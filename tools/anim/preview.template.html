@@ -1,0 +1,511 @@
+<title>Correr R6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Layout: a Studio-style viewport on the left, the animator's panel (keys, offsets) on the right; the timeline spans the bottom like Moon Animator. Stacks to one column on phones. */
+  :root {
+    --bg: #eef1f5;
+    --panel: #ffffff;
+    --ink: #17202c;
+    --muted: #5b6676;
+    --line: #d5dbe4;
+    --key: #e8890c;        /* keyframes: Moon-style amber */
+    --key-soft: #fde9cc;
+    --tag: #d63a2f;        /* tag red: offsets / off-pivot */
+    --font-display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151d; --panel: #18202b; --ink: #e6ebf2; --muted: #98a3b3; --line: #2a3442;
+      --key: #f3a23a; --key-soft: #3b2a12; --tag: #f0675c; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151d; --panel: #18202b; --ink: #e6ebf2; --muted: #98a3b3; --line: #2a3442;
+    --key: #f3a23a; --key-soft: #3b2a12; --tag: #f0675c; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 40px; display: grid; gap: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+  .sub { color: var(--muted); margin: 0; max-width: 70ch; }
+  .meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+  .viewport { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #8fc3e8; }
+  canvas#view { display: block; width: 100%; aspect-ratio: 16 / 11; max-width: 100%; touch-action: none; cursor: grab; }
+  canvas#view:active { cursor: grabbing; }
+  .hud { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .hud .chip { font-family: var(--font-mono); font-size: 0.75rem; background: rgba(23, 32, 44, 0.78); color: #f3f6fa; padding: 3px 8px; border-radius: 4px; }
+  .hud .chip b { color: #ffc46b; font-weight: 600; }
+  .side { display: grid; gap: 16px; min-width: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+  .card h2 { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button, select { font: inherit; font-size: 0.85rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  button:hover { border-color: var(--key); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--key); outline-offset: 2px; }
+  button[aria-pressed="true"] { background: var(--key-soft); border-color: var(--key); }
+  #play { min-width: 92px; font-weight: 600; }
+  label.tog { display: inline-flex; gap: 6px; align-items: center; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+  .timeline { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px 10px; display: grid; gap: 8px; }
+  .tl-top { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; }
+  .frame-read { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+  .frame-read b { color: var(--key); }
+  canvas#tl { display: block; width: 100%; height: 56px; cursor: pointer; touch-action: none; }
+  .keys { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .keys button { width: 100%; text-align: left; display: grid; grid-template-columns: 2.4em minmax(0, 1fr) auto; gap: 8px; align-items: baseline; background: transparent; border-color: transparent; padding: 5px 6px; }
+  .keys button.on { background: var(--key-soft); border-color: var(--key); }
+  .keys .f { font-family: var(--font-mono); color: var(--key); font-variant-numeric: tabular-nums; }
+  .keys .e { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+  .bars { display: grid; gap: 8px; }
+  .bar { display: grid; grid-template-columns: 6.6em minmax(0, 1fr) 3.6em; gap: 8px; align-items: center; font-size: 0.82rem; }
+  .bar .track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+  .bar .fill { height: 100%; background: var(--tag); width: 0; }
+  .bar .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); }
+  .note { font-size: 0.82rem; color: var(--muted); margin: 10px 0 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; color: var(--muted); }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  body.shot .wrap > :not(.main), body.shot .side, body.shot .hud { display: none !important; }
+  body.shot .wrap { padding: 0; max-width: none; }
+  body.shot .main { grid-template-columns: 1fr; }
+  body.shot .viewport { border: 0; border-radius: 0; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Correr R6</h1>
+    <p class="sub">Ciclo de carrera de 20 frames a 30 fps. Los brazos y las piernas salen de su pivote en los extremos y vuelven a él en 1–2 frames. Arrastra la vista para girar la cámara.</p>
+  </header>
+
+  <div class="main">
+    <div class="viewport">
+      <canvas id="view" aria-label="Vista 3D del personaje R6 corriendo"></canvas>
+      <div class="hud">
+        <span class="chip" id="hud-frame">frame <b>0</b> / 20</span>
+        <span class="chip" id="hud-key">Contacto</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <section class="card">
+        <h2>Keys</h2>
+        <ul class="keys" id="keys"></ul>
+      </section>
+      <section class="card">
+        <h2>Separación del pivote</h2>
+        <div class="bars" id="bars"></div>
+        <p class="note">Distancia en studs entre el pivote del torso (hombro o cadera) y el punto de la pieza que debería estar pegado a él. Con el rig "normal" siempre sería 0.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="timeline" aria-label="Línea de tiempo">
+    <div class="tl-top">
+      <div class="controls">
+        <button id="play" type="button">⏸ Pausa</button>
+        <button id="prev" type="button" aria-label="Frame anterior">◀ 1</button>
+        <button id="next" type="button" aria-label="Frame siguiente">1 ▶</button>
+        <label class="tog" for="speed">Velocidad
+          <select id="speed">
+            <option value="1">1×</option>
+            <option value="0.5">0.5×</option>
+            <option value="0.25">0.25×</option>
+            <option value="0.1">0.1×</option>
+          </select>
+        </label>
+      </div>
+      <div class="frame-read" id="read">frame <b>0.0</b> · 0.000 s</div>
+    </div>
+    <canvas id="tl" aria-label="Línea de tiempo: haz clic o arrastra para ir a un frame"></canvas>
+    <div class="tl-top">
+      <div class="controls" role="group" aria-label="Cámara">
+        <button type="button" data-cam="34" aria-pressed="true">3/4</button>
+        <button type="button" data-cam="side" aria-pressed="false">Lado</button>
+        <button type="button" data-cam="front" aria-pressed="false">Frente</button>
+        <button type="button" data-cam="back" aria-pressed="false">Detrás</button>
+      </div>
+      <div class="controls">
+        <label class="tog" for="t-piv"><input type="checkbox" id="t-piv" checked> Pivotes</label>
+        <label class="tog" for="t-ghost"><input type="checkbox" id="t-ghost"> Pose de reposo</label>
+        <label class="tog" for="t-ground"><input type="checkbox" id="t-ground" checked> Suelo en movimiento</label>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:#ffd166"></span>pivote del torso</span>
+      <span><span class="dot" style="background:#ff4d6d"></span>punto de la pieza</span>
+      <span>Línea roja = cuánto ha salido la pieza de su pivote</span>
+    </div>
+  </section>
+</div>
+
+<script>/*__CFRAME__*/</script>
+<script>/*__R6__*/</script>
+<script>/*__DATA__*/</script>
+<script>
+(function () {
+  const A = window.ANIM;
+  const { mul, inv, point, lerp, rotVec } = CF;
+  const params = new URLSearchParams(location.search);
+  const SHOT = params.has('shot');
+  if (SHOT) document.body.classList.add('shot');
+
+  // ---------- Animación: interpolar Transforms como Roblox ----------
+  const ease = {
+    Linear: (t) => t,
+    Cubic: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+  };
+  function sample(frame) {
+    const K = A.keys;
+    let i = 0;
+    while (i < K.length - 2 && frame >= K[i + 1].frame) i++;
+    const a = K[i], b = K[i + 1];
+    const t = Math.min(1, Math.max(0, (frame - a.frame) / (b.frame - a.frame)));
+    const e = ease[a.easing] ? ease[a.easing](t) : t;
+    const T = {};
+    for (const n of R6.PARTS) T[n] = lerp(a.T[n], b.T[n], e);
+    return { T, key: t < 0.5 ? a : b, from: a };
+  }
+  const restT = {};
+  for (const n of R6.PARTS) restT[n] = CF.cf();
+
+  // ---------- Cámara ----------
+  const cv = document.getElementById('view');
+  const ctx = cv.getContext('2d');
+  const cam = { yaw: 35, pitch: 12, dist: 11, target: [0, -0.6, 0] };
+  const PRESETS = { '34': [35, 12], side: [90, 4], front: [0, 6], back: [180, 8] };
+  if (params.get('view') && PRESETS[params.get('view')]) [cam.yaw, cam.pitch] = PRESETS[params.get('view')];
+
+  function camBasis() {
+    const y = (cam.yaw * Math.PI) / 180, p = (cam.pitch * Math.PI) / 180;
+    // cámara mirando al personaje; yaw 0 = de frente (el personaje mira a -Z, la cámara está en -Z)
+    const eye = [
+      cam.target[0] + Math.sin(y) * Math.cos(p) * -cam.dist * -1,
+      cam.target[1] + Math.sin(p) * cam.dist,
+      cam.target[2] - Math.cos(y) * Math.cos(p) * cam.dist,
+    ];
+    const fwd = norm(sub(cam.target, eye));
+    const right = norm(cross(fwd, [0, 1, 0]));
+    const up = cross(right, fwd);
+    return { eye, fwd, right, up };
+  }
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const norm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+
+  let W = 0, H = 0, DPR = 1;
+  function resize() {
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = cv.getBoundingClientRect();
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  }
+  function project(B, v) {
+    const d = sub(v, B.eye);
+    const z = dot(d, B.fwd);
+    const f = (H * 0.5) / Math.tan((20 * Math.PI) / 180);
+    return [W / 2 + (dot(d, B.right) * f) / z, H / 2 - (dot(d, B.up) * f) / z, z];
+  }
+
+  const NEAR = 0.3;
+  const depth = (B, v) => dot(sub(v, B.eye), B.fwd);
+  function clipPoly(B, poly) {
+    const out = [];
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length];
+      const da = depth(B, a) - NEAR, db = depth(B, b) - NEAR;
+      if (da >= 0) out.push(a);
+      if ((da >= 0) !== (db >= 0)) {
+        const t = da / (da - db);
+        out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]);
+      }
+    }
+    return out;
+  }
+  function clipSeg(B, a, b) {
+    const da = depth(B, a) - NEAR, db = depth(B, b) - NEAR;
+    if (da < 0 && db < 0) return null;
+    if (da >= 0 && db >= 0) return [a, b];
+    const t = da / (da - db);
+    const m = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    return da >= 0 ? [a, m] : [m, b];
+  }
+
+  // ---------- Dibujo ----------
+  const COLORS = {
+    Torso: [214, 58, 47], Head: [236, 238, 243],
+    'Right Arm': [44, 182, 112], 'Left Arm': [48, 140, 222],
+    'Right Leg': [44, 182, 112], 'Left Leg': [48, 140, 222],
+  };
+  const FACES = [
+    { idx: [1, 3, 7, 5], n: [1, 0, 0] }, { idx: [0, 4, 6, 2], n: [-1, 0, 0] },
+    { idx: [2, 6, 7, 3], n: [0, 1, 0] }, { idx: [0, 1, 5, 4], n: [0, -1, 0] },
+    { idx: [4, 5, 7, 6], n: [0, 0, 1] }, { idx: [0, 2, 3, 1], n: [0, 0, -1] },
+  ];
+  const LIGHT = norm([-0.4, 0.85, -0.5]);
+
+  function shade(rgb, k, a) {
+    const c = rgb.map((v) => Math.round(Math.min(255, v * k)));
+    return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  }
+
+  function collectFaces(B, parts, alpha, out) {
+    for (const n of R6.PARTS) {
+      const P = parts[n];
+      const corners = R6.boxCorners(P, R6.SIZES[n]);
+      const pr = corners.map((c) => project(B, c));
+      for (const f of FACES) {
+        const wn = rotVec(P.r, f.n);
+        const center = f.idx.reduce((s, i) => [s[0] + corners[i][0] / 4, s[1] + corners[i][1] / 4, s[2] + corners[i][2] / 4], [0, 0, 0]);
+        if (dot(wn, sub(B.eye, center)) <= 0) continue; // cara de espaldas
+        const lit = 0.55 + 0.5 * Math.max(0, dot(wn, LIGHT));
+        const isFront = f.n[2] === -1;
+        out.push({ pts: f.idx.map((i) => pr[i]), z: dot(sub(P.p, B.eye), B.fwd) + 0.001 * dot(sub(center, B.eye), B.fwd), fill: shade(COLORS[n], lit * (isFront && n !== 'Head' ? 1.08 : 1), alpha), alpha, part: n, front: isFront, P, corners, f });
+      }
+    }
+  }
+
+  function drawFace(fc) {
+    ctx.beginPath();
+    fc.pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+    ctx.closePath();
+    ctx.fillStyle = fc.fill;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(20,26,36,${0.55 * fc.alpha})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    if (fc.part === 'Head' && fc.front && fc.alpha > 0.9) {
+      // cara: dos ojos y una sonrisa para saber hacia dónde mira
+      const B = curB;
+      const eyeL = project(B, point(fc.P, [-0.22, 0.12, -0.63]));
+      const eyeR = project(B, point(fc.P, [0.22, 0.12, -0.63]));
+      ctx.fillStyle = '#1b1f27';
+      for (const e of [eyeL, eyeR]) { ctx.beginPath(); ctx.arc(e[0], e[1], Math.max(1.5, 260 / e[2] / 10), 0, Math.PI * 2); ctx.fill(); }
+      const m = [-0.25, -0.1, 0.1, 0.25].map((x) => project(B, point(fc.P, [x, -0.18 - 0.08 * (1 - Math.abs(x) * 3), -0.63])));
+      ctx.beginPath(); m.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+      ctx.strokeStyle = '#1b1f27'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    if (fc.part === 'Torso' && fc.front && fc.alpha > 0.9) {
+      // panel claro en la cara delantera del torso (para ver hacia dónde mira)
+      const q = [[-0.55, 0.45], [0.55, 0.45], [0.55, -0.2], [-0.55, -0.2]].map(([x, y]) => project(curB, point(fc.P, [x, y, -0.505])));
+      ctx.beginPath(); q.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fill();
+    }
+  }
+
+  let curB = null;
+  let groundOffset = 0;
+  function drawScene(frame) {
+    const B = camBasis();
+    curB = B;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // cielo
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#79b6e3'); g.addColorStop(1, '#cfe6f6');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // suelo (baseplate gris con cuadrícula, como Studio), recortado contra el plano cercano
+    const GY = R6.GROUND;
+    const S = 40;
+    const gq = clipPoly(B, [[-S, GY, -S], [S, GY, -S], [S, GY, S], [-S, GY, S]]).map((v) => project(B, v));
+    if (gq.length >= 3) {
+      ctx.beginPath(); gq.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+      ctx.fillStyle = '#8d939c'; ctx.fill();
+    }
+    ctx.strokeStyle = 'rgba(60,66,76,0.45)'; ctx.lineWidth = 1;
+    const off = ((groundOffset % 2) + 2) % 2;
+    const line3 = (a, b) => {
+      const seg = clipSeg(B, a, b);
+      if (!seg) return;
+      const pa = project(B, seg[0]), pb = project(B, seg[1]);
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    };
+    for (let i = -S; i <= S; i += 2) {
+      line3([-S, GY, i + off], [S, GY, i + off]);
+      line3([i, GY, -S], [i, GY, S]);
+    }
+
+    const s = sample(frame);
+    const parts = R6.transformsToParts(s.T);
+
+    // sombra: proyectar cada pieza al suelo
+    ctx.fillStyle = 'rgba(30,34,42,0.28)';
+    for (const n of R6.PARTS) {
+      const pts = R6.boxCorners(parts[n], R6.SIZES[n]).map((c) => {
+        const h = c[1] - GY; return project(B, [c[0] + h * 0.35, GY + 0.001, c[2] + h * 0.25]);
+      });
+      hull(pts);
+    }
+
+    const faces = [];
+    if (document.getElementById('t-ghost').checked) collectFaces(B, R6.transformsToParts(restT), 0.22, faces);
+    collectFaces(B, parts, 1, faces);
+    faces.sort((a, b) => b.z - a.z);
+    faces.forEach(drawFace);
+
+    if (document.getElementById('t-piv').checked) drawPivots(B, parts);
+    return s;
+  }
+
+  function hull(pts) {
+    const p = pts.map((q) => [q[0], q[1]]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of p) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (const q of p.slice().reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    const h = lo.slice(0, -1).concat(up.slice(0, -1));
+    ctx.beginPath(); h.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); ctx.fill();
+  }
+
+  function pivotGap(parts, n) {
+    const j = R6.JOINTS[n];
+    const a = point(parts[j.parent] || CF.cf(), j.C0.p);
+    const b = point(parts[n], j.C1.p);
+    return { a, b, d: Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) };
+  }
+
+  function drawPivots(B, parts) {
+    for (const n of R6.LIMBS.concat(['Head'])) {
+      const { a, b } = pivotGap(parts, n);
+      const pa = project(B, a), pb = project(B, b);
+      ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+      ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(pa[0], pa[1], 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff4d6d'; ctx.beginPath(); ctx.arc(pb[0], pb[1], 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // ---------- UI ----------
+  const N = A.duracionFrames;
+  let frame = SHOT ? Number(params.get('frame') || 0) : 0;
+  let playing = !SHOT;
+  let speed = 1;
+  let last = performance.now();
+
+  const keysEl = document.getElementById('keys');
+  const keyBtns = A.keys.slice(0, -1).map((k) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = `<span class="f">${k.frame}</span><span>${k.nombre}</span><span class="e">${k.easing}</span>`;
+    b.addEventListener('click', () => { frame = k.frame; setPlaying(false); });
+    li.appendChild(b); keysEl.appendChild(li);
+    return { k, b };
+  });
+
+  const barsEl = document.getElementById('bars');
+  const LABELS = { 'Right Arm': 'Brazo der.', 'Left Arm': 'Brazo izq.', 'Right Leg': 'Pierna der.', 'Left Leg': 'Pierna izq.', Head: 'Cabeza' };
+  const bars = Object.keys(LABELS).map((n) => {
+    const row = document.createElement('div');
+    row.className = 'bar';
+    row.innerHTML = `<span>${LABELS[n]}</span><span class="track"><span class="fill"></span></span><span class="v">0.00</span>`;
+    barsEl.appendChild(row);
+    return { n, fill: row.querySelector('.fill'), v: row.querySelector('.v') };
+  });
+
+  const playBtn = document.getElementById('play');
+  function setPlaying(p) { playing = p; playBtn.textContent = p ? '⏸ Pausa' : '▶ Play'; }
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  document.getElementById('prev').addEventListener('click', () => { setPlaying(false); frame = (Math.round(frame) - 1 + N) % N; });
+  document.getElementById('next').addEventListener('click', () => { setPlaying(false); frame = (Math.round(frame) + 1) % N; });
+  document.getElementById('speed').addEventListener('change', (e) => { speed = Number(e.target.value); });
+  document.querySelectorAll('[data-cam]').forEach((b) => b.addEventListener('click', () => {
+    [cam.yaw, cam.pitch] = PRESETS[b.dataset.cam];
+    document.querySelectorAll('[data-cam]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+
+  // girar la cámara arrastrando
+  let drag = null;
+  cv.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, yaw: cam.yaw, pitch: cam.pitch }; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    cam.yaw = drag.yaw - (e.clientX - drag.x) * 0.4;
+    cam.pitch = Math.max(-10, Math.min(70, drag.pitch + (e.clientY - drag.y) * 0.3));
+    document.querySelectorAll('[data-cam]').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+  });
+  cv.addEventListener('pointerup', () => { drag = null; });
+  cv.addEventListener('wheel', (e) => { e.preventDefault(); cam.dist = Math.max(6, Math.min(22, cam.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+
+  // línea de tiempo
+  const tl = document.getElementById('tl');
+  const tctx = tl.getContext('2d');
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function drawTimeline() {
+    const r = tl.getBoundingClientRect();
+    tl.width = Math.round(r.width * DPR); tl.height = Math.round(r.height * DPR);
+    tctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const w = r.width, h = r.height, pad = 12;
+    const x = (f) => pad + (f / N) * (w - pad * 2);
+    tctx.clearRect(0, 0, w, h);
+    tctx.strokeStyle = css('--line'); tctx.fillStyle = css('--muted');
+    tctx.font = '11px "JetBrains Mono", monospace'; tctx.textAlign = 'center';
+    for (let f = 0; f <= N; f++) {
+      tctx.beginPath(); tctx.moveTo(x(f), 16); tctx.lineTo(x(f), f % 5 === 0 ? 30 : 24); tctx.lineWidth = 1; tctx.stroke();
+      if (f % 2 === 0) tctx.fillText(String(f), x(f), 11);
+    }
+    for (const k of A.keys) {
+      const cx = x(k.frame), cy = 40;
+      tctx.beginPath(); tctx.moveTo(cx, cy - 6); tctx.lineTo(cx + 6, cy); tctx.lineTo(cx, cy + 6); tctx.lineTo(cx - 6, cy); tctx.closePath();
+      tctx.fillStyle = k.easing === 'Linear' ? css('--panel') : css('--key');
+      tctx.fill(); tctx.strokeStyle = css('--key'); tctx.lineWidth = 2; tctx.stroke();
+    }
+    const px = x(frame);
+    tctx.strokeStyle = css('--tag'); tctx.lineWidth = 2;
+    tctx.beginPath(); tctx.moveTo(px, 14); tctx.lineTo(px, h - 2); tctx.stroke();
+  }
+  function frameFromEvent(e) {
+    const r = tl.getBoundingClientRect(); const pad = 12;
+    return Math.max(0, Math.min(N - 0.001, ((e.clientX - r.left - pad) / (r.width - pad * 2)) * N));
+  }
+  let tdrag = false;
+  tl.addEventListener('pointerdown', (e) => { tdrag = true; tl.setPointerCapture(e.pointerId); setPlaying(false); frame = Math.round(frameFromEvent(e)); });
+  tl.addEventListener('pointermove', (e) => { if (tdrag) frame = Math.round(frameFromEvent(e)); });
+  tl.addEventListener('pointerup', () => { tdrag = false; });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest('select, input')) return;
+    if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+    if (e.code === 'ArrowLeft') { setPlaying(false); frame = (Math.round(frame) - 1 + N) % N; }
+    if (e.code === 'ArrowRight') { setPlaying(false); frame = (Math.round(frame) + 1) % N; }
+  });
+
+  const hudF = document.getElementById('hud-frame'), hudK = document.getElementById('hud-key'), read = document.getElementById('read');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced && !SHOT) { setPlaying(false); speed = 0.25; document.getElementById('speed').value = '0.25'; }
+
+  function tick(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (playing) {
+      frame = (frame + dt * A.fps * speed) % N;
+      if (document.getElementById('t-ground').checked) groundOffset += dt * 20 * speed; // 20 studs/s
+    }
+    const s = drawScene(frame);
+    if (!SHOT) {
+      const parts = R6.transformsToParts(s.T);
+      for (const b of bars) {
+        const d = pivotGap(parts, b.n).d;
+        b.fill.style.width = Math.min(100, (d / 1) * 100) + '%';
+        b.v.textContent = d.toFixed(2);
+      }
+      hudF.innerHTML = `frame <b>${frame.toFixed(1)}</b> / ${N}`;
+      const nearest = A.keys.slice(0, -1).reduce((best, k) => (Math.abs(k.frame - frame) < Math.abs(best.frame - frame) ? k : best));
+      hudK.textContent = nearest.nombre;
+      read.innerHTML = `frame <b>${frame.toFixed(1)}</b> · ${(frame / A.fps).toFixed(3)} s`;
+      keyBtns.forEach(({ k, b }) => b.classList.toggle('on', k === nearest));
+      drawTimeline();
+      requestAnimationFrame(tick);
+    } else {
+      document.body.dataset.ready = '1';
+    }
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(tick);
+})();
+</script>

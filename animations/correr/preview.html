@@ -1,0 +1,769 @@
+<title>Correr R6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Layout: a Studio-style viewport on the left, the animator's panel (keys, offsets) on the right; the timeline spans the bottom like Moon Animator. Stacks to one column on phones. */
+  :root {
+    --bg: #eef1f5;
+    --panel: #ffffff;
+    --ink: #17202c;
+    --muted: #5b6676;
+    --line: #d5dbe4;
+    --key: #e8890c;        /* keyframes: Moon-style amber */
+    --key-soft: #fde9cc;
+    --tag: #d63a2f;        /* tag red: offsets / off-pivot */
+    --font-display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151d; --panel: #18202b; --ink: #e6ebf2; --muted: #98a3b3; --line: #2a3442;
+      --key: #f3a23a; --key-soft: #3b2a12; --tag: #f0675c; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151d; --panel: #18202b; --ink: #e6ebf2; --muted: #98a3b3; --line: #2a3442;
+    --key: #f3a23a; --key-soft: #3b2a12; --tag: #f0675c; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 40px; display: grid; gap: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+  .sub { color: var(--muted); margin: 0; max-width: 70ch; }
+  .meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+  @media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+  .viewport { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #8fc3e8; }
+  canvas#view { display: block; width: 100%; aspect-ratio: 16 / 11; max-width: 100%; touch-action: none; cursor: grab; }
+  canvas#view:active { cursor: grabbing; }
+  .hud { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .hud .chip { font-family: var(--font-mono); font-size: 0.75rem; background: rgba(23, 32, 44, 0.78); color: #f3f6fa; padding: 3px 8px; border-radius: 4px; }
+  .hud .chip b { color: #ffc46b; font-weight: 600; }
+  .side { display: grid; gap: 16px; min-width: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; min-width: 0; }
+  .card h2 { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button, select { font: inherit; font-size: 0.85rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  button:hover { border-color: var(--key); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--key); outline-offset: 2px; }
+  button[aria-pressed="true"] { background: var(--key-soft); border-color: var(--key); }
+  #play { min-width: 92px; font-weight: 600; }
+  label.tog { display: inline-flex; gap: 6px; align-items: center; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+  .timeline { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px 10px; display: grid; gap: 8px; }
+  .tl-top { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; }
+  .frame-read { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+  .frame-read b { color: var(--key); }
+  canvas#tl { display: block; width: 100%; height: 56px; cursor: pointer; touch-action: none; }
+  .keys { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .keys button { width: 100%; text-align: left; display: grid; grid-template-columns: 2.4em minmax(0, 1fr) auto; gap: 8px; align-items: baseline; background: transparent; border-color: transparent; padding: 5px 6px; }
+  .keys button.on { background: var(--key-soft); border-color: var(--key); }
+  .keys .f { font-family: var(--font-mono); color: var(--key); font-variant-numeric: tabular-nums; }
+  .keys .e { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+  .bars { display: grid; gap: 8px; }
+  .bar { display: grid; grid-template-columns: 6.6em minmax(0, 1fr) 3.6em; gap: 8px; align-items: center; font-size: 0.82rem; }
+  .bar .track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+  .bar .fill { height: 100%; background: var(--tag); width: 0; }
+  .bar .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--muted); }
+  .note { font-size: 0.82rem; color: var(--muted); margin: 10px 0 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; color: var(--muted); }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  body.shot .wrap > :not(.main), body.shot .side, body.shot .hud { display: none !important; }
+  body.shot .wrap { padding: 0; max-width: none; }
+  body.shot .main { grid-template-columns: 1fr; }
+  body.shot .viewport { border: 0; border-radius: 0; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Correr R6</h1>
+    <p class="sub">Ciclo de carrera de 20 frames a 30 fps. Los brazos y las piernas salen de su pivote en los extremos y vuelven a él en 1–2 frames. Arrastra la vista para girar la cámara.</p>
+  </header>
+
+  <div class="main">
+    <div class="viewport">
+      <canvas id="view" aria-label="Vista 3D del personaje R6 corriendo"></canvas>
+      <div class="hud">
+        <span class="chip" id="hud-frame">frame <b>0</b> / 20</span>
+        <span class="chip" id="hud-key">Contacto</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <section class="card">
+        <h2>Keys</h2>
+        <ul class="keys" id="keys"></ul>
+      </section>
+      <section class="card">
+        <h2>Separación del pivote</h2>
+        <div class="bars" id="bars"></div>
+        <p class="note">Distancia en studs entre el pivote del torso (hombro o cadera) y el punto de la pieza que debería estar pegado a él. Con el rig "normal" siempre sería 0.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="timeline" aria-label="Línea de tiempo">
+    <div class="tl-top">
+      <div class="controls">
+        <button id="play" type="button">⏸ Pausa</button>
+        <button id="prev" type="button" aria-label="Frame anterior">◀ 1</button>
+        <button id="next" type="button" aria-label="Frame siguiente">1 ▶</button>
+        <label class="tog" for="speed">Velocidad
+          <select id="speed">
+            <option value="1">1×</option>
+            <option value="0.5">0.5×</option>
+            <option value="0.25">0.25×</option>
+            <option value="0.1">0.1×</option>
+          </select>
+        </label>
+      </div>
+      <div class="frame-read" id="read">frame <b>0.0</b> · 0.000 s</div>
+    </div>
+    <canvas id="tl" aria-label="Línea de tiempo: haz clic o arrastra para ir a un frame"></canvas>
+    <div class="tl-top">
+      <div class="controls" role="group" aria-label="Cámara">
+        <button type="button" data-cam="34" aria-pressed="true">3/4</button>
+        <button type="button" data-cam="side" aria-pressed="false">Lado</button>
+        <button type="button" data-cam="front" aria-pressed="false">Frente</button>
+        <button type="button" data-cam="back" aria-pressed="false">Detrás</button>
+      </div>
+      <div class="controls">
+        <label class="tog" for="t-piv"><input type="checkbox" id="t-piv" checked> Pivotes</label>
+        <label class="tog" for="t-ghost"><input type="checkbox" id="t-ghost"> Pose de reposo</label>
+        <label class="tog" for="t-ground"><input type="checkbox" id="t-ground" checked> Suelo en movimiento</label>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:#ffd166"></span>pivote del torso</span>
+      <span><span class="dot" style="background:#ff4d6d"></span>punto de la pieza</span>
+      <span>Línea roja = cuánto ha salido la pieza de su pivote</span>
+    </div>
+  </section>
+</div>
+
+<script>// Matemática mínima de CFrame (igual que en Roblox: posición + matriz 3x3 por filas).
+// Sirve en Node (require) y en el navegador (window.CF).
+(function (root) {
+  function cf(x, y, z, r) {
+    return { p: [x || 0, y || 0, z || 0], r: r || [1, 0, 0, 0, 1, 0, 0, 0, 1] };
+  }
+
+  // Igual que CFrame.new(x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22)
+  function cf12(x, y, z, a, b, c, d, e, f, g, h, i) {
+    return cf(x, y, z, [a, b, c, d, e, f, g, h, i]);
+  }
+
+  function mulRot(A, B) {
+    const o = new Array(9);
+    for (let i = 0; i < 3; i++)
+      for (let j = 0; j < 3; j++)
+        o[i * 3 + j] = A[i * 3] * B[j] + A[i * 3 + 1] * B[3 + j] + A[i * 3 + 2] * B[6 + j];
+    return o;
+  }
+
+  function rotVec(R, v) {
+    return [
+      R[0] * v[0] + R[1] * v[1] + R[2] * v[2],
+      R[3] * v[0] + R[4] * v[1] + R[5] * v[2],
+      R[6] * v[0] + R[7] * v[1] + R[8] * v[2],
+    ];
+  }
+
+  function mul(A, B) {
+    const pv = rotVec(A.r, B.p);
+    return { p: [A.p[0] + pv[0], A.p[1] + pv[1], A.p[2] + pv[2]], r: mulRot(A.r, B.r) };
+  }
+
+  function inv(A) {
+    const R = A.r;
+    const T = [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]];
+    const p = rotVec(T, A.p);
+    return { p: [-p[0], -p[1], -p[2]], r: T };
+  }
+
+  function point(A, v) {
+    const pv = rotVec(A.r, v);
+    return [A.p[0] + pv[0], A.p[1] + pv[1], A.p[2] + pv[2]];
+  }
+
+  const rad = (d) => (d * Math.PI) / 180;
+
+  function rx(deg) {
+    const c = Math.cos(rad(deg)), s = Math.sin(rad(deg));
+    return cf(0, 0, 0, [1, 0, 0, 0, c, -s, 0, s, c]);
+  }
+  function ry(deg) {
+    const c = Math.cos(rad(deg)), s = Math.sin(rad(deg));
+    return cf(0, 0, 0, [c, 0, s, 0, 1, 0, -s, 0, c]);
+  }
+  function rz(deg) {
+    const c = Math.cos(rad(deg)), s = Math.sin(rad(deg));
+    return cf(0, 0, 0, [c, -s, 0, s, c, 0, 0, 0, 1]);
+  }
+  function tr(x, y, z) {
+    return cf(x, y, z);
+  }
+
+  function toQuat(R) {
+    const [m00, m01, m02, m10, m11, m12, m20, m21, m22] = R;
+    const t = m00 + m11 + m22;
+    let w, x, y, z;
+    if (t > 0) {
+      const s = Math.sqrt(t + 1) * 2;
+      w = 0.25 * s; x = (m21 - m12) / s; y = (m02 - m20) / s; z = (m10 - m01) / s;
+    } else if (m00 > m11 && m00 > m22) {
+      const s = Math.sqrt(1 + m00 - m11 - m22) * 2;
+      w = (m21 - m12) / s; x = 0.25 * s; y = (m01 + m10) / s; z = (m02 + m20) / s;
+    } else if (m11 > m22) {
+      const s = Math.sqrt(1 + m11 - m00 - m22) * 2;
+      w = (m02 - m20) / s; x = (m01 + m10) / s; y = 0.25 * s; z = (m12 + m21) / s;
+    } else {
+      const s = Math.sqrt(1 + m22 - m00 - m11) * 2;
+      w = (m10 - m01) / s; x = (m02 + m20) / s; y = (m12 + m21) / s; z = 0.25 * s;
+    }
+    return [w, x, y, z];
+  }
+
+  function fromQuat(q) {
+    let [w, x, y, z] = q;
+    const n = Math.hypot(w, x, y, z);
+    w /= n; x /= n; y /= n; z /= n;
+    return [
+      1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w),
+      2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w),
+      2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y),
+    ];
+  }
+
+  // Igual que CFrame:Lerp: posición lineal y rotación esférica.
+  function lerp(A, B, t) {
+    const qa = toQuat(A.r);
+    let qb = toQuat(B.r);
+    let dot = qa[0] * qb[0] + qa[1] * qb[1] + qa[2] * qb[2] + qa[3] * qb[3];
+    if (dot < 0) { qb = qb.map((v) => -v); dot = -dot; }
+    let q;
+    if (dot > 0.9995) {
+      q = qa.map((v, i) => v + (qb[i] - v) * t);
+    } else {
+      const th = Math.acos(dot), s = Math.sin(th);
+      const wa = Math.sin((1 - t) * th) / s, wb = Math.sin(t * th) / s;
+      q = qa.map((v, i) => v * wa + qb[i] * wb);
+    }
+    return {
+      p: A.p.map((v, i) => v + (B.p[i] - v) * t),
+      r: fromQuat(q),
+    };
+  }
+
+  const api = { cf, cf12, mul, inv, point, rotVec, rx, ry, rz, tr, lerp, toQuat, fromQuat };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.CF = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>// Rig R6 de Roblox y cómo convertir una pose "fácil de pensar" en los Transform de cada Motor6D.
+//
+// Convenciones (espacio del HumanoidRootPart, el personaje mira hacia -Z):
+//   pitch > 0  -> el extremo del brazo/pierna va hacia delante
+//   roll  > 0  -> el extremo va hacia +X (fuera para la derecha, hacia dentro para la izquierda)
+//   lean  > 0  -> el torso se inclina hacia delante (pivotando en la cadera)
+//   d = [x, y, z] -> desplazamiento SACANDO la pieza de su pivote (la clave de la animación)
+//
+// Las rotaciones de brazos, piernas y cabeza son absolutas (respecto al suelo), no respecto al
+// torso: así "pitch 0" siempre es vertical y la cabeza se queda recta aunque el torso se incline.
+(function (root) {
+  const CF = typeof module !== 'undefined' && module.exports ? require('./cframe') : root.CF;
+  const { cf12, mul, inv, point, rx, ry, rz, tr } = CF;
+
+  const GROUND = -3; // el suelo está 3 studs por debajo del centro del HumanoidRootPart
+
+  const JOINTS = {
+    Torso: {
+      parent: 'HumanoidRootPart', motor: 'RootJoint',
+      C0: cf12(0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0),
+      C1: cf12(0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0),
+    },
+    Head: {
+      parent: 'Torso', motor: 'Neck',
+      C0: cf12(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0),
+      C1: cf12(0, -0.5, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0),
+    },
+    'Right Arm': {
+      parent: 'Torso', motor: 'Right Shoulder',
+      C0: cf12(1, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0),
+      C1: cf12(-0.5, 0.5, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0),
+    },
+    'Left Arm': {
+      parent: 'Torso', motor: 'Left Shoulder',
+      C0: cf12(-1, 0.5, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+      C1: cf12(0.5, 0.5, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+    },
+    'Right Leg': {
+      parent: 'Torso', motor: 'Right Hip',
+      C0: cf12(1, -1, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0),
+      C1: cf12(0.5, 1, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0),
+    },
+    'Left Leg': {
+      parent: 'Torso', motor: 'Left Hip',
+      C0: cf12(-1, -1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+      C1: cf12(-0.5, 1, 0, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+    },
+  };
+
+  const SIZES = {
+    Torso: [2, 2, 1],
+    Head: [1.25, 1.25, 1.25], // la cabeza R6 es 2x1x1 con malla; visualmente es un bloque redondeado
+    'Right Arm': [1, 2, 1],
+    'Left Arm': [1, 2, 1],
+    'Right Leg': [1, 2, 1],
+    'Left Leg': [1, 2, 1],
+  };
+
+  const LIMBS = ['Right Arm', 'Left Arm', 'Right Leg', 'Left Leg'];
+  const PARTS = ['Torso', 'Head', ...LIMBS];
+
+  function boxCorners(part, size) {
+    const out = [];
+    for (const sx of [-0.5, 0.5]) for (const sy of [-0.5, 0.5]) for (const sz of [-0.5, 0.5])
+      out.push(point(part, [sx * size[0], sy * size[1], sz * size[2]]));
+    return out;
+  }
+
+  // spec -> CFrame de cada pieza en el espacio del HumanoidRootPart
+  function buildParts(spec) {
+    const t = Object.assign({ x: 0, y: 0, z: 0, lean: 0, yaw: 0, roll: 0 }, spec.torso);
+    const torso = [tr(t.x, t.y, t.z), tr(0, -1, 0), ry(t.yaw), rx(-t.lean), rz(t.roll), tr(0, 1, 0)].reduce(mul);
+    const parts = { Torso: torso };
+
+    for (const name of ['Head', ...LIMBS]) {
+      const s = Object.assign({ pitch: 0, roll: 0, yaw: 0, d: [0, 0, 0] }, spec[name]);
+      const j = JOINTS[name];
+      const pivot = point(torso, j.C0.p);
+      const q = j.C1.p;
+      const R = name === 'Head'
+        ? [ry(s.yaw), rx(s.pitch), rz(s.roll)].reduce(mul)
+        : [ry(s.yaw), rz(s.roll), rx(s.pitch)].reduce(mul);
+      const d = s.d.slice();
+      let part = [tr(pivot[0] + d[0], pivot[1] + d[1], pivot[2] + d[2]), R, tr(-q[0], -q[1], -q[2])].reduce(mul);
+      if (s.plant) {
+        // Ajusta la altura para que el punto más bajo de la pierna toque el suelo justo
+        const minY = Math.min(...boxCorners(part, SIZES[name]).map((c) => c[1]));
+        part = mul(tr(0, GROUND - minY, 0), part);
+      }
+      parts[name] = part;
+    }
+    return parts;
+  }
+
+  // CFrame de pieza -> Transform del Motor6D (lo que guarda cada Pose del KeyframeSequence)
+  function partsToTransforms(parts) {
+    const hrp = CF.cf();
+    const out = {};
+    for (const name of PARTS) {
+      const j = JOINTS[name];
+      const parent = j.parent === 'HumanoidRootPart' ? hrp : parts[j.parent];
+      const rel = mul(inv(parent), parts[name]);
+      out[name] = mul(mul(inv(j.C0), rel), j.C1);
+    }
+    return out;
+  }
+
+  // Transforms -> CFrame de cada pieza (lo que hace Roblox al reproducir)
+  function transformsToParts(T) {
+    const parts = {};
+    const hrp = CF.cf();
+    for (const name of PARTS) {
+      const j = JOINTS[name];
+      const parent = j.parent === 'HumanoidRootPart' ? hrp : parts[j.parent];
+      parts[name] = mul(mul(mul(parent, j.C0), T[name]), inv(j.C1));
+    }
+    return parts;
+  }
+
+  const SWAP = { 'Right Arm': 'Left Arm', 'Left Arm': 'Right Arm', 'Right Leg': 'Left Leg', 'Left Leg': 'Right Leg' };
+
+  // Pose en espejo (izquierda <-> derecha): para la segunda mitad del ciclo
+  function mirror(spec) {
+    const out = {};
+    for (const [k, v] of Object.entries(spec)) {
+      const nk = SWAP[k] || k;
+      const nv = Object.assign({}, v);
+      if ('yaw' in nv) nv.yaw = -nv.yaw;
+      if ('roll' in nv) nv.roll = -nv.roll;
+      if ('x' in nv) nv.x = -nv.x;
+      if (nv.d) nv.d = [-nv.d[0], nv.d[1], nv.d[2]];
+      out[nk] = nv;
+    }
+    return out;
+  }
+
+  const api = { JOINTS, SIZES, PARTS, LIMBS, GROUND, buildParts, partsToTransforms, transformsToParts, mirror, boxCorners };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.R6 = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>window.ANIM = {"nombre":"Correr","fps":30,"duracionFrames":20,"keys":[{"frame":0,"nombre":"Contacto (pie derecho delante)","easing":"Cubic","T":{"Torso":{"p":[-0.0335917435713487,-0.2735827967647523,-0.18873830406168102],"r":[0.992546151641322,0.11714833172452144,-0.0335917435713487,-0.12186934340514748,0.954096597023789,-0.2735827967647523,0,0.27563735581699916,0.9612616959383189]},"Head":{"p":[0.006093467170257369,-0.047704829851189415,0.013679139838237597],"r":[0.992546151641322,-0.12179510389394452,0.004253178748303902,0.11714833172452144,0.963134992146131,0.24217195394560845,-0.0335917435713487,-0.2398685881292831,0.9702240231991276]},"Right Arm":{"p":[-0.528385387707466,0.10856278713790585,0.20981659444877154],"r":[0.7880538833812565,0.6129356112114294,0.057280130905859976,-0.6075707797041128,0.7594085661574701,0.2327152278996627,0.09914042837035553,-0.21819387286431027,0.9708566368455311]},"Left Arm":{"p":[-0.4654915879628886,0.44556739571637927,-0.13148109145543324],"r":[0.18449598810852458,0.982482974272466,0.026238057027685377,-0.9264772036790146,0.18276498541598046,-0.3289938467038709,-0.3280262511369673,0.03638908312427465,0.9439674852421569]},"Right Leg":{"p":[0.3246028656921607,0.12829484518874879,-0.04265427019180179],"r":[0.582139077297168,-0.8046057190063736,0.11714833172452144,0.8073979797478568,0.5890501651497233,0.0335917435713487,-0.09603435313824667,0.07503025975778237,0.992546151641322]},"Left Leg":{"p":[0.3752794123308759,0.04843527552308469,-0.04265427019180157],"r":[0.8934693401168003,-0.433576759807777,0.11714833172452144,0.43989798171739247,0.897419277954737,-0.0335917435713487,-0.09056657193586296,0.08154650764924225,0.992546151641322]}}},{"frame":2,"nombre":"Bajada (amortigua)","easing":"Linear","T":{"Torso":{"p":[-0.029809019626209157,-0.34071865342161006,-0.4603073792140915],"r":[0.9961946980917455,0.08189960831908934,-0.029809019626209157,-0.08715574274765817,0.9361168066628592,-0.34071865342161006,0,0.3420201433256687,0.9396926207859084]},"Head":{"p":[0.004357787137382909,-0.06390684749942643,-0.029948698368214843],"r":[0.9961946980917455,-0.08694343573875718,0.006079677280626756,0.08189960831908934,0.9576945923187536,0.27588679200098754,-0.029809019626209157,-0.2743390362769341,0.961170908591998]},"Right Arm":{"p":[-0.451745134465244,0.04841377207525055,0.15614877572502595],"r":[0.8872622811228555,0.4607748675042013,0.021264194627417618,-0.45588653534988743,0.8689642518014988,0.19253206480411866,0.0702361116758527,-0.18052049902309486,0.9810602621904069]},"Left Arm":{"p":[-0.35829307271450295,0.3645271235565557,-0.11020912047731557],"r":[0.2657254174830128,0.9640431913419341,-0.0032753214709253936,-0.9320805102917022,0.2560447134205588,-0.2562557844493347,-0.2462030154929841,0.0711465386132259,0.9666034580972273]},"Right Leg":{"p":[-0.06380344835220059,0.4665663778009883,-0.00871557427476577],"r":[0.8445504221512955,-0.5291758106728318,0.08189960831908934,0.5286462150061707,0.8483186911229611,0.029809019626209157,-0.08525118065879463,0.018120697839143274,0.9961946980917455]},"Left Leg":{"p":[0.40054209216284187,0.22667682124858501,-0.02614672282429753],"r":[0.9817110071424363,-0.1718602706054057,0.08189960831908934,0.1747753009866141,0.9841570080601788,-0.029809019626209157,-0.07547908730517333,0.043577871373829076,0.9961946980917455]}}},{"frame":4,"nombre":"Paso (todo vuelve al pivote)","easing":"Linear","T":{"Torso":{"p":[0,-0.29237170472273677,-0.09369524403696461],"r":[1,0,0,0,0.9563047559630354,-0.29237170472273677,0,0.29237170472273677,0.9563047559630354]},"Head":{"p":[0,0,5.551115123125783e-17],"r":[1,0,0,0,0.9563047559630354,0.29237170472273677,0,-0.29237170472273677,0.9563047559630354]},"Right Arm":{"p":[-0.014618585236136794,0.04781523779815178,-1.1102230246251565e-16],"r":[0.9743203840308403,-0.2242405864558833,-0.020394819144016745,0.22511355276946554,0.9720462290334813,0.06670844760071763,0.004865965629214842,-0.06958655048003272,0.9975640502598242]},"Left Arm":{"p":[0.01461858523613685,0.04781523779815178,5.551115123125783e-17],"r":[0.9336301072515965,0.3576574816573186,-0.020394819144016745,-0.3582054511196998,0.9312565907454478,-0.06670844760071763,-0.004865965629214842,0.06958655048003272,0.9975640502598242]},"Right Leg":{"p":[-0.03223428652274615,0.10543360047789219,0],"r":[0.9961946980917455,-0.08715574274765828,0,0.08715574274765828,0.9961946980917455,0,0,0,1]},"Left Leg":{"p":[0.09441113247347532,0.650835261848247,0],"r":[0.7431448254773941,0.6691306063588582,0,-0.6691306063588582,0.7431448254773941,0,0,0,1]}}},{"frame":6,"nombre":"Impulso (en el aire)","easing":"Cubic","T":{"Torso":{"p":[0.022557566113149834,-0.25783416049629954,0.16592582628906827],"r":[0.9961946980917455,-0.08418598282936919,0.022557566113149834,0.08715574274765817,0.9622501868990583,-0.25783416049629954,0,0.25881904510252074,0.9659258262890683]},"Head":{"p":[-3.903127820947816e-18,0,-2.220446049250313e-16],"r":[0.9961946980917455,0.08710264982404566,0.003041691556625919,-0.08418598282936919,0.9526313556732294,0.2922434267579655,0.022557566113149834,-0.2913874200816069,0.9563391279401028]},"Right Arm":{"p":[0.4684290858295999,0.4360980493823153,-0.15130328110713714],"r":[0.21144039706690565,-0.977390889597082,-0.00008614414600857656,0.9260109203590925,0.2003534919537962,-0.3199410158726553,0.31272469340283293,0.06756868501417446,0.9474374591188377]},"Left Arm":{"p":[0.5332019573007539,0.11594801124108978,0.19300707608759082],"r":[0.7736410318739231,-0.6329812938108728,-0.028534811836861837,0.6222202132691166,0.7504406750060142,0.22289190092027317,-0.1196727203684552,-0.19019325693102662,0.9744254538021788]},"Right Leg":{"p":[-0.34972851766979646,-0.04194566485925122,-0.030504509961680304],"r":[0.9034920839070235,0.42025560628312514,-0.08418598282936919,-0.42337272712040863,0.9056747154147999,-0.022557566113149834,0.0667651724177507,0.05602263155122212,0.9961946980917455]},"Left Leg":{"p":[-0.320195313483993,0.3446151207707868,-0.0348622970990633],"r":[0.5419075026220203,0.8362110851316302,-0.08418598282936919,-0.8379386560466184,0.5452980514487814,0.022557566113149834,0.0647693392335611,0.05831857499239717,0.9961946980917455]}}},{"frame":10,"nombre":"Contacto (pie izquierdo delante)","easing":"Cubic","T":{"Torso":{"p":[0.0335917435713487,-0.2735827967647523,-0.18873830406168102],"r":[0.992546151641322,-0.11714833172452144,0.0335917435713487,0.12186934340514748,0.954096597023789,-0.2735827967647523,0,0.27563735581699916,0.9612616959383189]},"Head":{"p":[-0.006093467170257369,-0.047704829851189415,0.013679139838237597],"r":[0.992546151641322,0.12179510389394452,-0.004253178748303902,-0.11714833172452144,0.963134992146131,0.24217195394560845,0.0335917435713487,-0.2398685881292831,0.9702240231991276]},"Right Arm":{"p":[0.4654915879628886,0.44556739571637927,-0.13148109145543324],"r":[0.18449598810852458,-0.982482974272466,-0.026238057027685377,0.9264772036790146,0.18276498541598046,-0.3289938467038709,0.3280262511369673,0.03638908312427465,0.9439674852421569]},"Left Arm":{"p":[0.528385387707466,0.10856278713790585,0.20981659444877154],"r":[0.7880538833812565,-0.6129356112114294,-0.057280130905859976,0.6075707797041128,0.7594085661574701,0.2327152278996627,-0.09914042837035553,-0.21819387286431027,0.9708566368455311]},"Right Leg":{"p":[-0.3752794123308759,0.04843527552308469,-0.04265427019180157],"r":[0.8934693401168003,0.433576759807777,-0.11714833172452144,-0.43989798171739247,0.897419277954737,-0.0335917435713487,0.09056657193586296,0.08154650764924225,0.992546151641322]},"Left Leg":{"p":[-0.3246028656921607,0.12829484518874879,-0.04265427019180179],"r":[0.582139077297168,0.8046057190063736,-0.11714833172452144,-0.8073979797478568,0.5890501651497233,0.0335917435713487,0.09603435313824667,0.07503025975778237,0.992546151641322]}}},{"frame":12,"nombre":"Bajada (amortigua)","easing":"Linear","T":{"Torso":{"p":[0.029809019626209157,-0.34071865342161006,-0.4603073792140915],"r":[0.9961946980917455,-0.08189960831908934,0.029809019626209157,0.08715574274765817,0.9361168066628592,-0.34071865342161006,0,0.3420201433256687,0.9396926207859084]},"Head":{"p":[-0.004357787137382909,-0.06390684749942643,-0.029948698368214843],"r":[0.9961946980917455,0.08694343573875718,-0.006079677280626756,-0.08189960831908934,0.9576945923187536,0.27588679200098754,0.029809019626209157,-0.2743390362769341,0.961170908591998]},"Right Arm":{"p":[0.35829307271450295,0.3645271235565557,-0.11020912047731557],"r":[0.2657254174830128,-0.9640431913419341,0.0032753214709253936,0.9320805102917022,0.2560447134205588,-0.2562557844493347,0.2462030154929841,0.0711465386132259,0.9666034580972273]},"Left Arm":{"p":[0.451745134465244,0.04841377207525055,0.15614877572502595],"r":[0.8872622811228555,-0.4607748675042013,-0.021264194627417618,0.45588653534988743,0.8689642518014988,0.19253206480411866,-0.0702361116758527,-0.18052049902309486,0.9810602621904069]},"Right Leg":{"p":[-0.40054209216284187,0.22667682124858501,-0.02614672282429753],"r":[0.9817110071424363,0.1718602706054057,-0.08189960831908934,-0.1747753009866141,0.9841570080601788,-0.029809019626209157,0.07547908730517333,0.043577871373829076,0.9961946980917455]},"Left Leg":{"p":[0.06380344835220059,0.4665663778009883,-0.00871557427476577],"r":[0.8445504221512955,0.5291758106728318,-0.08189960831908934,-0.5286462150061707,0.8483186911229611,0.029809019626209157,0.08525118065879463,0.018120697839143274,0.9961946980917455]}}},{"frame":14,"nombre":"Paso (todo vuelve al pivote)","easing":"Linear","T":{"Torso":{"p":[0,-0.29237170472273677,-0.09369524403696461],"r":[1,0,0,0,0.9563047559630354,-0.29237170472273677,0,0.29237170472273677,0.9563047559630354]},"Head":{"p":[0,0,5.551115123125783e-17],"r":[1,0,0,0,0.9563047559630354,0.29237170472273677,0,-0.29237170472273677,0.9563047559630354]},"Right Arm":{"p":[-0.01461858523613685,0.04781523779815178,5.551115123125783e-17],"r":[0.9336301072515965,-0.3576574816573186,0.020394819144016745,0.3582054511196998,0.9312565907454478,-0.06670844760071763,0.004865965629214842,0.06958655048003272,0.9975640502598242]},"Left Arm":{"p":[0.014618585236136794,0.04781523779815178,-1.1102230246251565e-16],"r":[0.9743203840308403,0.2242405864558833,0.020394819144016745,-0.22511355276946554,0.9720462290334813,0.06670844760071763,-0.004865965629214842,-0.06958655048003272,0.9975640502598242]},"Right Leg":{"p":[-0.09441113247347532,0.650835261848247,0],"r":[0.7431448254773941,-0.6691306063588582,0,0.6691306063588582,0.7431448254773941,0,0,0,1]},"Left Leg":{"p":[0.03223428652274615,0.10543360047789219,0],"r":[0.9961946980917455,0.08715574274765828,0,-0.08715574274765828,0.9961946980917455,0,0,0,1]}}},{"frame":16,"nombre":"Impulso (en el aire)","easing":"Cubic","T":{"Torso":{"p":[-0.022557566113149834,-0.25783416049629954,0.16592582628906827],"r":[0.9961946980917455,0.08418598282936919,-0.022557566113149834,-0.08715574274765817,0.9622501868990583,-0.25783416049629954,0,0.25881904510252074,0.9659258262890683]},"Head":{"p":[3.903127820947816e-18,0,-2.220446049250313e-16],"r":[0.9961946980917455,-0.08710264982404566,-0.003041691556625919,0.08418598282936919,0.9526313556732294,0.2922434267579655,-0.022557566113149834,-0.2913874200816069,0.9563391279401028]},"Right Arm":{"p":[-0.5332019573007539,0.11594801124108978,0.19300707608759082],"r":[0.7736410318739231,0.6329812938108728,0.028534811836861837,-0.6222202132691166,0.7504406750060142,0.22289190092027317,0.1196727203684552,-0.19019325693102662,0.9744254538021788]},"Left Arm":{"p":[-0.4684290858295999,0.4360980493823153,-0.15130328110713714],"r":[0.21144039706690565,0.977390889597082,0.00008614414600857656,-0.9260109203590925,0.2003534919537962,-0.3199410158726553,-0.31272469340283293,0.06756868501417446,0.9474374591188377]},"Right Leg":{"p":[0.320195313483993,0.3446151207707868,-0.0348622970990633],"r":[0.5419075026220203,-0.8362110851316302,0.08418598282936919,0.8379386560466184,0.5452980514487814,0.022557566113149834,-0.0647693392335611,0.05831857499239717,0.9961946980917455]},"Left Leg":{"p":[0.34972851766979646,-0.04194566485925122,-0.030504509961680304],"r":[0.9034920839070235,-0.42025560628312514,0.08418598282936919,0.42337272712040863,0.9056747154147999,-0.022557566113149834,-0.0667651724177507,0.05602263155122212,0.9961946980917455]}}},{"frame":20,"nombre":"Igual que el frame 0 (cierra el bucle)","easing":"Cubic","T":{"Torso":{"p":[-0.0335917435713487,-0.2735827967647523,-0.18873830406168102],"r":[0.992546151641322,0.11714833172452144,-0.0335917435713487,-0.12186934340514748,0.954096597023789,-0.2735827967647523,0,0.27563735581699916,0.9612616959383189]},"Head":{"p":[0.006093467170257369,-0.047704829851189415,0.013679139838237597],"r":[0.992546151641322,-0.12179510389394452,0.004253178748303902,0.11714833172452144,0.963134992146131,0.24217195394560845,-0.0335917435713487,-0.2398685881292831,0.9702240231991276]},"Right Arm":{"p":[-0.528385387707466,0.10856278713790585,0.20981659444877154],"r":[0.7880538833812565,0.6129356112114294,0.057280130905859976,-0.6075707797041128,0.7594085661574701,0.2327152278996627,0.09914042837035553,-0.21819387286431027,0.9708566368455311]},"Left Arm":{"p":[-0.4654915879628886,0.44556739571637927,-0.13148109145543324],"r":[0.18449598810852458,0.982482974272466,0.026238057027685377,-0.9264772036790146,0.18276498541598046,-0.3289938467038709,-0.3280262511369673,0.03638908312427465,0.9439674852421569]},"Right Leg":{"p":[0.3246028656921607,0.12829484518874879,-0.04265427019180179],"r":[0.582139077297168,-0.8046057190063736,0.11714833172452144,0.8073979797478568,0.5890501651497233,0.0335917435713487,-0.09603435313824667,0.07503025975778237,0.992546151641322]},"Left Leg":{"p":[0.3752794123308759,0.04843527552308469,-0.04265427019180157],"r":[0.8934693401168003,-0.433576759807777,0.11714833172452144,0.43989798171739247,0.897419277954737,-0.0335917435713487,-0.09056657193586296,0.08154650764924225,0.992546151641322]}}}]};</script>
+<script>
+(function () {
+  const A = window.ANIM;
+  const { mul, inv, point, lerp, rotVec } = CF;
+  const params = new URLSearchParams(location.search);
+  const SHOT = params.has('shot');
+  if (SHOT) document.body.classList.add('shot');
+
+  // ---------- Animación: interpolar Transforms como Roblox ----------
+  const ease = {
+    Linear: (t) => t,
+    Cubic: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+  };
+  function sample(frame) {
+    const K = A.keys;
+    let i = 0;
+    while (i < K.length - 2 && frame >= K[i + 1].frame) i++;
+    const a = K[i], b = K[i + 1];
+    const t = Math.min(1, Math.max(0, (frame - a.frame) / (b.frame - a.frame)));
+    const e = ease[a.easing] ? ease[a.easing](t) : t;
+    const T = {};
+    for (const n of R6.PARTS) T[n] = lerp(a.T[n], b.T[n], e);
+    return { T, key: t < 0.5 ? a : b, from: a };
+  }
+  const restT = {};
+  for (const n of R6.PARTS) restT[n] = CF.cf();
+
+  // ---------- Cámara ----------
+  const cv = document.getElementById('view');
+  const ctx = cv.getContext('2d');
+  const cam = { yaw: 35, pitch: 12, dist: 11, target: [0, -0.6, 0] };
+  const PRESETS = { '34': [35, 12], side: [90, 4], front: [0, 6], back: [180, 8] };
+  if (params.get('view') && PRESETS[params.get('view')]) [cam.yaw, cam.pitch] = PRESETS[params.get('view')];
+
+  function camBasis() {
+    const y = (cam.yaw * Math.PI) / 180, p = (cam.pitch * Math.PI) / 180;
+    // cámara mirando al personaje; yaw 0 = de frente (el personaje mira a -Z, la cámara está en -Z)
+    const eye = [
+      cam.target[0] + Math.sin(y) * Math.cos(p) * -cam.dist * -1,
+      cam.target[1] + Math.sin(p) * cam.dist,
+      cam.target[2] - Math.cos(y) * Math.cos(p) * cam.dist,
+    ];
+    const fwd = norm(sub(cam.target, eye));
+    const right = norm(cross(fwd, [0, 1, 0]));
+    const up = cross(right, fwd);
+    return { eye, fwd, right, up };
+  }
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const norm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+
+  let W = 0, H = 0, DPR = 1;
+  function resize() {
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = cv.getBoundingClientRect();
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  }
+  function project(B, v) {
+    const d = sub(v, B.eye);
+    const z = dot(d, B.fwd);
+    const f = (H * 0.5) / Math.tan((20 * Math.PI) / 180);
+    return [W / 2 + (dot(d, B.right) * f) / z, H / 2 - (dot(d, B.up) * f) / z, z];
+  }
+
+  const NEAR = 0.3;
+  const depth = (B, v) => dot(sub(v, B.eye), B.fwd);
+  function clipPoly(B, poly) {
+    const out = [];
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length];
+      const da = depth(B, a) - NEAR, db = depth(B, b) - NEAR;
+      if (da >= 0) out.push(a);
+      if ((da >= 0) !== (db >= 0)) {
+        const t = da / (da - db);
+        out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]);
+      }
+    }
+    return out;
+  }
+  function clipSeg(B, a, b) {
+    const da = depth(B, a) - NEAR, db = depth(B, b) - NEAR;
+    if (da < 0 && db < 0) return null;
+    if (da >= 0 && db >= 0) return [a, b];
+    const t = da / (da - db);
+    const m = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    return da >= 0 ? [a, m] : [m, b];
+  }
+
+  // ---------- Dibujo ----------
+  const COLORS = {
+    Torso: [214, 58, 47], Head: [236, 238, 243],
+    'Right Arm': [44, 182, 112], 'Left Arm': [48, 140, 222],
+    'Right Leg': [44, 182, 112], 'Left Leg': [48, 140, 222],
+  };
+  const FACES = [
+    { idx: [1, 3, 7, 5], n: [1, 0, 0] }, { idx: [0, 4, 6, 2], n: [-1, 0, 0] },
+    { idx: [2, 6, 7, 3], n: [0, 1, 0] }, { idx: [0, 1, 5, 4], n: [0, -1, 0] },
+    { idx: [4, 5, 7, 6], n: [0, 0, 1] }, { idx: [0, 2, 3, 1], n: [0, 0, -1] },
+  ];
+  const LIGHT = norm([-0.4, 0.85, -0.5]);
+
+  function shade(rgb, k, a) {
+    const c = rgb.map((v) => Math.round(Math.min(255, v * k)));
+    return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  }
+
+  function collectFaces(B, parts, alpha, out) {
+    for (const n of R6.PARTS) {
+      const P = parts[n];
+      const corners = R6.boxCorners(P, R6.SIZES[n]);
+      const pr = corners.map((c) => project(B, c));
+      for (const f of FACES) {
+        const wn = rotVec(P.r, f.n);
+        const center = f.idx.reduce((s, i) => [s[0] + corners[i][0] / 4, s[1] + corners[i][1] / 4, s[2] + corners[i][2] / 4], [0, 0, 0]);
+        if (dot(wn, sub(B.eye, center)) <= 0) continue; // cara de espaldas
+        const lit = 0.55 + 0.5 * Math.max(0, dot(wn, LIGHT));
+        const isFront = f.n[2] === -1;
+        out.push({ pts: f.idx.map((i) => pr[i]), z: dot(sub(P.p, B.eye), B.fwd) + 0.001 * dot(sub(center, B.eye), B.fwd), fill: shade(COLORS[n], lit * (isFront && n !== 'Head' ? 1.08 : 1), alpha), alpha, part: n, front: isFront, P, corners, f });
+      }
+    }
+  }
+
+  function drawFace(fc) {
+    ctx.beginPath();
+    fc.pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+    ctx.closePath();
+    ctx.fillStyle = fc.fill;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(20,26,36,${0.55 * fc.alpha})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    if (fc.part === 'Head' && fc.front && fc.alpha > 0.9) {
+      // cara: dos ojos y una sonrisa para saber hacia dónde mira
+      const B = curB;
+      const eyeL = project(B, point(fc.P, [-0.22, 0.12, -0.63]));
+      const eyeR = project(B, point(fc.P, [0.22, 0.12, -0.63]));
+      ctx.fillStyle = '#1b1f27';
+      for (const e of [eyeL, eyeR]) { ctx.beginPath(); ctx.arc(e[0], e[1], Math.max(1.5, 260 / e[2] / 10), 0, Math.PI * 2); ctx.fill(); }
+      const m = [-0.25, -0.1, 0.1, 0.25].map((x) => project(B, point(fc.P, [x, -0.18 - 0.08 * (1 - Math.abs(x) * 3), -0.63])));
+      ctx.beginPath(); m.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+      ctx.strokeStyle = '#1b1f27'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    if (fc.part === 'Torso' && fc.front && fc.alpha > 0.9) {
+      // panel claro en la cara delantera del torso (para ver hacia dónde mira)
+      const q = [[-0.55, 0.45], [0.55, 0.45], [0.55, -0.2], [-0.55, -0.2]].map(([x, y]) => project(curB, point(fc.P, [x, y, -0.505])));
+      ctx.beginPath(); q.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fill();
+    }
+  }
+
+  let curB = null;
+  let groundOffset = 0;
+  function drawScene(frame) {
+    const B = camBasis();
+    curB = B;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // cielo
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#79b6e3'); g.addColorStop(1, '#cfe6f6');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    // suelo (baseplate gris con cuadrícula, como Studio), recortado contra el plano cercano
+    const GY = R6.GROUND;
+    const S = 40;
+    const gq = clipPoly(B, [[-S, GY, -S], [S, GY, -S], [S, GY, S], [-S, GY, S]]).map((v) => project(B, v));
+    if (gq.length >= 3) {
+      ctx.beginPath(); gq.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+      ctx.fillStyle = '#8d939c'; ctx.fill();
+    }
+    ctx.strokeStyle = 'rgba(60,66,76,0.45)'; ctx.lineWidth = 1;
+    const off = ((groundOffset % 2) + 2) % 2;
+    const line3 = (a, b) => {
+      const seg = clipSeg(B, a, b);
+      if (!seg) return;
+      const pa = project(B, seg[0]), pb = project(B, seg[1]);
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    };
+    for (let i = -S; i <= S; i += 2) {
+      line3([-S, GY, i + off], [S, GY, i + off]);
+      line3([i, GY, -S], [i, GY, S]);
+    }
+
+    const s = sample(frame);
+    const parts = R6.transformsToParts(s.T);
+
+    // sombra: proyectar cada pieza al suelo
+    ctx.fillStyle = 'rgba(30,34,42,0.28)';
+    for (const n of R6.PARTS) {
+      const pts = R6.boxCorners(parts[n], R6.SIZES[n]).map((c) => {
+        const h = c[1] - GY; return project(B, [c[0] + h * 0.35, GY + 0.001, c[2] + h * 0.25]);
+      });
+      hull(pts);
+    }
+
+    const faces = [];
+    if (document.getElementById('t-ghost').checked) collectFaces(B, R6.transformsToParts(restT), 0.22, faces);
+    collectFaces(B, parts, 1, faces);
+    faces.sort((a, b) => b.z - a.z);
+    faces.forEach(drawFace);
+
+    if (document.getElementById('t-piv').checked) drawPivots(B, parts);
+    return s;
+  }
+
+  function hull(pts) {
+    const p = pts.map((q) => [q[0], q[1]]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of p) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (const q of p.slice().reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    const h = lo.slice(0, -1).concat(up.slice(0, -1));
+    ctx.beginPath(); h.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); ctx.fill();
+  }
+
+  function pivotGap(parts, n) {
+    const j = R6.JOINTS[n];
+    const a = point(parts[j.parent] || CF.cf(), j.C0.p);
+    const b = point(parts[n], j.C1.p);
+    return { a, b, d: Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) };
+  }
+
+  function drawPivots(B, parts) {
+    for (const n of R6.LIMBS.concat(['Head'])) {
+      const { a, b } = pivotGap(parts, n);
+      const pa = project(B, a), pb = project(B, b);
+      ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+      ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(pa[0], pa[1], 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff4d6d'; ctx.beginPath(); ctx.arc(pb[0], pb[1], 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // ---------- UI ----------
+  const N = A.duracionFrames;
+  let frame = SHOT ? Number(params.get('frame') || 0) : 0;
+  let playing = !SHOT;
+  let speed = 1;
+  let last = performance.now();
+
+  const keysEl = document.getElementById('keys');
+  const keyBtns = A.keys.slice(0, -1).map((k) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = `<span class="f">${k.frame}</span><span>${k.nombre}</span><span class="e">${k.easing}</span>`;
+    b.addEventListener('click', () => { frame = k.frame; setPlaying(false); });
+    li.appendChild(b); keysEl.appendChild(li);
+    return { k, b };
+  });
+
+  const barsEl = document.getElementById('bars');
+  const LABELS = { 'Right Arm': 'Brazo der.', 'Left Arm': 'Brazo izq.', 'Right Leg': 'Pierna der.', 'Left Leg': 'Pierna izq.', Head: 'Cabeza' };
+  const bars = Object.keys(LABELS).map((n) => {
+    const row = document.createElement('div');
+    row.className = 'bar';
+    row.innerHTML = `<span>${LABELS[n]}</span><span class="track"><span class="fill"></span></span><span class="v">0.00</span>`;
+    barsEl.appendChild(row);
+    return { n, fill: row.querySelector('.fill'), v: row.querySelector('.v') };
+  });
+
+  const playBtn = document.getElementById('play');
+  function setPlaying(p) { playing = p; playBtn.textContent = p ? '⏸ Pausa' : '▶ Play'; }
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  document.getElementById('prev').addEventListener('click', () => { setPlaying(false); frame = (Math.round(frame) - 1 + N) % N; });
+  document.getElementById('next').addEventListener('click', () => { setPlaying(false); frame = (Math.round(frame) + 1) % N; });
+  document.getElementById('speed').addEventListener('change', (e) => { speed = Number(e.target.value); });
+  document.querySelectorAll('[data-cam]').forEach((b) => b.addEventListener('click', () => {
+    [cam.yaw, cam.pitch] = PRESETS[b.dataset.cam];
+    document.querySelectorAll('[data-cam]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+
+  // girar la cámara arrastrando
+  let drag = null;
+  cv.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, yaw: cam.yaw, pitch: cam.pitch }; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    cam.yaw = drag.yaw - (e.clientX - drag.x) * 0.4;
+    cam.pitch = Math.max(-10, Math.min(70, drag.pitch + (e.clientY - drag.y) * 0.3));
+    document.querySelectorAll('[data-cam]').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+  });
+  cv.addEventListener('pointerup', () => { drag = null; });
+  cv.addEventListener('wheel', (e) => { e.preventDefault(); cam.dist = Math.max(6, Math.min(22, cam.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+
+  // línea de tiempo
+  const tl = document.getElementById('tl');
+  const tctx = tl.getContext('2d');
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function drawTimeline() {
+    const r = tl.getBoundingClientRect();
+    tl.width = Math.round(r.width * DPR); tl.height = Math.round(r.height * DPR);
+    tctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const w = r.width, h = r.height, pad = 12;
+    const x = (f) => pad + (f / N) * (w - pad * 2);
+    tctx.clearRect(0, 0, w, h);
+    tctx.strokeStyle = css('--line'); tctx.fillStyle = css('--muted');
+    tctx.font = '11px "JetBrains Mono", monospace'; tctx.textAlign = 'center';
+    for (let f = 0; f <= N; f++) {
+      tctx.beginPath(); tctx.moveTo(x(f), 16); tctx.lineTo(x(f), f % 5 === 0 ? 30 : 24); tctx.lineWidth = 1; tctx.stroke();
+      if (f % 2 === 0) tctx.fillText(String(f), x(f), 11);
+    }
+    for (const k of A.keys) {
+      const cx = x(k.frame), cy = 40;
+      tctx.beginPath(); tctx.moveTo(cx, cy - 6); tctx.lineTo(cx + 6, cy); tctx.lineTo(cx, cy + 6); tctx.lineTo(cx - 6, cy); tctx.closePath();
+      tctx.fillStyle = k.easing === 'Linear' ? css('--panel') : css('--key');
+      tctx.fill(); tctx.strokeStyle = css('--key'); tctx.lineWidth = 2; tctx.stroke();
+    }
+    const px = x(frame);
+    tctx.strokeStyle = css('--tag'); tctx.lineWidth = 2;
+    tctx.beginPath(); tctx.moveTo(px, 14); tctx.lineTo(px, h - 2); tctx.stroke();
+  }
+  function frameFromEvent(e) {
+    const r = tl.getBoundingClientRect(); const pad = 12;
+    return Math.max(0, Math.min(N - 0.001, ((e.clientX - r.left - pad) / (r.width - pad * 2)) * N));
+  }
+  let tdrag = false;
+  tl.addEventListener('pointerdown', (e) => { tdrag = true; tl.setPointerCapture(e.pointerId); setPlaying(false); frame = Math.round(frameFromEvent(e)); });
+  tl.addEventListener('pointermove', (e) => { if (tdrag) frame = Math.round(frameFromEvent(e)); });
+  tl.addEventListener('pointerup', () => { tdrag = false; });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest('select, input')) return;
+    if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+    if (e.code === 'ArrowLeft') { setPlaying(false); frame = (Math.round(frame) - 1 + N) % N; }
+    if (e.code === 'ArrowRight') { setPlaying(false); frame = (Math.round(frame) + 1) % N; }
+  });
+
+  const hudF = document.getElementById('hud-frame'), hudK = document.getElementById('hud-key'), read = document.getElementById('read');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced && !SHOT) { setPlaying(false); speed = 0.25; document.getElementById('speed').value = '0.25'; }
+
+  function tick(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (playing) {
+      frame = (frame + dt * A.fps * speed) % N;
+      if (document.getElementById('t-ground').checked) groundOffset += dt * 20 * speed; // 20 studs/s
+    }
+    const s = drawScene(frame);
+    if (!SHOT) {
+      const parts = R6.transformsToParts(s.T);
+      for (const b of bars) {
+        const d = pivotGap(parts, b.n).d;
+        b.fill.style.width = Math.min(100, (d / 1) * 100) + '%';
+        b.v.textContent = d.toFixed(2);
+      }
+      hudF.innerHTML = `frame <b>${frame.toFixed(1)}</b> / ${N}`;
+      const nearest = A.keys.slice(0, -1).reduce((best, k) => (Math.abs(k.frame - frame) < Math.abs(best.frame - frame) ? k : best));
+      hudK.textContent = nearest.nombre;
+      read.innerHTML = `frame <b>${frame.toFixed(1)}</b> · ${(frame / A.fps).toFixed(3)} s`;
+      keyBtns.forEach(({ k, b }) => b.classList.toggle('on', k === nearest));
+      drawTimeline();
+      requestAnimationFrame(tick);
+    } else {
+      document.body.dataset.ready = '1';
+    }
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(tick);
+})();
+</script>
