@@ -4,46 +4,48 @@ Fecha: 7 de octubre de 2026. Es una idea para decidir si la hacemos, todavía no
 
 ## Resumen en 30 segundos
 
-- **La frase del juego:** "En vez de una bola, te persigue un bicho disfrazado que viene jadeando. Dale un chanclazo en el momento justo y sale disparado hacia otro jugador, más rápido y más grande. Si te pilla, te han hussado."
-- **De Blade Ball** coge lo que funciona: algo que te persigue, un botón de parry con timing, cada parry lo acelera y gana el último que queda vivo.
-- **De Huss Valley** coge la gracia del meme: huir corriendo de un personaje disfrazado absurdo, con el jadeo "huss, huss, huss" de fondo.
-- **Lo que lo hace único:** la "bola" es un personaje que corre, crece y jadea cada vez más fuerte. Se entiende en un vídeo de 3 segundos sin explicar nada.
+- **La frase del juego:** "Cruza el campo sin que te pillen. Si un infectado se tira a por ti, dale un parry en el momento justo y sale volando como una bola de Blade Ball, tirando a los demás como bolos."
+- **De Huss Valley** coge la base: todos en una línea, los que pillan en el medio, hay que cruzar al otro lado y, si te pillan, te infectas y pillas con ellos. Gana el último que queda.
+- **De Blade Ball** coge el parry con timing, apuntar hacia dónde sale lo que devuelves y que todo va cada vez más rápido.
+- **Lo que lo hace único:** el infectado al que le haces parry se convierte en la "bola". Si apuntas bien, tiras a varios infectados de golpe (un "strike" humano). En Huss Valley solo puedes huir. Aquí también te puedes defender, pero tienes que acertar el momento.
 - **Todos los números son [Propuesta]** míos para empezar a probar.
 
 ---
 
 ## 1. De dónde sale cada parte
 
-No he podido abrir la página de Roblox de ninguno de los dos juegos (las webs están bloqueadas desde aquí). Lo de abajo sale de resúmenes del buscador. [Probable]
+**Huss Valley (el juego).** Según me has contado: un campo con los jugadores en una línea y uno que pilla en el medio. Hay que cruzar al otro lado sin que te pillen. Si te pillan te infectas y pillas con los demás, hasta que no queda nadie en el campo. Es como el juego del patio "bulldog" (o "tiburones y pececitos").
 
-**Huss Valley (el meme).** Empezó en TikTok e Instagram a principios de julio de 2026. Son vídeos de gente huyendo de personajes disfrazados en un sitio caótico, muchos con clips del creador Daniel LaBelle corriendo. "Huss" imita el sonido de alguien jadeando mientras corre. Luego salieron los "hussers" que "van hussin". (https://knowyourmeme.com/memes/huss-valley)
+Hay otro juego que se llama "Escape Huss Valley" y es distinto: ahí te persiguen personajes disfrazados por un pueblo. No es al que nos referimos. [Probable] (https://pcgamesn.com/escape-huss-valley-codes)
 
-**Huss Valley / Escape Huss Valley (los juegos de Roblox).** Salieron en agosto de 2026. En "Escape Huss Valley" un pueblo tranquilo se convierte en una persecución: personajes como Spider-Man o el Grinch persiguen a todos y tienes que escapar o esconderte hasta que acabe la ronda. Con monedas compras mejoras de velocidad, objetos y emotes. (https://pcgamesn.com/escape-huss-valley-codes, https://www.thespike.gg/roblox/game-codes/huss-valley-codes)
+**El meme.** Empezó en TikTok e Instagram a principios de julio de 2026: vídeos de gente huyendo de personajes disfrazados. "Huss" imita el sonido de alguien jadeando mientras corre. [Probable] (https://knowyourmeme.com/memes/huss-valley)
 
-**Blade Ball.** Es un "balón prisionero con espadas": una bola teledirigida va a por un jugador, la devuelves con un parry y cada vez va más rápido. Gana el último en pie. Tiene habilidades, skins de espada y efectos de remate. En 2026 sigue entre los 10 juegos más jugados de Roblox, con unos 15.000 jugadores a la vez. (https://profitable.app/roblox/games/blade-ball, https://boostmatch.gg/blog/other-games/articles/most-popular-roblox-games-2026)
+**Blade Ball.** Es un "balón prisionero con espadas": una bola teledirigida va a por un jugador, la devuelves con un parry y cada vez va más rápido. Gana el último en pie. En 2026 sigue entre los 10 juegos más jugados de Roblox, con unos 15.000 jugadores a la vez. [Probable] (https://profitable.app/roblox/games/blade-ball, https://boostmatch.gg/blog/other-games/articles/most-popular-roblox-games-2026)
 
-**Ojo con el momento:** el meme ya tiene 3 meses. Si queremos aprovecharlo hay que sacar una versión jugable rápido. La parte de Blade Ball no caduca, así que el juego no depende solo del meme.
+**Ojo con el momento:** el meme ya tiene 3 meses y Huss Valley es nuevo. Si queremos aprovechar la ola hay que sacar una versión jugable rápido.
 
 ---
 
-## 2. Cómo se juega una ronda
+## 2. Cómo se juega una partida
 
-1. **Lobby:** de 6 a 12 jugadores en un pueblo pequeño (el "valle"). Empieza la cuenta atrás.
-2. **Sale el Husser:** un personaje disfrazado aparece entre la niebla y empieza a correr hacia un jugador al azar. Se oye su jadeo.
-3. **Si eres el objetivo:** tu personaje brilla en rojo, los bordes de la pantalla se ponen rojos y el jadeo se oye cada vez más fuerte.
-4. **Parry (el chanclazo):** pulsas el botón cuando lo tienes cerca. Le das con la chancla y sale disparado hacia el jugador al que estás mirando con la cámara.
-5. **Cada parry:** el Husser va más rápido, crece un poco y jadea más fuerte. En pantalla sale la velocidad en km/h.
-6. **Si fallas:** te placa, sales volando como un muñeco de trapo y aparece "¡HUSSADO!". Quedas eliminado.
-7. **Final:** cuando quedan 2, duelo 1v1 a velocidades ridículas. El último parry se ve a cámara lenta. El ganador se lleva las monedas.
+1. **Salida:** de 8 a 16 jugadores en la línea de un extremo del campo. Uno al azar empieza infectado en el medio (dos si sois más de 12).
+2. **Cruce:** suena el silbato y todos tienen 12 s para llegar a la zona segura del otro lado. Los infectados no pueden entrar en las zonas seguras.
+3. **Pillar:** si un infectado te toca, te infectas y en el siguiente cruce estás en el medio con ellos.
+4. **Placaje:** los infectados tienen un botón para tirarse en plancha hacia delante. Llegan más lejos, pero si fallan se quedan un momento en el suelo.
+5. **Parry:** si eres corredor y pulsas el botón justo cuando un infectado te toca o se tira a por ti, no te pilla. Sale disparado hacia donde miras con la cámara.
+6. **Bolos humanos:** el infectado que sale disparado tira al suelo a los infectados con los que choca. Si tira a 3 o más, sale "¡STRIKE!".
+7. **Si no llegas:** quien no esté en una zona segura cuando se acaba el tiempo se infecta (así nadie se queda quieto esperando).
+8. **Cada cruce** los infectados van un poco más rápido, como la bola de Blade Ball.
+9. **Final:** cuando queda un solo corredor, tiene que hacer un último cruce él solo contra todos. Si llega, sale "CRUCE IMPOSIBLE" a cámara lenta y gana el doble de premio. Si lo pillan, gana igual, pero sin el extra.
 
 ### Qué lo diferencia
 
-| | Blade Ball | Huss Valley | Huss Ball |
+| | Huss Valley | Blade Ball | Huss Ball |
 |---|---|---|---|
-| Lo que te persigue | Una bola | Personajes disfrazados (a veces de marcas con copyright) | Un personaje disfrazado **inventado por nosotros** que corre como una bola de Blade Ball |
-| Cómo te salvas | Parry con espada | Correr o esconderte | Parry con chancla, y también correr (con aguante) |
-| Lo que escala | La velocidad | Nada fijo | Velocidad, tamaño y volumen del jadeo, todo a la vez |
-| Para TikTok | Clips de velocidad | El meme | Las dos cosas, y se entiende sin texto |
+| Cómo te salvas | Correr y esquivar | Parry a la bola | Correr, esquivar y hacer parry a los infectados |
+| Lo que devuelves | Nada | La bola, hacia quien apuntas | Al infectado, como si fuera una bola |
+| Lo que escala | Cada vez hay más infectados | La bola va más rápido | Las dos cosas |
+| Momento estrella | Cruzar en el último segundo | Duelo final a toda velocidad | El último corredor contra todos, tirándolos como bolos |
 
 ---
 
@@ -51,46 +53,54 @@ No he podido abrir la página de Roblox de ninguno de los dos juegos (las webs e
 
 Todo irá en un ModuleScript `Reglas` como en Catch It, para cambiarlo sin tocar el código.
 
-**El Husser**
-- Velocidad inicial: 30 studs/s (tú corres a 16 andando y 24 con sprint).
-- Cada parry: +8 % de velocidad. Con 20 parries va a unos 140 studs/s.
-- En pantalla se enseña en km/h (1 stud = 28 cm, así que 30 studs/s ≈ 30 km/h). Las cifras de 3 dígitos son las que se comparten.
-- Cada parry crece un 5 %, hasta 2,5 veces su tamaño.
-- No usa el Humanoid normal para moverse: el servidor lo mueve en línea recta hacia el objetivo, girando un poco, como la bola de Blade Ball. Así es rápido y fiable. Usa la animación de correr que ya tenemos (`animations/correr`).
+**El campo**
+- 140 studs de largo y 70 de ancho, con una zona segura de 12 studs en cada extremo.
+- Casi sin obstáculos en la versión 1, para que el parry se vea bien.
 
-**El parry**
-- Vale si el Husser va a llegar en menos de 0,45 s (se calcula con el tiempo y no con la distancia, porque así sigue siendo justo a cualquier velocidad).
-- El servidor da un pequeño margen extra según tu ping, para que no te pille por lag.
-- Si pulsas y no le das, no puedes volver a pulsar en 0,6 s (para que no se pueda spamear el botón).
-- Nuevo objetivo: el jugador más cerca del centro de tu cámara, dentro de un cono de 60°. Si no hay nadie, uno al azar (pero nunca tú).
+**Velocidades**
+- Corredores: 20 studs/s.
+- Infectados: 18 studs/s en el primer cruce y +1 en cada cruce, hasta 24. Al principio el número de infectados es el peligro; al final, la velocidad.
 
-**El aguante (lo que trae de Huss Valley)**
-- Barra de 100. Correr con sprint gasta 20 por segundo y se recupera 15 por segundo.
-- Si llega a 0: 2 segundos a velocidad 10, tu personaje jadea en voz alta y todos lo oyen.
-- Cada parry bueno te devuelve 25. Así se premia jugar bien y no solo huir.
+**Placaje de los infectados**
+- Se lanzan 16 studs hacia delante en 0,35 s.
+- Recarga de 3 s. Si fallan, se quedan 0,8 s en el suelo.
+
+**Parry de los corredores**
+- Al pulsar, tienes 0,3 s en los que cualquier infectado que te toque o se tire a por ti sale despedido.
+- Recarga: 1,5 s si le das a alguien y 2,5 s si fallas (para que no se pueda spamear el botón).
+- Con la recarga no puedes parar a todos. Cuando hay muchos infectados también hay que esquivar.
+- El servidor da un pequeño margen extra según tu ping, para que no te pillen por lag.
+
+**El infectado que sale volando**
+- Sale a 80 studs/s durante 0,5 s, hacia donde apunta tu cámara.
+- Él se queda 2 s en el suelo. Los infectados con los que choca, 1,5 s.
+
+**El tiempo**
+- 12 s por cruce y 4 s de descanso en la zona segura antes del siguiente.
 
 ---
 
 ## 4. Pensado para TikTok
 
-- **Se entiende en 3 segundos:** un bicho disfrazado corre hacia ti, le das un chanclazo y sale volando hacia otro.
-- **Números grandes en pantalla:** velocidad en km/h y combo (x12) bien visibles, para que salgan en los clips.
-- **El sonido es la mitad del meme:** grabad vosotros el jadeo (es fácil y gracioso). No uséis audios de los vídeos del meme, porque en Roblox solo puedes subir audio que sea tuyo.
-- **Cámara lenta en el último parry** de la partida, para que cada final sea un clip.
-- **Muñeco de trapo exagerado** al ser hussado.
+- **Se entiende en 3 segundos:** un campo, todos cruzando y una horda en el medio. No hace falta explicar nada.
+- **El clip estrella:** el último corredor contra 15 infectados, haciéndoles parry uno tras otro y tirándolos como bolos.
+- **Textos grandes en pantalla:** "¡PARRY!", "¡STRIKE x4!", "CRUCE IMPOSIBLE" y el número de infectados contra corredores.
+- **Cámara lenta** en el parry que salva al último corredor.
+- **Muñeco de trapo exagerado** cuando un infectado sale volando.
+- **El jadeo "huss":** grabadlo vosotros para cuando alguien corre al límite. En Roblox solo puedes subir audio que sea tuyo.
 - **Vídeos para subir mientras lo hacemos (formato devlog):**
-  1. "He juntado Huss Valley con Blade Ball" (el Husser corriendo y el primer chanclazo).
-  2. "¿Hasta qué velocidad aguanta?" (1v1 hasta 500 km/h).
-  3. "Mi amigo después de ser hussado" (el muñeco de trapo).
-  4. Enseñar disfraces nuevos de Husser y que la gente vote el siguiente en comentarios.
+  1. "He juntado Huss Valley con Blade Ball" (el primer parry que manda a un infectado volando).
+  2. "1 contra 15" (el cruce final).
+  3. "STRIKE humano" (un parry que tira a 4 o 5).
+  4. Enseñar las armas de parry nuevas y que la gente vote la siguiente en comentarios.
 
 ---
 
 ## 5. Cosas que NO hay que hacer
 
-- **No usar personajes con copyright** (Spider-Man, el Grinch, etc.). Roblox los puede borrar y te pueden denunciar. Nuestros Hussers son inventados: el Plátano, la Abuela Turbo, el Bebé Gigante, la Mascota del Súper...
-- **No llamar al juego "Huss Valley"**, porque ya hay juegos con ese nombre. "Huss" es una palabra del meme y se puede usar.
-- **No usar la cara ni el nombre de Daniel LaBelle** ni de ninguna persona real.
+- **No llamar al juego "Huss Valley"** ni copiar su mapa o su interfaz. Cruzar el campo es un juego de patio y no es de nadie, pero el nombre y el aspecto sí son suyos. "Huss" es una palabra del meme y se puede usar.
+- **No usar personajes con copyright** (Spider-Man, el Grinch, etc.) para los disfraces de los infectados.
+- **No usar la cara ni el nombre de personas reales** (por ejemplo, Daniel LaBelle, que sale en muchos vídeos del meme).
 - **No vender cosas que den ventaja.** Todo lo de pago es estético, como en Blade Ball.
 
 ---
@@ -98,27 +108,26 @@ Todo irá en un ModuleScript `Reglas` como en Catch It, para cambiarlo sin tocar
 ## 6. Qué hacemos primero
 
 **Versión 1 (lo mínimo para publicar y grabar clips):**
-1. Un mapa pequeño (lo haces tú en Blender o con bloques en Studio).
-2. Un Husser (un disfraz) con la animación de correr.
-3. Parry, cambio de objetivo, aceleración y crecimiento.
-4. Eliminación con muñeco de trapo y "¡HUSSADO!".
-5. Gana el último. Contador de km/h en pantalla.
-6. Jadeo que sube de volumen.
+1. Un campo con dos zonas seguras (bloques en Studio sirven para empezar).
+2. Salida, cruces con tiempo, infección al tocar y fin de partida.
+3. Placaje de los infectados.
+4. Parry con recarga y el infectado saliendo volando hacia donde apuntas.
+5. Bolos humanos y "¡STRIKE!".
+6. Textos grandes, contador de infectados contra corredores y cámara lenta en el cruce final.
 
 **Versión 2 (cuando la 1 funcione):**
-- Barra de aguante.
-- Escondites de un solo uso (por ejemplo, retretes portátiles): si te metes cuando vas a por ti, el Husser pierde tu rastro y va a por otro.
-- Un segundo Husser a los 40 s de ronda, para más caos.
-- Los eliminados votan el disfraz del siguiente Husser.
-- Monedas ("gotas de sudor" 💦) y tienda: chanclas nuevas (sartén, baguette, pez, escoba), efectos de parry y emotes de victoria.
+- Monedas y tienda: armas de parry (chancla, sartén, baguette, pez, escoba), efectos de parry, disfraces de infectado y emotes de victoria.
+- Más campos (con obstáculos, de noche, en la nieve).
+- Algún objeto en el campo, por ejemplo uno que te dé un parry extra.
+- Clasificación de "cruces imposibles".
 
-**Cómo lo montamos:** igual que Catch It. Un proyecto Rojo nuevo en una carpeta `HussBall`, yo hago el código en Luau y tú los mapas, los modelos de los Hussers y las animaciones.
+**Cómo lo montamos:** igual que Catch It. Un proyecto Rojo nuevo en una carpeta `HussBall`, yo hago el código en Luau y tú los mapas, los modelos y las animaciones. Catch It también es de pillar, así que la forma de detectar los toques y la de las rondas nos sirven para los dos juegos.
 
 ---
 
 ## 7. Preguntas para ti
 
-1. ¿Te gusta el nombre **Huss Ball**, o prefieres otro?
-2. ¿La chancla como arma de parry, o prefieres otra cosa (espada, sartén, capote)?
-3. ¿Lo hacemos después de Catch It o a la vez?
-4. ¿Monto ya el proyecto Rojo y empiezo con la versión 1?
+1. ¿Lo he entendido bien? ¿En Huss Valley hay algo más (habilidades, objetos, un tiempo para cruzar)?
+2. ¿Te gusta lo de que el infectado salga volando como la bola, o prefieres que haya una bola de verdad en el campo?
+3. ¿Te gusta el nombre **Huss Ball**, o prefieres otro?
+4. ¿Lo hacemos después de Catch It o a la vez? ¿Monto ya el proyecto Rojo y empiezo con la versión 1?
