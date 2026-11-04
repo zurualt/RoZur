@@ -31,6 +31,8 @@ local previas: { [BasePart]: Vector3 } = setmetatable({}, { __mode = "k" }) :: a
 local posiciones: { [BasePart]: Vector3 } = setmetatable({}, { __mode = "k" }) :: any
 local enfriados: { [BasePart]: number } = setmetatable({}, { __mode = "k" }) :: any
 local lanzamientos: { [BasePart]: Lanzamiento } = setmetatable({}, { __mode = "k" }) :: any
+local tiempos: { [BasePart]: number } = setmetatable({}, { __mode = "k" }) :: any
+local LIMITE = Config.AGARRE.LANZAMIENTO + 10
 local charcos: { Charco } = {}
 local resbalones: { [Player]: number } = {}
 local rng = Random.new()
@@ -119,8 +121,7 @@ local function jugadorDe(instancia: Instance): Player?
 	return nil
 end
 
-local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad: Vector3, ahora: number): boolean
-	enfriados[o] = ahora + 0.5
+local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad: Vector3, ahora: number): (boolean, boolean)
 	local rapidez = velocidad.Magnitude
 	local fuerza = rapidez * math.sqrt(math.max(o.AssemblyMass, 0.05))
 	local dir = if rapidez > 0.01 then velocidad.Unit else Vector3.yAxis
@@ -132,7 +133,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 			if lanzador then
 				RemotoAviso:FireClient(lanzador, "🎯 ¡Pedido servido al vuelo!", "bien")
 			end
-			return o.Parent == nil
+			return o.Parent == nil, true
 		end
 		Pasajeros.golpear(modelo, fuerza, dir, if tipo == "Cafe" then "Quemado" elseif tipo == "Agua" then "Mojado" else "Golpe", Avion.estado.cinturones)
 		if LIQUIDOS[tipo] then
@@ -140,23 +141,27 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 			Agarre.soltarObjeto(o)
 			o:Destroy()
 			salpicar(pos, tipo)
-			return true
+			return true, true
 		end
-		return false
+		return false, true
 	end
 	local cocodrilo = golpeado:FindFirstAncestorWhichIsA("Model")
 	if cocodrilo and CollectionService:HasTag(cocodrilo, "Cocodrilo") then
-		if fuerza > 18 and Carga.aturdir(3.5) and lanzador then
-			RemotoAviso:FireClient(lanzador, "🐊💫 ¡Cocodrilo aturdido!", "bien")
+		if fuerza > 18 and Carga.aturdir(3.5) then
+			if lanzador then
+				RemotoAviso:FireClient(lanzador, "🐊💫 ¡Cocodrilo aturdido!", "bien")
+			end
+			return false, true
 		end
-		return false
+		return false, false
 	end
 	local jugador = jugadorDe(golpeado)
 	if jugador and not (jugador == lanzador and l and ahora - l.hora < 0.8) and fuerza > 40 then
 		Personajes.ragdoll(jugador, 1.1, dir * math.min(fuerza, 80) * 0.5 + Vector3.new(0, 18, 0))
 		RemotoAviso:FireClient(jugador, if lanzador and lanzador ~= jugador then `💢 ¡{lanzador.DisplayName} te ha dado!` else "💢 ¡Cuidado con lo que vuela!", "peligro")
+		return false, true
 	end
-	return false
+	return false, false
 end
 
 local function incluir()
@@ -184,26 +189,41 @@ local function objetos(ahora: number)
 		end
 		if Agarre.portador(o) then
 			previas[o] = nil
-			posiciones[o] = nil
+			posiciones[o] = o.Position
+			tiempos[o] = ahora
 			continue
 		end
 		local v = o.AssemblyLinearVelocity
 		local pos = o.Position
-		local previa = previas[o] or v
+		local previa = (previas[o] or v) + Objetos.tomarEmpuje(o)
 		local antes = posiciones[o] or pos
+		local dt = math.max(ahora - (tiempos[o] or ahora), 0.1)
 		previas[o] = v
 		posiciones[o] = pos
+		tiempos[o] = ahora
 		if tipo == "Agua" and Peligros.mojar(pos, 2, 100) then
 			romperLiquido(o, tipo)
 			continue
 		end
 		local rapida = if v.Magnitude > previa.Magnitude then v else previa
-		if rapida.Magnitude > 16 and (enfriados[o] or 0) < ahora then
-			local delta = pos - antes
-			if delta.Magnitude > 0.05 then
-				local radio = math.clamp(math.min(o.Size.X, o.Size.Y, o.Size.Z) / 2, 0.3, 1.2)
-				local r = Workspace:Spherecast(antes, radio, delta + delta.Unit * 0.6, parametros)
-				if r and impacto(o, tipo, r.Instance, rapida, ahora) then
+		local delta = pos - antes
+		if not Agarre.delServidor(o) then
+			if rapida.Magnitude > LIMITE then
+				rapida = rapida.Unit * LIMITE
+			end
+			if delta.Magnitude > math.max(rapida.Magnitude, 20) * dt * 1.5 + 2 then
+				continue
+			end
+		end
+		if rapida.Magnitude > 16 and (enfriados[o] or 0) < ahora and delta.Magnitude > 0.05 then
+			local radio = math.clamp(math.min(o.Size.X, o.Size.Y, o.Size.Z) / 2, 0.3, 1.2)
+			local r = Workspace:Spherecast(antes, radio, delta + delta.Unit * 0.6, parametros)
+			if r then
+				local destruido, efecto = impacto(o, tipo, r.Instance, rapida, ahora)
+				if efecto then
+					enfriados[o] = ahora + 0.5
+				end
+				if destruido then
 					continue
 				end
 			end
@@ -293,10 +313,15 @@ function Interacciones.limpiar()
 end
 
 function Interacciones.iniciar()
-	Agarre.alSoltar(function(jugador, _, raiz)
+	Agarre.alSoltar(function(jugador, _, raiz, velocidad)
 		lanzamientos[raiz] = { jugador = jugador, hora = os.clock() }
-		previas[raiz] = nil
-		posiciones[raiz] = nil
+		if velocidad then
+			previas[raiz] = velocidad
+		else
+			previas[raiz] = nil
+		end
+		posiciones[raiz] = raiz.Position
+		tiempos[raiz] = os.clock()
 	end)
 	Peligros.alSacudir(sacudida)
 	Players.PlayerRemoving:Connect(function(jugador)

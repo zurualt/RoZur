@@ -8,7 +8,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 
 type Luz = { luz: Light, brillo: number, color: Color3 }
 type Neon = { parte: BasePart, color: Color3 }
-type Movil = { pivote: CFrame, partes: { BasePart }, relativos: { CFrame } }
+type Movil = { pivote: CFrame, partes: { BasePart }, relativos: { CFrame }, cframes: { CFrame }, clave: number }
 
 local Cabina = {}
 
@@ -23,7 +23,7 @@ local ultimoFactor = -1
 local ultimoRojo = -1
 
 local function movil(raiz: BasePart, ancla: CFrame?): Movil
-	local m: Movil = { pivote = raiz.CFrame * (ancla or CFrame.identity), partes = {}, relativos = {} }
+	local m: Movil = { pivote = raiz.CFrame * (ancla or CFrame.identity), partes = {}, relativos = {}, cframes = {}, clave = math.huge }
 	local function recoger()
 		table.clear(m.partes)
 		table.clear(m.relativos)
@@ -43,13 +43,19 @@ local function movil(raiz: BasePart, ancla: CFrame?): Movil
 				p.CFrame = m.pivote * m.relativos[i]
 			end
 			recoger()
+			m.clave = math.huge
 		end)
 	end)
 	return m
 end
 
-local function mover(m: Movil, desplazamiento: CFrame)
-	local cframes = table.create(#m.partes)
+local function mover(m: Movil, clave: number, desplazamiento: CFrame)
+	if math.abs(clave - m.clave) < 1e-3 then
+		return
+	end
+	m.clave = clave
+	local cframes = m.cframes
+	table.clear(cframes)
 	local base = m.pivote * desplazamiento
 	for i, r in m.relativos do
 		cframes[i] = base * r
@@ -131,12 +137,12 @@ function Cabina.iniciar()
 			cab += (numero("Cabeceo") / V.CABECEO_MAX - cab) * k
 			ala += (numero("Alabeo") / V.ALABEO_MAX - ala) * k
 			gas += (numero("Gases") / 100 - gas) * k
-			mover(yugo, CFrame.new(0, 0, -cab * 0.35) * CFrame.Angles(0, 0, -ala * 1.1))
+			mover(yugo, cab * 7 + ala * 13, CFrame.new(0, 0, -cab * 0.35) * CFrame.Angles(0, 0, -ala * 1.1))
 			for _, p in palancas do
-				mover(p, CFrame.Angles(-(gas - 0.5) * 1.1, 0, 0))
+				mover(p, gas, CFrame.Angles(-(gas - 0.5) * 1.1, 0, 0))
 			end
 		end
-		if giro and torreta and torreta:IsA("Seat") then
+		if giro and torreta and torreta:IsA("Seat") and (camara.CFrame.Position - torreta.Position).Magnitude < 160 then
 			local ocupante = torreta.Occupant
 			local objetivo = mira
 			local remota = torreta:GetAttribute("Mira")
@@ -151,7 +157,7 @@ function Cabina.iniciar()
 			end
 			local delta = (objetivo - mira + math.pi) % (2 * math.pi) - math.pi
 			mira += delta * math.min(1, dt * 10)
-			mover(giro, CFrame.Angles(0, mira, 0))
+			mover(giro, mira, CFrame.Angles(0, mira, 0))
 		end
 	end)
 end

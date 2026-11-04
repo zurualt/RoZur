@@ -463,7 +463,7 @@ local function vigilarCocodrilo(dt: number)
 		for _, o in CollectionService:GetTagged("Objeto") do
 			if o:IsA("BasePart") and o.Parent and not Agarre.portador(o) then
 				local t = o:GetAttribute("Tipo")
-				if t == "Hamburguesa" or t == "Bandeja" then
+				if (t == "Hamburguesa" or t == "Bandeja") and o.Position.Y - cuerpo.Position.Y < 1.5 then
 					local d = (o.Position - boca).Magnitude
 					if d < mejor then
 						comida, mejor = o, d
@@ -525,6 +525,25 @@ end
 
 function Carga.iniciar()
 	prepararHuecos()
+	Agarre.permitir(function(jugador, objeto)
+		local c = cocodrilo
+		if objeto ~= c or not c then
+			return true
+		end
+		local ahora = os.clock()
+		if ahora < aturdidoHasta or ahora < saciadoHasta then
+			return true
+		end
+		local raiz = Personajes.raiz(jugador)
+		local cuerpo = c.PrimaryPart
+		if raiz and cuerpo and (golpes[jugador] or 0) < ahora then
+			golpes[jugador] = ahora + 2.5
+			local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
+			Personajes.ragdoll(jugador, 1.6, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 40 + Vector3.new(0, 22, 0))
+		end
+		RemotoAviso:FireClient(jugador, "🐊 ¡Está furioso! Dale de comer o atúrdelo antes de cogerlo", "peligro")
+		return false
+	end)
 	Agarre.alSoltar(function(_, objeto, raiz)
 		local b = bultos[raiz]
 		if b then

@@ -176,7 +176,7 @@ local function construir()
 		"Clic: coger / soltar · Clic der.: lanzar",
 		"F: usar extintor, llave o agua (apaga fuego)",
 		"E: interactuar (servir, coger comida, botones)",
-		"G: sentarte en un asiento libre · abrir/cerrar altillos",
+		"G: sentarte en un asiento libre · T: abrir/cerrar altillos",
 		"R (mantener): calmar a un pasajero asustado",
 		"",
 		"Lanza la comida al pasajero que la pide 🎯",

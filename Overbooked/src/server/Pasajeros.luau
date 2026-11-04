@@ -232,7 +232,12 @@ end
 function Pasajeros.embarcar(cantidad: number, nivelRiesgo: number)
 	Pasajeros.limpiar()
 	riesgo = nivelRiesgo
-	local orden = table.clone(asientos)
+	local orden: { BasePart } = {}
+	for _, asiento in asientos do
+		if not Pasajeros.ocupado(asiento) then
+			table.insert(orden, asiento)
+		end
+	end
 	for i = #orden, 2, -1 do
 		local j = rng:NextInteger(1, i)
 		orden[i], orden[j] = orden[j], orden[i]

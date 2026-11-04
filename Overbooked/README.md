@@ -31,7 +31,8 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Lanzar | Clic derecho | L2 |
 | Usar extintor, llave o agua | F (mantener) | X |
 | Interactuar (servir, coger comida, botones, puertas) | E | — |
-| Sentarse en un asiento libre · abrir/cerrar altillos | G | — |
+| Sentarse en un asiento libre | G | Y |
+| Abrir / cerrar altillos | T | B |
 | Calmar a un pasajero | R (mantener) | — |
 | Pilotar: subir / bajar · girar | W / S · A / D | Stick izquierdo |
 | Pilotar: más / menos gases | Shift / Ctrl o Q | R2 / L2 |

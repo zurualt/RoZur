@@ -21,7 +21,8 @@ local portadores: { [Instance]: Player } = {}
 local devoluciones: { [Instance]: number } = {}
 local esperas: { [Player]: number } = {}
 local antesDeAgarrar: { (Instance) -> () } = {}
-local alSoltar: { (Player, Instance, BasePart) -> () } = {}
+local alSoltar: { (Player, Instance, BasePart, Vector3?) -> () } = {}
+local permisos: { (Player, Instance) -> boolean } = {}
 
 function Agarre.raiz(objeto: Instance): BasePart?
 	if objeto:IsA("BasePart") then
@@ -77,7 +78,7 @@ function Agarre.delServidor(parte: BasePart): boolean
 	return ok and dueno == nil and not devoluciones[parte]
 end
 
-local function soltarInterno(jugador: Player)
+local function soltarInterno(jugador: Player, velocidad: Vector3?)
 	local objeto = sostenidos[jugador]
 	if not objeto then
 		return
@@ -105,13 +106,18 @@ local function soltarInterno(jugador: Player)
 		end
 	end)
 	for _, f in alSoltar do
-		task.spawn(f, jugador, objeto, raiz)
+		task.spawn(f, jugador, objeto, raiz, velocidad)
 	end
 end
 
 local function tomar(jugador: Player, objeto: Instance): boolean
 	if portadores[objeto] or not Personajes.vivo(jugador) or Personajes.enRagdoll(jugador) then
 		return false
+	end
+	for _, f in permisos do
+		if not f(jugador, objeto) then
+			return false
+		end
 	end
 	for _, f in antesDeAgarrar do
 		f(objeto)
@@ -195,7 +201,11 @@ function Agarre.antesDeAgarrar(f: (Instance) -> ())
 	table.insert(antesDeAgarrar, f)
 end
 
-function Agarre.alSoltar(f: (Player, Instance, BasePart) -> ())
+function Agarre.permitir(f: (Player, Instance) -> boolean)
+	table.insert(permisos, f)
+end
+
+function Agarre.alSoltar(f: (Player, Instance, BasePart, Vector3?) -> ())
 	table.insert(alSoltar, f)
 end
 
@@ -247,8 +257,12 @@ function Agarre.iniciar()
 		end
 	end)
 
-	RemotoSoltar.OnServerEvent:Connect(function(jugador)
-		soltarInterno(jugador)
+	RemotoSoltar.OnServerEvent:Connect(function(jugador, velocidad)
+		local v: Vector3? = nil
+		if typeof(velocidad) == "Vector3" and velocidad == velocidad and velocidad.Magnitude <= Config.AGARRE.LANZAMIENTO + 12 then
+			v = velocidad
+		end
+		soltarInterno(jugador, v)
 	end)
 
 	Players.PlayerRemoving:Connect(function(jugador)

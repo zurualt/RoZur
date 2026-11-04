@@ -23,6 +23,7 @@ type Altillo = {
 	contenido: number,
 	aviso: ProximityPrompt,
 	lado: number,
+	espera: number,
 }
 
 local Cabina = {}
@@ -82,12 +83,18 @@ local function prepararAltillo(puerta: BasePart)
 	local aviso = Instance.new("ProximityPrompt")
 	aviso.ActionText = "Abrir"
 	aviso.ObjectText = "Altillo"
-	aviso.KeyboardKeyCode = Enum.KeyCode.G
+	aviso.KeyboardKeyCode = Enum.KeyCode.T
+	aviso.GamepadKeyCode = Enum.KeyCode.ButtonB
 	aviso.MaxActivationDistance = 8
 	aviso.RequiresLineOfSight = false
 	aviso.Parent = puerta
-	local a: Altillo = { puerta = puerta, valor = valor, abierto = false, contenido = 0, aviso = aviso, lado = math.sign(puerta.Position.X) }
+	local a: Altillo = { puerta = puerta, valor = valor, abierto = false, contenido = 0, aviso = aviso, lado = math.sign(puerta.Position.X), espera = 0 }
 	aviso.Triggered:Connect(function()
+		local ahora = os.clock()
+		if ahora < a.espera then
+			return
+		end
+		a.espera = ahora + 0.6
 		moverAltillo(a, not a.abierto)
 	end)
 	table.insert(altillos, a)
@@ -98,6 +105,7 @@ local function prepararAsiento(asiento: Seat)
 	aviso.ActionText = "Sentarse"
 	aviso.ObjectText = "Asiento"
 	aviso.KeyboardKeyCode = Enum.KeyCode.G
+	aviso.GamepadKeyCode = Enum.KeyCode.ButtonY
 	aviso.MaxActivationDistance = 6
 	aviso.RequiresLineOfSight = false
 	aviso.Enabled = false

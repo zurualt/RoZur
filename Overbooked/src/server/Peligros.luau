@@ -23,7 +23,7 @@ local RemotoSacudida = Remotos:WaitForChild("Sacudida") :: UnreliableRemoteEvent
 local RemotoUsar = Remotos:WaitForChild("Usar") :: RemoteEvent
 
 type Fuego = { parte: BasePart, vida: number }
-type Brecha = { parte: BasePart, ventana: Model, reparacion: number, originales: { [BasePart]: number }, viento: ParticleEmitter, tapon: BasePart? }
+type Brecha = { parte: BasePart, ventana: Model, reparacion: number, originales: { [BasePart]: number }, viento: ParticleEmitter, tapon: BasePart?, sinTapon: number }
 
 local Peligros = {}
 
@@ -94,6 +94,7 @@ local function destapar(b: Brecha, disparado: boolean)
 	tapon.Anchored = false
 	Objetos.servidor(tapon)
 	if disparado then
+		b.sinTapon = os.clock() + 2
 		tapon.AssemblyLinearVelocity = b.parte.CFrame.LookVector * 30 + Vector3.new(0, 10, 0)
 		aviso("💨 ¡El tapón ha salido disparado!", "peligro")
 	end
@@ -116,7 +117,7 @@ end
 function Peligros.sacudida(magnitud: number)
 	for _, p in sueltos() do
 		local dir = Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(0.4, 1.3), rng:NextNumber(-1, 1))
-		p.AssemblyLinearVelocity += dir * Config.TURBULENCIA.IMPULSO_OBJETOS * magnitud
+		Objetos.empujar(p, dir * Config.TURBULENCIA.IMPULSO_OBJETOS * magnitud)
 	end
 	Pasajeros.sacudir(magnitud, Avion.estado.cinturones)
 	Carga.danarJaula(magnitud * 6)
@@ -240,7 +241,7 @@ function Peligros.brecha()
 	marca:SetAttribute("Fuerza", 1)
 	CollectionService:AddTag(marca, "Brecha")
 	marca.Parent = carpeta
-	brechas[marca] = { parte = marca, ventana = ventana, reparacion = 0, originales = originales, viento = viento, tapon = nil }
+	brechas[marca] = { parte = marca, ventana = ventana, reparacion = 0, originales = originales, viento = viento, tapon = nil, sinTapon = 0 }
 	Avion.danar(5)
 	aviso("💥 ¡AGUJERO EN EL FUSELAJE! Repáralo con la llave", "peligro")
 	Pasajeros.asustar(0.5)
@@ -284,7 +285,7 @@ local function caidaLibre()
 	Workspace.Gravity = 26
 	Pasajeros.flotar(Avion.estado.cinturones)
 	for _, p in sueltos() do
-		p.AssemblyLinearVelocity += Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(10, 20), rng:NextNumber(-4, 4))
+		Objetos.empujar(p, Vector3.new(rng:NextNumber(-4, 4), rng:NextNumber(10, 20), rng:NextNumber(-4, 4)))
 	end
 	avion:SetAttribute("CaidaLibre", true)
 	local miGeneracion = generacion
@@ -450,7 +451,7 @@ local function usarExtintor(jugador: Player, mirada: Vector3?)
 		local delta = p.Position - origen
 		local d = delta.Magnitude
 		if d < H.ALCANCE_EXTINTOR and d > 0.1 and delta.Unit:Dot(dir) > 0.6 then
-			p.AssemblyLinearVelocity += dir * 22 * (1 - d / H.ALCANCE_EXTINTOR)
+			Objetos.empujar(p, dir * 22 * (1 - d / H.ALCANCE_EXTINTOR))
 		end
 	end
 	Pasajeros.rociar(origen, dir, H.ALCANCE_EXTINTOR)
@@ -585,7 +586,7 @@ function Peligros.iniciar()
 			end
 			Avion.danar(0.6 * paso)
 			local centro = parte.Position
-			for _, o in CollectionService:GetTagged("Objeto") do
+			for _, o in if os.clock() > b.sinTapon then CollectionService:GetTagged("Objeto") else {} do
 				if o:IsA("BasePart") and o.Parent and not o.Anchored and not Agarre.portador(o) then
 					local tipo = o:GetAttribute("Tipo")
 					if typeof(tipo) == "string" and TAPONES[tipo] and (o.Position - centro).Magnitude < 2.6 then
@@ -603,7 +604,7 @@ function Peligros.iniciar()
 				local d = delta.Magnitude
 				if d < 24 and d > 0.1 then
 					local fuerza = (1 - d / 24) * 70 * paso
-					p.AssemblyLinearVelocity += delta.Unit * fuerza + (if d < 3 then salida * 40 * paso else Vector3.zero)
+					Objetos.empujar(p, delta.Unit * fuerza + (if d < 3 then salida * 40 * paso else Vector3.zero))
 				end
 			end
 			Pasajeros.succionar(centro, 1.2, 22, cinturones, paso)

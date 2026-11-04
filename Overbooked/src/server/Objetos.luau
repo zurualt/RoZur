@@ -24,6 +24,18 @@ local soportes: { Soporte } = {}
 local orden: { BasePart } = {}
 local esperas: { [Player]: number } = {}
 local alPerder: { (BasePart) -> () } = {}
+local empujes: { [BasePart]: Vector3 } = setmetatable({}, { __mode = "k" }) :: any
+
+function Objetos.empujar(parte: BasePart, cambio: Vector3)
+	parte.AssemblyLinearVelocity += cambio
+	empujes[parte] = (empujes[parte] or Vector3.zero) + cambio
+end
+
+function Objetos.tomarEmpuje(parte: BasePart): Vector3
+	local e = empujes[parte]
+	empujes[parte] = nil
+	return e or Vector3.zero
+end
 
 function Objetos.servidor(parte: BasePart)
 	if parte.Anchored or not parte:IsDescendantOf(Workspace) then
@@ -69,9 +81,15 @@ function Objetos.crear(tipo: string, cframe: CFrame, padre: Instance?, visual: s
 	end
 	if not padre then
 		table.insert(orden, parte)
-		while #orden > Config.PARTIDA.MAX_OBJETOS do
-			local viejo = table.remove(orden, 1)
-			if viejo and viejo.Parent and not Agarre.portador(viejo) then
+		local i = 1
+		while #orden > Config.PARTIDA.MAX_OBJETOS and i <= #orden do
+			local viejo = orden[i]
+			if not viejo.Parent then
+				table.remove(orden, i)
+			elseif viejo.Anchored or Agarre.portador(viejo) then
+				i += 1
+			else
+				table.remove(orden, i)
 				viejo:Destroy()
 			end
 		end

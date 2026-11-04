@@ -453,7 +453,7 @@ TERM = {}
 def p_terminal():
     p = Prop("Terminal", (54.0, 54.0, 15.0), 9000)
     H0, FL = 0.48, 0.5
-    WO, WI = 26.5, 25.7
+    WO, WI = 26.6, 26.14
     FY0, FY1 = -25.4, -24.6
     SO, CE, DK = 12.6, 13.2, 14.2
     slab = [(-27, -27), (-8.6, -27), (-8.6, -25.4), (8.6, -25.4), (8.6, -27), (27, -27), (27, 27), (-27, 27)]
@@ -473,30 +473,39 @@ def p_terminal():
     p.add(decal(rrect(0, -21.6, 10.2, 2.2, 0.3), M((0, 0, FL + 0.02))), "teal")
     for s in (-1, 1):
         x0, x1 = sorted((s * WI, s * WO))
-        p.add(bb(x0, x1, -26.6, 26.2, H0, 13.25), "cream")
+        p.add(bb(x0, x1, -26.6, 26.5, H0, 13.25), "cream")
     BX, BZ0, BZ1 = 9.3, 2.7, 12.3
-    p.add(bb(-26.2, -BX, WI, WO, H0, 13.25), "cream")
-    p.add(bb(BX, 26.2, WI, WO, H0, 13.25), "cream")
+    p.add(bb(-26.5, -BX, WI, WO, H0, 13.25), "cream")
+    p.add(bb(BX, 26.5, WI, WO, H0, 13.25), "cream")
     p.add(bb(-BX, BX, WI, WO, H0, BZ0), "cream")
     p.add(bb(-BX, BX, WI, WO, BZ1, 13.25), "cream")
-    p.add(bb(-10.2, 10.2, WO, 26.85, 1.9, SO, 0.14, 2), lambda c, n: "dark" if n.y < -0.5 else "teal")
-    logo(p, fr((0, 26.85, 7.25), "+y"), 3.4, step=0.012)
+    mc = frame((0, WO, 7.5), (-1, 0, 0), (0, 0, 1))
+    p.add(rr_loft(2 * BX + 0.6, BZ1 - BZ0 + 0.6, 0.3, 2, [(0.0, 0.0), (0.0, 0.24), (0.3, 0.24), (0.3, 0.0)], mc, closed=True),
+          lambda c, n: "cream" if abs(c.x) < BX + 0.15 and BZ0 - 0.15 < c.z < BZ1 + 0.15 else "teal")
+    p.add(rr_loft(2 * BX + 0.6, BZ1 - BZ0 + 0.6, 0.3, 2, [(0.0, 0.24), (0.0, 0.34)], mc), lambda c, n: "dark" if n.y < -0.5 else "teal")
+    logo(p, fr((0, WO + 0.34, 7.5), "+y"), 3.3, step=0.012)
     p.add(bb(-10.0, 10.0, WI - 0.14, WI, BZ0 - 0.5, BZ0, 0.05, 1), "orange")
     for sx in (-1, 1):
         for sy in (-1, 1):
-            xs = sorted((sx * WI, sx * 26.9))
-            ys = sorted((sy * WI, sy * 26.9))
+            xs = sorted((sx * (26.24 if sy > 0 else 26.04), sx * 26.9))
+            ys = sorted((sy * (26.24 if sy > 0 else 25.9), sy * 26.9))
             p.add(bb(xs[0], xs[1], ys[0], ys[1], H0, SO, 0.3, 2), "white")
     for s in (-1, 1):
         x0, x1 = sorted((s * WO, s * 26.85))
         for y in (-15.6, -5.2, 5.2, 15.6):
             p.add(bb(x0, x1, y - 0.5, y + 0.5, H0, SO, 0.12, 2), "white")
-        x0, x1 = sorted((s * WO, s * 26.62))
+        x0, x1 = sorted((s * WO, s * 26.72))
         p.add(bb(x0, x1, -26.6, 26.6, H0, 1.5, 0.05, 1), "teal")
         p.add(bb(s * 17.9 - 0.5, s * 17.9 + 0.5, WO, 26.85, H0, SO, 0.12, 2), "white")
         p.add(cyl(2.2, 0.08, (s * WO, 0, 8.2), (0, s * 90, 0), seg=20), "cream")
         logo(p, fr((s * (WO + 0.08), 0, 8.2), "+x" if s > 0 else "-x"), 2.2, base=False, step=0.01)
-    p.add(bb(-26.6, 26.6, WO, 26.62, H0, 1.5, 0.05, 1), "teal")
+    p.add(bb(-26.6, -BX - 0.35, WO, 26.72, H0, 1.5, 0.05, 1), "teal")
+    p.add(bb(BX + 0.35, 26.6, WO, 26.72, H0, 1.5, 0.05, 1), "teal")
+    for s in (-1, 1):
+        mw = fr((s * WI, 0, 0), "-x" if s > 0 else "+x")
+        p.add(decal(rect(-WI, -FY1, 9.0, 9.45) if s > 0 else rect(FY1, WI, 9.0, 9.45), mw, 0.01), "orange")
+    for x0, x1 in ((-WI, -BX - 0.7), (BX + 0.7, WI)):
+        p.add(decal(rect(x0, x1, 9.0, 9.45), fr((0, WI, 0), "-y"), 0.01), "orange")
     for s in (-1, 1):
         x0, x1 = sorted((s * (WI - 0.1), s * WI))
         p.add(bb(x0, x1, FY1, WI, FL, 2.0), "teal")
@@ -509,18 +518,23 @@ def p_terminal():
         p.add(bb(x0, x1, FY0, FY1, z0, z1, 0.06, 1), col)
     fm(-WI, -8.2, 12.0, SO)
     fm(8.2, WI, 12.0, SO)
+    BW = (WI - 0.3 - 8.2 - 4 * 0.3) / 5
     panes = []
     for s in (-1, 1):
-        x0, x1 = sorted((s * 8.2, s * WI))
+        x0, x1 = sorted((s * 8.2, s * (WI - 0.3)))
         fm(x0, x1, FL, 1.2)
         fm(x0, x1, 10.0, 10.3)
-        x0, x1 = sorted((s * 25.4, s * WI))
-        fm(x0, x1, 1.2, 12.0)
+        x0, x1 = sorted((s * (WI - 0.3), s * WI))
+        fm(x0, x1, FL, 1.2)
+        x0, x1 = sorted((s * (WI - 0.3), s * WI))
+        fm(x0, x1, 1.2, 10.0)
+        fm(x0, x1, 10.3, 12.0)
         for k in range(1, 5):
-            x = s * (8.2 + 3.5 * k - 0.15)
-            fm(x - 0.15, x + 0.15, 1.2, 12.0)
+            x = s * (8.2 + (BW + 0.3) * k - 0.15)
+            fm(x - 0.15, x + 0.15, 1.2, 10.0)
+            fm(x - 0.15, x + 0.15, 10.3, 12.0)
         for b in range(5):
-            u0, u1 = 8.2 + 3.5 * b, 8.2 + 3.5 * b + 3.2
+            u0, u1 = 8.2 + (BW + 0.3) * b, 8.2 + (BW + 0.3) * b + BW
             x0, x1 = sorted((s * u0, s * u1))
             panes.append((x0, x1, 1.2, 10.0))
             panes.append((x0, x1, 10.3, 12.0))
@@ -534,7 +548,7 @@ def p_terminal():
         if n.z < -0.6:
             return "white"
         return "cream" if n.z > 0.6 else "orange"
-    p.add(bb(-9.4, 9.4, -27.0, -25.5, 10.0, 10.55, 0.2, 2), canopy)
+    p.add(bb(-9.4, 9.4, -27.0, -25.6, 10.0, 10.75, 0.24, 2), canopy)
     for x in (-6.0, -2.0, 2.0, 6.0):
         p.add(decal(circ(x, 0, 0.22, 8), fr((0, -26.25, 10.0), "-z"), 0.006), "yellow")
     p.add(bb(-WO, WO, -26.3, -24.4, SO, CE), "white")
@@ -580,7 +594,7 @@ def p_mostrador():
     p.add(bb(-2.75, 0.75, -1.47, -1.36, 0.55, 1.98, 0.05, 1), "cream")
     logo(p, fr((-1.0, -1.47, 1.27), "-y"), 0.42, base=False, step=0.006)
     p.add(bb(-2.98, 0.98, -1.44, 1.48, 2.28, 2.42, 0.04, 1), "orange")
-    p.add(bb(-3.0, 1.0, -0.55, 1.5, 2.4, 2.5, 0.04, 1), "white")
+    p.add(bb(-3.0, 1.0, -0.5, 1.5, 2.4, 2.5, 0.04, 1), "white")
     p.add(bb(-3.0, 1.0, -1.5, -0.5, 2.4, 2.8, 0.1, 2), "white")
     p.add(bb(-1.5, -0.9, 0.15, 0.65, 2.5, 2.6, 0.04, 1), "dark")
     p.add(bb(-1.29, -1.11, 0.32, 0.48, 2.58, 2.8), "dark")
@@ -589,7 +603,7 @@ def p_mostrador():
     p.add(decal(rrect(-1.2, 1.0, 1.2, 0.36, 0.05, 1), M((0, 0, 2.5)), 0.006), "dark")
     p.add(bb(-2.75, -2.15, 0.6, 1.3, 2.5, 2.78, 0.04, 1), "metal")
     p.add(decal(rect(-2.68, -2.22, 0.6, 1.25), M((0, 0, 2.78)), 0.006), "dark")
-    p.add(bb(1.05, 3.0, -1.45, 1.45, 0.0, 0.72, 0.08, 1), "dark")
+    p.add(bb(1.1, 2.95, -1.45, 1.45, 0.0, 0.72, 0.08, 1), "dark")
     p.add(bb(1.2, 2.85, -1.42, 1.42, 0.7, 0.8), "black")
     for y in (-1.05, -0.6, -0.15, 0.3, 0.75, 1.2):
         p.add(decal(rect(1.22, 2.83, y - 0.03, y + 0.03), M((0, 0, 0.8)), 0.004), "dark")
@@ -629,10 +643,14 @@ def p_kiosko():
     p.add(decal(rrect(0, 1.0, 0.9, 1.0, 0.12, 1), fr((0, -0.9, 0), "-y"), 0.006), "cream")
     logo(p, fr((0, -0.912, 1.12), "-y"), 0.3, base=False, step=0.005)
     p.add(decal(rrect(0, 0.62, 0.6, 0.08, 0.03, 1), fr((0, -0.9, 0), "-y"), 0.012), "black")
-    head = [(-1.2, 1.95), (1.2, 1.95), (1.2, 3.0), (-0.84, 3.0), (-1.2, 2.45)]
-    bm = prism(head, 2.4, yzx((0, 0, 0)))
+    head = [(-1.2, 1.95), (1.19, 1.95), (1.19, 3.0), (-0.84, 3.0), (-1.2, 2.45)]
+    bm = prism(head, 2.38, yzx((0, 0, 0)))
     bevel_sharp(bm, 0.05, 2, 30)
-    p.add(bm, lambda c, n: "dteal" if n.z < -0.5 else "cream", 40)
+    p.add(bm, lambda c, n: "dteal" if n.z < -0.5 else ("orange" if n.y < -0.9 else "cream"), 40)
+    for side in ("+x", "-x"):
+        sx = 1.19 if side == "+x" else -1.19
+        p.add(decal(rect(-1.1, 1.1, 2.02, 2.2), fr((sx, 0, 0), side), 0.006), "orange")
+    p.add(decal(rect(-1.1, 1.1, 2.02, 2.2), fr((0, 1.19, 0), "+y"), 0.006), "orange")
     a = Vector((0, 0.36, 0.55)).normalized()
     m = frame((0, -1.02, 2.725), (1, 0, 0), a)
     p.add(decal(rrect(0, 0, 2.05, 0.44, 0.06, 1), m, 0.006), "black")
@@ -827,8 +845,8 @@ def p_valla():
         p.add(bm, "dteal", 30)
     for z in (0.32, 2.05):
         p.add(bar((-3.76, 0, z), (3.76, 0, z), 0.1, 0.12, caps=False, up=(0, 1, 0)), "metal")
-    for i in range(9):
-        x = -3.2 + 0.8 * i
+    for i in range(11):
+        x = -3.25 + 0.65 * i
         p.add(bar((x, 0, 0.27), (x, 0, 2.18), 0.07, 0.07, caps=False), "metal")
     return p
 
@@ -921,7 +939,7 @@ def p_hangar():
         p.add(arc_rib(R - 0.02, zc, -al + 0.012, al - 0.012, 16, y, 0.35, RH + 0.02), "concrete", 40)
     for s in (-1, 1):
         x0, x1 = sorted((s * 23.8, s * 24.4))
-        p.add(bb(x0, x1, -19.4, 19.4, 0.0, 12.3), "cream")
+        p.add(bb(x0, x1, -19.3, 19.3, 0.0, 12.3), "cream")
         x0, x1 = sorted((s * 24.4, s * 24.56))
         p.add(bb(x0, x1, -19.0, 19.0, 0.0, 1.4, 0.04, 1), "teal")
         for y in (-13.0, -6.5, 0.0, 6.5, 13.0):
@@ -933,7 +951,7 @@ def p_hangar():
             ys = sorted((sy * 19.0, sy * 19.85))
             p.add(bb(xs[0], xs[1], ys[0], ys[1], 0.0, 12.0, 0.15, 1), "teal")
     Rg = R - 0.3
-    gab = [(-24.4, 0.0), (24.4, 0.0)] + [(Rg * math.sin(a), zc + Rg * math.cos(a)) for a in [math.asin(24.4 / Rg) - 2 * math.asin(24.4 / Rg) * k / N for k in range(N + 1)]]
+    gab = [(-24.3, 0.0), (24.3, 0.0)] + [(Rg * math.sin(a), zc + Rg * math.cos(a)) for a in [math.asin(24.3 / Rg) - 2 * math.asin(24.3 / Rg) * k / N for k in range(N + 1)]]
     for s in (-1, 1):
         p.add(prism(gab, 0.6, frame((0, s * 19.1, 0), (1, 0, 0), (0, 0, 1))), "cream")
         if s > 0:
@@ -951,7 +969,7 @@ def p_hangar():
         p.add(decal(rect(x0 + 0.1, x1 - 0.1, 3.0, 3.6), mp, 0.01), "orange")
     for s in (-1, 1):
         x0, x1 = sorted((s * 18.0, s * 19.0))
-        p.add(bb(x0, x1, -19.95, -19.4, 0.0, 15.8, 0.12, 1), "teal")
+        p.add(bb(x0, x1, -19.95, -19.4, 0.0, 14.8, 0.12, 1), "teal")
     p.add(bb(-19.0, 19.0, -19.95, -19.4, 14.8, 15.8, 0.12, 1), "teal")
     p.add(decal(rect(-18.6, 18.6, 15.12, 15.48), fr((0, -19.95, 0), "-y"), 0.01), "orange")
     p.add(bb(-19.0, 19.0, -20.0, -19.4, 0.0, 0.14), "dark")
@@ -1230,15 +1248,17 @@ def sheet_exterior(st):
         st.put("Arbol", x, y, r)
     for x, y, r in ((-31, -29.5, 0), (-30, -12, 50), (-30.5, 9, 120), (31, -29.5, 30), (30.5, -10, 80), (-24, -30.5, 10), (24, -30.5, 70)):
         st.put("Arbusto", x, y, r)
-    for k in range(12):
-        st.put("Valla", -48.0, -40.0 + 8.0 * k + 4.0, 90)
-    for k in range(6):
-        st.put("Valla", -44.0 + 8.0 * k, 52.0, 0)
+    for k in range(10):
+        st.put("Valla", -48.0, -28.0 + 8.0 * k, 90)
+    for k in range(5):
+        st.put("Valla", -76.0 + 8.0 * k, -31.6, 0)
+    for k in range(8):
+        st.put("Valla", 44.0, -26.0 + 8.0 * k, 90)
     for x, y in ((-10.5, -37.0), (-8.0, -38.6), (-5.5, -39.6), (5.5, -39.6), (8.0, -38.6), (10.5, -37.0), (22, -36.5), (24.2, -36.5)):
         st.put("Cono", x, y, 20)
     for k in range(9):
         st.put("LuzPista", -32.0 + 8.0 * k, -33.6)
-    st.camera((-58, -86, 24), (2, -6, 6.0), 36)
+    st.camera((-50, -78, 21), (3, -3, 3.5), 36)
 
 
 def board_fill(st, x0, y, z0, w, h):
@@ -1267,24 +1287,22 @@ def sheet_interior(st):
     board_fill(st, -9.0, 26.29, 3.0, 18.0, 9.0)
     red = mat_rgb("D9443A", 0.4)
     for x in (-6.5, 0.0, 6.5):
-        st.put("Kiosko", x, 13.0)
-        bm = lathe([(0.8, 0.0), (0.8, 0.2), (0.7, 0.34), (0.0, 0.38)], 24, M((x, 13.0, 3.0)))
+        st.put("Kiosko", x, 7.0)
+        bm = lathe([(0.8, 0.0), (0.8, 0.2), (0.7, 0.34), (0.0, 0.38)], 24, M((x, 7.0, 3.0)))
         me = bpy.data.meshes.new("btn")
         bm.to_mesh(me)
         bm.free()
         me.materials.append(red)
         me.shade_smooth()
         st.link(bpy.data.objects.new("btn", me))
-    for y in (-12.0, -3.0, 6.0):
-        st.put("Mostrador", 21.5, y, -90)
-    for y in (-10.0, 2.0):
-        st.put("BancoEspera", -16.0, y, 0)
-        st.put("BancoEspera", -16.0, y + 2.3, 180)
-    st.put("BancoEspera", -4.0, -8.0, 0)
-    for x, y in ((-23.0, 22.5), (23.0, 22.5), (-23.0, -20.5), (13.0, 22.5), (-13.0, 22.5)):
+    for y in (-15.0, -6.5, 2.0):
+        st.put("Mostrador", 21.0, y, -90)
+    for y in (-14.0, -4.0):
+        st.put("BancoEspera", -15.0, y, 0)
+        st.put("BancoEspera", -15.0, y + 2.3, 180)
+    st.put("BancoEspera", -2.0, -11.0, 0)
+    for x, y in ((-23.5, 23.0), (23.5, 23.0), (-23.5, -21.5), (14.0, 23.0), (-14.0, 23.0)):
         st.put("Arbusto", x, y, 30)
-    for x, y in ((-3.0, -14.0), (3.0, -14.0)):
-        st.put("Cono", x, y, 10)
     for y in (-19.3, -9.3, 0.9, 11.1, 21.0):
         for x in (-18.0, 0.0, 18.0):
             st.area((x, y, 12.9), 6.0, 380, sy=2.0, color=(1.0, 0.93, 0.82))
@@ -1307,10 +1325,10 @@ def sheet_ramp(st):
     ca = math.radians(-25)
     for k in (1, 2):
         d = 8.6 * k
-        st.put("CarroEquipaje", -12.0 - math.sin(ca) * d * -1.0, -1.0 + math.cos(ca) * d, 90 - 25)
+        st.put("CarroEquipaje", -12.0 - math.sin(ca) * d, -1.0 + math.cos(ca) * d, 90 - 25)
     for k in range(15):
         st.put("LuzPista", -42.0 + 6.0 * k, -18.6)
-    st.put("Manga", 30.0, -26.0, -60)
+    st.put("Manga", 14.0, -25.0, -60)
     for x, yy in ((4.0, -2.0), (6.2, -3.2), (20.5, 1.5), (21.5, 10.5)):
         st.put("Cono", x, yy, 15)
     for x, yy, r in ((48, 14, 10), (56, 30, 40), (-58, 8, 0), (52, -30, 0)):
@@ -1322,23 +1340,49 @@ def sheet_ramp(st):
     st.camera((-10, -60, 15), (5, 14, 8.5), 30)
 
 
-def sheet_catalog(st):
-    ground(st)
-    st.quad(-60, 60, -60, 60, 0.0, mat_rgb(WALK, 0.9))
-    x = -30.0
-    for nm in ("Mostrador", "BancoEspera", "Kiosko", "CarroEquipaje", "Tractor", "Escalera", "Manga"):
-        w = st.objs[nm].dimensions.x
-        st.put(nm, x + w / 2, 0.0, -20)
-        x += w + 2.0
-    x = -22.0
-    for nm in ("Arbol", "Arbusto", "Valla", "LuzPista", "Cono", "MarcoTablero"):
-        w = st.objs[nm].dimensions.x
-        st.put(nm, x + w / 2, 14.0, -20)
-        x += w + 2.0
-    st.camera((-6, -34, 16), (0, 5, 2.0), 40)
+def fit_camera(st, pts, el, az, lens):
+    scene = bpy.context.scene
+    d = Vector((math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)))
+    f = -d
+    right = f.cross(Vector((0, 0, 1))).normalized()
+    upv = right.cross(f).normalized()
+    tx = 18.0 / lens
+    ty = tx * scene.render.resolution_y / scene.render.resolution_x
+    c = sum(pts, Vector()) / len(pts)
+    for _ in range(5):
+        q = [(p - c).dot(right) for p in pts], [(p - c).dot(upv) for p in pts], [(p - c).dot(d) for p in pts]
+        D = max(max(z + abs(x) / (tx * 0.92) for x, z in zip(q[0], q[2])), max(z + abs(y) / (ty * 0.9) for y, z in zip(q[1], q[2])))
+        sxs = [x / (D - z) for x, z in zip(q[0], q[2])]
+        sys_ = [y / (D - z) for y, z in zip(q[1], q[2])]
+        c = c + right * ((max(sxs) + min(sxs)) / 2 * D) + upv * ((max(sys_) + min(sys_)) / 2 * D)
+    q = [(p - c).dot(right) for p in pts], [(p - c).dot(upv) for p in pts], [(p - c).dot(d) for p in pts]
+    D = max(max(z + abs(x) / (tx * 0.92) for x, z in zip(q[0], q[2])), max(z + abs(y) / (ty * 0.9) for y, z in zip(q[1], q[2])))
+    return st.camera(c + d * D, c, lens)
 
 
-SHEETS = [("aero_1.png", sheet_exterior), ("aero_2.png", sheet_interior), ("aero_3.png", sheet_ramp), ("aero_kit.png", sheet_catalog)]
+def sheet_catalog(st, rows, gap):
+    st.quad(-400, 400, -400, 400, 0.0, mat_rgb("D6EEF7", 0.95))
+    ycur = 0.0
+    made = []
+    for row in rows:
+        items = [(nm, st.objs[nm].dimensions.x, st.objs[nm].dimensions.y) for nm in row]
+        total = sum(i[1] for i in items) + gap * (len(items) - 1)
+        rd = max(i[2] for i in items)
+        if made:
+            ycur += rd / 2
+        x = -total / 2
+        for nm, w, dd in items:
+            made.append(st.put(nm, x + w / 2, ycur, -24))
+            x += w + gap
+        ycur += rd / 2 + gap * 1.5
+    bpy.context.view_layer.update()
+    pts = [o.matrix_world @ Vector(c) for o in made for c in o.bound_box]
+    fit_camera(st, pts, math.radians(28), math.radians(-12), 50)
+
+
+SHEETS = [("aero_1.png", sheet_exterior), ("aero_2.png", sheet_interior), ("aero_3.png", sheet_ramp),
+          ("aero_kit_a.png", lambda st: sheet_catalog(st, [["LuzPista", "Cono", "Arbusto", "Kiosko", "Valla", "Manga"], ["Mostrador", "BancoEspera", "Arbol"]], 1.6)),
+          ("aero_kit_b.png", lambda st: sheet_catalog(st, [["CarroEquipaje", "Tractor", "Escalera"], ["MarcoTablero"]], 2.0))]
 
 
 def render_sheets(objs, which, threads, outdir):
