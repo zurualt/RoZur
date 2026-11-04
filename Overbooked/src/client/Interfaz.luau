@@ -50,6 +50,8 @@ local textoResultados: TextLabel
 local tituloResultados: TextLabel
 local tableroGui: SurfaceGui
 local ayuda: Frame
+local resaltado: Highlight
+local ultimoApuntado: Instance? = nil
 
 local function esquina(padre: Instance, radio: number)
 	local c = Instance.new("UICorner")
@@ -319,6 +321,12 @@ local function actualizarPiloto()
 end
 
 local function actualizarPista()
+	local objetivo = if Agarre.sostenido() then nil else Agarre.apuntado()
+	if objetivo ~= ultimoApuntado then
+		ultimoApuntado = objetivo
+		resaltado.Adornee = objetivo
+		resaltado.Enabled = objetivo ~= nil
+	end
 	local objeto = Agarre.sostenido()
 	if objeto then
 		local tipo = Agarre.tipo(objeto)
@@ -539,6 +547,14 @@ end
 
 function Interfaz.iniciar()
 	construir()
+	resaltado = Instance.new("Highlight")
+	resaltado.Name = "Apuntado"
+	resaltado.FillTransparency = 1
+	resaltado.OutlineColor = Color3.new(1, 1, 1)
+	resaltado.OutlineTransparency = 0.15
+	resaltado.DepthMode = Enum.HighlightDepthMode.Occluded
+	resaltado.Enabled = false
+	resaltado.Parent = Workspace.CurrentCamera
 	RemotoAviso.OnClientEvent:Connect(function(contenido, tipo)
 		if typeof(contenido) == "string" then
 			aviso(contenido, if typeof(tipo) == "string" then tipo else "info")
