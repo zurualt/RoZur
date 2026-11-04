@@ -183,6 +183,11 @@ def cabina():
     for nombre, x, c in botones:
         p.append(part(nombre, (0.4, 0.9, 0.9), (x, 104.85, -61.0), c, "SmoothPlastic", forma="Cylinder",
                       r=rot(0, 0, 90), atributos={"Visual": "Boton"}))
+    etiquetas = {"BotonExtintorMotor": "EXTINTOR", "BotonAutopiloto": "AUTO", "BotonMotores": "MOTOR",
+                 "BotonCinturones": "CINTUR.", "BotonRampa": "RAMPA"}
+    for nombre, x, c in botones:
+        p.append(part("Etiqueta", (1.5, 0.45, 0.05), (x, 105.75, -61.0), "1B1B21", colision=False,
+                      hijos=[cartel(etiquetas[nombre], "Back", c)]))
     return carpeta("Cabina", p)
 
 

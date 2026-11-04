@@ -4,6 +4,16 @@ Juego cooperativo de 1 a 4 jugadores: la tripulación de la peor aerolínea del 
 
 Todo el código es Luau estricto, sin comentarios. El arte se genera en Blender con scripts y se sube por la API de Open Cloud. El lugar también se construye con Rojo y se publica por la API.
 
+## Vista previa
+
+Montado en Blender con la misma lógica de colocación que usa el juego (`herramientas/vista_previa.py`). En Roblox las ventanas muestran el cielo y el mundo en movimiento; aquí se ve el interior del casco porque Blender dibuja las caras traseras.
+
+![Cabina de pasajeros](renders/cabina_pasajeros.png)
+![Cabina del piloto](renders/cabina_piloto.png)
+![Bodega con la carga y la jaula](renders/bodega.png)
+![Torreta en el ala](renders/ala_torreta.png)
+![Exterior en el aeropuerto](renders/exterior.png)
+
 ## Cómo se juega
 
 1. **Aeropuerto:** apareces en la terminal. En el tablero hay 3 contratos (ruta, distancia, pasajeros, carga, riesgo y pago aproximado). Pulsa **E** en uno de los pedestales para elegirlo.
@@ -80,7 +90,8 @@ Cada cliente conecta el `AudioDeviceInput` de cada jugador a un `AudioAnalyzer` 
 
 ## Pendiente
 
-- **Probar en el servidor por API:** la clave aún no tiene el permiso *Luau Execution Sessions* (escritura), así que no he podido arrancar el juego en un servidor de Roblox para probarlo. Todo el código pasa el analizador de tipos de Luau en modo estricto.
-- **Orientación de los modelos:** cómo importa Roblox los FBX por API no se puede comprobar sin ese permiso. El código detecta solo los ejes de cada modelo, pero si alguno sale girado 180°, se corrige con `Config.ROTACION_FBX`.
+- **Probar en el servidor por API:** la clave aún no tiene el permiso *Luau Execution Sessions* (escritura), así que no he podido arrancar el juego en un servidor de Roblox. Lo que sí está comprobado: todo el código pasa el analizador de tipos de Luau en modo estricto, dos revisiones de código de Roblox (sus hallazgos están corregidos) y la vista previa en Blender del mapa con todos los modelos colocados.
+- **Orientación de los modelos:** cómo importa Roblox los FBX por API no se puede comprobar sin ese permiso. El código detecta solo los ejes de cada modelo. Si los asientos o los pasajeros salen mirando hacia atrás, se corrige con `Config.ROTACION_FBX = CFrame.Angles(0, math.pi, 0)`.
+- **Tripulante:** si el modelo importado no trae `Humanoid` o `HumanoidRootPart`, el juego usa personajes por defecto y lo avisa en la consola del servidor.
 - **Sonidos:** ElevenLabs no es accesible desde esta sesión. El juego aún no tiene sonidos.
 - **Del tráiler, no hecho todavía:** escalar el fuselaje con piolet, vehículo de equipaje en tierra e inspección de aduanas.

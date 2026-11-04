@@ -247,6 +247,13 @@ function Partida.iniciar()
 	Avion.alTerminar(function(tipo, motivo)
 		resultado = { tipo = tipo, motivo = motivo }
 	end)
+	Players.PlayerAdded:Connect(function(jugador)
+		task.delay(6, function()
+			if jugador.Parent then
+				RemotoAviso:FireClient(jugador, "✈ ¡Bienvenido a Overbooked! Elige un vuelo en el tablero de la terminal · H: controles", "info")
+			end
+		end)
+	end)
 	Personajes.alCaer(function(jugador)
 		aviso(`🪂 ¡{jugador.DisplayName} se ha caído del avión!`, "peligro")
 	end)

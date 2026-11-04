@@ -12693,6 +12693,456 @@
      "attributes": {
       "Visual": "Boton"
      }
+    },
+    {
+     "name": "Etiqueta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.5,
+       0.45,
+       0.05
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -4.0,
+         105.75,
+         -61.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Cartel",
+       "className": "SurfaceGui",
+       "properties": {
+        "Face": "Back",
+        "SizingMode": "PixelsPerStud",
+        "PixelsPerStud": 40,
+        "LightInfluence": 1
+       },
+       "children": [
+        {
+         "name": "Texto",
+         "className": "TextLabel",
+         "properties": {
+          "Text": "EXTINTOR",
+          "TextScaled": true,
+          "BackgroundTransparency": 1,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Font": "FredokaOne",
+          "TextColor3": [
+           0.8509803921568627,
+           0.26666666666666666,
+           0.22745098039215686
+          ]
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Etiqueta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.5,
+       0.45,
+       0.05
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -2.0,
+         105.75,
+         -61.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Cartel",
+       "className": "SurfaceGui",
+       "properties": {
+        "Face": "Back",
+        "SizingMode": "PixelsPerStud",
+        "PixelsPerStud": 40,
+        "LightInfluence": 1
+       },
+       "children": [
+        {
+         "name": "Texto",
+         "className": "TextLabel",
+         "properties": {
+          "Text": "AUTO",
+          "TextScaled": true,
+          "BackgroundTransparency": 1,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Font": "FredokaOne",
+          "TextColor3": [
+           0.2901960784313726,
+           0.7215686274509804,
+           0.9411764705882353
+          ]
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Etiqueta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.5,
+       0.45,
+       0.05
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0.0,
+         105.75,
+         -61.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Cartel",
+       "className": "SurfaceGui",
+       "properties": {
+        "Face": "Back",
+        "SizingMode": "PixelsPerStud",
+        "PixelsPerStud": 40,
+        "LightInfluence": 1
+       },
+       "children": [
+        {
+         "name": "Texto",
+         "className": "TextLabel",
+         "properties": {
+          "Text": "MOTOR",
+          "TextScaled": true,
+          "BackgroundTransparency": 1,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Font": "FredokaOne",
+          "TextColor3": [
+           0.9607843137254902,
+           0.803921568627451,
+           0.23921568627450981
+          ]
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Etiqueta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.5,
+       0.45,
+       0.05
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         2.0,
+         105.75,
+         -61.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Cartel",
+       "className": "SurfaceGui",
+       "properties": {
+        "Face": "Back",
+        "SizingMode": "PixelsPerStud",
+        "PixelsPerStud": 40,
+        "LightInfluence": 1
+       },
+       "children": [
+        {
+         "name": "Texto",
+         "className": "TextLabel",
+         "properties": {
+          "Text": "CINTUR.",
+          "TextScaled": true,
+          "BackgroundTransparency": 1,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Font": "FredokaOne",
+          "TextColor3": [
+           0.9490196078431372,
+           0.4823529411764706,
+           0.16862745098039217
+          ]
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Etiqueta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.5,
+       0.45,
+       0.05
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         4.0,
+         105.75,
+         -61.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Cartel",
+       "className": "SurfaceGui",
+       "properties": {
+        "Face": "Back",
+        "SizingMode": "PixelsPerStud",
+        "PixelsPerStud": 40,
+        "LightInfluence": 1
+       },
+       "children": [
+        {
+         "name": "Texto",
+         "className": "TextLabel",
+         "properties": {
+          "Text": "RAMPA",
+          "TextScaled": true,
+          "BackgroundTransparency": 1,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Font": "FredokaOne",
+          "TextColor3": [
+           0.12156862745098039,
+           0.6509803921568628,
+           0.6274509803921569
+          ]
+         }
+        }
+       ]
+      }
+     ]
     }
    ]
   },
