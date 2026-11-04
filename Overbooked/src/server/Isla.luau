@@ -6,6 +6,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
+local Audio = require(ReplicatedStorage.Shared.Audio)
 local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Activos = require(script.Parent.Activos)
@@ -38,6 +39,26 @@ local efectos: { Instance } = {}
 local palmeras: { BasePart } = {}
 local HUMO_RESTOS = Color3.fromRGB(70, 66, 64)
 
+local function sonidoBucle(nombre: string, padre: Instance, alcance: number?): Sound?
+	local id = Audio.IDS[nombre]
+	if not id then
+		return nil
+	end
+	local s = Instance.new("Sound")
+	s.Name = nombre
+	s.SoundId = `rbxassetid://{id}`
+	s.Looped = true
+	local datos = Audio.DATOS[nombre]
+	s.Volume = if datos then datos.volumen else 0.6
+	s.RollOffMode = Enum.RollOffMode.InverseTapered
+	s.RollOffMinDistance = 10
+	s.RollOffMaxDistance = alcance or 120
+	s.Parent = padre
+	s:Play()
+	table.insert(efectos, s)
+	return s
+end
+
 local function motores(): { Vector3 }
 	local exterior = Workspace:WaitForChild("Avion"):FindFirstChild("Exterior")
 	local lista = {}
@@ -68,7 +89,7 @@ local function caerCoco()
 			if raiz and (raiz.Position - coco.Position).Magnitude < 4 then
 				Personajes.ragdoll(jugador, 1.2, Vector3.new(rng:NextNumber(-20, 20), 20, rng:NextNumber(-20, 20)))
 				Rafagas.lanzar("Estrellas", raiz.Position + Vector3.new(0, 2.5, 0), 1.2)
-				Sonidos.emitir("Golpe", raiz.Position)
+				Sonidos.emitir("Coco", raiz.Position)
 				RemotoAviso:FireClient(jugador, "¡Un coco en toda la cabeza!", "peligro")
 			end
 		end
@@ -148,7 +169,7 @@ local function pellizcar(ahora: number)
 				local empuje = Vector3.new(d.X, 0, d.Z)
 				Personajes.ragdoll(jugador, 1, (if empuje.Magnitude > 0.1 then empuje.Unit else Vector3.xAxis) * 28 + Vector3.new(0, 26, 0))
 				Rafagas.lanzar("Estrellas", raiz.Position + Vector3.new(0, 2, 0), 1)
-				Sonidos.emitir("Mordisco", raiz.Position)
+				Sonidos.emitir("Cangrejo", raiz.Position)
 				RemotoAviso:FireClient(jugador, "¡Un cangrejo te ha pellizcado!", "peligro")
 				break
 			end
@@ -179,7 +200,7 @@ local function encajar(tipo: string)
 	pieza.CanCollide = false
 	CollectionService:RemoveTag(pieza, "Agarrable")
 	Rafagas.lanzar("Chispas", pieza.Position, 1)
-	Sonidos.emitir("Reparado", pieza.Position)
+	Sonidos.emitir("Radio", pieza.Position)
 end
 
 local function encender()
@@ -198,6 +219,7 @@ local function encender()
 	luz.Brightness = 2.2
 	luz.Parent = a
 	table.insert(efectos, a)
+	sonidoBucle("Hoguera", a, 90)
 	Rafagas.lanzar("Bengala", hoguera.Position + Vector3.new(0, 2, 0), 2)
 	Rafagas.lanzar("Chispas", hoguera.Position + Vector3.new(0, 2, 0), 2)
 	Rafagas.lanzar("Humo", hoguera.Position + Vector3.new(0, 6, 0), 3)
@@ -220,9 +242,13 @@ local function hidroavion()
 	p.CFrame = final + Vector3.new(1400, 260, 0)
 	p.Parent = carpeta
 	Activos.vestirDinamico(p, "Hidroavion")
+	local motor = sonidoBucle("Hidroavion", p, 700)
 	local duracion = math.max(4, C.RESCATE - 4)
 	TweenService:Create(p, TweenInfo.new(duracion, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { CFrame = final }):Play()
 	task.delay(duracion, function()
+		if motor then
+			motor:Stop()
+		end
 		if p.Parent then
 			Rafagas.lanzar("Salpicadura", destino.Position, 4)
 			Sonidos.emitir("Salpicadura", destino.Position)
@@ -268,6 +294,7 @@ function Isla.jugar(): boolean
 	Avion.danarMotor("Izq", 50, true)
 	Avion.danarMotor("Der", 35, rng:NextNumber() < 0.5)
 	isla.Parent = Workspace
+	sonidoBucle("AmbienteIsla", isla)
 	local piezas = mezclar(spots.radio)
 	for i, tipo in C.PIEZAS do
 		if piezas[i] then

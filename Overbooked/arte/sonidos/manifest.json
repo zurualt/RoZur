@@ -26,10 +26,10 @@
  {
   "nombre": "GolpeFuerte",
   "archivo": "GolpeFuerte.ogg",
-  "duracion": 1.286,
+  "duracion": 1.5,
   "bucle": false,
   "volumen": 0.65,
-  "descripcion": "Impacto pesado con cuerpo grave y algo de escombro."
+  "descripcion": "Maleta contra la pared metálica, golpe con traqueteo (ElevenLabs)."
  },
  {
   "nombre": "GolpeMetal",
@@ -58,10 +58,10 @@
  {
   "nombre": "Salpicadura",
   "archivo": "Salpicadura.ogg",
-  "duracion": 0.695,
+  "duracion": 1.5,
   "bucle": false,
   "volumen": 0.6,
-  "descripcion": "Salpicadura de líquido con gotitas."
+  "descripcion": "Líquido salpicando el suelo (ElevenLabs)."
  },
  {
   "nombre": "Resbalon",
@@ -74,10 +74,10 @@
  {
   "nombre": "Extintor",
   "archivo": "Extintor.ogg",
-  "duracion": 0.456,
+  "duracion": 2.0,
   "bucle": false,
   "volumen": 0.4,
-  "descripcion": "Ráfaga corta de extintor (~0,4 s), apta para repetir."
+  "descripcion": "Chorro de extintor a presión (ElevenLabs)."
  },
  {
   "nombre": "Llave",
@@ -98,10 +98,10 @@
  {
   "nombre": "Explosion",
   "archivo": "Explosion.ogg",
-  "duracion": 2.617,
+  "duracion": 3.0,
   "bucle": false,
-  "volumen": 0.7,
-  "descripcion": "Explosión caricaturesca (boom redondo) para brecha en el casco o motor."
+  "volumen": 0.9,
+  "descripcion": "Explosión de dibujo animado del avión estrellándose, con chatarra y rumor (ElevenLabs)."
  },
  {
   "nombre": "Succion",
@@ -362,10 +362,10 @@
  {
   "nombre": "MotorAvion",
   "archivo": "MotorAvion.ogg",
-  "duracion": 8.011,
+  "duracion": 5.0,
   "bucle": true,
   "volumen": 0.45,
-  "descripcion": "Bucle de motores bimotor (turbohélice/turbofán), dron grave; admite cambiar PlaybackSpeed."
+  "descripcion": "Zumbido de motor a reacción dentro de la cabina (ElevenLabs)."
  },
  {
   "nombre": "VientoCabina",
@@ -378,10 +378,10 @@
  {
   "nombre": "VientoExterior",
   "archivo": "VientoExterior.ogg",
-  "duracion": 12.005,
+  "duracion": 5.0,
   "bucle": true,
   "volumen": 0.45,
-  "descripcion": "Bucle estéreo de viento fuerte en el exterior (sobre el ala)."
+  "descripcion": "Viento fuerte encima del avión en vuelo (ElevenLabs)."
  },
  {
   "nombre": "Alarma",
@@ -394,10 +394,10 @@
  {
   "nombre": "FuegoLoop",
   "archivo": "FuegoLoop.ogg",
-  "duracion": 8.011,
+  "duracion": 5.0,
   "bucle": true,
   "volumen": 0.55,
-  "descripcion": "Bucle de fuego crepitante."
+  "descripcion": "Fuego rugiendo con chasquidos (ElevenLabs)."
  },
  {
   "nombre": "Lluvia",
@@ -446,5 +446,53 @@
   "bucle": true,
   "volumen": 0.4,
   "descripcion": "Música original de emergencia: variante rápida e intensa del tema de vuelo (mismas armonías y motivo), Re menor, 150 BPM, 24 compases (38,4 s)."
+ },
+ {
+  "nombre": "AmbienteIsla",
+  "archivo": "AmbienteIsla.ogg",
+  "duracion": 5.0,
+  "bucle": true,
+  "volumen": 0.5,
+  "descripcion": "Playa de isla desierta: olas suaves, brisa y gaviotas a lo lejos (ElevenLabs)."
+ },
+ {
+  "nombre": "Hoguera",
+  "archivo": "Hoguera.ogg",
+  "duracion": 5.0,
+  "bucle": true,
+  "volumen": 0.7,
+  "descripcion": "Hoguera crepitando en la playa (ElevenLabs)."
+ },
+ {
+  "nombre": "Radio",
+  "archivo": "Radio.ogg",
+  "duracion": 2.0,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Radio vieja encendiéndose: estática y dos pitidos (ElevenLabs)."
+ },
+ {
+  "nombre": "Hidroavion",
+  "archivo": "Hidroavion.ogg",
+  "duracion": 5.0,
+  "bucle": true,
+  "volumen": 0.8,
+  "descripcion": "Hidroavión de hélice acercándose sobre el mar (ElevenLabs)."
+ },
+ {
+  "nombre": "Cangrejo",
+  "archivo": "Cangrejo.ogg",
+  "duracion": 1.0,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Pinza de cangrejo de dibujo animado (ElevenLabs)."
+ },
+ {
+  "nombre": "Coco",
+  "archivo": "Coco.ogg",
+  "duracion": 1.0,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Coco que cae y da un coscorrón hueco (ElevenLabs)."
  }
 ]

@@ -43,7 +43,7 @@ def subir(ruta, nombre):
 
 def main():
     salida = sys.argv[1]
-    archivos = sys.argv[2:]
+    archivos = [a for a in sys.argv[2:] if not a.startswith("--")]
     resultados = json.load(open(salida)) if os.path.exists(salida) else {}
     for ruta in archivos:
         nombre = os.path.splitext(os.path.basename(ruta))[0]
