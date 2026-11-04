@@ -4,6 +4,7 @@ import json
 import os
 import pathlib
 import re
+import sys
 import time
 import urllib.request
 import uuid
@@ -77,21 +78,31 @@ def lua(v, sangria=1):
 
 
 def main():
-    ids = json.loads(IDS.read_text()) if IDS.exists() else {}
-    manifiesto = json.loads((CARPETA / "manifest.json").read_text(encoding="utf-8"))
-    for png in sorted(CARPETA.glob("*.png")):
+    args = sys.argv[1:]
+    carpeta = RAIZ / args[0] if args else CARPETA
+    ruta_ids = RAIZ / args[1] if len(args) > 1 else IDS
+    salida = RAIZ / args[2] if len(args) > 2 else SALIDA
+    ids = json.loads(ruta_ids.read_text()) if ruta_ids.exists() else {}
+    for png in sorted(carpeta.glob("*.png")):
         huella = hashlib.sha1(png.read_bytes()).hexdigest()
         if ids.get(png.stem, {}).get("sha1") == huella:
             continue
         decal = subir(png, png.stem)
         ids[png.stem] = {"id": imagen_de(decal), "decal": decal, "sha1": huella}
-        IDS.write_text(json.dumps(ids, indent=1))
+        ruta_ids.write_text(json.dumps(ids, indent=1))
         print(png.stem, ids[png.stem]["id"], flush=True)
+    ruta_manifiesto = carpeta / "manifest.json"
+    if not ruta_manifiesto.exists():
+        datos = {n: v["id"] for n, v in sorted(ids.items())}
+        salida.write_text("--!strict\nreturn " + lua(datos) + " :: { [string]: number }\n", encoding="utf-8", newline="\n")
+        print(salida.name, "con", len(datos), "imágenes")
+        return
+    manifiesto = json.loads(ruta_manifiesto.read_text(encoding="utf-8"))
     datos = {
         "Paneles": {n: {"id": ids[n]["id"], "tam": p["tam"], "corte": p["corte"], "escala": p["escala"]} for n, p in manifiesto["paneles"].items() if n in ids},
         "Iconos": {"id": ids["Iconos"]["id"], "celda": manifiesto["celda"], "posiciones": manifiesto["iconos"]},
     }
-    SALIDA.write_text("--!strict\nreturn " + lua(datos) + "\n", encoding="utf-8", newline="\n")
+    salida.write_text("--!strict\nreturn " + lua(datos) + "\n", encoding="utf-8", newline="\n")
     print("ImagenesGui.luau con", len(datos["Paneles"]), "paneles y", len(datos["Iconos"]["posiciones"]), "iconos")
 
 

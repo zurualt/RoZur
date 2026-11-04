@@ -4,9 +4,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
-local VFX = require(ReplicatedStorage.Shared.VFX)
 local Avion = require(script.Parent.Avion)
 local Pasajeros = require(script.Parent.Pasajeros)
+local Rafagas = require(script.Parent.Rafagas)
 
 local Estadisticas = require(script.Parent.Estadisticas)
 
@@ -50,18 +50,8 @@ end
 
 local function chispazo()
 	local punto = Vector3.new(rng:NextNumber(-7, 7), rng:NextNumber(101, 109), rng:NextNumber(-55, 15))
-	local p = Instance.new("Part")
-	p.Anchored = true
-	p.CanCollide = false
-	p.CanQuery = false
-	p.Transparency = 1
-	p.Size = Vector3.one
-	p.Position = punto
-	p.Parent = carpeta
-	VFX.chispas(p):Emit(30)
-	task.delay(1, function()
-		p:Destroy()
-	end)
+	Rafagas.lanzar("ExplosionPequena", punto, 0.5)
+	Rafagas.lanzar("Chispas", punto)
 end
 
 function Piratas.lanzar()
@@ -146,6 +136,8 @@ function Piratas.iniciar()
 					Estadisticas.sumar(jugador, "piratas")
 					table.remove(piratas, i)
 					RemotoAviso:FireAllClients(`¡{jugador.DisplayName} ha derribado un pirata! +{RECOMPENSA}`, "bien")
+					Rafagas.lanzar("Explosion", pos, 1.6)
+					Rafagas.lanzar("Escombros", pos, 1.4)
 					local f = p.carpeta
 					task.delay(2, function()
 						f:Destroy()

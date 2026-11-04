@@ -10,6 +10,7 @@ local VFX = require(ReplicatedStorage.Shared.VFX)
 local Estadisticas = require(script.Parent.Estadisticas)
 local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
+local Rafagas = require(script.Parent.Rafagas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoPiloto = Remotos:WaitForChild("Piloto") :: UnreliableRemoteEvent
@@ -347,6 +348,17 @@ local function aproximar(actual: number, objetivo: number, velocidad: number, dt
 	return actual + math.sign(objetivo - actual) * paso
 end
 
+local function polvoTren(escala: number)
+	local carpeta = exterior:FindFirstChild("Tren")
+	if carpeta then
+		for _, d in carpeta:GetDescendants() do
+			if d:IsA("BasePart") and d.Name == "Rueda" then
+				Rafagas.lanzar("Polvo", d.Position - Vector3.new(0, d.Size.Y / 2, 0), escala)
+			end
+		end
+	end
+end
+
 local function tocarSuelo()
 	local restante = Avion.restante()
 	local vertical = estado.vertical
@@ -356,9 +368,15 @@ local function tocarSuelo()
 	if estado.fase == "Aproximacion" and math.abs(restante) <= V.PISTA then
 		if vertical >= -V.VERTICAL_ATERRIZAJE and estado.velocidad <= V.VELOCIDAD_ATERRIZAJE and math.abs(estado.alabeo) < 15 then
 			avion:SetAttribute("Aterrizaje", if vertical >= -V.VERTICAL_ATERRIZAJE * 0.5 then "Perfecto" else "Bueno")
+			polvoTren(1)
+			if avion:GetAttribute("Aterrizaje") == "Perfecto" then
+				Rafagas.lanzar("Confeti", Config.CENTRO_AVION, 1.3)
+			end
 			aviso("¡Aterrizaje completado!", "bien")
 		elseif vertical >= -V.VERTICAL_ATERRIZAJE * 2.2 and estado.velocidad <= V.VELOCIDAD_ATERRIZAJE * 1.35 then
 			avion:SetAttribute("Aterrizaje", "Duro")
+			polvoTren(2)
+			Rafagas.lanzar("Onda", Vector3.new(0, 90.5, -20), 1.6)
 			Avion.danar(25)
 			aviso("¡Aterrizaje duro! Daños en el casco", "peligro")
 			avion:SetAttribute("Golpe", os.clock())

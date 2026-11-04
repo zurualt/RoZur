@@ -4,6 +4,7 @@ local Workspace = game:GetService("Workspace")
 
 local Carga = require(script.Parent.Carga)
 local Sonidos = require(script.Parent.Sonidos)
+local Rafagas = require(script.Parent.Rafagas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -55,6 +56,7 @@ function Aduana.iniciar()
 					end
 				elseif dentro(contenedor, p) and Carga.confiscar(maleta) then
 					Sonidos.emitir("Reparado", p)
+					Rafagas.lanzar("Monedas", p)
 					RemotoAviso:FireAllClients(`¡Contrabando requisado! +{Aduana.BONUS}`, "bien")
 				end
 			end

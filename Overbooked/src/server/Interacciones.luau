@@ -1,18 +1,17 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
-local VFX = require(ReplicatedStorage.Shared.VFX)
 local Agarre = require(script.Parent.Agarre)
 local Avion = require(script.Parent.Avion)
 local Carga = require(script.Parent.Carga)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
+local Rafagas = require(script.Parent.Rafagas)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Sonidos = require(script.Parent.Sonidos)
@@ -48,18 +47,8 @@ local function dentro(p: Vector3): boolean
 end
 
 local function salpicar(posicion: Vector3, tipo: string)
-	local marca = Instance.new("Part")
-	marca.Anchored = true
-	marca.CanCollide = false
-	marca.CanQuery = false
-	marca.CanTouch = false
-	marca.Transparency = 1
-	marca.Size = Vector3.one
-	marca.Position = posicion
-	marca.Parent = carpetaPeligros
 	Sonidos.emitir("Salpicadura", posicion)
-	VFX.salpicadura(marca, LIQUIDOS[tipo] or Color3.new(1, 1, 1)):Emit(28)
-	Debris:AddItem(marca, 1.5)
+	Rafagas.lanzar("Salpicadura", posicion, 1, LIQUIDOS[tipo])
 end
 
 local function charco(posicion: Vector3, tipo: string)
@@ -136,6 +125,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 		local donde = o.Position
 		if Pasajeros.servirCon(modelo, o) then
 			Sonidos.emitir("Servir", donde)
+			Rafagas.lanzar("Confeti", donde, 0.4)
 			Estadisticas.sumar(lanzador, "servir")
 			Estadisticas.sumar(lanzador, "punteria")
 			if lanzador then
@@ -145,6 +135,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 		end
 		Pasajeros.golpear(modelo, fuerza, dir, if tipo == "Cafe" then "Quemado" elseif tipo == "Agua" then "Mojado" else "Golpe", Avion.estado.cinturones)
 		Sonidos.emitir(if fuerza > 45 then "GolpeFuerte" else "Golpe", donde)
+		Rafagas.lanzar("Estrellas", donde, math.clamp(fuerza / 40, 0.6, 1.6))
 		if LIQUIDOS[tipo] then
 			local pos = o.Position
 			Agarre.soltarObjeto(o)
@@ -158,6 +149,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	if cocodrilo and CollectionService:HasTag(cocodrilo, "Cocodrilo") then
 		if fuerza > 18 and Carga.aturdir(3.5) then
 			Sonidos.emitir("GolpeMetal", o.Position)
+			Rafagas.lanzar("Estrellas", o.Position, 1.4)
 			if lanzador then
 				RemotoAviso:FireClient(lanzador, "¡Cocodrilo aturdido!", "bien")
 			end
@@ -169,6 +161,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	if jugador and not (jugador == lanzador and l and ahora - l.hora < 0.8) and fuerza > 40 then
 		Personajes.ragdoll(jugador, 1.1, dir * math.min(fuerza, 80) * 0.5 + Vector3.new(0, 18, 0))
 		Sonidos.emitir("GolpeFuerte", o.Position)
+		Rafagas.lanzar("Estrellas", o.Position, 1.2)
 		RemotoAviso:FireClient(jugador, if lanzador and lanzador ~= jugador then `¡{lanzador.DisplayName} te ha dado!` else "¡Cuidado con lo que vuela!", "peligro")
 		return false, true
 	end
@@ -277,6 +270,7 @@ local function resbalar(ahora: number)
 			if delta.Magnitude < c.parte.Size.Y / 2 and raiz.Position.Y - c.parte.Position.Y < 4.5 then
 				resbalones[jugador] = ahora + 2.5
 				Sonidos.emitir("Resbalon", raiz.Position)
+				Rafagas.lanzar("Salpicadura", c.parte.Position, 0.8, LIQUIDOS[c.tipo])
 				Personajes.ragdoll(jugador, 1.1, plano.Unit * 30 + Vector3.new(0, 16, 0))
 				RemotoAviso:FireClient(jugador, if c.tipo == "Cafe" then "¡Resbalón en el café!" else "¡Resbalón!", "peligro")
 				break

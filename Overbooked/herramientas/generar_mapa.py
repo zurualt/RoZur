@@ -519,9 +519,62 @@ def aeropuerto():
     return {"className": "Model", "children": p}
 
 
+def punto(tipo, x, y, z):
+    return part("Spot", (1, 1, 1), (x, y, z), "FFFFFF", transp=1, colision=False, sombra=False, atributos={"Spot": tipo})
+
+
+def isla():
+    cx, base, cz = -140.0, 90.2, -40.0
+    p = []
+    p.append(part("Agua", (2400, 0.4, 2400), (cx, 89.4, cz), "2FB3C4", "Glass", transp=0.3, colision=False, sombra=False))
+    p.append(part("FondoMar", (2400, 1, 2400), (cx, 86.1, cz), "D9B877", "Sand"))
+    p.append(part("ArenaPaso", (1.8, 500, 500), (cx, 87.7, cz), "D9B877", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
+    p.append(part("Arena", (2, 470, 470), (cx, 89.2, cz), "F2D9A0", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
+    p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart", r=rot(0, 180, 0)))
+    p.append(part("CubiertaMuelle", (30, 0.6, 8), (108, 89.9, -70), "6E4A2B", "WoodPlanks", transp=1))
+    d = [deco("Terreno", "IslaTerreno", (520, 8.1, 520), cx, base - 8.1, cz, 0, "F2D9A0", colision=False, transp=1)]
+    d.append(deco("Hoguera", "Hoguera", (6, 3, 6), -250, base, 0, 0, "6E4A2B", atributos={"Zona": "Hoguera"}))
+    d.append(deco("EstacionRadio", "EstacionRadio", (6, 4, 4), 58, base, -10, 90, "9C6B3E", atributos={"Zona": "Radio"}))
+    d.append(deco("Muelle", "Muelle", (8, 3, 30), 108, 87.2, -70, 90, "6E4A2B", colision=False))
+    d.append(deco("Sos", "SenalSOS", (24, 0.6, 9), -80, base, -210, 8, "9AA0A6", colision=False))
+    d.append(deco("RestosAla", "RestosAla", (26, 3, 10), -72, base, 72, 25, "FFF4E0"))
+    d.append(deco("RestosMotor", "RestosMotor", (6, 6, 6), 54, base - 1, 60, 40, "9AA0A6"))
+    cajones = ((70, 40), (-200, 120), (-300, -60), (20, -150))
+    for i, (x, z) in enumerate(cajones):
+        d.append(deco("Cajon", "Cajon", (3, 3, 3), x, base, z, i * 37, "9C6B3E"))
+    palmas = ((-60, -120), (-120, -150), (-200, -170), (-280, -120), (-320, -20), (-300, 80), (-230, 140), (-150, 160),
+              (-60, 150), (60, 120), (75, -90), (-180, 40), (-20, -200), (-250, -200), (-90, 20), (-330, 150))
+    for i, (x, z) in enumerate(palmas):
+        alto = 22 if i % 2 == 0 else 18
+        ancho = 12 if i % 2 == 0 else 10
+        d.append(deco("Palmera", f"Palmera{1 + i % 2}", (ancho, alto, ancho), x, base, z, (i * 53) % 360, "6DBE45", colision=False))
+        d.append(part("TroncoPalmera", (alto * 0.62, 1.6, 1.6), (x, base + alto * 0.31, z), "9C6B3E", "Wood", forma="Cylinder",
+                      r=rot(0, 0, 90), transp=1))
+        d.append(punto("coco", x + 2.2, base + 0.8, z + 1.6))
+        d.append(punto("coco", x - 1.8, base + 0.8, z - 2.0))
+    for x, z, g in ((-330, -110, 20), (-60, -232, 70), (-262, 150, 140), (40, -40, 200)):
+        d.append(deco("Roca", "RocaGrande", (14, 9, 12), x, base - 0.6, z, g, "9AA0A6"))
+    for i, (x, z) in enumerate(((-100, -60), (-220, -40), (-170, -230), (10, 100), (-280, 30), (-40, 60), (30, -120), (-350, 50))):
+        d.append(deco("Piedra", "RocaPequena", (5, 3, 4), x, base - 0.3, z, i * 61, "9AA0A6"))
+    for i, (x, z) in enumerate(((-70, -100), (-210, -150), (-300, -100), (-310, 100), (-160, 140), (50, 100), (-10, -180),
+                                (-200, 60), (-120, -10), (-260, 120), (70, -60), (-340, 0))):
+        d.append(deco("Arbusto", "ArbustoTropical", (5, 4, 5), x, base, z, i * 47, "6DBE45", colision=False))
+    for x, z in ((72, 44), (-200, 125), (-296, -56), (22, -146), (-325, -100), (-55, -222)):
+        d.append(punto("radio", x, base + 1.4, z))
+    for x, z in ((-118, -144), (-276, -114), (-148, 154), (58, 114), (-18, -194), (-226, 134), (-176, 46)):
+        d.append(punto("tronco", x, base + 1, z))
+    for x, z in ((80, -120), (-30, -250), (-330, 60), (-280, -200), (40, 150), (-120, 180)):
+        d.append(punto("cangrejo", x, base + 0.6, z))
+    d.append(punto("bengala", 64, base + 1, -24))
+    d.append(part("PuntoRescate", (1, 1, 1), (150, 89.6, -46), "FFFFFF", transp=1, colision=False, sombra=False,
+                  atributos={"Zona": "Rescate"}))
+    p.append(carpeta("Decorado", d))
+    return {"className": "Model", "children": p}
+
+
 def main():
     os.makedirs(SALIDA, exist_ok=True)
-    for nombre, datos in (("Avion", avion()), ("Aeropuerto", aeropuerto())):
+    for nombre, datos in (("Avion", avion()), ("Aeropuerto", aeropuerto()), ("Isla", isla())):
         ruta = os.path.join(SALIDA, nombre + ".model.json")
         with open(ruta, "w", encoding="utf-8") as f:
             json.dump(datos, f, ensure_ascii=False, indent=1)

@@ -81,7 +81,7 @@ return {
 		},
 	},
 	Iconos = {
-		id = 124709058898028,
+		id = 74590125642917,
 		celda = 128,
 		posiciones = {
 			Hamburguesa = { 0, 0 },
@@ -135,6 +135,13 @@ return {
 			Info = { 0, 768 },
 			Peligro = { 128, 768 },
 			Volante = { 256, 768 },
+			Radio = { 384, 768 },
+			Tronco = { 512, 768 },
+			Bengala = { 640, 768 },
+			Coco = { 768, 768 },
+			Cangrejo = { 896, 768 },
+			Hidroavion = { 0, 896 },
+			Palmera = { 128, 896 },
 		},
 	},
 }

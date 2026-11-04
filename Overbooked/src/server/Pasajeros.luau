@@ -83,7 +83,7 @@ local function levantar(p: Pasajero)
 end
 
 local function coincide(pedido: string, tipo: string?): boolean
-	return tipo ~= nil and (tipo == pedido or (tipo == "Bandeja" and pedido == "Hamburguesa"))
+	return tipo ~= nil and (tipo == pedido or (tipo == "Bandeja" and pedido == "Hamburguesa") or (tipo == "Coco" and pedido ~= "Cafe"))
 end
 
 local function quitarRacion(objeto: Instance): boolean

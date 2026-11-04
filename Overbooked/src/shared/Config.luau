@@ -221,7 +221,70 @@ Config.OBJETOS = {
 		visual = "Jaula",
 		nombre = "Jaula",
 	},
+	Tronco = {
+		tamano = Vector3.new(4, 1.2, 1.2),
+		color = Color3.fromRGB(156, 107, 62),
+		material = Enum.Material.Wood,
+		densidad = 0.6,
+		visual = "Tronco",
+		nombre = "tronco",
+	},
+	Coco = {
+		tamano = Vector3.new(1.2, 1.3, 1.2),
+		color = Color3.fromRGB(122, 74, 42),
+		material = Enum.Material.Wood,
+		densidad = 0.7,
+		visual = "Coco",
+		nombre = "coco",
+	},
+	RadioAntena = {
+		tamano = Vector3.new(1, 4, 1),
+		color = Color3.fromRGB(169, 176, 184),
+		material = Enum.Material.Metal,
+		densidad = 0.5,
+		visual = "RadioAntena",
+		nombre = "antena de radio",
+	},
+	RadioBateria = {
+		tamano = Vector3.new(1.6, 1.2, 1),
+		color = Color3.fromRGB(246, 196, 69),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 1,
+		visual = "RadioBateria",
+		nombre = "batería",
+	},
+	RadioCaja = {
+		tamano = Vector3.new(2, 1.4, 1.4),
+		color = Color3.fromRGB(31, 166, 160),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 0.8,
+		visual = "RadioCaja",
+		nombre = "radio",
+	},
+	Bengala = {
+		tamano = Vector3.new(0.4, 1.6, 0.4),
+		color = Color3.fromRGB(217, 68, 58),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 0.5,
+		visual = "Bengala",
+		nombre = "bengala",
+	},
 } :: { [string]: DefObjeto }
+
+Config.ISLA = {
+	CENTRO = Vector3.new(-140, 90.2, -40),
+	DURACION = 300,
+	RESCATE = 22,
+	ENTREGA = 6,
+	TRONCOS = 3,
+	PIEZAS = { "RadioAntena", "RadioBateria", "RadioCaja" },
+	CANGREJOS = 6,
+	COCOS = 12,
+	VELOCIDAD_CANGREJO = 5,
+	PELLIZCO = 2.6,
+	PAGO = 0.5,
+	BONUS_RESCATE = 300,
+}
 
 Config.COMIDA = { "Hamburguesa", "Cafe", "Agua" }
 

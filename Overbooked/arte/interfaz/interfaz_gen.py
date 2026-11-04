@@ -927,6 +927,87 @@ def i_volante():
     pieza(rrect(46, 52, 82, 70, 5), NARANJA, 3.6, semilla=493)
 
 
+@icono("Radio")
+def i_radio():
+    trazo([(84, 92), (100, 122)], 5.0, TINTA, semilla=501)
+    puntos(100, 122, 4.0, ROJO)
+    pieza(rrect(14, 24, 114, 92, 12), TURQUESA, 5.2, semilla=502, rayas={"sep": 7, "ancho": 1.5, "color": "178580", "zona": lambda q: q[0] > 90})
+    pieza(rrect(22, 34, 66, 82, 8), PAPEL2, 3.6, semilla=503)
+    for y in (44, 56, 68):
+        for x in (30, 42, 54):
+            puntos(x, y, 2.6)
+    pieza(elipse(88, 64, 14, 14, 24), PAPEL, 3.8, semilla=504)
+    trazo([(88, 64), (96, 72)], 3.6, NARANJA, semilla=505)
+    pieza(rrect(76, 32, 104, 42, 3), AMARILLO, 3.0, semilla=506)
+
+
+@icono("Tronco")
+def i_tronco():
+    pieza(rrect(12, 40, 104, 88, 22), "9C6B3E", 5.0, semilla=511, rayas={"sep": 6, "ancho": 1.6, "color": "6E4A2B", "angulo": 0.0, "zona": lambda q: q[1] < 56})
+    pieza(elipse(100, 64, 18, 24, 28), "E9C083", 5.0, semilla=512)
+    trazo(elipse(100, 64, 10, 14, 20), 3.0, "9C6B3E", cerrado=True, semilla=513)
+    puntos(100, 64, 2.6, "9C6B3E")
+    trazo([(30, 76), (70, 78)], 3.0, "6E4A2B", semilla=514)
+
+
+@icono("Bengala")
+def i_bengala():
+    pieza(rrect(52, 10, 76, 80, 8), ROJO, 5.0, semilla=521, rayas={"sep": 6, "ancho": 1.5, "color": "B43328", "zona": lambda q: q[0] > 66})
+    pieza(rrect(48, 74, 80, 86, 4), BLANCO, 3.6, semilla=522)
+    llama = suave([(64, 124), (80, 104), (78, 90), (64, 84), (50, 90), (48, 104)], True, 6)
+    pieza(llama, NARANJA, 4.4, semilla=523)
+    pieza(suave([(64, 112), (72, 100), (64, 90), (56, 100)], True, 5), AMARILLO, 3.0, semilla=524, desfase=(0, 0))
+    for a in (40, 90, 140):
+        r = math.radians(a)
+        trazo([(64 + 30 * math.cos(r), 100 + 24 * math.sin(r)), (64 + 40 * math.cos(r), 100 + 32 * math.sin(r))], 3.4, AMARILLO, semilla=525 + a)
+
+
+@icono("Coco")
+def i_coco():
+    pieza(elipse(64, 60, 46, 44, 40), "7A4A2A", 5.2, semilla=531, rayas={"sep": 6, "ancho": 1.6, "color": "5A3520", "zona": lambda q: q[0] > 70})
+    for x, y in ((50, 78), (72, 80), (60, 64)):
+        pieza(elipse(x, y, 6, 7, 14), "3E2414", 2.6, semilla=532 + x, desfase=(0, 0))
+    trazo(elipse(64, 60, 36, 34, 14, 0, 110, 150), 4.0, "A87A55", semilla=536)
+
+
+@icono("Cangrejo")
+def i_cangrejo():
+    for s in (-1, 1):
+        for k in range(3):
+            trazo([(64 + s * 26, 46 - k * 6), (64 + s * 50, 30 - k * 9)], 4.0, TINTA, semilla=541 + k + s * 10)
+        trazo([(64 + s * 24, 66), (64 + s * 40, 90)], 4.4, TINTA, semilla=545 + s)
+        pieza(suave([(64 + s * 40, 112), (64 + s * 54, 100), (64 + s * 50, 84), (64 + s * 36, 82), (64 + s * 30, 96), (64 + s * 42, 98)], True, 4), ROJO, 4.0, semilla=547 + s)
+        trazo([(64 + s * 12, 70), (64 + s * 16, 92)], 3.4, TINTA, semilla=549 + s)
+        pieza(elipse(64 + s * 16, 96, 6, 6, 12), BLANCO, 2.8, semilla=551 + s, desfase=(0, 0))
+        puntos(64 + s * 16, 96, 2.4)
+    pieza(elipse(64, 56, 36, 24, 36), ROJO, 5.2, semilla=553, brillo=elipse(64, 56, 26, 16, 10, 0, 110, 160))
+    trazo(elipse(64, 56, 10, 6, 12, 0, 200, 340), 3.2, TINTA, semilla=554)
+
+
+@icono("Hidroavion")
+def i_hidroavion():
+    for x in (42, 86):
+        trazo([(x, 48), (x - 4, 30)], 3.4, TINTA, semilla=561 + x)
+    pieza(suave([(14, 28), (24, 32), (112, 32), (118, 26), (104, 18), (20, 18)], True, 3), "F2DCA8", 4.0, semilla=563)
+    dibujar_avion(lambda p: girar(p, 0, (64, 64), 0.9, (0, 4)), 564, 0.9)
+    for k in range(3):
+        trazo([(10 + k * 34, 12), (30 + k * 34, 12)], 3.0, CIELO, semilla=570 + k)
+
+
+@icono("Palmera")
+def i_palmera():
+    tronco = suave([(56, 12), (60, 40), (66, 70), (74, 92)], False, 6)
+    trazo(tronco, 11.0, TINTA, semilla=581, var=0.15, afilar=False)
+    trazo(tronco, 6.0, "9C6B3E", semilla=582, var=0.15, amp=0.5, afilar=False)
+    for a, l in ((160, 44), (120, 40), (70, 42), (30, 46), (200, 34), (-10, 34)):
+        r = math.radians(a)
+        punta = (74 + l * math.cos(r), 92 + l * math.sin(r) * 0.7)
+        medio = (74 + l * 0.5 * math.cos(r), 92 + l * 0.5 * math.sin(r) * 0.7 + 10)
+        pieza(suave([(74, 92), medio, punta, (medio[0], medio[1] - 9)], True, 4), VERDE, 3.6, semilla=583 + a)
+    for x, y in ((70, 84), (80, 86)):
+        pieza(elipse(x, y, 5, 5, 12), "7A4A2A", 2.6, semilla=590 + x, desfase=(0, 0))
+
+
 def atlas():
     escena(1024, 1024)
     manifiesto = {}

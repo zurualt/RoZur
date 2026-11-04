@@ -1,0 +1,6601 @@
+{
+ "className": "Model",
+ "children": [
+  {
+   "name": "Agua",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     2400,
+     0.4,
+     2400
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       -140.0,
+       89.4,
+       -40.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.1843137254901961,
+     0.7019607843137254,
+     0.7686274509803922
+    ],
+    "Material": "Glass",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": false,
+    "Transparency": 0.3,
+    "CanQuery": false
+   }
+  },
+  {
+   "name": "FondoMar",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     2400,
+     1,
+     2400
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       -140.0,
+       86.1,
+       -40.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.8509803921568627,
+     0.7215686274509804,
+     0.4666666666666667
+    ],
+    "Material": "Sand",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   }
+  },
+  {
+   "name": "ArenaPaso",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.8,
+     500,
+     500
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       -140.0,
+       87.7,
+       -40.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        -1.0,
+        0.0
+       ],
+       [
+        1.0,
+        6.123233995736766e-17,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.8509803921568627,
+     0.7215686274509804,
+     0.4666666666666667
+    ],
+    "Material": "Sand",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true,
+    "Transparency": 1,
+    "Shape": "Cylinder"
+   }
+  },
+  {
+   "name": "Arena",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     2,
+     470,
+     470
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       -140.0,
+       89.2,
+       -40.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        -1.0,
+        0.0
+       ],
+       [
+        1.0,
+        6.123233995736766e-17,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.9490196078431372,
+     0.8509803921568627,
+     0.6274509803921569
+    ],
+    "Material": "Sand",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true,
+    "Transparency": 1,
+    "Shape": "Cylinder"
+   }
+  },
+  {
+   "name": "RampaSuelo",
+   "className": "WedgePart",
+   "properties": {
+    "Size": [
+     12,
+     2.6,
+     5.2
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       0,
+       91.3,
+       31.4
+      ],
+      "orientation": [
+       [
+        -1.0,
+        0.0,
+        1.2246467991473532e-16
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -1.2246467991473532e-16,
+        0.0,
+        -1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.5411764705882353,
+     0.5607843137254902,
+     0.5882352941176471
+    ],
+    "Material": "DiamondPlate",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   }
+  },
+  {
+   "name": "CubiertaMuelle",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     30,
+     0.6,
+     8
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       108,
+       89.9,
+       -70
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.43137254901960786,
+     0.2901960784313726,
+     0.16862745098039217
+    ],
+    "Material": "WoodPlanks",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true,
+    "Transparency": 1
+   }
+  },
+  {
+   "name": "Decorado",
+   "className": "Folder",
+   "children": [
+    {
+     "name": "Terreno",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       520,
+       8.1,
+       520
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -140.0,
+         86.15,
+         -40.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.8509803921568627,
+       0.6274509803921569
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "IslaTerreno",
+      "Base": 82.10000000000001
+     }
+    },
+    {
+     "name": "Hoguera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       6,
+       3,
+       6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -250,
+         91.7,
+         0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.43137254901960786,
+       0.2901960784313726,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "Hoguera",
+      "Base": 90.2,
+      "Zona": "Hoguera"
+     }
+    },
+    {
+     "name": "EstacionRadio",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       6,
+       4,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         58,
+         92.2,
+         -10
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "EstacionRadio",
+      "Base": 90.2,
+      "Zona": "Radio"
+     }
+    },
+    {
+     "name": "Muelle",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       8,
+       3,
+       30
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         108,
+         88.7,
+         -70
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.43137254901960786,
+       0.2901960784313726,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Muelle",
+      "Base": 87.2
+     }
+    },
+    {
+     "name": "Sos",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       24,
+       0.6,
+       9
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -80,
+         90.5,
+         -210
+        ],
+        "orientation": [
+         [
+          0.9902680687415704,
+          0.0,
+          0.13917310096006544
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.13917310096006544,
+          0.0,
+          0.9902680687415704
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "SenalSOS",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "RestosAla",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       26,
+       3,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -72,
+         91.7,
+         72
+        ],
+        "orientation": [
+         [
+          0.9063077870366499,
+          0.0,
+          0.42261826174069944
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.42261826174069944,
+          0.0,
+          0.9063077870366499
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       0.9568627450980393,
+       0.8784313725490196
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RestosAla",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "RestosMotor",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       6,
+       6,
+       6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         54,
+         92.2,
+         60
+        ],
+        "orientation": [
+         [
+          0.766044443118978,
+          0.0,
+          0.6427876096865393
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.6427876096865393,
+          0.0,
+          0.766044443118978
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RestosMotor",
+      "Base": 89.2
+     }
+    },
+    {
+     "name": "Cajon",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       3,
+       3,
+       3
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         70,
+         91.7,
+         40
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "Cajon",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Cajon",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       3,
+       3,
+       3
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -200,
+         91.7,
+         120
+        ],
+        "orientation": [
+         [
+          0.7986355100472928,
+          0.0,
+          0.6018150231520483
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.6018150231520483,
+          0.0,
+          0.7986355100472928
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "Cajon",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Cajon",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       3,
+       3,
+       3
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -300,
+         91.7,
+         -60
+        ],
+        "orientation": [
+         [
+          0.27563735581699916,
+          0.0,
+          0.9612616959383189
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9612616959383189,
+          0.0,
+          0.27563735581699916
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "Cajon",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Cajon",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       3,
+       3,
+       3
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         20,
+         91.7,
+         -150
+        ],
+        "orientation": [
+         [
+          -0.35836794954530027,
+          0.0,
+          0.9335804264972017
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9335804264972017,
+          0.0,
+          -0.35836794954530027
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "Cajon",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -60,
+         101.2,
+         -120
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -60,
+         97.02,
+         -120
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -57.8,
+         91.0,
+         -118.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -61.8,
+         91.0,
+         -122.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -120,
+         99.2,
+         -150
+        ],
+        "orientation": [
+         [
+          0.6018150231520484,
+          0.0,
+          0.7986355100472928
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.7986355100472928,
+          0.0,
+          0.6018150231520484
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -120,
+         95.78,
+         -150
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -117.8,
+         91.0,
+         -148.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -121.8,
+         91.0,
+         -152.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -200,
+         101.2,
+         -170
+        ],
+        "orientation": [
+         [
+          -0.27563735581699905,
+          0.0,
+          0.9612616959383189
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9612616959383189,
+          0.0,
+          -0.27563735581699905
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -200,
+         97.02,
+         -170
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -197.8,
+         91.0,
+         -168.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -201.8,
+         91.0,
+         -172.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -280,
+         99.2,
+         -120
+        ],
+        "orientation": [
+         [
+          -0.9335804264972017,
+          0.0,
+          0.3583679495453002
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.3583679495453002,
+          0.0,
+          -0.9335804264972017
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -280,
+         95.78,
+         -120
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -277.8,
+         91.0,
+         -118.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -281.8,
+         91.0,
+         -122.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -320,
+         101.2,
+         -20
+        ],
+        "orientation": [
+         [
+          -0.8480480961564261,
+          0.0,
+          -0.5299192642332048
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.5299192642332048,
+          0.0,
+          -0.8480480961564261
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -320,
+         97.02,
+         -20
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -317.8,
+         91.0,
+         -18.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -321.8,
+         91.0,
+         -22.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -300,
+         99.2,
+         80
+        ],
+        "orientation": [
+         [
+          -0.08715574274765825,
+          0.0,
+          -0.9961946980917455
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.9961946980917455,
+          0.0,
+          -0.08715574274765825
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -300,
+         95.78,
+         80
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -297.8,
+         91.0,
+         81.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -301.8,
+         91.0,
+         78.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -230,
+         101.2,
+         140
+        ],
+        "orientation": [
+         [
+          0.7431448254773942,
+          0.0,
+          -0.6691306063588581
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.6691306063588581,
+          0.0,
+          0.7431448254773942
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -230,
+         97.02,
+         140
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -227.8,
+         91.0,
+         141.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -231.8,
+         91.0,
+         138.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -150,
+         99.2,
+         160
+        ],
+        "orientation": [
+         [
+          0.981627183447664,
+          0.0,
+          0.1908089953765448
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.1908089953765448,
+          0.0,
+          0.981627183447664
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -150,
+         95.78,
+         160
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -147.8,
+         91.0,
+         161.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -151.8,
+         91.0,
+         158.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -60,
+         101.2,
+         150
+        ],
+        "orientation": [
+         [
+          0.43837114678907746,
+          0.0,
+          0.898794046299167
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.898794046299167,
+          0.0,
+          0.43837114678907746
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -60,
+         97.02,
+         150
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -57.8,
+         91.0,
+         151.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -61.8,
+         91.0,
+         148.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         60,
+         99.2,
+         120
+        ],
+        "orientation": [
+         [
+          -0.45399049973954675,
+          0.0,
+          0.8910065241883679
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.8910065241883679,
+          0.0,
+          -0.45399049973954675
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         60,
+         95.78,
+         120
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         62.2,
+         91.0,
+         121.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         58.2,
+         91.0,
+         118.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         75,
+         101.2,
+         -90
+        ],
+        "orientation": [
+         [
+          -0.984807753012208,
+          0.0,
+          0.17364817766693028
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.17364817766693028,
+          0.0,
+          -0.984807753012208
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         75,
+         97.02,
+         -90
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         77.2,
+         91.0,
+         -88.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         73.2,
+         91.0,
+         -92.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -180,
+         99.2,
+         40
+        ],
+        "orientation": [
+         [
+          -0.7313537016191706,
+          0.0,
+          -0.6819983600624984
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.6819983600624984,
+          0.0,
+          -0.7313537016191706
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -180,
+         95.78,
+         40
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -177.8,
+         91.0,
+         41.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -181.8,
+         91.0,
+         38.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -20,
+         101.2,
+         -200
+        ],
+        "orientation": [
+         [
+          0.10452846326765299,
+          0.0,
+          -0.9945218953682734
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.9945218953682734,
+          0.0,
+          0.10452846326765299
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -20,
+         97.02,
+         -200
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -17.8,
+         91.0,
+         -198.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -21.8,
+         91.0,
+         -202.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -250,
+         99.2,
+         -200
+        ],
+        "orientation": [
+         [
+          0.8571673007021121,
+          0.0,
+          -0.5150380749100545
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.5150380749100545,
+          0.0,
+          0.8571673007021121
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -250,
+         95.78,
+         -200
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -247.8,
+         91.0,
+         -198.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -251.8,
+         91.0,
+         -202.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       12,
+       22,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -90,
+         101.2,
+         20
+        ],
+        "orientation": [
+         [
+          0.9271838545667874,
+          0.0,
+          0.374606593415912
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.374606593415912,
+          0.0,
+          0.9271838545667874
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera1",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       13.64,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -90,
+         97.02,
+         20
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -87.8,
+         91.0,
+         21.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -91.8,
+         91.0,
+         18.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Palmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10,
+       18,
+       10
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -330,
+         99.2,
+         150
+        ],
+        "orientation": [
+         [
+          0.25881904510252074,
+          0.0,
+          0.9659258262890683
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9659258262890683,
+          0.0,
+          0.25881904510252074
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Palmera2",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "TroncoPalmera",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11.16,
+       1.6,
+       1.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -330,
+         95.78,
+         150
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          -1.0,
+          0.0
+         ],
+         [
+          1.0,
+          6.123233995736766e-17,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.611764705882353,
+       0.4196078431372549,
+       0.24313725490196078
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Transparency": 1,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -327.8,
+         91.0,
+         151.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -331.8,
+         91.0,
+         148.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "coco"
+     }
+    },
+    {
+     "name": "Roca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       14,
+       9,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -330,
+         94.1,
+         -110
+        ],
+        "orientation": [
+         [
+          0.9396926207859084,
+          0.0,
+          0.3420201433256687
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.3420201433256687,
+          0.0,
+          0.9396926207859084
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaGrande",
+      "Base": 89.60000000000001
+     }
+    },
+    {
+     "name": "Roca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       14,
+       9,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -60,
+         94.1,
+         -232
+        ],
+        "orientation": [
+         [
+          0.3420201433256688,
+          0.0,
+          0.9396926207859083
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9396926207859083,
+          0.0,
+          0.3420201433256688
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaGrande",
+      "Base": 89.60000000000001
+     }
+    },
+    {
+     "name": "Roca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       14,
+       9,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -262,
+         94.1,
+         150
+        ],
+        "orientation": [
+         [
+          -0.7660444431189779,
+          0.0,
+          0.6427876096865395
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.6427876096865395,
+          0.0,
+          -0.7660444431189779
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaGrande",
+      "Base": 89.60000000000001
+     }
+    },
+    {
+     "name": "Roca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       14,
+       9,
+       12
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         40,
+         94.1,
+         -40
+        ],
+        "orientation": [
+         [
+          -0.9396926207859084,
+          0.0,
+          -0.34202014332566866
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.34202014332566866,
+          0.0,
+          -0.9396926207859084
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaGrande",
+      "Base": 89.60000000000001
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -100,
+         91.4,
+         -60
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -220,
+         91.4,
+         -40
+        ],
+        "orientation": [
+         [
+          0.4848096202463371,
+          0.0,
+          0.8746197071393957
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.8746197071393957,
+          0.0,
+          0.4848096202463371
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -170,
+         91.4,
+         -230
+        ],
+        "orientation": [
+         [
+          -0.5299192642332048,
+          0.0,
+          0.8480480961564261
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.8480480961564261,
+          0.0,
+          -0.5299192642332048
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         10,
+         91.4,
+         100
+        ],
+        "orientation": [
+         [
+          -0.9986295347545738,
+          0.0,
+          -0.052335956242943564
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.052335956242943564,
+          0.0,
+          -0.9986295347545738
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -280,
+         91.4,
+         30
+        ],
+        "orientation": [
+         [
+          -0.43837114678907774,
+          0.0,
+          -0.8987940462991668
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.8987940462991668,
+          0.0,
+          -0.43837114678907774
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -40,
+         91.4,
+         60
+        ],
+        "orientation": [
+         [
+          0.573576436351046,
+          0.0,
+          -0.8191520442889918
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.8191520442889918,
+          0.0,
+          0.573576436351046
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         30,
+         91.4,
+         -120
+        ],
+        "orientation": [
+         [
+          0.9945218953682734,
+          0.0,
+          0.10452846326765293
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.10452846326765293,
+          0.0,
+          0.9945218953682734
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Piedra",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       3,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -350,
+         91.4,
+         50
+        ],
+        "orientation": [
+         [
+          0.39073112848927394,
+          0.0,
+          0.9205048534524403
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9205048534524403,
+          0.0,
+          0.39073112848927394
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6039215686274509,
+       0.6274509803921569,
+       0.6509803921568628
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "RocaPequena",
+      "Base": 89.9
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -70,
+         92.2,
+         -100
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -210,
+         92.2,
+         -150
+        ],
+        "orientation": [
+         [
+          0.6819983600624985,
+          0.0,
+          0.7313537016191705
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.7313537016191705,
+          0.0,
+          0.6819983600624985
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -300,
+         92.2,
+         -100
+        ],
+        "orientation": [
+         [
+          -0.06975647374412533,
+          0.0,
+          0.9975640502598242
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9975640502598242,
+          0.0,
+          -0.06975647374412533
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -310,
+         92.2,
+         100
+        ],
+        "orientation": [
+         [
+          -0.7771459614569709,
+          0.0,
+          0.6293203910498374
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.6293203910498374,
+          0.0,
+          -0.7771459614569709
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -160,
+         92.2,
+         140
+        ],
+        "orientation": [
+         [
+          -0.9902680687415703,
+          0.0,
+          -0.13917310096006552
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.13917310096006552,
+          0.0,
+          -0.9902680687415703
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         50,
+         92.2,
+         100
+        ],
+        "orientation": [
+         [
+          -0.5735764363510464,
+          0.0,
+          -0.8191520442889916
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.8191520442889916,
+          0.0,
+          -0.5735764363510464
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -10,
+         92.2,
+         -180
+        ],
+        "orientation": [
+         [
+          0.20791169081775943,
+          0.0,
+          -0.9781476007338056
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.9781476007338056,
+          0.0,
+          0.20791169081775943
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -200,
+         92.2,
+         60
+        ],
+        "orientation": [
+         [
+          0.8571673007021121,
+          0.0,
+          -0.5150380749100545
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.5150380749100545,
+          0.0,
+          0.8571673007021121
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -120,
+         92.2,
+         -10
+        ],
+        "orientation": [
+         [
+          0.9612616959383188,
+          0.0,
+          0.27563735581699933
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.27563735581699933,
+          0.0,
+          0.9612616959383188
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -260,
+         92.2,
+         120
+        ],
+        "orientation": [
+         [
+          0.453990499739547,
+          0.0,
+          0.8910065241883678
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.8910065241883678,
+          0.0,
+          0.453990499739547
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         70,
+         92.2,
+         -60
+        ],
+        "orientation": [
+         [
+          -0.34202014332566805,
+          0.0,
+          0.9396926207859086
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.9396926207859086,
+          0.0,
+          -0.34202014332566805
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Arbusto",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5,
+       4,
+       5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -340,
+         92.2,
+         0
+        ],
+        "orientation": [
+         [
+          -0.9205048534524403,
+          0.0,
+          0.390731128489274
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.390731128489274,
+          0.0,
+          -0.9205048534524403
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.42745098039215684,
+       0.7450980392156863,
+       0.27058823529411763
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "ArbustoTropical",
+      "Base": 90.2
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         72,
+         91.6,
+         44
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "radio"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -200,
+         91.6,
+         125
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "radio"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -296,
+         91.6,
+         -56
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "radio"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         22,
+         91.6,
+         -146
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "radio"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -325,
+         91.6,
+         -100
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "radio"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -55,
+         91.6,
+         -222
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "radio"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -118,
+         91.2,
+         -144
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -276,
+         91.2,
+         -114
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -148,
+         91.2,
+         154
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         58,
+         91.2,
+         114
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -18,
+         91.2,
+         -194
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -226,
+         91.2,
+         134
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -176,
+         91.2,
+         46
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "tronco"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         80,
+         90.8,
+         -120
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "cangrejo"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -30,
+         90.8,
+         -250
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "cangrejo"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -330,
+         90.8,
+         60
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "cangrejo"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -280,
+         90.8,
+         -200
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "cangrejo"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         40,
+         90.8,
+         150
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "cangrejo"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -120,
+         90.8,
+         180
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "cangrejo"
+     }
+    },
+    {
+     "name": "Spot",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         64,
+         91.2,
+         -24
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Spot": "bengala"
+     }
+    },
+    {
+     "name": "PuntoRescate",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         150,
+         89.6,
+         -46
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Zona": "Rescate"
+     }
+    }
+   ]
+  }
+ ]
+}

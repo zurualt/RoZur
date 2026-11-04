@@ -66,6 +66,9 @@ local resaltado: Highlight
 local ultimoApuntado: Instance? = nil
 local panelTienda: ImageLabel? = nil
 local estadoTienda: { [string]: any }? = nil
+local panelIsla: ImageLabel
+local textosIsla: { [string]: TextLabel } = {}
+local iconoTiempoIsla: ImageLabel
 
 local function numero(nombre: string): number
 	local v = avion:GetAttribute(nombre)
@@ -209,6 +212,24 @@ local function construir()
 		Gui.fila(lineasAyuda, l[1], l[2] :: string, 26, Gui.TINTA, i)
 	end
 
+	panelIsla = Gui.panel(raiz, "Papel", UDim2.fromOffset(310, 206), UDim2.new(1, -14, 0, 192), Vector2.new(1, 0))
+	panelIsla.Rotation = -1.5
+	panelIsla.Visible = false
+	izquierda(Gui.texto(panelIsla, "NÁUFRAGOS", UDim2.new(1, -50, 0, 30), UDim2.fromOffset(26, 18), Gui.NARANJA, true))
+	local filasIsla = Instance.new("Frame")
+	filasIsla.BackgroundTransparency = 1
+	filasIsla.Size = UDim2.new(1, -50, 1, -70)
+	filasIsla.Position = UDim2.fromOffset(26, 54)
+	filasIsla.Parent = panelIsla
+	Gui.lista(filasIsla, 4)
+	for i, f in { { "radio", "Radio" }, { "lena", "Tronco" }, { "fuego", "Bengala" }, { "tiempo", "Reloj" } } do
+		local fila = Gui.fila(filasIsla, f[2], "", 28, Gui.TINTA, i)
+		textosIsla[f[1]] = fila:FindFirstChildOfClass("TextLabel") :: TextLabel
+		if f[1] == "tiempo" then
+			iconoTiempoIsla = fila:FindFirstChildOfClass("ImageLabel") :: ImageLabel
+		end
+	end
+
 	local indicacion = Gui.texto(raiz, "H controles · M música", UDim2.fromOffset(220, 24), UDim2.new(1, -14, 1, -10), Gui.PAPEL, false, 20)
 	indicacion.AnchorPoint = Vector2.new(1, 1)
 	indicacion.TextXAlignment = Enum.TextXAlignment.Right
@@ -263,7 +284,18 @@ local NOMBRES_FASE = {
 	Frenando = "FRENANDO",
 	Aterrizado = "EN TIERRA",
 	Estrellado = "¡ESTRELLADOS!",
+	Isla = "NÁUFRAGOS · ¡Pedid rescate!",
+	Resultados = "FIN DEL VUELO · Cuentas de la tripulación",
 }
+
+local function numeroEstado(nombre: string): number
+	local v = Estado:GetAttribute(nombre)
+	return if typeof(v) == "number" then v else 0
+end
+
+local function reloj(segundos: number): string
+	return string.format("%d:%02d", math.floor(segundos / 60), segundos % 60)
+end
 
 local function decodificarContrato()
 	local json = Estado:GetAttribute("Contrato")
@@ -278,11 +310,21 @@ end
 local function actualizarBarra()
 	local faseJuego = Estado:GetAttribute("Fase")
 	local faseAvion = avion:GetAttribute("Fase")
-	local clave = if faseJuego == "Aeropuerto" or faseJuego == "Embarque" then faseJuego else faseAvion
+	local clave = if faseJuego == "Aeropuerto" or faseJuego == "Embarque" or faseJuego == "Isla" or faseJuego == "Resultados" then faseJuego else faseAvion
 	textoFase.Text = NOMBRES_FASE[if typeof(clave) == "string" then clave else ""] or ""
 	local contrato = contratoCache
 	local progreso = 0
-	if faseJuego == "Aeropuerto" then
+	if faseJuego == "Isla" then
+		local quedan = numeroEstado("IslaQuedan")
+		local rescate = numeroEstado("IslaRescate")
+		textoRuta.Text = if rescate > 0 then "¡Viene el hidroavión! Id hacia el muelle" else `Isla desierta · quedan {reloj(quedan)} para que os encuentren`
+		progreso = 1 - quedan / Config.ISLA.DURACION
+		Gui.llenar(relleno, progreso)
+		avionRuta.Position = UDim2.fromScale(progreso, 0.5)
+		textoCuenta.Text = if rescate > 0 then tostring(rescate) else ""
+		relojCuenta.Visible = rescate > 0
+		return
+	elseif faseJuego == "Aeropuerto" then
 		local ciudad = Estado:GetAttribute("Ciudad")
 		textoRuta.Text = `Estás en {if typeof(ciudad) == "string" then ciudad else "?"} · entrad en la puerta de vuestro vuelo`
 	elseif contrato then
@@ -315,6 +357,76 @@ local function actualizarEstado()
 	textoCinturones.Text = if puestos then "Cinturones <b>ON</b>" else "Cinturones <b>OFF</b>"
 	textoCinturones.TextColor3 = if puestos then Gui.TINTA else Gui.ROJO
 	iconoCinturones.ImageTransparency = if puestos then 0 else 0.45
+end
+
+local function tarea(t: TextLabel, hecho: boolean, contenido: string)
+	t.Text = if hecho then `<s>{contenido}</s>` else contenido
+	t.TextColor3 = if hecho then Gui.VERDE else Gui.TINTA
+end
+
+local function actualizarIsla()
+	local enIsla = Estado:GetAttribute("Fase") == "Isla"
+	panelIsla.Visible = enIsla
+	if not enIsla then
+		return
+	end
+	local piezas = #Config.ISLA.PIEZAS
+	local radio = numeroEstado("IslaRadio")
+	local lena = numeroEstado("IslaLena")
+	local fuego = Estado:GetAttribute("IslaFuego") == true
+	tarea(textosIsla.radio, radio >= piezas, `Piezas de radio {radio}/{piezas}`)
+	tarea(textosIsla.lena, lena >= Config.ISLA.TRONCOS, `Leña en la hoguera {lena}/{Config.ISLA.TRONCOS}`)
+	tarea(textosIsla.fuego, fuego, if fuego then "Hoguera encendida" else "Enciende la hoguera con la bengala")
+	local rescate = numeroEstado("IslaRescate")
+	if rescate > 0 then
+		Gui.ponerIcono(iconoTiempoIsla, "Hidroavion")
+		textosIsla.tiempo.Text = `<b>¡Rescate en {rescate} s!</b>`
+		textosIsla.tiempo.TextColor3 = Gui.TURQUESA
+	else
+		Gui.ponerIcono(iconoTiempoIsla, "Reloj")
+		textosIsla.tiempo.Text = `Quedan {reloj(numeroEstado("IslaQuedan"))}`
+		textosIsla.tiempo.TextColor3 = Gui.TINTA
+	end
+end
+
+local marcasIsla: { [Instance]: BillboardGui } = {}
+
+local function marcarIsla(objeto: Instance, destino: boolean)
+	if not objeto:IsA("BasePart") or marcasIsla[objeto] then
+		return
+	end
+	local b = Instance.new("BillboardGui")
+	b.Name = "MarcaIsla"
+	b.Adornee = objeto
+	b.AlwaysOnTop = true
+	b.Size = if destino then UDim2.fromOffset(70, 70) else UDim2.fromOffset(46, 46)
+	b.StudsOffsetWorldSpace = Vector3.new(0, if destino then 8 else 3, 0)
+	b.MaxDistance = 700
+	b.ResetOnSpawn = false
+	local icono = objeto:GetAttribute("Icono")
+	local img = Gui.icono(b, if typeof(icono) == "string" then icono else "Info", UDim2.fromScale(1, 1), UDim2.new())
+	if destino then
+		local aro = Gui.panel(b, "Sello", UDim2.fromScale(1.5, 1.5), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
+		aro.ImageColor3 = Gui.AMARILLO
+		aro.ZIndex = 0
+		img.ZIndex = 2
+	end
+	local function portado()
+		local p = objeto:GetAttribute("Portador")
+		b.Enabled = not (typeof(p) == "number" and p ~= 0)
+	end
+	objeto:GetAttributeChangedSignal("Portador"):Connect(portado)
+	portado()
+	b.Parent = etiquetasGui
+	marcasIsla[objeto] = b
+end
+
+local function desmarcarIsla(objeto: Instance)
+	local b = marcasIsla[objeto]
+	if b then
+		b:Destroy()
+		marcasIsla[objeto] = nil
+	end
 end
 
 local function actualizarPiloto()
@@ -612,12 +724,13 @@ local function resultados(datos: any)
 		task.delay(1.2, Sonido.reproducir, "Caja", nil, 1, 1)
 	end
 	local estrellado = datos.tipo == "Estrellado"
+	local rescatado = datos.tipo == "Rescatado"
 	local perfecto = datos.aterrizaje == "Perfecto"
-	tituloResultados.Text = if estrellado then "¡ESTRELLADOS!" elseif perfecto then "¡ATERRIZAJE PERFECTO!" else "¡VUELO COMPLETADO!"
-	local colorSello = if estrellado then Gui.ROJO elseif perfecto then Gui.AMARILLO else Gui.VERDE
+	tituloResultados.Text = if estrellado then "¡PERDIDOS EN LA ISLA!" elseif rescatado then "¡RESCATADOS!" elseif perfecto then "¡ATERRIZAJE PERFECTO!" else "¡VUELO COMPLETADO!"
+	local colorSello = if estrellado then Gui.ROJO elseif rescatado then Gui.TURQUESA elseif perfecto then Gui.AMARILLO else Gui.VERDE
 	selloResultados.ImageColor3 = colorSello
 	textoSello.TextColor3 = colorSello
-	textoSello.Text = if estrellado then "FALLIDO" elseif perfecto then "PERFECTO" else "PAGADO"
+	textoSello.Text = if estrellado then "FALLIDO" elseif rescatado then "RESCATE" elseif perfecto then "PERFECTO" else "PAGADO"
 	for _, h in filasResultados:GetChildren() do
 		if h:IsA("Frame") then
 			h:Destroy()
@@ -628,7 +741,14 @@ local function resultados(datos: any)
 		orden += 1
 		Gui.fila(filasResultados, icono, contenido, alto or 26, Gui.TINTA, orden)
 	end
-	linea(if estrellado then "Peligro" else "Aterrizaje", if estrellado then `<b>{datos.motivo}</b>` else `Destino: <b>{datos.destino}</b>`)
+	if rescatado then
+		linea("Palmera", "<b>Os ha rescatado el hidroavión</b>")
+	else
+		linea(if estrellado then "Peligro" else "Aterrizaje", if estrellado then `<b>{datos.motivo}</b>` else `Destino: <b>{datos.destino}</b>`)
+	end
+	if datos.rescate then
+		linea("Hidroavion", `Rescate: +{datos.rescate}`)
+	end
 	linea("Pasajero", `Pasajeros entregados: {datos.pasajeros}  (perdidos: {datos.perdidos})`)
 	linea("Feliz", `Satisfacción media: {datos.satisfaccion}% · Servidos: {datos.servidos}`)
 	linea("Maleta", `Carga intacta: +{datos.carga}`)
@@ -824,6 +944,15 @@ function Interfaz.iniciar()
 		task.spawn(estadoCocodrilo, modelo)
 	end
 	CollectionService:GetInstanceAddedSignal("Cocodrilo"):Connect(estadoCocodrilo)
+	for etiquetaIsla, destino in { ObjetivoIsla = false, DestinoIsla = true } do
+		for _, objeto in CollectionService:GetTagged(etiquetaIsla) do
+			marcarIsla(objeto, destino)
+		end
+		CollectionService:GetInstanceAddedSignal(etiquetaIsla):Connect(function(objeto)
+			marcarIsla(objeto, destino)
+		end)
+		CollectionService:GetInstanceRemovedSignal(etiquetaIsla):Connect(desmarcarIsla)
+	end
 	for _, otro in Players:GetPlayers() do
 		seguirJugador(otro)
 	end
@@ -861,6 +990,7 @@ function Interfaz.iniciar()
 		actualizarBarra()
 		actualizarEstado()
 		actualizarPiloto()
+		actualizarIsla()
 		for otro, e in etiquetas do
 			e.voz.Visible = BocaVoz.nivel(otro) > 0.08
 		end

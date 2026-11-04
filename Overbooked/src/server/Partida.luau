@@ -18,6 +18,7 @@ local Carga = require(script.Parent.Carga)
 local Datos = require(script.Parent.Datos)
 local Estadisticas = require(script.Parent.Estadisticas)
 local Interacciones = require(script.Parent.Interacciones)
+local Isla = require(script.Parent.Isla)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
@@ -381,6 +382,11 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		total = billetes + intacto + entregado * 1.5 + bonus + Piratas.bonus() + confiscados * Aduana.BONUS - contrabando * Aduana.MULTA - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
 		datos.billetes = math.floor(billetes)
 		datos.bonus = bonus
+	elseif tipo == "Rescatado" then
+		local billetes = entregados * contrato.pagoPasajero * (0.4 + 0.6 * satisfaccion) * Config.ISLA.PAGO
+		total = billetes + Config.ISLA.BONUS_RESCATE + Piratas.bonus() - perdidos * contrato.multaPasajero * 0.5
+		datos.billetes = math.floor(billetes)
+		datos.rescate = Config.ISLA.BONUS_RESCATE
 	end
 	total = math.max(0, math.floor(total))
 	datos.total = total
@@ -406,18 +412,36 @@ local function limpiar()
 	Workspace.Gravity = Config.GRAVEDAD
 end
 
+local function naufragio(contrato: Contratos.Contrato, motivo: string)
+	Peligros.detener()
+	Piratas.reiniciar()
+	Workspace.Gravity = Config.GRAVEDAD
+	fase("Isla")
+	aviso(motivo, "peligro")
+	Personajes.ragdollTodos(3, 70)
+	local rescatados = Isla.jugar()
+	fase("Resultados")
+	if rescatados then
+		cobrar(contrato, "Rescatado", "Rescatados en la isla")
+	else
+		cobrar(contrato, "Estrellado", "Nadie vino a por vosotros")
+	end
+	task.wait(Config.PARTIDA.RESULTADOS)
+	Isla.limpiar()
+	limpiar()
+	Avion.reparar()
+end
+
 local function jugar(contrato: Contratos.Contrato)
 	embarque(contrato)
 	vuelo(contrato)
 	local r = resultado :: { tipo: string, motivo: string }
-	fase("Resultados")
 	if r.tipo == "Estrellado" then
-		aviso(r.motivo, "peligro")
-		Personajes.ragdollTodos(3, 70)
-		task.wait(3)
-	else
-		ciudad = contrato.destino
+		naufragio(contrato, r.motivo)
+		return
 	end
+	fase("Resultados")
+	ciudad = contrato.destino
 	cobrar(contrato, r.tipo, r.motivo)
 	task.wait(Config.PARTIDA.RESULTADOS)
 	limpiar()
@@ -442,9 +466,25 @@ local function bucle()
 	end
 	prepararSalas()
 	while true do
-		local contrato = enLobby()
-		meterJugadores()
-		jugar(contrato)
+		if RunService:IsStudio() and Workspace:GetAttribute("PruebaIsla") == true then
+			Workspace:SetAttribute("PruebaIsla", nil)
+			while #Players:GetPlayers() == 0 do
+				task.wait(0.5)
+			end
+			task.wait(3)
+			local contrato = Contratos.generar(rng, ciudad)
+			Estado:SetAttribute("Contrato", HttpService:JSONEncode(contrato))
+			Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo, contrato.condicion)
+			aeropuerto.Parent = ServerStorage
+			spawnAvion.Enabled = true
+			spawnAeropuerto.Enabled = false
+			meterJugadores()
+			naufragio(contrato, "Prueba de isla")
+		else
+			local contrato = enLobby()
+			meterJugadores()
+			jugar(contrato)
+		end
 		aeropuerto.Parent = Workspace
 		spawnAeropuerto.Enabled = true
 		spawnAvion.Enabled = false

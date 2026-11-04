@@ -19,7 +19,8 @@
         "Sonido": { "$className": "UnreliableRemoteEvent" },
         "Tienda": { "$className": "RemoteEvent" },
         "Resultados": { "$className": "RemoteEvent" },
-        "Disparar": { "$className": "RemoteEvent" }
+        "Disparar": { "$className": "RemoteEvent" },
+        "Efecto": { "$className": "UnreliableRemoteEvent" }
       },
       "Estado": {
         "$className": "Folder"
@@ -56,6 +57,11 @@
       },
       "Aeropuerto": {
         "$path": "mapa/Aeropuerto.model.json"
+      }
+    },
+    "ServerStorage": {
+      "Isla": {
+        "$path": "mapa/Isla.model.json"
       }
     },
     "Lighting": {

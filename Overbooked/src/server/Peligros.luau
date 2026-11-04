@@ -16,6 +16,7 @@ local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
+local Rafagas = require(script.Parent.Rafagas)
 local Sonidos = require(script.Parent.Sonidos)
 local Estadisticas = require(script.Parent.Estadisticas)
 
@@ -176,6 +177,7 @@ function Peligros.fuego(posicion: Vector3)
 	CollectionService:AddTag(parte, "Fuego")
 	parte.Parent = carpeta
 	fuegos[parte] = { parte = parte, vida = 100 }
+	Rafagas.lanzar("Humo", posicion, 0.7)
 	Pasajeros.asustar(0.3, posicion, 16)
 end
 
@@ -245,6 +247,8 @@ function Peligros.brecha()
 	local chispas = VFX.chispas(marca)
 	chispas:Emit(40)
 	Sonidos.emitir("Explosion", centro)
+	Rafagas.lanzar("Escombros", centro, 1.2)
+	Rafagas.lanzar("Onda", centro, 0.8)
 	task.delay(0.25, Sonidos.emitir, "Succion", centro)
 	marca:SetAttribute("Reparacion", 0)
 	marca:SetAttribute("Fuerza", 1)
@@ -267,6 +271,7 @@ local function cerrar(b: Brecha, silencioso: boolean?)
 	b.parte:Destroy()
 	if not silencioso then
 		Sonidos.emitir("Reparado", b.parte.Position)
+		Rafagas.lanzar("Chispas", b.parte.Position, 1.2)
 		aviso("¡Agujero reparado!", "bien")
 	end
 end
@@ -307,6 +312,7 @@ local function cerrarPanel(p: Panel, silencioso: boolean?)
 	paneles[p.parte] = nil
 	if not silencioso then
 		Sonidos.emitir("Reparado", p.parte.Position)
+		Rafagas.lanzar("Chispas", p.parte.Position, 1.2)
 		aviso("¡Panel del techo arreglado!", "bien")
 	end
 	p.parte:Destroy()
@@ -324,6 +330,11 @@ local function pajaros()
 		Avion.danarMotor(lado, 35, true)
 		Avion.danar(6)
 		Avion.plumas(lado)
+		local motor = Avion.motorParte(lado)
+		if motor then
+			Rafagas.lanzar("Plumas", motor.Position, 1.6)
+			Rafagas.lanzar("ExplosionPequena", motor.Position, 1.2)
+		end
 		Avion.desconectarAutopiloto()
 		avion:SetAttribute("Pajaros", os.clock())
 		aviso(`¡Motor {if lado == "Izq" then "izquierdo" else "derecho"} en llamas!`, "peligro")
@@ -359,6 +370,10 @@ end
 local function falloMotor()
 	local lado = if rng:NextNumber() < 0.5 then "Izq" else "Der"
 	Avion.danarMotor(lado, 100, false)
+	local motor = Avion.motorParte(lado)
+	if motor then
+		Rafagas.lanzar("Humo", motor.Position, 1.6, Color3.fromRGB(90, 86, 84))
+	end
 	aviso(`¡Motor {if lado == "Izq" then "izquierdo" else "derecho"} apagado! Reinícialo en la cabina`, "peligro")
 end
 
@@ -573,6 +588,7 @@ local function usarPiolet(jugador: Player)
 	for parte, p in paneles do
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_PIOLET then
 			Sonidos.emitir("GolpeMetal", parte.Position, 0.15)
+			Rafagas.lanzar("Chispas", parte.Position, 0.5)
 			p.reparacion += H.REPARACION_PIOLET
 			Estadisticas.sumar(jugador, "reparar")
 			parte:SetAttribute("Reparacion", math.min(100, p.reparacion))
@@ -593,6 +609,7 @@ local function usarLlave(jugador: Player)
 	local H = Config.HERRAMIENTAS
 	for parte, b in brechas do
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_LLAVE then
+			Rafagas.lanzar("Chispas", parte.Position, 0.5)
 			b.reparacion += H.REPARACION_LLAVE
 			parte:SetAttribute("Reparacion", math.min(100, b.reparacion))
 			Estadisticas.sumar(jugador, "reparar")

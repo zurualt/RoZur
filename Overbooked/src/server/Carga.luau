@@ -8,13 +8,13 @@ local Debris = game:GetService("Debris")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Contratos = require(ReplicatedStorage.Shared.Contratos)
-local VFX = require(ReplicatedStorage.Shared.VFX)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
 local Avion = require(script.Parent.Avion)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
+local Rafagas = require(script.Parent.Rafagas)
 local Vehiculos = require(script.Parent.Vehiculos)
 local Sonidos = require(script.Parent.Sonidos)
 local Estadisticas = require(script.Parent.Estadisticas)
@@ -139,6 +139,7 @@ local function soltarCocodrilo(desde: BasePart)
 	local z = math.clamp(desde.Position.Z - (desde.Size.Z / 2 + 3.6), -58, 16)
 	cocodrilo = crearCocodrilo(CFrame.new(x, Config.SUELO_Y + 0.7, z))
 	Sonidos.emitir("GolpeMetal", desde.Position)
+	Rafagas.lanzar("Astillas", desde.Position, 1.2)
 	cuenta.cocodrilo = "Suelto"
 	saciadoHasta = 0
 	aturdidoHasta = 0
@@ -327,18 +328,8 @@ local function romper(parte: BasePart, b: Bulto, tipo: string)
 		end
 		Debris:AddItem(t, rng:NextNumber(6, 9))
 	end
-	local marca = Instance.new("Part")
-	marca.Anchored = true
-	marca.CanCollide = false
-	marca.CanQuery = false
-	marca.CanTouch = false
-	marca.Transparency = 1
-	marca.Size = Vector3.one
-	marca.Position = centro
-	marca.Parent = carpeta
-	VFX.chispas(marca):Emit(30)
+	Rafagas.lanzar(if tipo == "CajaFragil" then "Cristales" else "Astillas", centro, 1.2)
 	Sonidos.emitir(if tipo == "CajaFragil" then "Cristal" else "Madera", centro)
-	Debris:AddItem(marca, 1.5)
 	Agarre.soltarObjeto(parte)
 	parte:Destroy()
 	Pasajeros.asustar(0.2, centro, 12)
@@ -453,6 +444,7 @@ local function caida(parte: BasePart, b: Bulto?)
 		bultos[parte] = nil
 		if b.entrega and Avion.zonaEntrega() then
 			cuenta.entregado += b.valor
+			Rafagas.lanzar("Confeti", parte.Position)
 			RemotoAviso:FireAllClients(`¡Entrega aérea completada! +{b.valor}`, "bien")
 		else
 			cuenta.perdido += b.valor
@@ -482,6 +474,7 @@ local function enjaular(c: Model)
 	cuenta.cocodrilo = "Enjaulado"
 	if j then
 		Sonidos.emitir("GolpeMetal", j.Position)
+		Rafagas.lanzar("Confeti", j.Position, 0.7)
 	end
 	RemotoAviso:FireAllClients("¡Cocodrilo enjaulado otra vez!", "bien")
 end
@@ -554,6 +547,7 @@ local function vigilarCocodrilo(dt: number)
 					local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 					Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
 					Sonidos.emitir("Mordisco", boca)
+					Rafagas.lanzar("Estrellas", raiz.Position)
 					RemotoAviso:FireClient(jugador, "¡Te ha mordido el cocodrilo!", "peligro")
 				end
 			end
@@ -563,6 +557,8 @@ local function vigilarCocodrilo(dt: number)
 			Agarre.soltarObjeto(presa)
 			presa:Destroy()
 			Sonidos.emitir("Comer", boca)
+			Rafagas.lanzar("Estrellas", boca, 0.8)
+			Rafagas.lanzar("Confeti", boca, 0.5)
 			saciadoHasta = ahora + 14
 			RemotoAviso:FireAllClients("¡El cocodrilo se ha comido la hamburguesa! Ahora está tranquilo: llévalo a la jaula", "bien")
 			return
