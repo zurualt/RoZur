@@ -3429,7 +3429,7 @@
       "CFrame": {
        "CFrame": {
         "position": [
-         100.55,
+         99.93,
          97.5,
          -20.0
         ],
@@ -3469,20 +3469,20 @@
      }
     },
     {
-     "name": "PedestalContrato",
+     "name": "PuertaSala",
      "className": "Part",
      "properties": {
       "Size": [
-       2.4,
-       3,
-       2.4
+       9.2,
+       3.47,
+       10.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         92.0,
-         92.0,
-         -26.0
+         88.625,
+         92.235,
+         -32.0
         ],
         "orientation": [
          [
@@ -3512,29 +3512,30 @@
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
      },
      "attributes": {
-      "Visual": "Kiosko",
+      "Visual": "PuertaSala1",
       "Base": 90.5
      }
     },
     {
-     "name": "BotonContrato",
+     "name": "SalaSalida",
      "className": "Part",
      "properties": {
       "Size": [
-       0.5,
-       1.6,
-       1.6
+       0.12,
+       8.4,
+       8.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         92.0,
-         93.75,
-         -26.0
+         88.0,
+         90.56,
+         -32.0
         ],
         "orientation": [
          [
@@ -3557,35 +3558,90 @@
       },
       "Anchored": true,
       "Color": [
-       0.9490196078431372,
-       0.4823529411764706,
-       0.16862745098039217
+       1.0,
+       1.0,
+       1.0
       ],
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true,
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false,
       "Shape": "Cylinder"
      },
      "attributes": {
-      "Contrato": 1
+      "Sala": 1
      }
     },
     {
-     "name": "PedestalContrato",
+     "name": "PantallaSala",
      "className": "Part",
      "properties": {
       "Size": [
-       2.4,
-       3,
-       2.4
+       1.95,
+       1.05,
+       0.04
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         92.0,
-         92.0,
+         93.15,
+         93.15,
+         -32.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Sala": 1
+     }
+    },
+    {
+     "name": "PuertaSala",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       9.2,
+       3.47,
+       10.45
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         88.625,
+         92.235,
          -20.0
         ],
         "orientation": [
@@ -3616,28 +3672,29 @@
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
      },
      "attributes": {
-      "Visual": "Kiosko",
+      "Visual": "PuertaSala2",
       "Base": 90.5
      }
     },
     {
-     "name": "BotonContrato",
+     "name": "SalaSalida",
      "className": "Part",
      "properties": {
       "Size": [
-       0.5,
-       1.6,
-       1.6
+       0.12,
+       8.4,
+       8.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         92.0,
-         93.75,
+         88.0,
+         90.56,
          -20.0
         ],
         "orientation": [
@@ -3661,36 +3718,91 @@
       },
       "Anchored": true,
       "Color": [
-       0.12156862745098039,
-       0.6509803921568628,
-       0.6274509803921569
+       1.0,
+       1.0,
+       1.0
       ],
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true,
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false,
       "Shape": "Cylinder"
      },
      "attributes": {
-      "Contrato": 2
+      "Sala": 2
      }
     },
     {
-     "name": "PedestalContrato",
+     "name": "PantallaSala",
      "className": "Part",
      "properties": {
       "Size": [
-       2.4,
-       3,
-       2.4
+       1.95,
+       1.05,
+       0.04
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         92.0,
-         92.0,
-         -14.0
+         93.15,
+         93.15,
+         -20.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Sala": 2
+     }
+    },
+    {
+     "name": "PuertaSala",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       9.2,
+       3.47,
+       10.45
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         88.625,
+         92.235,
+         -8.0
         ],
         "orientation": [
          [
@@ -3720,29 +3832,30 @@
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
      },
      "attributes": {
-      "Visual": "Kiosko",
+      "Visual": "PuertaSala3",
       "Base": 90.5
      }
     },
     {
-     "name": "BotonContrato",
+     "name": "SalaSalida",
      "className": "Part",
      "properties": {
       "Size": [
-       0.5,
-       1.6,
-       1.6
+       0.12,
+       8.4,
+       8.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         92.0,
-         93.75,
-         -14.0
+         88.0,
+         90.56,
+         -8.0
         ],
         "orientation": [
          [
@@ -3765,19 +3878,74 @@
       },
       "Anchored": true,
       "Color": [
-       0.9607843137254902,
-       0.803921568627451,
-       0.23921568627450981
+       1.0,
+       1.0,
+       1.0
       ],
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true,
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false,
       "Shape": "Cylinder"
      },
      "attributes": {
-      "Contrato": 3
+      "Sala": 3
+     }
+    },
+    {
+     "name": "PantallaSala",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.95,
+       1.05,
+       0.04
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         93.15,
+         93.15,
+         -8.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Sala": 3
      }
     },
     {
@@ -5429,7 +5597,7 @@
          [
           -0.48480962024633684,
           0.0,
-          -0.874619707139396
+          -0.8746197071393959
          ],
          [
           0.0,
@@ -5437,7 +5605,7 @@
           0.0
          ],
          [
-          0.874619707139396,
+          0.8746197071393959,
           0.0,
           -0.48480962024633684
          ]

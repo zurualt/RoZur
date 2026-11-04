@@ -82,6 +82,12 @@ Config.TURBULENCIA = {
 	IMPULSO_PASAJEROS = 30,
 }
 
+Config.LOBBY = {
+	CUENTA = 15,
+	MAX = 4,
+	ESPERA_GRUPO = 20,
+}
+
 Config.PARTIDA = {
 	EMBARQUE = 45,
 	RESULTADOS = 14,

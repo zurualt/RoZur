@@ -16,7 +16,7 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 
 ## Cómo se juega
 
-1. **Aeropuerto:** apareces en la terminal. En el tablero hay 3 contratos (ruta, distancia, pasajeros, carga, riesgo y pago aproximado). Pulsa **E** en uno de los pedestales para elegirlo.
+1. **Aeropuerto (lobby):** apareces en la terminal. En el tablero hay 3 vuelos (ruta, distancia, pasajeros, carga, riesgo y pago aproximado) y delante de cada uno un círculo de su color. Entrad en el círculo con vuestro grupo (hasta 4): a los 15 s os lleva juntos a un servidor reservado y la partida empieza dentro del avión. Al acabar volvéis al lobby. En Studio no hay teletransporte y la partida se juega en el mismo servidor.
 2. **Embarque (25 s):** suben los pasajeros y se carga la bodega. Entra al avión por la rampa trasera.
 3. **Despegue:** alguien se sienta en el asiento izquierdo de la cabina, acelera con **Shift** y, al pasar de 260 km/h, sube con **W**. Si nadie pilota en 45 s, despega el piloto automático.
 4. **Vuelo:** mantén el rumbo (el panel dice hacia dónde girar) y la altitud. El piloto automático ayuda, pero se desconecta con los sustos.
@@ -45,7 +45,7 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 
 | Sistema | Archivo | Qué hace |
 |---|---|---|
-| Partida | `src/server/Partida.luau` | Aeropuerto → embarque → vuelo → resultados, contratos y cobro |
+| Partida | `src/server/Partida.luau` | Lobby con círculos de salida → servidor reservado (contrato por MemoryStore) → embarque → vuelo → resultados → vuelta al lobby, contratos y cobro |
 | Vuelo | `src/server/Avion.luau` | Simulación a 10 Hz, piloto y automático, motores, combustible, casco, rampa, puertas y botones |
 | Pasajeros | `src/server/Pasajeros.luau` | Pedidos 🍔 ☕ 💧 con paciencia, miedo y satisfacción (cada bandeja lleva 3 hamburguesas); salen volando si no llevan cinturón |
 | Carga | `src/server/Carga.luau` | Daños por golpes, cajas frágiles, entregas aéreas desde la rampa y el cocodrilo |
@@ -93,7 +93,7 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | `mapa/` | Avión y aeropuerto en piezas de Roblox, generados por `herramientas/generar_mapa.py` |
 | `arte/` | Modelos de Blender (tripulante, avión, pasajeros, objetos) con sus generadores, FBX, renders y manifiestos |
 | `arte/kit_interior/` | Kit del interior del avión: paneles con ventanas, techo con altillos y sus puertas, cocina, baño, mamparas, cabina del piloto, pared de bodega, puertas, torreta en dos piezas, bolso, mascarilla y trozos de cajas |
-| `arte/kit_aeropuerto/` | Kit del aeropuerto: terminal, mostradores, bancos, quioscos, marco del tablero, torre de control, hangar, carro, tractor, escalerilla, árboles, arbustos, vallas, conos, luces de pista y manga de viento |
+| `arte/kit_aeropuerto/` | Kit del aeropuerto: terminal, puertas de embarque del lobby (`PuertaSala1-3`), mostradores, bancos, quioscos, marco del tablero, torre de control, hangar, carro, tractor, escalerilla, árboles, arbustos, vallas, conos, luces de pista y manga de viento |
 | `arte/ids_roblox.json` | IDs de los modelos subidos a Roblox |
 | `herramientas/` | Scripts: mapa, subida de modelos y generación de `src/shared/Visuales.luau` |
 

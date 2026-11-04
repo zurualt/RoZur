@@ -248,14 +248,14 @@ local function aviso(contenido: string, tipo: string)
 end
 
 local NOMBRES_FASE = {
-	Aeropuerto = "🏢 AEROPUERTO · Elige un contrato en el tablero",
-	Embarque = "🧳 EMBARQUE · ¡Subid al avión!",
-	Despegue = "🛫 DESPEGUE",
-	Vuelo = "✈ EN VUELO",
-	Aproximacion = "🛬 APROXIMACIÓN · ¡Hay que aterrizar!",
-	Frenando = "🛬 FRENANDO",
-	Aterrizado = "✅ EN TIERRA",
-	Estrellado = "💥 ¡ESTRELLADOS!",
+	Aeropuerto = "AEROPUERTO · Elegid vuelo en el tablero",
+	Embarque = "EMBARQUE · ¡Subid al avión!",
+	Despegue = "DESPEGUE",
+	Vuelo = "EN VUELO",
+	Aproximacion = "APROXIMACIÓN · ¡Hay que aterrizar!",
+	Frenando = "FRENANDO",
+	Aterrizado = "EN TIERRA",
+	Estrellado = "¡ESTRELLADOS!",
 }
 
 local function decodificarContrato()
@@ -280,18 +280,18 @@ local function actualizarBarra()
 	local contrato = contratoActual()
 	if faseJuego == "Aeropuerto" then
 		local ciudad = Estado:GetAttribute("Ciudad")
-		textoRuta.Text = `Estás en {if typeof(ciudad) == "string" then ciudad else "?"} · Pulsa E en un pedestal del tablero`
+		textoRuta.Text = `Estás en {if typeof(ciudad) == "string" then ciudad else "?"} · Entrad en el círculo de vuestro vuelo`
 		relleno.Size = UDim2.fromScale(0, 1)
 	elseif contrato then
 		local total, recorrido = numero("Total"), numero("Distancia")
-		textoRuta.Text = `{contrato.origen} ✈ {contrato.destino} · {math.max(0, math.floor(total - recorrido))} km restantes`
+		textoRuta.Text = `{contrato.origen} → {contrato.destino} · {math.max(0, math.floor(total - recorrido))} km restantes`
 		relleno.Size = UDim2.fromScale(math.clamp(recorrido / math.max(total, 1), 0, 1), 1)
 		if avion:GetAttribute("ZonaEntrega") then
-			textoRuta.Text ..= " · 📦 ¡ZONA DE ENTREGA!"
+			textoRuta.Text ..= " · ¡ZONA DE ENTREGA!"
 		end
 	end
 	local cuenta = Estado:GetAttribute("Cuenta")
-	textoCuenta.Text = if typeof(cuenta) == "number" and cuenta > 0 and (faseJuego == "Embarque" or faseJuego == "Aeropuerto") then `⏱ {cuenta}` else ""
+	textoCuenta.Text = if typeof(cuenta) == "number" and cuenta > 0 and (faseJuego == "Embarque" or faseJuego == "Aeropuerto") then `{cuenta}` else ""
 end
 
 local function actualizarEstado()
@@ -517,7 +517,7 @@ local function riesgo(n: number): string
 	return string.rep("★", n) .. string.rep("☆", 3 - n)
 end
 
-local ICONOS_CARGA = { Maleta = "🧳", Caja = "📦", CajaFragil = "🍾", Jaula = "🐊" }
+local NOMBRES_CARGA = { Maleta = "maletas", Caja = "cajas", CajaFragil = "frágiles", Jaula = "cocodrilo" }
 
 local function tablero()
 	local json = Estado:GetAttribute("Contratos")
@@ -542,30 +542,34 @@ local function tablero()
 	tableroGui.Adornee = parte
 	tableroGui.ResetOnSpawn = false
 	local colores = { NARANJA, TURQUESA, Color3.fromRGB(245, 205, 61) }
-	texto(tableroGui, "SALIDAS · ELIGE TU VUELO (E en el pedestal)", UDim2.new(1, -40, 0, 50), UDim2.fromOffset(20, 10), CREMA)
+	texto(tableroGui, "SALIDAS · ENTRAD EN EL CÍRCULO DE VUESTRO VUELO", UDim2.new(1, -40, 0, 50), UDim2.fromOffset(20, 10), CREMA)
 	for i, o in ofertas :: { any } do
 		local columna = marco(tableroGui, UDim2.new(1 / 3, -20, 1, -90), UDim2.new((i - 1) / 3, 10, 0, 74), Vector2.zero, Color3.fromRGB(40, 40, 48), 0)
 		esquina(columna, 16)
 		borde(columna, colores[i] or CREMA, 4)
 		local carga = {}
 		for _, c in o.carga do
-			table.insert(carga, `{ICONOS_CARGA[c.tipo] or "📦"}×{c.cantidad}{if c.entrega then "🪂" else ""}`)
+			table.insert(carga, `{c.cantidad} {NOMBRES_CARGA[c.tipo] or "bultos"}`)
 		end
 		local estimado = o.pasajeros * o.pagoPasajero
 		for _, c in o.carga do
 			estimado += c.valor * c.cantidad
 		end
-		local t = texto(columna, table.concat({
-			`<font size="64" color="#{(colores[i] or CREMA):ToHex()}">{i}</font>`,
+		local lineas = {
+			`<font size="60" color="#{(colores[i] or CREMA):ToHex()}">{i}</font>`,
 			`<b>{o.titulo}</b>`,
 			`{o.origen} → {o.destino}`,
-			`📏 {o.distancia} km   👥 {o.pasajeros}`,
-			table.concat(carga, "  "),
-			`Riesgo {riesgo(o.riesgo)}`,
-			`💰 ~{estimado}`,
-			if o.entregaAerea then "🪂 Incluye entrega aérea" else "",
-			if typeof(o.condicion) == "string" and Contratos.CONDICIONES[o.condicion] and o.condicion ~= "Normal" then `{Contratos.CONDICIONES[o.condicion].icono} {Contratos.CONDICIONES[o.condicion].texto}` else "",
-		}, "\n"), UDim2.new(1, -20, 1, -20), UDim2.fromOffset(10, 10), CREMA, 30)
+			`{o.distancia} km · {o.pasajeros} pasajeros`,
+			table.concat(carga, " · "),
+			`Riesgo {riesgo(o.riesgo)} · Pago ~{estimado}`,
+		}
+		if o.entregaAerea then
+			table.insert(lineas, "Incluye entrega aérea")
+		end
+		if typeof(o.condicion) == "string" and Contratos.CONDICIONES[o.condicion] and o.condicion ~= "Normal" then
+			table.insert(lineas, Contratos.CONDICIONES[o.condicion].texto)
+		end
+		local t = texto(columna, table.concat(lineas, "\n"), UDim2.new(1, -20, 1, -20), UDim2.fromOffset(10, 10), CREMA, 22)
 		t.TextYAlignment = Enum.TextYAlignment.Top
 	end
 	tableroGui.Parent = jugador:WaitForChild("PlayerGui")

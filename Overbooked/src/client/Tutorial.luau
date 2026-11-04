@@ -21,13 +21,13 @@ local FUENTE = Enum.Font.FredokaOne
 local comidaHasta = 0
 
 local pasos: { Paso } = {
-	{ texto = "Elige un vuelo: E en un quiosco de la terminal", hecho = false },
-	{ texto = "Lleva maletas al avión (tractor 🚜, escáner 🛃)", hecho = false },
+	{ texto = "Elige un vuelo: entrad en su círculo de la terminal", hecho = false },
+	{ texto = "Lleva maletas al avión (tractor y escáner)", hecho = false },
 	{ texto = "Coge comida en la cocina del avión", hecho = false },
-	{ texto = "Sirve a un pasajero (E o lánzasela 🎯)", hecho = false },
-	{ texto = "Usa el extintor 🔥 o la llave 🔧 (F)", hecho = false },
+	{ texto = "Sirve a un pasajero (E o lánzasela)", hecho = false },
+	{ texto = "Usa el extintor o la llave (F)", hecho = false },
 	{ texto = "Que alguien pilote: asiento izquierdo de la cabina", hecho = false },
-	{ texto = "Aterrizad en el destino 🛬", hecho = false },
+	{ texto = "Aterrizad en el destino", hecho = false },
 }
 
 local function vuelos(): number

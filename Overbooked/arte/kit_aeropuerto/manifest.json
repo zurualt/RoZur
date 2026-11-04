@@ -158,5 +158,35 @@
       40.0
     ],
     "triangulos": 2100
+  },
+  {
+    "nombre": "PuertaSala1",
+    "archivo": "PuertaSala1.fbx",
+    "tamano": [
+      9.2,
+      3.47,
+      10.45
+    ],
+    "triangulos": 2346
+  },
+  {
+    "nombre": "PuertaSala2",
+    "archivo": "PuertaSala2.fbx",
+    "tamano": [
+      9.2,
+      3.47,
+      10.45
+    ],
+    "triangulos": 2382
+  },
+  {
+    "nombre": "PuertaSala3",
+    "archivo": "PuertaSala3.fbx",
+    "tamano": [
+      9.2,
+      3.47,
+      10.45
+    ],
+    "triangulos": 2382
   }
 ]

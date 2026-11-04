@@ -1,8 +1,11 @@
 --!strict
 local HttpService = game:GetService("HttpService")
+local MemoryStoreService = game:GetService("MemoryStoreService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
+local TeleportService = game:GetService("TeleportService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
@@ -37,10 +40,19 @@ local spawnAeropuerto = aeropuerto:FindFirstChild("SpawnAeropuerto", true) :: Sp
 local rng = Random.new()
 local ciudad = Contratos.ciudadInicial(rng)
 local ofertas: { Contratos.Contrato } = {}
-local elegido: Contratos.Contrato? = nil
 local resultado: { tipo: string, motivo: string }? = nil
 local listos = false
 local avisoListos: ProximityPrompt? = nil
+local vuelos = MemoryStoreService:GetSortedMap("OverbookedVuelos")
+local esPartida = game.PrivateServerId ~= "" and game.PrivateServerOwnerId == 0
+
+type Sala = { centro: BasePart, destino: TextLabel, info: TextLabel, estado: TextLabel, plazas: { Frame }, fin: number? }
+local COLORES_SALA = { Color3.fromRGB(242, 123, 43), Color3.fromRGB(31, 166, 160), Color3.fromRGB(246, 196, 69) }
+local OSCURO = Color3.fromRGB(27, 27, 33)
+local APAGADO = Color3.fromRGB(52, 56, 63)
+local CREMA = Color3.fromRGB(255, 244, 224)
+local salas: { [number]: Sala } = {}
+local saliendo: { [Player]: boolean } = setmetatable({}, { __mode = "k" }) :: any
 
 local function fase(nombre: string)
 	Estado:SetAttribute("Fase", nombre)
@@ -84,54 +96,199 @@ local function publicarOfertas()
 	Estado:SetAttribute("Ciudad", ciudad)
 end
 
-local function prepararBotones()
+local function etiqueta(padre: Instance, pos: UDim2, tam: UDim2, color: Color3, alineacion: Enum.TextXAlignment): TextLabel
+	local t = Instance.new("TextLabel")
+	t.Position = pos
+	t.Size = tam
+	t.BackgroundTransparency = 1
+	t.Font = Enum.Font.FredokaOne
+	t.TextScaled = true
+	t.TextColor3 = color
+	t.TextXAlignment = alineacion
+	t.Text = ""
+	t.Parent = padre
+	return t
+end
+
+local function prepararSalas()
+	local pantallas: { [number]: BasePart } = {}
+	local centros: { [number]: BasePart } = {}
 	for _, d in aeropuerto:GetDescendants() do
-		local n = d:GetAttribute("Contrato")
+		local n = d:GetAttribute("Sala")
 		if d:IsA("BasePart") and typeof(n) == "number" then
-			local boton = Instance.new("ProximityPrompt")
-			boton.ActionText = "Elegir"
-			boton.ObjectText = `Contrato {n}`
-			boton.MaxActivationDistance = 9
-			boton.RequiresLineOfSight = false
-			boton.Parent = d
-			boton.Triggered:Connect(function(jugador)
-				if Estado:GetAttribute("Fase") ~= "Aeropuerto" or elegido then
-					return
-				end
-				local oferta = ofertas[n]
-				if oferta then
-					elegido = oferta
-					RemotoAviso:FireAllClients(`{jugador.DisplayName} ha elegido: {oferta.origen} → {oferta.destino}`, "bien")
-				end
-			end)
+			if d.Name == "PantallaSala" then
+				pantallas[n] = d
+			else
+				centros[n] = d
+			end
 		end
 	end
-end
-
-local function esperarJugadores()
-	while #Players:GetPlayers() == 0 do
-		task.wait(1)
+	for n, centro in centros do
+		local pantalla = pantallas[n]
+		if not pantalla then
+			continue
+		end
+		local color = COLORES_SALA[n] or CREMA
+		local gui = Instance.new("SurfaceGui")
+		gui.Face = Enum.NormalId.Front
+		gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+		gui.PixelsPerStud = 200
+		gui.LightInfluence = 0
+		gui.Brightness = 1.4
+		gui.MaxDistance = 90
+		local fondo = Instance.new("Frame")
+		fondo.Size = UDim2.fromScale(1, 1)
+		fondo.BackgroundColor3 = OSCURO
+		fondo.BorderSizePixel = 0
+		fondo.Parent = gui
+		local cabecera = Instance.new("Frame")
+		cabecera.Size = UDim2.fromScale(1, 0.24)
+		cabecera.BackgroundColor3 = color
+		cabecera.BorderSizePixel = 0
+		cabecera.Parent = fondo
+		etiqueta(cabecera, UDim2.fromScale(0.05, 0.12), UDim2.fromScale(0.5, 0.76), OSCURO, Enum.TextXAlignment.Left).Text = `PUERTA {n}`
+		etiqueta(cabecera, UDim2.fromScale(0.5, 0.22), UDim2.fromScale(0.45, 0.56), OSCURO, Enum.TextXAlignment.Right).Text = "SALIDA"
+		local plazas = {}
+		for i = 1, Config.LOBBY.MAX do
+			local plaza = Instance.new("Frame")
+			plaza.Position = UDim2.fromScale(0.05 + (i - 1) * 0.11, 0.77)
+			plaza.Size = UDim2.fromScale(0.085, 0.16)
+			plaza.BackgroundColor3 = APAGADO
+			plaza.BorderSizePixel = 0
+			Instance.new("UICorner").Parent = plaza
+			plaza.Parent = fondo
+			table.insert(plazas, plaza)
+		end
+		salas[n] = {
+			centro = centro,
+			destino = etiqueta(fondo, UDim2.fromScale(0.05, 0.29), UDim2.fromScale(0.9, 0.28), CREMA, Enum.TextXAlignment.Left),
+			info = etiqueta(fondo, UDim2.fromScale(0.05, 0.58), UDim2.fromScale(0.9, 0.12), Color3.fromRGB(169, 176, 184), Enum.TextXAlignment.Left),
+			estado = etiqueta(fondo, UDim2.fromScale(0.52, 0.76), UDim2.fromScale(0.43, 0.18), color, Enum.TextXAlignment.Right),
+			plazas = plazas,
+			fin = nil,
+		}
+		gui.Parent = pantalla
 	end
 end
 
-local function enAeropuerto()
+local function pintarSala(sala: Sala, oferta: Contratos.Contrato?, ocupadas: number, estado: string)
+	sala.destino.Text = if oferta then oferta.destino else ""
+	sala.info.Text = if oferta then `{math.floor(oferta.distancia)} km · {oferta.pasajeros} pasajeros` else ""
+	sala.estado.Text = estado
+	for i, plaza in sala.plazas do
+		plaza.BackgroundColor3 = if i <= ocupadas then sala.estado.TextColor3 else APAGADO
+	end
+end
+
+local function enSala(sala: Sala): { Player }
+	local grupo = {}
+	local centro = sala.centro.Position
+	local radio = sala.centro.Size.Y / 2
+	for _, jugador in Players:GetPlayers() do
+		local raiz = Personajes.raiz(jugador)
+		if raiz and not saliendo[jugador] and #grupo < Config.LOBBY.MAX then
+			local d = raiz.Position - centro
+			if Vector3.new(d.X, 0, d.Z).Magnitude <= radio and math.abs(d.Y) < 6 then
+				table.insert(grupo, jugador)
+			end
+		end
+	end
+	return grupo
+end
+
+local function despegarGrupo(contrato: Contratos.Contrato, grupo: { Player }): boolean
+	local ok, codigo, id = pcall(TeleportService.ReserveServer, TeleportService, game.PlaceId)
+	if not ok then
+		return false
+	end
+	local guardado = pcall(function()
+		vuelos:SetAsync(id, HttpService:JSONEncode({ contrato = contrato, jugadores = #grupo }), 1800)
+	end)
+	if not guardado then
+		return false
+	end
+	local opciones = Instance.new("TeleportOptions")
+	opciones.ReservedServerAccessCode = codigo
+	for _, jugador in grupo do
+		saliendo[jugador] = true
+	end
+	local enviado = pcall(TeleportService.TeleportAsync, TeleportService, game.PlaceId, grupo, opciones)
+	if not enviado then
+		for _, jugador in grupo do
+			saliendo[jugador] = nil
+		end
+	end
+	return enviado
+end
+
+local function enLobby(): Contratos.Contrato
 	fase("Aeropuerto")
-	elegido = nil
 	resultado = nil
 	aeropuerto.Parent = Workspace
 	spawnAeropuerto.Enabled = true
 	spawnAvion.Enabled = false
 	Avion.prepararTierra()
 	publicarOfertas()
-	esperarJugadores()
-	local limite = os.clock() + 120
-	while not elegido do
-		Estado:SetAttribute("Cuenta", math.max(0, math.ceil(limite - os.clock())))
-		if os.clock() >= limite and #Players:GetPlayers() > 0 then
-			elegido = ofertas[1]
-			aviso("Se ha elegido el primer contrato automáticamente", "info")
+	Estado:SetAttribute("Cuenta", 0)
+	while true do
+		for n, sala in salas do
+			local oferta = ofertas[n]
+			local grupo = enSala(sala)
+			if not oferta or #grupo == 0 then
+				sala.fin = nil
+				pintarSala(sala, oferta, 0, "ESPERANDO")
+				continue
+			end
+			sala.fin = sala.fin or os.clock() + Config.LOBBY.CUENTA
+			local quedan = math.max(0, math.ceil((sala.fin :: number) - os.clock()))
+			pintarSala(sala, oferta, #grupo, `SALE EN {quedan}`)
+			if quedan > 0 then
+				continue
+			end
+			sala.fin = nil
+			pintarSala(sala, oferta, #grupo, "EMBARCANDO")
+			if RunService:IsStudio() then
+				return oferta
+			end
+			if despegarGrupo(oferta, grupo) then
+				ofertas[n] = Contratos.generar(rng, ciudad)
+				Estado:SetAttribute("Contratos", HttpService:JSONEncode(ofertas))
+			else
+				for _, jugador in grupo do
+					RemotoAviso:FireClient(jugador, "No se ha podido despegar. Volved a entrar en el círculo.", "peligro")
+				end
+			end
 		end
+		task.wait(0.25)
+	end
+end
+
+local function leerVuelo(): (Contratos.Contrato?, number)
+	for _ = 1, 10 do
+		local ok, valor = pcall(vuelos.GetAsync, vuelos, game.PrivateServerId)
+		if ok and typeof(valor) == "string" then
+			local datos = HttpService:JSONDecode(valor)
+			return datos.contrato, datos.jugadores
+		end
+		task.wait(1)
+	end
+	return nil, 1
+end
+
+local function esperarGrupo(esperados: number)
+	while #Players:GetPlayers() == 0 do
 		task.wait(0.5)
+	end
+	local limite = os.clock() + Config.LOBBY.ESPERA_GRUPO
+	while #Players:GetPlayers() < esperados and os.clock() < limite do
+		task.wait(0.5)
+	end
+end
+
+local function volverAlLobby()
+	while #Players:GetPlayers() > 0 do
+		pcall(TeleportService.TeleportAsync, TeleportService, game.PlaceId, Players:GetPlayers())
+		task.wait(10)
 	end
 end
 
@@ -145,7 +302,7 @@ local function embarque(contrato: Contratos.Contrato)
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo, contrato.condicion)
 	Vehiculos.reiniciar()
 	Carga.cargar(contrato)
-	aviso(`🧳 ¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
+	aviso(`¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
 	listos = false
 	local p = avisoListos
 	if p then
@@ -178,7 +335,7 @@ local function vuelo(contrato: Contratos.Contrato)
 	Estadisticas.reiniciar()
 	Tienda.aplicar()
 	Peligros.activar(contrato)
-	aviso("🛫 ¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
+	aviso("¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
 	local inicio = os.clock()
 	local forzado = false
 	while not resultado do
@@ -249,26 +406,45 @@ local function limpiar()
 	Workspace.Gravity = Config.GRAVEDAD
 end
 
+local function jugar(contrato: Contratos.Contrato)
+	embarque(contrato)
+	vuelo(contrato)
+	local r = resultado :: { tipo: string, motivo: string }
+	fase("Resultados")
+	if r.tipo == "Estrellado" then
+		aviso(r.motivo, "peligro")
+		Personajes.ragdollTodos(3, 70)
+		task.wait(3)
+	else
+		ciudad = contrato.destino
+	end
+	cobrar(contrato, r.tipo, r.motivo)
+	task.wait(Config.PARTIDA.RESULTADOS)
+	limpiar()
+	Avion.reparar()
+end
+
 local function bucle()
-	prepararBotones()
+	if esPartida then
+		spawnAvion.Enabled = true
+		spawnAeropuerto.Enabled = false
+		Avion.prepararTierra()
+		local leido, esperados = leerVuelo()
+		local contrato = leido or Contratos.generar(rng, ciudad)
+		ciudad = contrato.origen
+		Estado:SetAttribute("Contrato", HttpService:JSONEncode(contrato))
+		fase("Embarque")
+		esperarGrupo(esperados)
+		meterJugadores()
+		jugar(contrato)
+		volverAlLobby()
+		return
+	end
+	prepararSalas()
 	while true do
-		enAeropuerto()
-		local contrato = elegido :: Contratos.Contrato
-		embarque(contrato)
-		vuelo(contrato)
-		local r = resultado :: { tipo: string, motivo: string }
-		fase("Resultados")
-		if r.tipo == "Estrellado" then
-			aviso(`💥 {r.motivo}`, "peligro")
-			Personajes.ragdollTodos(3, 70)
-			task.wait(3)
-		else
-			ciudad = contrato.destino
-		end
-		cobrar(contrato, r.tipo, r.motivo)
-		task.wait(Config.PARTIDA.RESULTADOS)
-		limpiar()
-		Avion.reparar()
+		local contrato = enLobby()
+		meterJugadores()
+		jugar(contrato)
 		aeropuerto.Parent = Workspace
 		spawnAeropuerto.Enabled = true
 		spawnAvion.Enabled = false
@@ -301,7 +477,7 @@ local function prepararListos()
 			return
 		end
 		listos = true
-		aviso(`✈ {jugador.DisplayName} da por terminado el embarque`, "info")
+		aviso(`{jugador.DisplayName} da por terminado el embarque`, "info")
 	end)
 end
 
@@ -313,13 +489,13 @@ function Partida.iniciar()
 	Players.PlayerAdded:Connect(function(jugador)
 		task.delay(6, function()
 			if jugador.Parent then
-				local enTierra = Estado:GetAttribute("Fase") == "Aeropuerto" or Estado:GetAttribute("Fase") == "Embarque"
-				RemotoAviso:FireClient(jugador, if enTierra then "✈ ¡Bienvenido a Overbooked! Elige un vuelo en el tablero de la terminal · H: controles" else "✈ ¡Bienvenido a bordo! Ayuda a la tripulación · H: controles", "info")
+				local enLobbyAhora = Estado:GetAttribute("Fase") == "Aeropuerto"
+				RemotoAviso:FireClient(jugador, if enLobbyAhora then "¡Bienvenido a Overbooked! Mira las salidas y entrad en el círculo de vuestro vuelo · H: controles" else "¡Bienvenido a bordo! Ayuda a la tripulación · H: controles", "info")
 			end
 		end)
 	end)
 	Personajes.alCaer(function(jugador)
-		aviso(`🪂 ¡{jugador.DisplayName} se ha caído del avión!`, "peligro")
+		aviso(`¡{jugador.DisplayName} se ha caído del avión!`, "peligro")
 	end)
 	task.spawn(bucle)
 end

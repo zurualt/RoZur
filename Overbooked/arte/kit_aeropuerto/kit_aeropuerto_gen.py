@@ -989,8 +989,71 @@ def p_hangar():
     return p
 
 
+SEG7 = {1: "bc", 2: "abged", 3: "abgcd"}
+PUERTA = {"radio": 4.4, "totem_y": 5.4, "pantalla": (0.0, 5.15, 2.65, 1.95, 1.05)}
+
+
+def seg7(p, m, cx, cy, h, st, n, role, w):
+    hw = 0.3 * h
+    if n == 1:
+        cx -= hw
+    segs = {"a": (cx, cy + h / 2, 0.0, 2 * hw), "g": (cx, cy, 0.0, 2 * hw), "d": (cx, cy - h / 2, 0.0, 2 * hw),
+            "b": (cx + hw, cy + h / 4, 90.0, h / 2), "c": (cx + hw, cy - h / 4, 90.0, h / 2),
+            "f": (cx - hw, cy + h / 4, 90.0, h / 2), "e": (cx - hw, cy - h / 4, 90.0, h / 2)}
+    for i, s in enumerate(SEG7[n]):
+        x, y, a, ln = segs[s]
+        p.add(decal(pill(x, y, ln, st / 2, math.radians(a), 3), m, w + 0.002 * i), role)
+
+
+def p_puerta(n):
+    acento = ("orange", "teal", "yellow")[n - 1]
+    p = Prop("PuertaSala%d" % n, (9.2, 10.45, 3.47), 3200)
+    R = PUERTA["radio"]
+    suelo = fr((0, 0, 0), "+z")
+    p.add(decal(circ(0, 0, 3.9, 40), suelo, 0.008), "cream")
+    p.add(arc_strip(0, 0, 4.32, 4.6, 0, 360, 48, suelo, 0.012), "dark")
+    for k in range(24):
+        a0 = 15.0 * k
+        p.add(arc_strip(0, 0, 3.95, 4.15, a0, a0 + 9.0, 2, suelo, 0.014), acento)
+    seg7(p, suelo, 0.0, 0.45, 2.6, 0.46, n, acento, 0.018)
+    for y in (-2.35, -3.15):
+        p.add(decal([(-0.75, y - 0.35), (0.0, y + 0.25), (0.0, y + 0.6), (-0.75, y)], suelo, 0.018), acento)
+        p.add(decal([(0.75, y - 0.35), (0.75, y), (0.0, y + 0.6), (0.0, y + 0.25)], suelo, 0.018), acento)
+    cabezas = []
+    for k in range(8):
+        a = math.radians(-60.0 + 300.0 / 7 * k)
+        x, y = R * math.cos(a), R * math.sin(a)
+        p.add(cyl(0.3, 0.06, (x, y, 0), seg=12, bev=0.02), "dark")
+        p.add(cyl(0.055, 0.94, (x, y, 0.06), seg=8, cap0=False, cap1=False), "metal")
+        p.add(cyl(0.085, 0.13, (x, y, 0.98), seg=8, bev=0.02), "dark")
+        p.add(cyl(0.09, 0.04, (x, y, 1.11), seg=8, cap0=False), acento)
+        cabezas.append(Vector((x, y, 1.03)))
+    for i, (a, b) in enumerate(zip(cabezas, cabezas[1:])):
+        if i == 3:
+            continue
+        pts =[a.lerp(b, t) - Vector((0, 0, 0.07 * math.sin(math.pi * t))) for t in (0.0, 1 / 3, 2 / 3, 1.0)]
+        for q0, q1 in zip(pts, pts[1:]):
+            p.add(bar(q0, q1, 0.014, 0.11, up=(0, 0, 1)), acento)
+    ty = PUERTA["totem_y"]
+    p.add(bb(-1.1, 1.1, ty - 0.45, ty + 0.45, 0.0, 0.15, 0.05, 1), "dark")
+    p.add(rr_loft(1.2, 0.55, 0.18, 2, [(0.0, 0.15), (0.0, 1.98)], M((0, ty, 0))), "teal")
+    p.add(rr_loft(1.26, 0.61, 0.2, 2, [(0.0, 1.5), (0.0, 1.66)], M((0, ty, 0)), cap0=False, cap1=False), acento)
+    p.add(bb(-1.15, 1.15, ty - 0.25, ty + 0.25, 1.95, 3.35, 0.08, 2), "cream")
+    _, sy, sz, sw, sh = PUERTA["pantalla"]
+    cara = fr((0, sy, 0), "-y")
+    p.add(decal(rrect(0, sz, sw + 0.15, sh + 0.15, 0.07, 2), cara, 0.006), "dark")
+    p.add(decal(rrect(0, sz, sw, sh, 0.05, 2), cara, 0.012), "black")
+    p.add(bb(-1.0, 1.0, ty - 0.15, ty + 0.15, 3.35, 3.47, 0.04, 1), acento)
+    frente = fr((0, ty - 0.275, 0), "-y")
+    p.add(decal(rrect(0, 0.62, 0.72, 0.72, 0.12, 2), frente, 0.006), acento)
+    seg7(p, frente, 0.0, 0.62, 0.46, 0.09, n, "cream", 0.012)
+    logo(p, fr((0, ty - 0.275, 1.15), "-y"), 0.2, step=0.005)
+    return p
+
+
 BUILDERS = [p_terminal, p_mostrador, p_banco, p_kiosko, p_marco, p_torre, p_carro, p_tractor, p_escalera,
-            p_arbol, p_arbusto, p_valla, p_luz, p_cono, p_manga, p_hangar]
+            p_arbol, p_arbusto, p_valla, p_luz, p_cono, p_manga, p_hangar,
+            lambda: p_puerta(1), lambda: p_puerta(2), lambda: p_puerta(3)]
 
 
 def finalize(p):
@@ -1386,7 +1449,8 @@ def sheet_catalog(st, rows, gap):
 
 SHEETS = [("aero_1.png", sheet_exterior), ("aero_2.png", sheet_interior), ("aero_3.png", sheet_ramp),
           ("aero_kit_a.png", lambda st: sheet_catalog(st, [["LuzPista", "Cono", "Arbusto", "Kiosko", "Valla", "Manga"], ["Mostrador", "BancoEspera", "Arbol"]], 1.6)),
-          ("aero_kit_b.png", lambda st: sheet_catalog(st, [["CarroEquipaje", "Tractor", "Escalera"], ["MarcoTablero"]], 2.0))]
+          ("aero_kit_b.png", lambda st: sheet_catalog(st, [["CarroEquipaje", "Tractor", "Escalera"], ["MarcoTablero"]], 2.0)),
+          ("aero_kit_c.png", lambda st: sheet_catalog(st, [["PuertaSala1", "PuertaSala2", "PuertaSala3"]], 1.5))]
 
 
 def render_sheets(objs, which, threads, outdir):
@@ -1431,8 +1495,12 @@ def main():
             export_fbx(ob)
         dim = ob.dimensions
         manifest.append({"nombre": p.name, "archivo": p.name + ".fbx", "tamano": [round(dim.x, 3), round(dim.z, 3), round(dim.y, 3)], "triangulos": tris})
-    if not only and not arg("--no-export"):
-        with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as fh:
+    if not arg("--no-export"):
+        ruta = os.path.join(OUT, "manifest.json")
+        if only and os.path.exists(ruta):
+            with open(ruta, encoding="utf-8") as fh:
+                manifest = [e for e in json.load(fh) if e["nombre"] not in only] + manifest
+        with open(ruta, "w", encoding="utf-8") as fh:
             json.dump(manifest, fh, ensure_ascii=False, indent=2)
     if "Terminal" in objs:
         print("GLASS y=%.2f panes=%d" % (TERM["glass_y"], len(TERM["panes"])))

@@ -456,11 +456,14 @@ def terminal():
             t.append(part("CristalTerminal", (0.2, 10.8, b - a), (x, base + 6.6, z), CRISTAL, "Glass", transp=0.6))
     x, z = mundo(0, 26.44)
     t.append(marca("MarcoTablero", (18.6, 9.6, 0.8), (x, base + 2.7 + 4.8, z), "MarcoTablero", r=rot(0, 90, 0), base=base + 2.7))
-    t.append(part("Tablero", (17.6, 8.8, 0.2), (cx + 26.55, base + 7.5, cz), "1B1B21", r=rot(0, -90, 0), atributos={"Tablero": True}))
-    for i, dz in enumerate((-6, 0, 6)):
-        t.append(deco("PedestalContrato", "Kiosko", (2.4, 3, 2.4), 76 + dx, base + 0.5, cz + dz, 90, GRIS))
-        t.append(part("BotonContrato", (0.5, 1.6, 1.6), (76 + dx, base + 3.75, cz + dz), [NARANJA, TURQUESA, "F5CD3D"][i],
-                      forma="Cylinder", r=rot(0, 0, 90), atributos={"Contrato": i + 1}))
+    t.append(part("Tablero", (17.6, 8.8, 0.2), (cx + 25.93, base + 7.5, cz), "1B1B21", r=rot(0, -90, 0), atributos={"Tablero": True}))
+    for i, dz in enumerate((-12, 0, 12)):
+        sx, sz = 72 + dx, cz + dz
+        t.append(deco("PuertaSala", f"PuertaSala{i + 1}", (9.2, 3.47, 10.45), sx + 0.625, base + 0.5, sz, 90, GRIS, colision=False))
+        t.append(part("SalaSalida", (0.12, 8.4, 8.4), (sx, base + 0.56, sz), "FFFFFF", forma="Cylinder", r=rot(0, 0, 90),
+                      transp=1, colision=False, sombra=False, atributos={"Sala": i + 1}))
+        t.append(part("PantallaSala", (1.95, 1.05, 0.04), (sx + 5.15, base + 0.5 + 2.65, sz), "1B1B21", r=rot(0, 90, 0),
+                      transp=1, colision=False, sombra=False, atributos={"Sala": i + 1}))
     for x in (46, 54, 62):
         t.append(deco("Mostrador", "Mostrador", (6, 3.5, 3), x + dx, base + 0.5, cz - 23, 180, TURQUESA))
     for x in (52, 62):
