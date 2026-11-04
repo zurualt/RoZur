@@ -104,7 +104,7 @@ def estructura():
                       hijos=[luz(22 if z > -52 else 14, 1.0)]))
     for lado, sx in (("Izq", -1), ("Der", 1)):
         x = sx * 7.5
-        p.append(part("ParedCabina" + lado, (1, 10, 12), (sx * 6.0, 105, -58), CREMA))
+        p.append(part("ParedCabina" + lado, (1, 10, 11), (sx * 6.0, 105, -57.5), CREMA))
         p.append(part("ParedCocina" + lado, (1, 10, 8), (x, 105, -48), CREMA))
         for i, z in enumerate(FILAS):
             if i == FILA_SALIDA:
@@ -125,10 +125,10 @@ def estructura():
         p.append(part("ParedBodega" + lado, (1, 10, 22), (x, 105, 11), "C9C2B5"))
         p.append(part("Pilastra" + lado, (1, 10, 1), (sx * 6.5, 105, 22.5), "C9C2B5"))
         p.append(part("Relleno" + lado, (1.5, 10, 1), (sx * 6.25, 105, -52), CREMA))
-    p.append(part("ParabrisasBajo", (11, 3.5, 1), (0, SUELO_Y + 1.75, -64.5), CREMA))
-    p.append(part("Parabrisas", (11, 4, 0.4), (0, 105.5, -64.3), CRISTAL, "Glass", transp=0.55))
-    p.append(part("ParabrisasAlto", (11, 2.5, 1), (0, 108.75, -64.5), CREMA))
-    p.append(part("Parteluz", (0.4, 4, 0.5), (0, 105.5, -64.2), GRIS))
+    p.append(part("ParabrisasBajo", (11, 3.5, 1), (0, SUELO_Y + 1.75, -63.5), CREMA))
+    p.append(part("Parabrisas", (11, 4, 0.4), (0, 105.5, -63.3), CRISTAL, "Glass", transp=0.55))
+    p.append(part("ParabrisasAlto", (11, 2.5, 1), (0, 108.75, -63.5), CREMA))
+    p.append(part("Parteluz", (0.4, 4, 0.5), (0, 105.5, -63.2), GRIS))
     for nombre, z, hueco in (("MamparaCabina", -52, 2.0), ("MamparaBodega", 0, 2.5)):
         ancho = 7 - hueco
         for sx in (-1, 1):
@@ -166,11 +166,11 @@ def cabina():
                       atributos={"Visual": "AsientoPiloto", "Base": SUELO_Y},
                       hijos=[part("Respaldo", (2.2, 3.2, 0.5), (x, 103.0, -56.4), GRIS, "Fabric"),
                              part("Raya", (0.5, 3.0, 0.52), (x, 103.0, -56.4), TURQUESA, "Fabric", colision=False)]))
-    p.append(part("Cuadro", (10.5, 2.8, 2), (0, 102.8, -62.2), GRIS, r=rot(0, 180, 0), atributos={"Visual": "Cuadro"}))
-    p.append(part("Visera", (10.5, 0.5, 1.4), (0, 104.4, -62.5), "1B1B21"))
+    p.append(part("Cuadro", (10.5, 2.8, 2), (0, 102.8, -61.9), GRIS, r=rot(0, 180, 0), atributos={"Visual": "Cuadro"}))
+    p.append(part("Visera", (10.5, 0.5, 1.4), (0, 104.4, -62.2), "1B1B21"))
     for i, x in enumerate((-4.2, -3.0, -1.5, 1.5, 3.0, 4.2)):
         colores = ["55D66B", "F5CD3D", "55D66B", "4AB8F0", "F27B2B", "55D66B"]
-        p.append(part("Indicador", (0.15, 0.7, 0.7), (x, 103.3, -61.15), colores[i], "Neon", forma="Cylinder",
+        p.append(part("Indicador", (0.15, 0.7, 0.7), (x, 103.3, -60.85), colores[i], "Neon", forma="Cylinder",
                       r=rot(0, 90, 0), colision=False, sombra=False))
     p.append(part("Columna", (0.35, 0.35, 1.8), (-2.6, 102.6, -60.4), "1B1B21", r=rot(0, 180, 0), atributos={"Visual": "Volante"},
                   hijos=[part("Volante", (1.5, 0.3, 0.3), (-2.6, 103.0, -59.5), "1B1B21")]))
@@ -180,7 +180,7 @@ def cabina():
     botones = [("BotonExtintorMotor", -4.0, "D9443A"), ("BotonAutopiloto", -2.0, "4AB8F0"),
                ("BotonMotores", 0.0, "F5CD3D"), ("BotonCinturones", 2.0, "F27B2B"), ("BotonRampa", 4.0, "1FA6A0")]
     for nombre, x, c in botones:
-        p.append(part(nombre, (0.4, 0.9, 0.9), (x, 104.85, -62.0), c, "SmoothPlastic", forma="Cylinder",
+        p.append(part(nombre, (0.4, 0.9, 0.9), (x, 104.85, -61.7), c, "SmoothPlastic", forma="Cylinder",
                       r=rot(0, 0, 90), atributos={"Visual": "Boton"}))
     return carpeta("Cabina", p)
 
@@ -270,7 +270,7 @@ def exterior():
                          part("Escudo", (3.2, 2.2, 0.4), (-24, 101.4, -23.0), GRIS, "Metal", colision=False),
                          part("Canon", (0.35, 0.35, 3.2), (-24.5, 102.0, -24.4), "1B1B21", "Metal", colision=False),
                          part("Canon", (0.35, 0.35, 3.2), (-23.5, 102.0, -24.4), "1B1B21", "Metal", colision=False)]))
-    p.append(part("Morro", (11, 3.5, 2), (0, 101.75, -65.6), "FFF4E0"))
+    p.append(part("Morro", (11, 3.5, 2), (0, 101.75, -64.6), "FFF4E0"))
     tren = []
     for x, z in ((0, -50), (-4.5, -2), (4.5, -2)):
         tren.append(part("Pata", (0.7, 8.4, 0.7), (x, 94.8, z), GRIS, "Metal"))
