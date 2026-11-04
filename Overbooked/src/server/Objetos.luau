@@ -154,7 +154,8 @@ local function vestir(d: BasePart)
 		return
 	end
 	if d:GetAttribute("Movil") then
-		Activos.vestirDinamico(d, visual)
+		local escala = d:GetAttribute("Escala")
+		Activos.vestirDinamico(d, visual, if typeof(escala) == "number" then escala else nil)
 	else
 		local base = d:GetAttribute("Base")
 		Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)

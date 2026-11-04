@@ -136,7 +136,7 @@ local function embarque(contrato: Contratos.Contrato)
 	Cabina.reiniciar()
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo)
 	Carga.cargar(contrato)
-	aviso(`🧳 ¡Embarque! Subid al avión por la rampa y meted las maletas del carro en la bodega. Destino: {contrato.destino}`, "info")
+	aviso(`🧳 ¡Embarque! Llevad el carro de maletas con el tractor hasta la rampa y meted el equipaje en la bodega. Destino: {contrato.destino}`, "info")
 	for t = Config.PARTIDA.EMBARQUE, 1, -1 do
 		Estado:SetAttribute("Cuenta", t)
 		task.wait(1)

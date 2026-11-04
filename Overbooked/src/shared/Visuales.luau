@@ -67,7 +67,7 @@ Visuales.IDS = {
 	TorreControl = 132948254073455,
 	Torreta = 72486027717077,
 	TorretaCanones = 91234399205868,
-	Tractor = 92358255649671,
+	Tractor = 120380171288677,
 	Valla = 122479620749313,
 	Volante = 128883340253803,
 } :: { [string]: number }
@@ -137,7 +137,7 @@ Visuales.CAJAS = {
 	TorreControl = { minimo = Vector3.new(-5.0, 0, -5.0), maximo = Vector3.new(5.0, 40.0, 5.0) },
 	Torreta = { minimo = Vector3.new(-1.5, 0, -2.0), maximo = Vector3.new(1.5, 1.2, 2.0) },
 	TorretaCanones = { minimo = Vector3.new(-1.5, 0, -1.6), maximo = Vector3.new(1.5, 2.2, 1.6) },
-	Tractor = { minimo = Vector3.new(-2.0, 0, -3.5), maximo = Vector3.new(2.0, 3.0, 3.5) },
+	Tractor = { minimo = Vector3.new(-2.0, 0, -3.5), maximo = Vector3.new(2.0, 4.76, 3.5) },
 	Valla = { minimo = Vector3.new(-4.0, 0, -0.15), maximo = Vector3.new(4.0, 2.4, 0.15) },
 	Volante = { minimo = Vector3.new(-0.7, 0, -0.6), maximo = Vector3.new(0.7, 1.4, 0.6) },
 } :: { [string]: Caja }

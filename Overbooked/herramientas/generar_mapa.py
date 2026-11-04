@@ -350,6 +350,24 @@ def deco(nombre, visual, tam, x, base, z, giro=0.0, color=GRIS, colision=True, h
                 atributos=a, hijos=hijos, transp=transp)
 
 
+def vehiculos():
+    v = []
+    base = 90.4
+    cx, cz = 36.0, 34.0
+    v.append(part("CarroEquipaje", (7, 1.3, 5), (cx, base + 0.65, cz), "34383F", "Metal",
+                  atributos={"Visual": "CarroEquipaje", "Movil": True},
+                  hijos=[part("BarandaCarro", (6.2, 0.55, 0.16), (cx, base + 1.58, cz + 2.38), TURQUESA, "Metal"),
+                         part("BarandaCarro", (6.2, 0.55, 0.16), (cx, base + 1.58, cz - 2.38), TURQUESA, "Metal"),
+                         part("BarandaCarro", (0.16, 0.55, 4.6), (cx + 2.56, base + 1.58, cz), TURQUESA, "Metal")]))
+    tx, tz, e = 44.0, 38.0, 1.25
+    v.append(part("Tractor", (4 * e, 1.8, 7 * e), (tx, base + 0.9, tz), NARANJA, "SmoothPlastic",
+                  atributos={"Visual": "Tractor", "Movil": True, "Escala": e},
+                  hijos=[part("AsientoTractor", (1.3 * e, 0.3, 1.0 * e), (tx, base + 1.95 * e - 0.15, tz + 1.675 * e), GRIS,
+                              clase="VehicleSeat", transp=1,
+                              extra={"MaxSpeed": 0, "Torque": 0, "TurnSpeed": 0, "HeadsUpDisplay": False})]))
+    return carpeta("Vehiculos", v)
+
+
 def terminal():
     t = []
     cx, cz, base = 74.0, -20.0, 90.0
@@ -408,19 +426,11 @@ def aeropuerto():
     p.append(part("Plataforma", (30, 0.4, 110), (32, 90.2, -5), "8A8F96", "Concrete"))
     p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart",
                   r=rot(0, 180, 0)))
-    p.append(part("CarroEquipaje", (7, 0.4, 5), (13, 91.1, 40), "34383F", "Metal",
-                  atributos={"Visual": "CarroEquipaje", "Base": 90.2},
-                  hijos=[part("BarandaCarro", (7, 0.8, 0.2), (13, 91.7, 42.4), NARANJA, "Metal"),
-                         part("BarandaCarro", (7, 0.8, 0.2), (13, 91.7, 37.6), NARANJA, "Metal"),
-                         part("RuedaCarro", (0.4, 0.9, 0.9), (10, 90.65, 38), "1B1B21", forma="Cylinder", colision=False),
-                         part("RuedaCarro", (0.4, 0.9, 0.9), (16, 90.65, 38), "1B1B21", forma="Cylinder", colision=False),
-                         part("RuedaCarro", (0.4, 0.9, 0.9), (10, 90.65, 42), "1B1B21", forma="Cylinder", colision=False),
-                         part("RuedaCarro", (0.4, 0.9, 0.9), (16, 90.65, 42), "1B1B21", forma="Cylinder", colision=False)]))
+    p.append(vehiculos())
     p.append(terminal())
     d = []
     d.append(deco("Torre", "TorreControl", (10, 40, 10), 44, 90, -95, 90, "FFF4E0"))
     d.append(deco("Hangar", "Hangar", (50, 22, 40), 72, 90, 64, 90, "1FA6A0"))
-    d.append(deco("Tractor", "Tractor", (4, 3, 7), 24, 90.4, 50, 15, NARANJA))
     d.append(deco("Escalera", "Escalera", (3, 9, 9), 25, 90.4, -48, 0, TURQUESA, colision=False))
     for i in range(6):
         d.append(deco("Cono", "Cono", (1, 1.6, 1), -14 + i * 5.6, 90.2, 36, 0, NARANJA))
