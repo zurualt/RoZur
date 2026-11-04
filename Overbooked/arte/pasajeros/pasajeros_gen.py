@@ -413,7 +413,7 @@ def align_z(n):
     return Vector((0, 0, 1)).rotation_difference(n.normalized()).to_matrix().to_4x4()
 
 
-def build_body(extra_z, color_fn, m=18):
+def build_body(extra_z, color_fn, m=20):
     prof = []
     for i in range(3):
         a = math.radians(-90 + 90 * i / 3)
@@ -539,6 +539,19 @@ class Face:
             ctrl.append(loc + n * off)
         return tube(ctrl, lambda u: radius * (1.0 - taper + taper * math.sin(math.pi * u)), k=k, steps=steps, cap_rings=2)
 
+    def lens(self, x, z, a, b, off=0.004, dome=0.03, seg=12):
+        bm = bmesh.new()
+        lc, nc = self.hit(x, z)
+        ctr = bm.verts.new(lc + nc * (off + dome))
+        ring = []
+        for k in range(seg):
+            t = 2 * math.pi * k / seg
+            l, n = self.hit(x + a * math.cos(t), z + b * math.sin(t))
+            ring.append(bm.verts.new(l + n * off))
+        for k in range(seg):
+            bm.faces.new((ctr, ring[k], ring[(k + 1) % seg]))
+        return orient(bm, lambda c: Vector((0, -1, 0)))
+
     def dot(self, x, z, radii, off=0.0, u=8, v=6):
         loc, n = self.hit(x, z)
         return ellipsoid(radii, Matrix.Translation(loc + n * off) @ frame_from_normal(n), u, v)
@@ -589,7 +602,7 @@ def passenger(spec):
     ex, ez = spec.get("eye_x", 0.215), spec.get("eye_z", 3.98)
     er = spec.get("eye_r", (0.055, 0.08, 0.04))
     for sx in (-1, 1):
-        prims.append((face.dot(sx * ex, ez, er, 0.0, 8, 4), BLACK, 70.0))
+        prims.append((face.lens(sx * ex, ez, er[0], er[1], 0.004, er[2] * 0.8), BLACK, 80.0))
         bi, bo = spec.get("brow", (4.16, 4.16))
         if isinstance(bi, tuple):
             (bi, bo) = bi if sx > 0 else bo
@@ -763,8 +776,8 @@ def extras_deportista(face):
 
 def extras_rockero(face):
     out = []
-    spikes = [(-90, 0.66, 0.38, 0.13), (-90, 0.98, 0.55, 0.16), (-90, 1.3, 0.66, 0.18),
-              (90, 1.32, 0.64, 0.18), (90, 0.98, 0.56, 0.17), (90, 0.62, 0.44, 0.15), (90, 0.25, 0.3, 0.12)]
+    spikes = [(-90, 0.98, 0.36, 0.13), (-90, 1.22, 0.52, 0.16), (-90, 1.47, 0.64, 0.18),
+              (90, 1.3, 0.62, 0.18), (90, 1.0, 0.55, 0.17), (90, 0.66, 0.44, 0.15), (90, 0.3, 0.3, 0.12)]
     ridge = []
     for i, (th, e, ln, r) in enumerate(spikes):
         p = body_pt(math.radians(th), e, 0.0)
@@ -925,8 +938,8 @@ def build_croc():
             z = croc_mz(y)
             x = croc_side_x(y, z) + 0.012
             pts.append(Vector((sx * x + croc_xo(y), y, z)))
-        pts.append(Vector((sx * 0.14, -2.985, 0.462)))
-        pts.append(Vector((0.0, -3.03, 0.462)))
+        pts.append(Vector((sx * 0.14, -2.975, 0.462)))
+        pts.append(Vector((0.0, -3.0, 0.462)))
         prims.append((tube(pts, lambda u: 0.036, k=4, steps=1, cap_rings=1), BLACK, 60.0))
         for i, y in enumerate((-1.3, -1.52, -1.76, -2.0, -2.24, -2.48, -2.72)):
             up = i % 2 == 0
@@ -938,7 +951,7 @@ def build_croc():
             prims.append((cylinder(0.07, ln, Matrix.Translation(base + d * (ln * 0.5)) @ align_z(d), 4, r2=0.0), WHITE, 40.0))
     for sx in (-0.13, 0.13):
         d = Vector((sx * 0.5, -0.8, -1.0)).normalized()
-        base = Vector((sx, -2.99, 0.475))
+        base = Vector((sx, -2.95, 0.475))
         prims.append((cylinder(0.06, 0.16, Matrix.Translation(base + d * 0.08) @ align_z(d), 4, r2=0.0), WHITE, 40.0))
 
     for sx in (-1, 1):
@@ -972,18 +985,23 @@ def build_croc():
     for ly in (-0.6, 0.72):
         for sx in (-1, 1):
             w, zb, zt = croc_section(ly)
-            ctrl = [Vector((sx * (w - 0.25), ly + 0.04, 0.5)), Vector((sx * (w - 0.02), ly, 0.3)), Vector((sx * 0.57, ly - 0.05, 0.1))]
+            ctrl = [Vector((sx * (w - 0.27), ly + 0.04, 0.5)), Vector((sx * (w - 0.1), ly, 0.3)), Vector((sx * 0.54, ly - 0.05, 0.1))]
             prims.append((tube(ctrl, lambda u: 0.17 - 0.03 * u, k=7, steps=2, cap_rings=1), GREEN, 50.0))
-            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.56, ly - 0.12, 0.07)), 8, 5)
+            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.54, ly - 0.12, 0.07)), 8, 5)
             for v in foot.verts:
                 v.co.z = max(v.co.z, 0.0)
             prims.append((foot, GREEN, 60.0))
             for k in (-1, 0, 1):
                 d = Vector((k * 0.35, -1.0, -0.15)).normalized()
-                base = Vector((sx * 0.56 + k * 0.075, ly - 0.3, 0.05))
+                base = Vector((sx * 0.54 + k * 0.07, ly - 0.3, 0.05))
                 prims.append((cylinder(0.035, 0.09, Matrix.Translation(base + d * 0.04) @ align_z(d), 4, r2=0.0), CREAM, 40.0))
+    lo = min(v.co.y for bm, _, _ in prims for v in bm.verts)
+    hi = max(v.co.y for bm, _, _ in prims for v in bm.verts)
+    k = 6.0 / (hi - lo)
+    T = Matrix.Diagonal((k, k, k, 1.0)) @ Matrix.Translation((0, -0.5 * (lo + hi), 0))
     out = []
     for bm, col, ang in prims:
+        bmesh.ops.transform(bm, matrix=T, verts=bm.verts)
         out.append((fix_closed(bm), col, ang))
     return out
 
@@ -1037,7 +1055,7 @@ def main():
         ob.location = (x, 0, 0)
         seat_objs.append(build_object("Seat%d" % i, seat(x), mat))
     croc.hide_render = True
-    shoot(scene, "pasajeros_1", dict(loc=(-4.2, -17.5, 4.4), target=(0.0, 0.0, 0.75), lens=34))
+    shoot(scene, "pasajeros_1", dict(loc=(-2.6, -17.0, 4.3), target=(0.35, 0.0, 0.8), lens=35))
     for ob in pas + seat_objs:
         ob.hide_render = True
     croc.hide_render = False

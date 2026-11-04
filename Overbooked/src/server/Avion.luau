@@ -261,6 +261,7 @@ end
 
 function Avion.despegar()
 	terminado = false
+	avion:SetAttribute("Aterrizaje", "")
 	estado.fase = "Despegue"
 	estado.enTierra = true
 	estado.velocidad = 0

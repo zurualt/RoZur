@@ -130,7 +130,7 @@ end
 
 local function actualizar(dt: number)
 	local fase = avion:GetAttribute("Fase")
-	local enAire = fase == "Despegue" or fase == "Vuelo" or fase == "Aproximacion" or fase == "Frenando" or fase == "Estrellado"
+	local enAire = fase == "Despegue" or fase == "Vuelo" or fase == "Aproximacion" or fase == "Frenando" or fase == "Estrellado" or fase == "Aterrizado"
 	if not enAire then
 		if carpeta.Parent then
 			carpeta.Parent = nil
@@ -162,7 +162,7 @@ local function actualizar(dt: number)
 	end
 	poner(actitud * CFrame.new(0, alturaSuelo - 1, 0))
 	recorrido += velocidad * dt
-	local zPista = if fase == "Aproximacion" or fase == "Frenando" then -(numero("Total") - numero("Distancia")) * 30 else -200 + recorrido
+	local zPista = if fase == "Aproximacion" or fase == "Frenando" or fase == "Aterrizado" then -(numero("Total") - numero("Distancia")) * 30 else -200 + recorrido
 	poner(actitud * CFrame.new(0, alturaSuelo + 0.25, zPista))
 	for _, c in campos do
 		c.rel = envolver(yaw * (c.rel + avance))

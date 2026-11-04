@@ -1,15 +1,59 @@
 # Overbooked!
 
-Juego cooperativo de tripulación de avión caótica. El código va en Luau estricto, optimizado y sin comentarios. El arte (modelos, animaciones, efectos) se hace en Blender y los sonidos en ElevenLabs.
+Juego cooperativo de 1 a 4 jugadores: la tripulación de la peor aerolínea del mundo. Uno pilota y los demás atienden la cabina: sirven comida y bebida, calman pasajeros, apagan fuegos, tapan agujeros del fuselaje y cuidan de la carga… incluido un cocodrilo.
+
+Todo el código es Luau estricto, sin comentarios. El arte se genera en Blender con scripts y se sube por la API de Open Cloud. El lugar también se construye con Rojo y se publica por la API.
+
+## Cómo se juega
+
+1. **Aeropuerto:** apareces en la terminal. En el tablero hay 3 contratos (ruta, distancia, pasajeros, carga, riesgo y pago aproximado). Pulsa **E** en uno de los pedestales para elegirlo.
+2. **Embarque (25 s):** suben los pasajeros y se carga la bodega. Entra al avión por la rampa trasera.
+3. **Despegue:** alguien se sienta en el asiento izquierdo de la cabina, acelera con **Shift** y, al pasar de 260 km/h, sube con **W**. Si nadie pilota en 45 s, despega el piloto automático.
+4. **Vuelo:** mantén el rumbo (el panel dice hacia dónde girar) y la altitud. El piloto automático ayuda, pero se desconecta con los sustos.
+5. **Aproximación:** a 140 km del destino el aterrizaje es manual. Hay que llegar a 0 m con menos de 340 km/h, bajando despacio y con las alas rectas.
+6. **Resultados:** se cobra por pasajeros entregados (según su satisfacción), carga intacta, entregas aéreas y la calidad del aterrizaje. Se resta por pasajeros perdidos, carga perdida y daños. El dinero se reparte y se guarda.
+
+## Controles
+
+| Acción | Teclado | Mando |
+|---|---|---|
+| Coger / soltar | Clic | R2 |
+| Lanzar | Clic derecho | L2 |
+| Usar extintor o llave | F (mantener) | X |
+| Interactuar (servir, coger comida, botones, puertas) | E | — |
+| Calmar a un pasajero | R (mantener) | — |
+| Pilotar: subir / bajar · girar | W / S · A / D | Stick izquierdo |
+| Pilotar: más / menos gases | Shift / Ctrl o Q | R2 / L2 |
+| Ayuda | H | — |
+
+## Sistemas
+
+| Sistema | Archivo | Qué hace |
+|---|---|---|
+| Partida | `src/server/Partida.luau` | Aeropuerto → embarque → vuelo → resultados, contratos y cobro |
+| Vuelo | `src/server/Avion.luau` | Simulación a 10 Hz, piloto y automático, motores, combustible, casco, rampa, puertas y botones |
+| Pasajeros | `src/server/Pasajeros.luau` | Pedidos 🍔 ☕ 💧 con paciencia, miedo, satisfacción; salen volando si no llevan cinturón |
+| Carga | `src/server/Carga.luau` | Daños por golpes, cajas frágiles, entregas aéreas desde la rampa y el cocodrilo |
+| Peligros | `src/server/Peligros.luau` | Turbulencias, pájaros que incendian un motor, fuego que se extiende, agujeros que succionan, caída libre, tormenta y fallo de motor |
+| Agarrar | `src/server/Agarre.luau` + `src/client/Agarre.luau` | Física con propiedad de red para quien sostiene; se puede coger a pasajeros y lanzarlos por la puerta |
+| Personajes | `src/server/Personajes.luau` + `src/client/Cuerpo.luau` | Tripulante como StarterCharacter, color por jugador, ragdoll, caídas del avión, viento en las alas |
+| Cámara | `src/client/Camara.luau` | Primera persona con brazos visibles, balanceo al andar, inclinación con el avión y sacudidas |
+| Mundo | `src/client/Mundo.luau` | El avión no se mueve: nubes, campos y pista se mueven a su alrededor en cada cliente |
+| Interfaz | `src/client/Interfaz.luau` | Ruta y progreso, panel del piloto, estado del avión, avisos, burbujas de pedidos, nombres con 🔊, tablero de contratos y resultados |
+| Boca con voz | `src/client/BocaVoz.luau` | La boca del tripulante se abre según el volumen del chat de voz |
+| Datos | `src/server/Datos.luau` | Dinero y vuelos guardados en DataStore |
+
+Todos los números del juego están en `src/shared/Config.luau`.
 
 ## Carpetas
 
-| Carpeta | Qué hay | Dónde aparece en Studio |
-|---|---|---|
-| `src/client` | Scripts del jugador | `StarterPlayer.StarterPlayerScripts.Client` |
-| `arte/tripulante` | Personaje jugable (Blender, FBX, renders) | Asset `87418247604950` |
-
-Rojo se conecta igual que en Catch It: abre una terminal en la carpeta `Overbooked`, ejecuta `rokit install` la primera vez y luego `rojo serve`. Los pasos completos están en el README de Catch It.
+| Carpeta | Qué hay |
+|---|---|
+| `src/` | Código (servidor, cliente y compartido) |
+| `mapa/` | Avión y aeropuerto en piezas de Roblox, generados por `herramientas/generar_mapa.py` |
+| `arte/` | Modelos de Blender (tripulante, avión, pasajeros, objetos) con sus generadores, FBX, renders y manifiestos |
+| `arte/ids_roblox.json` | IDs de los modelos subidos a Roblox |
+| `herramientas/` | Scripts: mapa, subida de modelos y generación de `src/shared/Visuales.luau` |
 
 ## IDs en Roblox
 
@@ -18,37 +62,24 @@ Rojo se conecta igual que en Catch It: abre una terminal en la carpeta `Overbook
 | Experiencia (universo) | `10774639088` |
 | Lugar principal | `70554923634533` |
 | Grupo dueño | `783757619` |
-| Tripulante v2 (modelo) | `87418247604950` |
+| Tripulante v2 | `87418247604950` |
+| Resto de modelos | `arte/ids_roblox.json` |
 
-Todo se sube y se prueba con la API de Open Cloud: los modelos con la API de assets, el lugar con la de publicación y las pruebas con la de ejecución de Luau.
+## Flujo de trabajo por API
+
+1. Generar el mapa: `python3 herramientas/generar_mapa.py`
+2. Subir modelos nuevos: `python3 herramientas/subir_modelos.py arte/ids_roblox.json ruta/Modelo.fbx …`
+3. Regenerar los visuales: `python3 herramientas/generar_visuales.py`
+4. Construir: `rojo build default.project.json -o overbooked.rbxlx`
+5. Publicar: `POST https://apis.roblox.com/universes/v1/10774639088/places/70554923634533/versions?versionType=Published` con el archivo `.rbxlx`
 
 ## Boca que se abre al hablar por voz
 
-`src/client/BocaVoz.luau` abre la boca de cada tripulante según el volumen de su micrófono. Con la voz normal se abre un poco; si grita, se abre del todo. Cada jugador lo calcula en su propio PC, así que no gasta red.
+Cada cliente conecta el `AudioDeviceInput` de cada jugador a un `AudioAnalyzer` y mueve los huesos `BocaSup` y `BocaInf`. La boca se abre del todo a −12 dB y queda cerrada por debajo de −46 dB. Hace falta tener la voz activada en la configuración del juego (Comunicación). Rojo ya pone `VoiceChatService.UseAudioApi = Enabled`.
 
-**Cómo funciona:**
-1. Roblox crea un `AudioDeviceInput` por cada jugador con voz.
-2. Cada cliente lo conecta a un `AudioAnalyzer` y lee el volumen en cada fotograma.
-3. El volumen se pasa a decibelios: de −46 dB (boca cerrada) a −12 dB (boca abierta del todo).
-4. Se suaviza: abre rápido y cierra algo más despacio, para que no tiemble.
-5. Mueve los huesos `BocaSup` y `BocaInf` del modelo.
+## Pendiente
 
-Las bocas a más de 120 studs de la cámara no se calculan.
-
-**Qué hay que activar en Studio:**
-- **Voz:** actívala en Configuración del juego → Comunicación (micrófono). Solo funciona para jugadores con el chat de voz habilitado en su cuenta.
-- **Servicio de voz:** `VoiceChatService.UseAudioApi = Enabled` y `EnableDefaultVoice = true`. Rojo ya los pone desde `default.project.json`; si no usas Rojo, cámbialos a mano en el Explorer.
-- **Apariencia del avatar:** `StarterPlayer.LoadCharacterAppearance = false`, para que Roblox no meta sombreros ni ropa del avatar encima del tripulante. Rojo también lo pone.
-- **Personaje:** el modelo importado tiene que estar en `StarterPlayer` con el nombre `StarterCharacter`.
-
-**Números para ajustar jugando** (al principio de `BocaVoz.luau`):
-
-| Valor | Qué hace | Ahora |
-|---|---|---|
-| `DB_MIN` | Volumen por debajo del cual la boca queda cerrada | −46 dB |
-| `DB_MAX` | Volumen con el que la boca se abre del todo | −12 dB |
-| `ATAQUE` / `CAIDA` | Rapidez al abrir / al cerrar | 30 / 12 |
-| `ABRIR` | Cuánto baja el labio de abajo, en studs | 0,24 |
-| `SUBIR` | Cuánto sube el labio de arriba, en studs | 0,05 |
-
-**Pendiente de probar en Studio:** que Roblox conserve los huesos `BocaSup` y `BocaInf` al importar el FBX como R15, y los números de volumen con voces reales.
+- **Probar en el servidor por API:** la clave aún no tiene el permiso *Luau Execution Sessions* (escritura), así que no he podido arrancar el juego en un servidor de Roblox para probarlo. Todo el código pasa el analizador de tipos de Luau en modo estricto.
+- **Orientación de los modelos:** cómo importa Roblox los FBX por API no se puede comprobar sin ese permiso. El código detecta solo los ejes de cada modelo, pero si alguno sale girado 180°, se corrige con `Config.ROTACION_FBX`.
+- **Sonidos:** ElevenLabs no es accesible desde esta sesión. El juego aún no tiene sonidos.
+- **Del tráiler, no hecho todavía:** torreta contra aviones pirata, escalar el fuselaje con piolet, vehículo de equipaje en tierra e inspección de aduanas.

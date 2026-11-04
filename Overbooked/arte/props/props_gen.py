@@ -417,10 +417,12 @@ def burger(p, m, lod=False):
 def p_asiento():
     p = Prop("Asiento", (2.2, 2.4, 4.2), 900)
     for sx in (-1, 1):
-        x = sx * 0.72
-        p.add(bar((x, -1.0, 0.0), (x, 1.0, 0.0), 0.2, 0.12, 0.04, up=(0, 0, 1)), "dark")
-        p.add(bar((x, -0.85, 0.05), (x, -0.45, 1.05), 0.17, 0.17, 0.05, up=(0, 1, 0)), "dark")
-        p.add(bar((x, 0.85, 0.05), (x, 0.4, 1.05), 0.17, 0.17, 0.05, up=(0, 1, 0)), "dark")
+        x = sx * 0.7
+        p.add(bar((x, -0.72, 0.0), (x, 0.95, 0.0), 0.2, 0.07, 0.025, up=(0, 0, 1)), "dark")
+        p.add(bar((x, -0.6, 0.03), (x, -0.6, 1.02), 0.16, 0.22, 0.05, up=(0, 1, 0)), "dark")
+        p.add(bar((x, 0.85, 0.03), (x, 0.22, 1.02), 0.16, 0.18, 0.05, up=(0, 1, 0)), "dark")
+    for y in (-0.6, 0.3):
+        p.add(bar((-0.72, y, 0.9), (0.72, y, 0.9), 0.12, 0.12, 0.035, caps=False), "dark")
     p.add(bb(-0.92, 0.92, -1.05, 0.7, 1.0, 1.14, 0.04), "dark")
     p.add(rbox((1.78, 1.85, 0.5), (0, -0.275, 1.35), 0.17, 2), "teal")
     a = math.radians(8)
@@ -433,8 +435,8 @@ def p_asiento():
     p.add(rbox((0.24, 0.05, 0.08), B + ax * 2.28 + nb * 0.27, 0.0, rot=(-8, 0, 0)), "cream")
     for sx in (-1, 1):
         x = sx * 1.0
-        p.add(rbox((0.2, 1.55, 0.16), (x, -0.22, 2.22), 0.06, 1), "dark")
-        p.add(bar((x, -0.7, 1.08), (x, -0.62, 2.18), 0.15, 0.15, 0.04, up=(0, 1, 0)), "dark")
+        p.add(rbox((0.2, 1.55, 0.18), (x, -0.22, 2.22), 0.07, 1), "dark")
+        p.add(bar((x, -0.72, 1.08), (x, -0.64, 2.18), 0.16, 0.17, 0.045, up=(0, 1, 0)), "dark")
     return p
 
 
@@ -495,7 +497,7 @@ def p_extintor():
 
 def p_llave():
     p = Prop("Llave", (0.5, 0.15, 1.8), 400)
-    p.add(lathe([(0.1, -0.062), (0.205, -0.075), (0.225, 0.0), (0.205, 0.075), (0.1, 0.062)], 10, M((0, 0, 0.225), (90, 0, 0)), closed=True), "metal")
+    p.add(lathe([(0.1, -0.062), (0.205, -0.075), (0.225, 0.0), (0.205, 0.075), (0.1, 0.062)], 12, M((0, 0, 0.225), (90, 0, 0)), closed=True), "metal")
     p.add(rbox((0.15, 0.085, 1.04), (0, 0, 0.88), 0.03, 1), "metal")
     p.add(rr_loft(0.21, 0.125, 0.05, 2, [(0.035, 0.5), (0.0, 0.55), (0.0, 1.13), (0.035, 1.18)], cap0=False, cap1=False), "orange")
     cx, cz, R, hw = 0.0, 1.56, 0.245, 0.095
@@ -510,7 +512,7 @@ def p_llave():
     if aL > aR:
         aL -= 2 * math.pi
     pts = []
-    na = 11
+    na = 13
     for k in range(na):
         a = aR + (aL - aR) * k / (na - 1)
         pts.append((cx + R * math.cos(a), cz + R * math.sin(a)))
@@ -591,7 +593,7 @@ def p_caja_fragil():
     for ry, sy in ((0, -1), (180, 1)):
         m = M((0, sy * c, 1.0), (90, 0, ry))
         p.add(prism(gob, 0.035, m, z0=0.0), "red")
-        p.add(decal(rect(-0.47, 0.47, -0.62, 0.7), m, -0.002), "cream")
+        p.add(decal(rect(-0.47, 0.47, -0.62, 0.7), m, 0.006), "cream")
     arrow = [(-0.09, -0.32), (0.09, -0.32), (0.09, 0.04), (0.21, 0.04), (0.0, 0.32), (-0.21, 0.04), (-0.09, 0.04)]
     for rz, sx in ((90, 1), (-90, -1)):
         m = M((sx * c, 0, 1.0), (90, 0, rz))
@@ -730,7 +732,7 @@ def p_volante():
     p.add(rbox((0.36, 0.2, 0.26), (0, -0.2, 0.92), 0.07, 2), "dark")
     p.add(cyl(0.07, 0.03, (0, -0.3, 0.94), rot=(90, 0, 0), seg=8), "gold")
     horns = [(-0.6, 1.3), (-0.62, 1.06), (-0.44, 0.88), (0.0, 0.88), (0.44, 0.88), (0.62, 1.06), (0.6, 1.3)]
-    hb = tube([(x, -0.24, z) for x, z in horns], lambda u: 0.055 + 0.03 * abs(2 * u - 1) ** 3, k=8, steps=2, cap_rings=2)
+    hb = tube([(x, -0.24, z) for x, z in horns], lambda u: 0.066 + 0.03 * abs(2 * u - 1) ** 3, k=8, steps=2, cap_rings=2)
     p.add(hb, lambda c, n: "black" if abs(c.x) > 0.47 else "dark", 70)
     return p
 
@@ -775,8 +777,9 @@ def p_asiento_piloto():
     for sx in (-1, 1):
         p.add(rbox((0.24, 1.3, 0.16), (sx * 1.08, -0.35, 2.15), 0.06, 1), "dark")
         p.add(bar((sx * 1.08, -0.75, 1.0), (sx * 1.08, -0.6, 2.1), 0.14, 0.14, 0.035, up=(0, 1, 0)), "dark")
-        p.add(bar(B + ax * 2.42 - nb * 0.27 + Vector((sx * 0.3, 0, 0)), B + ax * 0.75 - nb * 0.27 + Vector((sx * 0.12, 0, 0)), 0.12, 0.03, 0.0, up=-nb), "orange")
-    p.add(rbox((0.3, 0.05, 0.2), B + ax * 0.7 - nb * 0.29, 0.0, rot=(-10, 0, 0)), "gold")
+        p.add(bar(B + ax * 2.42 - nb * 0.27 + Vector((sx * 0.28, 0, 0)), B + ax * 0.42 - nb * 0.27 + Vector((sx * 0.2, 0, 0)), 0.12, 0.03, 0.0, up=-nb), "orange")
+    p.add(bar(B + ax * 0.36 - nb * 0.28 + Vector((-0.43, 0, 0)), B + ax * 0.36 - nb * 0.28 + Vector((0.43, 0, 0)), 0.13, 0.03, 0.0, up=-nb), "orange")
+    p.add(rbox((0.24, 0.05, 0.18), B + ax * 0.36 - nb * 0.3, 0.0, rot=(-10, 0, 0)), "gold")
     return p
 
 
@@ -837,9 +840,9 @@ def p_inodoro():
     bowl = [(0.34, 0.0), (0.4, 0.05), (0.41, 0.3), (0.52, 0.61), (0.585, 0.8), (0.44, 0.8), (0.28, 0.58), (0.0, 0.54)]
     p.add(lathe(bowl, 14, M((0, by, 0)), sy=sy, cap1=False),
           lambda c, n: "glass" if 0.4 < c.z < 0.62 and (c.x ** 2 + ((c.y - by) / sy) ** 2) < 0.3 ** 2 else "white")
-    p.add(lathe([(0.4, 0.8), (0.6, 0.8), (0.6, 0.865), (0.42, 0.865)], 14, M((0, by, 0)), sy=sy, closed=True), "teal")
+    p.add(lathe([(0.4, 0.8), (0.6, 0.8), (0.6, 0.865), (0.42, 0.865)], 16, M((0, by, 0)), sy=sy, closed=True), "teal")
     hy = by + 0.6 * sy
-    lid = lathe([(0.585, 0.0), (0.6, 0.035), (0.575, 0.07), (0.0, 0.075)], 14, None, sy=sy)
+    lid = lathe([(0.585, 0.0), (0.6, 0.035), (0.575, 0.07), (0.0, 0.075)], 16, None, sy=sy)
     xf(lid, Matrix.Translation((0, hy, 0.865)) @ Matrix.Rotation(math.radians(-95), 4, "X") @ Matrix.Translation((0, -0.6 * sy, 0)))
     p.add(lid, "teal")
     p.add(bb(-0.32, 0.32, 0.12, 0.62, 0.0, 0.8, 0.05, 1), "white")
@@ -972,9 +975,9 @@ def export_fbx(ob):
 
 
 SHEETS = [
-    ("props_1.png", [["Asiento", "AsientoPiloto", "Carrito", "Inodoro", "Nevera"], [("Jaula", 62), "Caja", "CajaFragil"]], 1.0, 0.34),
+    ("props_1.png", [["Caja", "Nevera", "CajaFragil", "Inodoro"], ["Asiento", "AsientoPiloto", "Carrito", ("Jaula", -80)]], 1.0, 0.34),
     ("props_2.png", [["Volante", "Gases", "Boton", "Extintor", "Cafetera"], [("Cuadro", -6)]], 0.7, 0.19),
-    ("props_3.png", [["Bandeja", "Hamburguesa", "Cafe", "Agua", "Llave"], ["Maleta1", "Maleta2", "Maleta3"]], 0.42, 0.105),
+    ("props_3.png", [["Bandeja", "Hamburguesa", "Cafe", "Agua"], ["Maleta1", "Maleta2", "Maleta3", "Llave"]], 0.42, 0.105),
 ]
 
 
@@ -1001,10 +1004,10 @@ def render_setup(scene, threads):
     world.use_nodes = True
     bg = world.node_tree.nodes["Background"]
     bg.inputs[0].default_value = (*lin(hex_rgb("BFE3F2")), 1.0)
-    bg.inputs[1].default_value = 0.9
+    bg.inputs[1].default_value = 0.75
     scene.world = world
     sun = bpy.data.lights.new("Sun", "SUN")
-    sun.energy = 3.0
+    sun.energy = 3.6
     sun.angle = math.radians(12)
     so = bpy.data.objects.new("Sun", sun)
     so.rotation_euler = (math.radians(46), 0.0, math.radians(-32))
@@ -1058,7 +1061,7 @@ def render_sheets(objs, which, threads, outdir):
     tm = render_setup(scene, threads)
     for o in objs.values():
         o.hide_render = True
-    el, az = math.radians(28), math.radians(-10)
+    el, az = math.radians(30), math.radians(-10)
     for si, (fname, rows, gap, lsize) in enumerate(SHEETS):
         if which and str(si + 1) not in which:
             continue
@@ -1076,9 +1079,11 @@ def render_sheets(objs, which, threads, outdir):
                 items.append((nm, rz, fw, fd))
             total = sum(i[2] for i in items) + gap * (len(items) - 1)
             rd = max(i[3] for i in items)
+            if made:
+                ycur += rd / 2
             x = -total / 2
             for nm, rz, fw, fd in items:
-                cx, cy = x + fw / 2, ycur + rd / 2
+                cx, cy = x + fw / 2, ycur
                 inst = bpy.data.objects.new(nm + "_v", objs[nm].data)
                 scene.collection.objects.link(inst)
                 inst.location = (cx, cy, 0)
@@ -1091,11 +1096,12 @@ def render_sheets(objs, which, threads, outdir):
                 cu.materials.append(tm)
                 lo = bpy.data.objects.new(nm + "_t", cu)
                 scene.collection.objects.link(lo)
-                lo.location = (cx, cy - fd / 2 - lsize * 0.9 - gap * 0.15, 0.002)
+                lo.location = (cx, cy - fd / 2 - lsize * 0.9 - gap * 0.15, lsize * 0.3)
                 lo.rotation_euler = (math.radians(90) - el, 0, 0)
                 made.append(lo)
                 x += fw + gap
-            ycur += rd + gap + lsize * 2.2
+            hmax = max(objs[i[0]].dimensions.z for i in items)
+            ycur += rd / 2 + gap + lsize * 2.2 + 0.75 * hmax / math.tan(el)
         bpy.context.view_layer.update()
         pts = []
         for o in made:
