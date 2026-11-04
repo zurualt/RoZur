@@ -1,0 +1,107 @@
+[
+  {
+    "nombre": "PasajeroAbuela",
+    "archivo": "PasajeroAbuela.fbx",
+    "bbox_min": [
+      -1.055,
+      -1.581,
+      -1.58
+    ],
+    "bbox_max": [
+      1.055,
+      3.591,
+      0.715
+    ],
+    "triangulos": 2358
+  },
+  {
+    "nombre": "PasajeroTurista",
+    "archivo": "PasajeroTurista.fbx",
+    "bbox_min": [
+      -1.2,
+      -1.581,
+      -1.58
+    ],
+    "bbox_max": [
+      1.2,
+      3.69,
+      1.052
+    ],
+    "triangulos": 2298
+  },
+  {
+    "nombre": "PasajeroEjecutivo",
+    "archivo": "PasajeroEjecutivo.fbx",
+    "bbox_min": [
+      -1.055,
+      -1.581,
+      -1.58
+    ],
+    "bbox_max": [
+      1.055,
+      3.409,
+      0.715
+    ],
+    "triangulos": 2066
+  },
+  {
+    "nombre": "PasajeroNino",
+    "archivo": "PasajeroNino.fbx",
+    "bbox_min": [
+      -0.782,
+      -1.197,
+      -1.171
+    ],
+    "bbox_max": [
+      0.782,
+      2.684,
+      0.53
+    ],
+    "triangulos": 2258
+  },
+  {
+    "nombre": "PasajeroDeportista",
+    "archivo": "PasajeroDeportista.fbx",
+    "bbox_min": [
+      -1.086,
+      -1.581,
+      -1.58
+    ],
+    "bbox_max": [
+      1.086,
+      3.355,
+      0.765
+    ],
+    "triangulos": 2330
+  },
+  {
+    "nombre": "PasajeroRockero",
+    "archivo": "PasajeroRockero.fbx",
+    "bbox_min": [
+      -1.055,
+      -1.581,
+      -1.58
+    ],
+    "bbox_max": [
+      1.055,
+      3.688,
+      0.836
+    ],
+    "triangulos": 2138
+  },
+  {
+    "nombre": "Cocodrilo",
+    "archivo": "Cocodrilo.fbx",
+    "bbox_min": [
+      -0.753,
+      -0.019,
+      -3.079
+    ],
+    "bbox_max": [
+      0.753,
+      1.286,
+      3.0
+    ],
+    "triangulos": 2656
+  }
+]

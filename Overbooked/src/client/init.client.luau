@@ -1,4 +1,18 @@
 --!strict
 local BocaVoz = require(script:WaitForChild("BocaVoz"))
+local Camara = require(script:WaitForChild("Camara"))
+local Mundo = require(script:WaitForChild("Mundo"))
+local Piloto = require(script:WaitForChild("Piloto"))
+local Agarre = require(script:WaitForChild("Agarre"))
+local Cuerpo = require(script:WaitForChild("Cuerpo"))
+local Efectos = require(script:WaitForChild("Efectos"))
+local Interfaz = require(script:WaitForChild("Interfaz"))
 
 BocaVoz.iniciar()
+Camara.iniciar()
+Mundo.iniciar()
+Piloto.iniciar()
+Agarre.iniciar()
+Cuerpo.iniciar()
+Efectos.iniciar()
+Interfaz.iniciar()

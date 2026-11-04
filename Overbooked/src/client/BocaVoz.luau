@@ -219,6 +219,11 @@ local function paso(dt: number)
 	end
 end
 
+function BocaVoz.nivel(jugador: Player): number
+	local estado = estados[jugador]
+	return if estado then estado.apertura else 0
+end
+
 function BocaVoz.iniciar()
 	if iniciado then
 		return

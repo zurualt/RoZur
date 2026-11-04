@@ -1,0 +1,17 @@
+[
+  {
+    "nombre": "AvionExterior",
+    "archivo": "AvionExterior.fbx",
+    "bbox_min": [
+      -38.08,
+      90.0,
+      -66.0
+    ],
+    "bbox_max": [
+      38.08,
+      122.6,
+      31.458
+    ],
+    "triangulos": 7732
+  }
+]

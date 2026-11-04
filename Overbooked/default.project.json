@@ -2,13 +2,93 @@
   "name": "Overbooked",
   "tree": {
     "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      },
+      "Remotos": {
+        "$className": "Folder",
+        "Piloto": { "$className": "UnreliableRemoteEvent" },
+        "Agarrar": { "$className": "RemoteEvent" },
+        "Soltar": { "$className": "RemoteEvent" },
+        "Usar": { "$className": "RemoteEvent" },
+        "Sostener": { "$className": "RemoteEvent" },
+        "Ragdoll": { "$className": "RemoteEvent" },
+        "Aviso": { "$className": "RemoteEvent" },
+        "Sacudida": { "$className": "UnreliableRemoteEvent" },
+        "Resultados": { "$className": "RemoteEvent" }
+      },
+      "Estado": {
+        "$className": "Folder"
+      }
+    },
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
     "StarterPlayer": {
       "$properties": {
-        "LoadCharacterAppearance": false
+        "LoadCharacterAppearance": false,
+        "CameraMode": "LockFirstPerson",
+        "CameraMaxZoomDistance": 0.5,
+        "CharacterWalkSpeed": 16,
+        "CharacterJumpPower": 45,
+        "CharacterUseJumpPower": true
       },
       "StarterPlayerScripts": {
         "Client": {
           "$path": "src/client"
+        }
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "Gravity": 196.2,
+        "FallenPartsDestroyHeight": -400
+      },
+      "Avion": {
+        "$path": "mapa/Avion.model.json"
+      },
+      "Aeropuerto": {
+        "$path": "mapa/Aeropuerto.model.json"
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0.45, 0.47, 0.52],
+        "OutdoorAmbient": [0.62, 0.64, 0.7],
+        "Brightness": 2.4,
+        "ClockTime": 14.2,
+        "GlobalShadows": true,
+        "EnvironmentDiffuseScale": 0.6,
+        "EnvironmentSpecularScale": 0.4
+      },
+      "Atmosfera": {
+        "$className": "Atmosphere",
+        "$properties": {
+          "Density": 0.28,
+          "Offset": 0.12,
+          "Color": [0.78, 0.86, 0.95],
+          "Decay": [0.55, 0.68, 0.85],
+          "Glare": 0.15,
+          "Haze": 1.4
+        }
+      },
+      "Brillo": {
+        "$className": "BloomEffect",
+        "$properties": {
+          "Intensity": 0.35,
+          "Size": 28,
+          "Threshold": 1.4
+        }
+      },
+      "Color": {
+        "$className": "ColorCorrectionEffect",
+        "$properties": {
+          "Saturation": 0.12,
+          "Contrast": 0.06,
+          "Brightness": 0.02
         }
       }
     },
