@@ -33,6 +33,9 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Interactuar (servir, coger comida, botones, puertas) | E | — |
 | Sentarse en un asiento libre | G | Y |
 | Abrir / cerrar altillos | T | B |
+| Piolet: clavarte al casco / soltarte | F / Espacio | botón «Piolet» |
+| Tractor: conducir | WASD (sentado) | stick |
+| Silenciar la música | M | — |
 | Calmar a un pasajero | R (mantener) | — |
 | Pilotar: subir / bajar · girar | W / S · A / D | Stick izquierdo |
 | Pilotar: más / menos gases | Shift / Ctrl o Q | R2 / L2 |
@@ -61,6 +64,13 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 
 Todos los números del juego están en `src/shared/Config.luau`.
 
+| Tractor y carro | `src/server/Vehiculos.luau` + `src/client/Vehiculo.luau` | Tractor conducible que remolca el carro de maletas (E junto a la lanza para enganchar) |
+| Piolet | `src/client/Escalada.luau` | Trepar por fuera del fuselaje sobre un casco invisible; en el techo hay viento fuerte en vuelo |
+| Aduana | `src/server/Aduana.luau` | Escáner con cinta: revela el contrabando; el contenedor de aduanas da +60 por maleta y cada una que llegue a destino es una multa de 150 |
+| Tienda | `src/server/Tienda.luau` + `src/server/Mejoras.luau` | Gorros cosméticos y mejoras del avión con el dinero guardado (DataStore versión 2) |
+| Sonido | `src/server/Sonidos.luau` + `src/client/Sonido.luau` | Efectos con posición, bucles (motores, viento, alarma, lluvia, fuego) y música por fase |
+| Tutorial | `src/client/Tutorial.luau` | Lista de pasos para los dos primeros vuelos |
+
 ### Cómo se relaciona todo
 
 - **Fuego:** se apaga con el extintor, con agua (F con la botella o lanzándola) y con los charcos de agua. Daña la carga que tenga cerca.
@@ -68,6 +78,8 @@ Todos los números del juego están en `src/shared/Config.luau`.
 - **Cocodrilo:** persigue la comida suelta o a quien la lleva. Si se come una hamburguesa se calma unos segundos; un golpe o el extintor lo aturden. Muerde a los pasajeros por los que pasa.
 - **Turbulencias:** abren altillos, tiran la comida de las bandejas y el café de las manos, mueven la carga y las mascarillas, y hacen parpadear las luces.
 - **Carga:** las cajas se rompen en astillas y las frágiles en cristales.
+- **Techo:** un panel suelto daña el casco; hay que salir al ala, trepar con el piolet y clavarlo a martillazos (F).
+- **Aduana:** las maletas con contrabando solo se ven al pasarlas por el escáner.
 
 ## Carpetas
 
@@ -109,6 +121,6 @@ Cada cliente conecta el `AudioDeviceInput` de cada jugador a un `AudioAnalyzer` 
 - **Probar en el servidor por API:** la clave aún no tiene el permiso *Luau Execution Sessions* (escritura), así que no he podido arrancar el juego en un servidor de Roblox. Lo que sí está comprobado: todo el código pasa el analizador de tipos de Luau en modo estricto, dos revisiones de código de Roblox (sus hallazgos están corregidos) y la vista previa en Blender del mapa con todos los modelos colocados.
 - **Orientación de los modelos:** cómo importa Roblox los FBX por API no se puede comprobar sin ese permiso. El código detecta solo los ejes de cada modelo. Si los asientos o los pasajeros salen mirando hacia atrás, se corrige con `Config.ROTACION_FBX = CFrame.Angles(0, math.pi, 0)`.
 - **Tripulante:** si el modelo importado no trae `Humanoid` o `HumanoidRootPart`, el juego usa personajes por defecto y lo avisa en la consola del servidor.
-- **Sonidos:** ElevenLabs no es accesible desde esta sesión. El juego aún no tiene sonidos.
-- **Del tráiler, no hecho todavía:** escalar el fuselaje con piolet, vehículo de equipaje en tierra e inspección de aduanas.
+- **Sonidos:** ElevenLabs no es accesible desde esta sesión, así que los efectos y la música se generan por código (`arte/sonidos/sonidos_gen.py`) y se suben como audio por la API. Si se habilita ElevenLabs, se pueden sustituir archivo por archivo con el mismo nombre.
+- **Del tráiler:** piolet, tractor de equipaje y aduana ya están hechos.
 - **Botones de la cabina:** los cinco usan el mismo modelo rojo; se distinguen por la etiqueta de color que tienen encima.
