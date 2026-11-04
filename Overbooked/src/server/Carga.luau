@@ -31,6 +31,7 @@ local Carga = {}
 
 local avion = Workspace:WaitForChild("Avion") :: Model
 local zona = avion:FindFirstChild("ZonaCarga", true) :: BasePart
+local carro = Workspace:WaitForChild("Aeropuerto"):FindFirstChild("CarroEquipaje", true) :: BasePart?
 local carpeta = Instance.new("Folder")
 carpeta.Name = "Carga"
 carpeta.Parent = avion
@@ -47,6 +48,7 @@ local COLORES_MALETA = { Color3.fromRGB(242, 123, 43), Color3.fromRGB(31, 166, 1
 local COLUMNAS = { -3.2, 0, 3.2 }
 local ORDEN = { Caja = 1, CajaFragil = 2, Maleta = 3 }
 local huecos: { Vector3 } = {}
+local enEspera = 0
 
 local function servidor(parte: BasePart)
 	if parte.Anchored or not parte:IsDescendantOf(Workspace) then
@@ -151,6 +153,7 @@ end
 
 function Carga.cargar(contrato: Contratos.Contrato)
 	Carga.limpiar()
+	enEspera = 0
 	local indice = 0
 	local lista = table.clone(contrato.carga)
 	table.sort(lista, function(a, b)
@@ -160,8 +163,13 @@ function Carga.cargar(contrato: Contratos.Contrato)
 		for _ = 1, c.cantidad do
 			local alto = Config.OBJETOS[c.tipo].tamano.Y
 			local cf
+			local enCarro = carro
 			if c.tipo == "Jaula" then
 				cf = CFrame.new(-5.5, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
+			elseif c.tipo == "Maleta" and enCarro then
+				local k = enEspera
+				enEspera += 1
+				cf = enCarro.CFrame * CFrame.new(-2.4 + (k % 4) * 1.6, enCarro.Size.Y / 2 + alto / 2 + 0.05 + (k // 8) * 1.3, -1.2 + ((k // 4) % 2) * 2.4)
 			else
 				indice += 1
 				cf = hueco(indice, alto) * CFrame.Angles(0, if c.tipo == "Maleta" then rng:NextNumber(-0.4, 0.4) else 0, 0)
@@ -236,6 +244,25 @@ function Carga.danarJaula(cantidad: number)
 			soltarCocodrilo(j)
 		end
 	end
+end
+
+function Carga.dejarEnTierra(): number
+	local perdidas = 0
+	for parte, b in bultos do
+		local p = parte.Position
+		local dentro = math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 23
+		if not dentro then
+			bultos[parte] = nil
+			perdidas += 1
+			cuenta.perdido += b.valor
+			Agarre.soltarObjeto(parte)
+			parte:Destroy()
+		end
+	end
+	if perdidas > 0 then
+		RemotoAviso:FireAllClients(`🧳 Se han quedado {perdidas} bultos en tierra`, "peligro")
+	end
+	return perdidas
 end
 
 function Carga.repararJaula(origen: Vector3, alcance: number, cantidad: number): boolean

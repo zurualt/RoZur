@@ -310,6 +310,13 @@ def aeropuerto():
     p.append(part("Plataforma", (60, 0.4, 70), (52, 90.2, 10), "8A8F96", "Concrete"))
     p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart",
                   r=rot(0, 180, 0)))
+    p.append(part("CarroEquipaje", (7, 0.6, 5), (13, 91.0, 40), "34383F", "Metal",
+                  hijos=[part("BarandaCarro", (7, 1.2, 0.2), (13, 91.9, 42.4), NARANJA, "Metal"),
+                         part("BarandaCarro", (7, 1.2, 0.2), (13, 91.9, 37.6), NARANJA, "Metal"),
+                         part("RuedaCarro", (0.4, 1, 1), (10, 90.5, 38), "1B1B21", forma="Cylinder"),
+                         part("RuedaCarro", (0.4, 1, 1), (16, 90.5, 38), "1B1B21", forma="Cylinder"),
+                         part("RuedaCarro", (0.4, 1, 1), (10, 90.5, 42), "1B1B21", forma="Cylinder"),
+                         part("RuedaCarro", (0.4, 1, 1), (16, 90.5, 42), "1B1B21", forma="Cylinder")]))
     t = []
     t.append(part("SueloTerminal", (52, 1, 52), (58, 90.5, -20), "E8E2D6", "Marble"))
     t.append(part("TechoTerminal", (54, 1, 54), (58, 104.5, -20), "FFF4E0"))

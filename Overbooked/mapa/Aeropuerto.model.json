@@ -1223,6 +1223,348 @@
    }
   },
   {
+   "name": "CarroEquipaje",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     7,
+     0.6,
+     5
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       13,
+       91.0,
+       40
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "Metal",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "children": [
+    {
+     "name": "BarandaCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       7,
+       1.2,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         13,
+         91.9,
+         42.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BarandaCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       7,
+       1.2,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         13,
+         91.9,
+         37.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "RuedaCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         10,
+         90.5,
+         38
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "RuedaCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         16,
+         90.5,
+         38
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "RuedaCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         10,
+         90.5,
+         42
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Shape": "Cylinder"
+     }
+    },
+    {
+     "name": "RuedaCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         16,
+         90.5,
+         42
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true,
+      "Shape": "Cylinder"
+     }
+    }
+   ]
+  },
+  {
    "name": "Terminal",
    "className": "Folder",
    "children": [
