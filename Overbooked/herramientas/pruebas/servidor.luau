@@ -2,10 +2,41 @@ local HttpService = game:GetService("HttpService")
 local InsertService = game:GetService("InsertService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
+local LogService = game:GetService("LogService")
+local RunService = game:GetService("RunService")
+
+local informe: { [string]: any } = { arranque = {}, registros = {} }
+
+if not RunService:IsRunning() then
+	local carpeta = game:GetService("ServerScriptService"):FindFirstChild("Server")
+	local orden = { "Activos", "Estadisticas", "Datos", "Personajes", "Agarre", "Objetos", "Avion", "Pasajeros", "Carga", "Piratas", "Peligros", "Interacciones", "Cabina", "Vehiculos", "Aduana", "Tienda", "Partida" }
+	local modulos = {}
+	for _, nombre in orden do
+		local ok, m = pcall(require, (carpeta :: Instance):FindFirstChild(nombre) :: ModuleScript)
+		if ok then
+			modulos[nombre] = m
+		else
+			informe.arranque[nombre] = "require: " .. tostring(m)
+		end
+	end
+	for _, nombre in orden do
+		local m = modulos[nombre]
+		if m then
+			local ok, e = pcall(m.iniciar)
+			if not ok then
+				informe.arranque[nombre] = tostring(e)
+			end
+		end
+	end
+end
 
 task.wait(25)
 
-local informe = {}
+for _, m in LogService:GetLogHistory() do
+	if m.messageType == Enum.MessageType.MessageWarning or m.messageType == Enum.MessageType.MessageError then
+		table.insert(informe.registros, string.sub(m.message, 1, 300))
+	end
+end
 
 local function arbol(instancia: Instance, profundidad: number): { any }
 	local lista = {}
