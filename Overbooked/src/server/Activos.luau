@@ -3,6 +3,7 @@ local InsertService = game:GetService("InsertService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Visuales = require(ReplicatedStorage.Shared.Visuales)
 
 local Activos = {}
 
@@ -18,13 +19,24 @@ local ROTACIONES = {
 	CFrame.Angles(-math.pi / 2, 0, math.pi / 2),
 }
 
+local ESQUINAS = {
+	Vector3.new(1, 1, 1),
+	Vector3.new(1, 1, -1),
+	Vector3.new(1, -1, 1),
+	Vector3.new(1, -1, -1),
+	Vector3.new(-1, 1, 1),
+	Vector3.new(-1, 1, -1),
+	Vector3.new(-1, -1, 1),
+	Vector3.new(-1, -1, -1),
+}
+
 local function caja(modelo: Model): (Vector3, Vector3)
 	local minimo = Vector3.one * math.huge
 	local maximo = -Vector3.one * math.huge
 	for _, d in modelo:GetDescendants() do
 		if d:IsA("BasePart") then
 			local cf, s = d.CFrame, d.Size / 2
-			for _, signo in { Vector3.new(1, 1, 1), Vector3.new(1, 1, -1), Vector3.new(1, -1, 1), Vector3.new(1, -1, -1), Vector3.new(-1, 1, 1), Vector3.new(-1, 1, -1), Vector3.new(-1, -1, 1), Vector3.new(-1, -1, -1) } do
+			for _, signo in ESQUINAS do
 				local p = cf:PointToWorldSpace(s * signo)
 				minimo = minimo:Min(p)
 				maximo = maximo:Max(p)
@@ -35,15 +47,15 @@ local function caja(modelo: Model): (Vector3, Vector3)
 end
 
 local function forma(v: Vector3): Vector3
-	local mayor = math.max(v.X, v.Y, v.Z, 1e-3)
-	return v / mayor
+	return v / math.max(v.X, v.Y, v.Z, 1e-3)
 end
 
-local function orientar(modelo: Model, esperado: Vector3?): CFrame
-	if not esperado then
+local function orientar(modelo: Model, nombre: string): CFrame
+	local esperada = Visuales.CAJAS[nombre]
+	if not esperada then
 		return Config.ROTACION_FBX
 	end
-	local objetivo = forma(esperado)
+	local objetivo = forma(esperada.maximo - esperada.minimo)
 	local mejor, error = Config.ROTACION_FBX, math.huge
 	for _, r in ROTACIONES do
 		modelo:PivotTo(r)
@@ -86,15 +98,14 @@ local function cargar(nombre: string, id: number)
 		hijo.Parent = modelo
 	end
 	resultado:Destroy()
-	if not modelo:FindFirstChildWhichIsA("BasePart", true) then
+	local primera = modelo:FindFirstChildWhichIsA("BasePart", true)
+	if not primera then
 		warn(`[Overbooked] El modelo {nombre} no tiene piezas`)
 		return
 	end
 	preparar(modelo)
-	if not modelo.PrimaryPart then
-		modelo.PrimaryPart = modelo:FindFirstChildWhichIsA("BasePart", true)
-	end
-	modelo:SetAttribute("Rotacion", orientar(modelo, Config.TAMANOS[nombre]))
+	modelo.PrimaryPart = primera
+	modelo:SetAttribute("Rotacion", orientar(modelo, nombre))
 	plantillas[nombre] = modelo
 	local cola = pendientes[nombre]
 	if cola then
@@ -106,7 +117,7 @@ local function cargar(nombre: string, id: number)
 end
 
 function Activos.iniciar()
-	for nombre, id in Config.VISUALES do
+	for nombre, id in Visuales.IDS do
 		task.spawn(cargar, nombre, id)
 	end
 end
@@ -117,7 +128,7 @@ function Activos.cuando(nombre: string, f: (Model) -> ())
 		task.spawn(f, plantilla)
 		return
 	end
-	if not Config.VISUALES[nombre] then
+	if not Visuales.IDS[nombre] then
 		return
 	end
 	local cola = pendientes[nombre] or {}
@@ -125,22 +136,24 @@ function Activos.cuando(nombre: string, f: (Model) -> ())
 	table.insert(cola, f)
 end
 
-local function colocar(visual: Model, base: CFrame, esperado: Vector3?)
+local function colocar(visual: Model, base: CFrame, nombre: string)
 	local r = visual:GetAttribute("Rotacion")
 	local giro = if typeof(r) == "CFrame" then r else Config.ROTACION_FBX
 	visual:PivotTo(base * giro)
+	local esperada = Visuales.CAJAS[nombre]
+	if not esperada then
+		return
+	end
 	local minimo, maximo = caja(visual)
 	local medida = maximo - minimo
-	if esperado then
-		local mayorV = math.max(medida.X, medida.Y, medida.Z)
-		local mayorE = math.max(esperado.X, esperado.Y, esperado.Z)
-		if mayorV > 1e-3 then
-			visual:ScaleTo(visual:GetScale() * mayorE / mayorV)
-		end
+	local tamano = esperada.maximo - esperada.minimo
+	local mayorV = math.max(medida.X, medida.Y, medida.Z)
+	if mayorV > 1e-3 then
+		visual:ScaleTo(visual:GetScale() * math.max(tamano.X, tamano.Y, tamano.Z) / mayorV)
 		minimo, maximo = caja(visual)
 	end
-	local fondo = Vector3.new((minimo.X + maximo.X) / 2, minimo.Y, (minimo.Z + maximo.Z) / 2)
-	visual:PivotTo(visual:GetPivot() + (base.Position - fondo))
+	local objetivo = base:PointToWorldSpace((esperada.minimo + esperada.maximo) / 2)
+	visual:PivotTo(visual:GetPivot() + (objetivo - (minimo + maximo) / 2))
 end
 
 local function ocultar(parte: BasePart)
@@ -154,6 +167,14 @@ local function ocultar(parte: BasePart)
 	end
 end
 
+local function anclar(visual: Model)
+	for _, d in visual:GetDescendants() do
+		if d:IsA("BasePart") then
+			d.Anchored = true
+		end
+	end
+end
+
 function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
 	Activos.cuando(nombre, function(plantilla)
 		if not marcador.Parent then
@@ -161,13 +182,8 @@ function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
 		end
 		local visual = plantilla:Clone()
 		local y = baseY or (marcador.Position.Y - marcador.Size.Y / 2)
-		local orientacion = marcador.CFrame - marcador.Position
-		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * orientacion, Config.TAMANOS[nombre])
-		for _, d in visual:GetDescendants() do
-			if d:IsA("BasePart") then
-				d.Anchored = true
-			end
-		end
+		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * marcador.CFrame.Rotation, nombre)
+		anclar(visual)
 		ocultar(marcador)
 		visual.Parent = marcador
 	end)
@@ -179,7 +195,7 @@ function Activos.vestirDinamico(parte: BasePart, nombre: string)
 			return
 		end
 		local visual = plantilla:Clone()
-		colocar(visual, parte.CFrame * CFrame.new(0, -parte.Size.Y / 2, 0), Config.TAMANOS[nombre])
+		colocar(visual, parte.CFrame * CFrame.new(0, -parte.Size.Y / 2, 0), nombre)
 		for _, d in visual:GetDescendants() do
 			if d:IsA("BasePart") then
 				local soldadura = Instance.new("WeldConstraint")
@@ -196,28 +212,23 @@ end
 function Activos.vestirAvion(avion: Model)
 	Activos.cuando("AvionExterior", function(plantilla)
 		local visual = plantilla:Clone()
-		local minimoE, maximoE = Config.CAJA_AVION.minimo, Config.CAJA_AVION.maximo
-		colocar(visual, CFrame.new((minimoE.X + maximoE.X) / 2, minimoE.Y, (minimoE.Z + maximoE.Z) / 2), maximoE - minimoE)
-		for _, d in visual:GetDescendants() do
-			if d:IsA("BasePart") then
-				d.Anchored = true
+		colocar(visual, CFrame.identity, "AvionExterior")
+		anclar(visual)
+		visual.Parent = avion
+		local exterior = avion:FindFirstChild("Exterior")
+		if exterior then
+			for _, d in exterior:GetDescendants() do
+				if d:IsA("BasePart") and not (d.Parent and d.Parent.Name == "Tren") then
+					d.Transparency = 1
+				end
 			end
 		end
-		visual.Parent = avion
+		avion:SetAttribute("CascoCargado", true)
 	end)
 end
 
 function Activos.tiene(nombre: string): boolean
 	return if plantillas[nombre] then true else false
-end
-
-function Activos.clonar(nombre: string): Model?
-	local plantilla = plantillas[nombre]
-	return if plantilla then plantilla:Clone() else nil
-end
-
-function Activos.colocar(visual: Model, base: CFrame, nombre: string)
-	colocar(visual, base, Config.TAMANOS[nombre])
 end
 
 return Activos

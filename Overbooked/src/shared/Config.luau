@@ -14,12 +14,6 @@ Config.ASSET_TRIPULANTE = 87418247604950
 Config.ALTURA_TRIPULANTE = 4.67
 Config.ROTACION_FBX = CFrame.identity
 
-Config.VISUALES = {} :: { [string]: number }
-Config.TAMANOS = {} :: { [string]: Vector3 }
-Config.CAJA_AVION = {
-	minimo = Vector3.new(-38.6, 90, -66),
-	maximo = Vector3.new(38.6, 122, 31),
-}
 
 Config.COLORES_JUGADOR = {
 	Color3.fromRGB(139, 210, 76),

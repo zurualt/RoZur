@@ -589,7 +589,7 @@ def passenger(spec):
     ex, ez = spec.get("eye_x", 0.215), spec.get("eye_z", 3.98)
     er = spec.get("eye_r", (0.055, 0.08, 0.04))
     for sx in (-1, 1):
-        prims.append((face.dot(sx * ex, ez, er, 0.0, 6, 4), BLACK, 70.0))
+        prims.append((face.dot(sx * ex, ez, er, 0.0, 8, 4), BLACK, 70.0))
         bi, bo = spec.get("brow", (4.16, 4.16))
         if isinstance(bi, tuple):
             (bi, bo) = bi if sx > 0 else bo
@@ -763,16 +763,16 @@ def extras_deportista(face):
 
 def extras_rockero(face):
     out = []
-    spikes = [(-90, 0.62, 0.26, 0.11), (-90, 0.95, 0.36, 0.13), (-90, 1.3, 0.44, 0.15),
-              (90, 1.32, 0.44, 0.15), (90, 0.98, 0.38, 0.14), (90, 0.62, 0.3, 0.12), (90, 0.25, 0.22, 0.1)]
+    spikes = [(-90, 0.66, 0.38, 0.13), (-90, 0.98, 0.55, 0.16), (-90, 1.3, 0.66, 0.18),
+              (90, 1.32, 0.64, 0.18), (90, 0.98, 0.56, 0.17), (90, 0.62, 0.44, 0.15), (90, 0.25, 0.3, 0.12)]
     ridge = []
     for i, (th, e, ln, r) in enumerate(spikes):
         p = body_pt(math.radians(th), e, 0.0)
         n = body_normal(math.radians(th), e)
-        d = (n + Vector((0, 0.35, 0.0))).normalized()
+        d = (n + Vector((0, 0.45, 0.0))).normalized()
         out.append((cylinder(r, ln, Matrix.Translation(p + d * (ln * 0.5)) @ align_z(d), 6, r2=0.015), GREEN if i % 2 == 0 else DGREEN, 45.0))
         ridge.append(p + n * 0.02)
-    out.append((tube(ridge, lambda u: 0.11, k=6, steps=2, cap_rings=2), DGREEN, 55.0))
+    out.append((tube(ridge, lambda u: 0.13, k=6, steps=2, cap_rings=2), GREEN, 55.0))
     out.append((v_patch(face, 3.32, 1.75, 0.27, 0.2, 3, 5, 0.02), RED, 60.0))
     for sx in (-1, 1):
         for z in (3.15, 2.85, 2.55):
@@ -805,23 +805,23 @@ PASSENGERS = [
 
 def croc_section(y):
     keys = [
-        (-3.0, 0.20, 0.36, 0.60),
-        (-2.92, 0.27, 0.33, 0.64),
-        (-2.6, 0.30, 0.31, 0.66),
-        (-2.2, 0.34, 0.30, 0.68),
-        (-1.8, 0.42, 0.29, 0.75),
-        (-1.5, 0.50, 0.29, 0.86),
-        (-1.2, 0.54, 0.29, 0.90),
-        (-0.95, 0.51, 0.29, 0.87),
-        (-0.6, 0.60, 0.27, 0.97),
-        (-0.1, 0.66, 0.25, 1.04),
-        (0.4, 0.64, 0.26, 1.01),
-        (0.9, 0.55, 0.29, 0.92),
-        (1.4, 0.42, 0.31, 0.78),
-        (1.9, 0.30, 0.30, 0.63),
-        (2.4, 0.19, 0.26, 0.48),
-        (2.8, 0.09, 0.21, 0.33),
-        (2.97, 0.03, 0.19, 0.26),
+        (-3.0, 0.22, 0.33, 0.60),
+        (-2.92, 0.29, 0.30, 0.64),
+        (-2.6, 0.32, 0.28, 0.66),
+        (-2.2, 0.36, 0.27, 0.69),
+        (-1.85, 0.45, 0.26, 0.78),
+        (-1.5, 0.56, 0.25, 0.92),
+        (-1.2, 0.60, 0.25, 0.98),
+        (-0.95, 0.55, 0.26, 0.93),
+        (-0.6, 0.62, 0.24, 1.0),
+        (-0.1, 0.67, 0.22, 1.06),
+        (0.4, 0.65, 0.23, 1.03),
+        (0.9, 0.56, 0.26, 0.93),
+        (1.4, 0.43, 0.28, 0.78),
+        (1.9, 0.30, 0.27, 0.62),
+        (2.4, 0.19, 0.23, 0.47),
+        (2.8, 0.09, 0.19, 0.32),
+        (2.97, 0.03, 0.18, 0.26),
     ]
     for i in range(len(keys) - 1):
         if keys[i][0] <= y <= keys[i + 1][0]:
@@ -837,6 +837,34 @@ def croc_xo(y):
 
 
 CROC_N = 2.6
+MOUTH_END = -1.08
+
+
+def croc_mz(y):
+    return 0.455 + 0.3 * ss(-1.75, -1.1, y) ** 1.4
+
+
+def croc_theta_m(y):
+    if y >= MOUTH_END:
+        return 0.0
+    w, zb, zt = croc_section(y)
+    zc, h = 0.5 * (zb + zt), 0.5 * (zt - zb)
+    q = max(-0.95, min(0.95, (croc_mz(y) - zc) / h))
+    return math.asin(math.copysign(abs(q) ** (CROC_N / 2), q))
+
+
+def croc_ring(y, m):
+    tm = croc_theta_m(y)
+    half = []
+    for j in range(m // 2 + 1):
+        th = -math.pi / 2 + 2 * math.pi * j / m
+        if th <= 0:
+            t2 = -math.pi / 2 + (th + math.pi / 2) * (tm + math.pi / 2) / (math.pi / 2)
+        else:
+            t2 = tm + th * (math.pi / 2 - tm) / (math.pi / 2)
+        half.append(croc_pt(y, t2) - Vector((croc_xo(y), 0, 0)))
+    pts = half + [Vector((-p.x, p.y, p.z)) for p in reversed(half[1:-1])]
+    return [p + Vector((croc_xo(y), 0, 0)) for p in pts]
 
 
 def croc_pt(y, th, off=0.0):
@@ -858,15 +886,15 @@ def croc_side_x(y, z):
 def build_croc():
     prims = []
     m = 16
-    ys = [-2.97, -2.86, -2.65, -2.35, -2.05, -1.75, -1.5, -1.25, -1.02, -0.75, -0.4, 0.0, 0.4, 0.8,
+    ys = [-2.97, -2.86, -2.65, -2.4, -2.15, -1.9, -1.65, -1.42, -1.2, -1.0, -0.78, -0.45, -0.05, 0.4, 0.8,
           1.2, 1.6, 2.0, 2.4, 2.7, 2.9]
     bm = bmesh.new()
     cl = bm.faces.layers.int.new("c")
     ths = [-math.pi / 2 + 2 * math.pi * j / m for j in range(m)]
-    rings = [[bm.verts.new((croc_xo(-3.0), -3.0, 0.48))]]
+    rings = [[bm.verts.new((croc_xo(-3.0), -3.0, 0.465))]]
     for y in ys:
-        rings.append([bm.verts.new(croc_pt(y, th)) for th in ths])
-    rings.append([bm.verts.new((croc_xo(3.0), 3.0, 0.23))])
+        rings.append([bm.verts.new(p) for p in croc_ring(y, m)])
+    rings.append([bm.verts.new((croc_xo(3.0), 3.0, 0.22))])
     for i in range(len(rings) - 1):
         a, b = rings[i], rings[i + 1]
         yb = ys[i] if i < len(ys) else 3.0
@@ -878,9 +906,11 @@ def build_croc():
                 f = bm.faces.new((a[j], b[0], a[j2]))
             else:
                 f = bm.faces.new((a[j], b[j], b[j2], a[j2]))
+            c = f.calc_center_median()
             thm = ths[j] + math.pi / m
             sn = math.sin(thm)
-            if sn < -0.62:
+            jaw = yb <= MOUTH_END and (j < m // 4 or j >= 3 * m // 4)
+            if sn < -0.62 or jaw:
                 f[cl] = CREAM
             elif sn > 0.9 and -0.95 < yb < 2.9:
                 f[cl] = DGREEN
@@ -889,48 +919,45 @@ def build_croc():
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     prims.append((bm, None, 45.0))
 
-    def mz(y):
-        return 0.47 + 0.16 * ss(-1.65, -1.12, y)
-
     for sx in (-1, 1):
-        pts = []
-        for y in (-1.1, -1.2, -1.32, -1.5, -1.75, -2.05, -2.35, -2.62, -2.84):
-            x = croc_side_x(y, mz(y)) + 0.012
-            pts.append(Vector((sx * x + croc_xo(y), y, mz(y))))
-        pts.append(Vector((sx * 0.13, -2.98, 0.475)))
-        pts.append(Vector((0.0, -3.025, 0.475)))
-        prims.append((tube(pts, lambda u: 0.032, k=4, steps=1, cap_rings=1), BLACK, 60.0))
-        for i, y in enumerate((-1.36, -1.58, -1.82, -2.06, -2.3, -2.54, -2.76)):
+        pts = [Vector((sx * (croc_side_x(-1.02, 0.80) - 0.02), -1.02, 0.84))]
+        for y in (-1.1, -1.2, -1.34, -1.55, -1.8, -2.08, -2.36, -2.62, -2.84):
+            z = croc_mz(y)
+            x = croc_side_x(y, z) + 0.012
+            pts.append(Vector((sx * x + croc_xo(y), y, z)))
+        pts.append(Vector((sx * 0.14, -2.985, 0.462)))
+        pts.append(Vector((0.0, -3.03, 0.462)))
+        prims.append((tube(pts, lambda u: 0.036, k=4, steps=1, cap_rings=1), BLACK, 60.0))
+        for i, y in enumerate((-1.3, -1.52, -1.76, -2.0, -2.24, -2.48, -2.72)):
             up = i % 2 == 0
-            z = mz(y)
+            z = croc_mz(y)
             x = croc_side_x(y, z)
-            n = Vector((1.0, 0, 0)) * sx
-            base = Vector((sx * (x + 0.01), y, z + (0.01 if up else -0.01)))
-            d = Vector((sx * 0.25, -0.15, -1.0 if up else 1.0)).normalized()
-            ln = 0.15 if i < 2 else 0.12
-            prims.append((cylinder(0.058, ln, Matrix.Translation(base + d * (ln * 0.5)) @ align_z(d), 4, r2=0.0), WHITE, 40.0))
-    for sx in (-0.12, 0.12):
-        d = Vector((sx * 0.6, -1.0, -0.9)).normalized()
-        base = Vector((sx, -2.99, 0.49))
-        prims.append((cylinder(0.05, 0.12, Matrix.Translation(base + d * 0.06) @ align_z(d), 4, r2=0.0), WHITE, 40.0))
+            base = Vector((sx * (x + 0.015), y, z + (0.012 if up else -0.012)))
+            d = Vector((sx * 0.3, -0.1, -1.0 if up else 1.0)).normalized()
+            ln = 0.19 if i < 3 else 0.15
+            prims.append((cylinder(0.07, ln, Matrix.Translation(base + d * (ln * 0.5)) @ align_z(d), 4, r2=0.0), WHITE, 40.0))
+    for sx in (-0.13, 0.13):
+        d = Vector((sx * 0.5, -0.8, -1.0)).normalized()
+        base = Vector((sx, -2.99, 0.475))
+        prims.append((cylinder(0.06, 0.16, Matrix.Translation(base + d * 0.08) @ align_z(d), 4, r2=0.0), WHITE, 40.0))
 
     for sx in (-1, 1):
-        ec = Vector((sx * 0.25, -1.42, 1.08))
-        prims.append((ellipsoid((0.21, 0.24, 0.16), Matrix.Translation((sx * 0.25, -1.38, 0.9)), 10, 6), GREEN, 60.0))
-        prims.append((ellipsoid((0.19, 0.19, 0.19), Matrix.Translation(ec), 12, 8), WHITE, 60.0))
-        dpup = Vector((-sx * 0.15, -1.0, 0.12)).normalized()
-        prims.append((ellipsoid((0.075, 0.095, 0.04), Matrix.Translation(ec + dpup * 0.172) @ frame_from_normal(dpup), 8, 4), BLACK, 70.0))
-        ln = Vector((sx * 0.35, 0.45, 1.0)).normalized()
-        a0 = math.radians(100)
-        prof = [(0.17 * math.cos(a0), 0.17 * math.sin(a0), GREEN)]
+        ec = Vector((sx * 0.27, -1.4, 1.14))
+        prims.append((ellipsoid((0.24, 0.27, 0.2), Matrix.Translation((sx * 0.27, -1.36, 0.95)), 10, 6), GREEN, 60.0))
+        prims.append((ellipsoid((0.21, 0.21, 0.21), Matrix.Translation(ec), 12, 8), WHITE, 60.0))
+        dpup = Vector((-sx * 0.12, -1.0, 0.05)).normalized()
+        prims.append((ellipsoid((0.08, 0.1, 0.045), Matrix.Translation(ec + dpup * 0.19) @ frame_from_normal(dpup), 8, 4), BLACK, 70.0))
+        ln = Vector((-sx * 0.42, 0.42, 1.0)).normalized()
+        a0 = math.radians(96)
+        prof = [(0.18 * math.cos(a0), 0.18 * math.sin(a0), DGREEN)]
         for k in range(5):
             a = a0 * (1 - k / 4)
-            prof.append((0.207 * math.cos(a), 0.207 * math.sin(a), GREEN))
+            prof.append((0.228 * math.cos(a), 0.228 * math.sin(a), GREEN if k else DGREEN))
         prims.append((lathe(prof, 12, Matrix.Translation(ec) @ align_z(ln)), None, 60.0))
-        prims.append((ellipsoid((0.06, 0.05, 0.035), Matrix.Translation((sx * 0.1 + croc_xo(-2.85), -2.86, 0.66)), 6, 4), DGREEN, 60.0))
+        prims.append((ellipsoid((0.065, 0.055, 0.04), Matrix.Translation((sx * 0.11 + croc_xo(-2.85), -2.86, 0.645)), 6, 4), DGREEN, 60.0))
 
-    scutes = [(-0.75, 0.0), (-0.45, -0.17), (-0.45, 0.17), (-0.15, -0.19), (-0.15, 0.19), (0.15, -0.19), (0.15, 0.19),
-              (0.45, -0.17), (0.45, 0.17), (0.75, 0.0), (1.05, 0.0), (1.35, 0.0), (1.65, 0.0), (1.95, 0.0), (2.25, 0.0), (2.55, 0.0)]
+    scutes = [(-0.72, 0.0), (-0.42, -0.18), (-0.42, 0.18), (-0.12, -0.2), (-0.12, 0.2), (0.18, -0.2), (0.18, 0.2),
+              (0.48, -0.18), (0.48, 0.18), (0.78, 0.0), (1.08, 0.0), (1.38, 0.0), (1.68, 0.0), (1.98, 0.0), (2.28, 0.0), (2.58, 0.0)]
     for y, dx in scutes:
         w, zb, zt = croc_section(y)
         f = 1.0 if y < 0.9 else max(0.45, 1.0 - (y - 0.9) / 2.2)
@@ -939,21 +966,21 @@ def build_croc():
         zz = zc + h * (1 - t ** CROC_N) ** (1 / CROC_N)
         n = Vector((dx * 1.5, 0, 1.0)).normalized()
         base = Vector((dx + croc_xo(y), y, zz - 0.02))
-        ln = 0.13 * f
-        prims.append((cylinder(0.1 * f, ln, Matrix.Translation(base + n * ln * 0.5) @ align_z(n), 5, r2=0.03 * f), DGREEN, 45.0))
+        ln = 0.14 * f
+        prims.append((cylinder(0.105 * f, ln, Matrix.Translation(base + n * ln * 0.5) @ align_z(n), 5, r2=0.03 * f), DGREEN, 45.0))
 
-    for ly in (-0.62, 0.72):
+    for ly in (-0.6, 0.72):
         for sx in (-1, 1):
             w, zb, zt = croc_section(ly)
-            ctrl = [Vector((sx * (w - 0.18), ly, 0.5)), Vector((sx * (w - 0.02), ly - 0.02, 0.36)), Vector((sx * 0.62, ly - 0.05, 0.1))]
-            prims.append((tube(ctrl, lambda u: 0.14 - 0.02 * u, k=6, steps=2, cap_rings=1), GREEN, 50.0))
-            foot = ellipsoid((0.15, 0.22, 0.085), Matrix.Translation((sx * 0.61, ly - 0.12, 0.07)), 8, 5)
+            ctrl = [Vector((sx * (w - 0.25), ly + 0.04, 0.5)), Vector((sx * (w - 0.02), ly, 0.3)), Vector((sx * 0.57, ly - 0.05, 0.1))]
+            prims.append((tube(ctrl, lambda u: 0.17 - 0.03 * u, k=7, steps=2, cap_rings=1), GREEN, 50.0))
+            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.56, ly - 0.12, 0.07)), 8, 5)
             for v in foot.verts:
                 v.co.z = max(v.co.z, 0.0)
             prims.append((foot, GREEN, 60.0))
             for k in (-1, 0, 1):
                 d = Vector((k * 0.35, -1.0, -0.15)).normalized()
-                base = Vector((sx * 0.61 + k * 0.075, ly - 0.3, 0.05))
+                base = Vector((sx * 0.56 + k * 0.075, ly - 0.3, 0.05))
                 prims.append((cylinder(0.035, 0.09, Matrix.Translation(base + d * 0.04) @ align_z(d), 4, r2=0.0), CREAM, 40.0))
     out = []
     for bm, col, ang in prims:
@@ -968,8 +995,8 @@ def seat(x):
                                               (x, 0.1, -1.0, 1.6, 1.4, 1.2, DARK)):
         bm = bmesh.new()
         bmesh.ops.create_cube(bm, size=1.0)
-        bmesh.ops.bevel(bm, geom=bm.edges[:], offset=0.12, segments=2, affect="EDGES")
         bmesh.ops.transform(bm, matrix=Matrix.Translation((cx, cy, cz)) @ Matrix.Diagonal((sx_, sy_, sz_, 1.0)), verts=bm.verts)
+        bmesh.ops.bevel(bm, geom=bm.edges[:], offset=0.14, segments=3, affect="EDGES", profile=0.5)
         out.append((bm, col, 40.0))
     return out
 
@@ -1010,12 +1037,12 @@ def main():
         ob.location = (x, 0, 0)
         seat_objs.append(build_object("Seat%d" % i, seat(x), mat))
     croc.hide_render = True
-    shoot(scene, "pasajeros_1", dict(loc=(-4.0, -15.5, 4.6), target=(0.0, 0.0, 0.9), lens=36))
+    shoot(scene, "pasajeros_1", dict(loc=(-4.2, -17.5, 4.4), target=(0.0, 0.0, 0.75), lens=34))
     for ob in pas + seat_objs:
         ob.hide_render = True
     croc.hide_render = False
     croc.location = (0, 0, -1.6)
-    shoot(scene, "cocodrilo", dict(loc=(-6.2, -6.6, 2.4), target=(0.1, 0.1, -0.95), lens=40))
+    shoot(scene, "cocodrilo", dict(loc=(-5.0, -5.6, 0.9), target=(0.25, -0.2, -1.05), lens=40))
 
 
 main()

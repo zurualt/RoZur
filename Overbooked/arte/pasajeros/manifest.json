@@ -12,7 +12,7 @@
       3.591,
       0.715
     ],
-    "triangulos": 2358
+    "triangulos": 2382
   },
   {
     "nombre": "PasajeroTurista",
@@ -27,7 +27,7 @@
       3.69,
       1.052
     ],
-    "triangulos": 2298
+    "triangulos": 2322
   },
   {
     "nombre": "PasajeroEjecutivo",
@@ -42,7 +42,7 @@
       3.409,
       0.715
     ],
-    "triangulos": 2066
+    "triangulos": 2090
   },
   {
     "nombre": "PasajeroNino",
@@ -57,7 +57,7 @@
       2.684,
       0.53
     ],
-    "triangulos": 2258
+    "triangulos": 2282
   },
   {
     "nombre": "PasajeroDeportista",
@@ -72,7 +72,7 @@
       3.355,
       0.765
     ],
-    "triangulos": 2330
+    "triangulos": 2354
   },
   {
     "nombre": "PasajeroRockero",
@@ -84,24 +84,24 @@
     ],
     "bbox_max": [
       1.055,
-      3.688,
-      0.836
+      3.885,
+      0.911
     ],
-    "triangulos": 2138
+    "triangulos": 2162
   },
   {
     "nombre": "Cocodrilo",
     "archivo": "Cocodrilo.fbx",
     "bbox_min": [
-      -0.753,
-      -0.019,
-      -3.079
+      -0.738,
+      -0.034,
+      -3.09
     ],
     "bbox_max": [
-      0.753,
-      1.286,
+      0.738,
+      1.365,
       3.0
     ],
-    "triangulos": 2656
+    "triangulos": 2744
   }
 ]
