@@ -3,6 +3,9 @@
   "tree": {
     "$className": "DataModel",
     "StarterPlayer": {
+      "$properties": {
+        "LoadCharacterAppearance": false
+      },
       "StarterPlayerScripts": {
         "Client": {
           "$path": "src/client"

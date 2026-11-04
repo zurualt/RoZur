@@ -27,6 +27,7 @@ Las bocas a más de 120 studs de la cámara no se calculan.
 **Qué hay que activar en Studio:**
 - **Voz:** actívala en Configuración del juego → Comunicación (micrófono). Solo funciona para jugadores con el chat de voz habilitado en su cuenta.
 - **Servicio de voz:** `VoiceChatService.UseAudioApi = Enabled` y `EnableDefaultVoice = true`. Rojo ya los pone desde `default.project.json`; si no usas Rojo, cámbialos a mano en el Explorer.
+- **Apariencia del avatar:** `StarterPlayer.LoadCharacterAppearance = false`, para que Roblox no meta sombreros ni ropa del avatar encima del tripulante. Rojo también lo pone.
 - **Personaje:** el modelo importado tiene que estar en `StarterPlayer` con el nombre `StarterCharacter`.
 
 **Números para ajustar jugando** (al principio de `BocaVoz.luau`):

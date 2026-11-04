@@ -50,16 +50,18 @@ local function ponerBoca(estado: Estado, k: number)
 	estado.aplicada = k
 end
 
-local function enHueso(hueso: Bone, cabeza: BasePart, v: Vector3): Vector3
-	return hueso.WorldCFrame:VectorToObjectSpace(cabeza.CFrame:VectorToWorldSpace(v))
+local function enHueso(hueso: Bone, v: Vector3): Vector3
+	local base = hueso:FindFirstAncestorWhichIsA("BasePart")
+	local marco = if base and base:IsA("BasePart") then base.CFrame else hueso.WorldCFrame
+	return hueso.WorldCFrame:VectorToObjectSpace(marco:VectorToWorldSpace(v))
 end
 
-local function enlazarHuesos(estado: Estado, personaje: Model): boolean
+local function enlazarHuesos(estado: Estado, personaje: Model)
 	local sup = personaje:FindFirstChild("BocaSup", true)
 	local inf = personaje:FindFirstChild("BocaInf", true)
 	local cabeza = personaje:FindFirstChild("Head")
 	if not (sup and sup:IsA("Bone") and inf and inf:IsA("Bone") and cabeza and cabeza:IsA("BasePart")) then
-		return false
+		return
 	end
 	sup.Transform = CFrame.identity
 	inf.Transform = CFrame.identity
@@ -67,35 +69,41 @@ local function enlazarHuesos(estado: Estado, personaje: Model): boolean
 	estado.sup = sup
 	estado.inf = inf
 	estado.cabeza = cabeza
-	estado.vSup = enHueso(sup, cabeza, Vector3.new(0, SUBIR * escala, 0))
-	estado.vInf = enHueso(inf, cabeza, Vector3.new(0, -ABRIR * escala, -ADELANTE * escala))
+	estado.vSup = enHueso(sup, Vector3.new(0, SUBIR * escala, 0))
+	estado.vInf = enHueso(inf, Vector3.new(0, -ABRIR * escala, -ADELANTE * escala))
 	estado.apertura = 0
 	estado.aplicada = 0
-	return true
+end
+
+local function olvidarPersonaje(estado: Estado)
+	desconectar(estado.conexionesPersonaje)
+	estado.sup, estado.inf, estado.cabeza = nil, nil, nil
 end
 
 local function alPersonaje(estado: Estado, personaje: Model)
-	desconectar(estado.conexionesPersonaje)
-	estado.sup, estado.inf, estado.cabeza = nil, nil, nil
-	if enlazarHuesos(estado, personaje) then
-		return
-	end
+	olvidarPersonaje(estado)
+	enlazarHuesos(estado, personaje)
 	table.insert(
 		estado.conexionesPersonaje,
 		personaje.DescendantAdded:Connect(function(nuevo)
 			local nombre = nuevo.Name
-			if (nombre == "BocaSup" or nombre == "BocaInf" or nombre == "Head") and enlazarHuesos(estado, personaje) then
-				desconectar(estado.conexionesPersonaje)
+			if nombre == "BocaSup" or nombre == "BocaInf" or nombre == "Head" then
+				enlazarHuesos(estado, personaje)
 			end
 		end)
 	)
 end
 
-local function enlazarEntrada(estado: Estado, entrada: AudioDeviceInput)
-	local anterior = estado.analizador
-	if anterior then
-		anterior:Destroy()
+local function soltarEntrada(estado: Estado)
+	local analizador = estado.analizador
+	if analizador then
+		analizador:Destroy()
 	end
+	estado.entrada, estado.analizador = nil, nil
+end
+
+local function enlazarEntrada(estado: Estado, entrada: AudioDeviceInput)
+	soltarEntrada(estado)
 	local analizador = Instance.new("AudioAnalyzer")
 	analizador.SpectrumEnabled = false
 	local cable = Instance.new("Wire")
@@ -139,8 +147,22 @@ local function seguir(jugador: Player)
 	)
 	table.insert(
 		estado.conexiones,
+		jugador.ChildRemoved:Connect(function(hijo)
+			if hijo == estado.entrada then
+				soltarEntrada(estado)
+			end
+		end)
+	)
+	table.insert(
+		estado.conexiones,
 		jugador.CharacterAdded:Connect(function(personaje)
 			alPersonaje(estado, personaje)
+		end)
+	)
+	table.insert(
+		estado.conexiones,
+		jugador.CharacterRemoving:Connect(function()
+			olvidarPersonaje(estado)
 		end)
 	)
 	local personaje = jugador.Character
@@ -156,11 +178,8 @@ local function soltar(jugador: Player)
 	end
 	estados[jugador] = nil
 	desconectar(estado.conexiones)
-	desconectar(estado.conexionesPersonaje)
-	local analizador = estado.analizador
-	if analizador then
-		analizador:Destroy()
-	end
+	olvidarPersonaje(estado)
+	soltarEntrada(estado)
 end
 
 local function volumen(estado: Estado): number
@@ -194,7 +213,7 @@ local function paso(dt: number)
 			k = 0
 		end
 		estado.apertura = k
-		if math.abs(k - estado.aplicada) > MINIMO or (k == 0 and estado.aplicada ~= 0) then
+		if k > 0 or estado.aplicada > 0 then
 			ponerBoca(estado, k)
 		end
 	end
