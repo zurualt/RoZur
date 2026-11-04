@@ -189,6 +189,14 @@ Config.OBJETOS = {
 		visual = "Carrito",
 		nombre = "Carrito",
 	},
+	Bolso = {
+		tamano = Vector3.new(1.6, 1, 0.8),
+		color = Color3.fromRGB(31, 166, 160),
+		material = Enum.Material.Fabric,
+		densidad = 0.45,
+		visual = "Bolso",
+		nombre = "Bolso de mano",
+	},
 	Jaula = {
 		tamano = Vector3.new(3, 2.6, 7),
 		color = Color3.fromRGB(52, 56, 63),
@@ -208,6 +216,11 @@ Config.ICONOS = {
 	Miedo = "😱",
 	Enfado = "😡",
 	Feliz = "😊",
+	Golpe = "💢",
+	Quemado = "🥵",
+	Mojado = "💦",
+	Mordisco = "😭",
+	Bolso = "🧳",
 }
 
 Config.PASAJEROS = {
@@ -232,6 +245,7 @@ Config.PASAJEROS = {
 	BAJADA_ESPERA = 0.3,
 	MIEDO_DECAE = 0.03,
 	DISTANCIA_ASIENTO = 4.5,
+	ESCALA_VISUAL = 0.85,
 }
 
 return Config

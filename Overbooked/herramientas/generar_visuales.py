@@ -14,7 +14,7 @@ def v(x):
 def main():
     ids = json.load(open(IDS)) if os.path.exists(IDS) else {}
     cajas = {}
-    for carpeta in ("props", "avion", "pasajeros"):
+    for carpeta in ("props", "avion", "pasajeros", "kit_interior", "kit_aeropuerto"):
         ruta = os.path.join(ARTE, carpeta, "manifest.json")
         if not os.path.exists(ruta):
             continue

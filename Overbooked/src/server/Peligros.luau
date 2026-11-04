@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
+local Debris = game:GetService("Debris")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Contratos = require(ReplicatedStorage.Shared.Contratos)
@@ -22,7 +23,7 @@ local RemotoSacudida = Remotos:WaitForChild("Sacudida") :: UnreliableRemoteEvent
 local RemotoUsar = Remotos:WaitForChild("Usar") :: RemoteEvent
 
 type Fuego = { parte: BasePart, vida: number }
-type Brecha = { parte: BasePart, ventana: Model, reparacion: number, originales: { [BasePart]: number } }
+type Brecha = { parte: BasePart, ventana: Model, reparacion: number, originales: { [BasePart]: number }, viento: ParticleEmitter, tapon: BasePart? }
 
 local Peligros = {}
 
@@ -37,6 +38,22 @@ local finTormenta = 0
 local ultimoUso: { [Player]: number } = {}
 local quemados: { [Player]: number } = {}
 local generacion = 0
+local alSacudir: { (number) -> () } = {}
+local TAPONES = { Maleta = true, Caja = true, CajaFragil = true, Carrito = true, Bolso = true }
+
+local function efecto(posicion: Vector3, crear: (Instance) -> ParticleEmitter, cantidad: number)
+	local marca = Instance.new("Part")
+	marca.Anchored = true
+	marca.CanCollide = false
+	marca.CanQuery = false
+	marca.CanTouch = false
+	marca.Transparency = 1
+	marca.Size = Vector3.one
+	marca.Position = posicion
+	marca.Parent = carpeta
+	crear(marca):Emit(cantidad)
+	Debris:AddItem(marca, 2)
+end
 
 local PUNTOS_FUEGO = {
 	Vector3.new(-4.6, 100.2, -48),
@@ -61,6 +78,41 @@ local function sueltos(): { BasePart }
 	return lista
 end
 
+function Peligros.alSacudir(f: (number) -> ())
+	table.insert(alSacudir, f)
+end
+
+local function destapar(b: Brecha, disparado: boolean)
+	local tapon = b.tapon
+	b.tapon = nil
+	b.parte:SetAttribute("Fuerza", 1)
+	b.viento.Rate = 80
+	if not tapon or not tapon.Parent then
+		return
+	end
+	tapon:SetAttribute("Tapon", nil)
+	tapon.Anchored = false
+	Objetos.servidor(tapon)
+	if disparado then
+		tapon.AssemblyLinearVelocity = b.parte.CFrame.LookVector * 30 + Vector3.new(0, 10, 0)
+		aviso("💨 ¡El tapón ha salido disparado!", "peligro")
+	end
+end
+
+local function taponar(b: Brecha, objeto: BasePart)
+	Agarre.soltarObjeto(objeto)
+	local centro = b.parte.Position
+	local dentro = b.parte.CFrame.LookVector
+	objeto.Anchored = true
+	objeto.AssemblyLinearVelocity = Vector3.zero
+	objeto.CFrame = CFrame.lookAt(centro + dentro * (objeto.Size.Z / 2 + 0.05), centro + dentro * 4)
+	objeto:SetAttribute("Tapon", true)
+	b.tapon = objeto
+	b.parte:SetAttribute("Fuerza", 0)
+	b.viento.Rate = 6
+	aviso("🧳 ¡Agujero tapado! Repáralo con la llave antes de que salga disparado", "bien")
+end
+
 function Peligros.sacudida(magnitud: number)
 	for _, p in sueltos() do
 		local dir = Vector3.new(rng:NextNumber(-1, 1), rng:NextNumber(0.4, 1.3), rng:NextNumber(-1, 1))
@@ -69,6 +121,16 @@ function Peligros.sacudida(magnitud: number)
 	Pasajeros.sacudir(magnitud, Avion.estado.cinturones)
 	Carga.danarJaula(magnitud * 6)
 	RemotoSacudida:FireAllClients(magnitud)
+	if magnitud > 0.65 then
+		for _, b in brechas do
+			if b.tapon and rng:NextNumber() < 0.3 then
+				destapar(b, true)
+			end
+		end
+	end
+	for _, f in alSacudir do
+		task.spawn(f, magnitud)
+	end
 	if magnitud > Config.TURBULENCIA.UMBRAL_RAGDOLL then
 		for _, jugador in Players:GetPlayers() do
 			if rng:NextNumber() < 0.45 then
@@ -112,7 +174,23 @@ end
 
 local function apagar(f: Fuego)
 	fuegos[f.parte] = nil
+	efecto(f.parte.Position, VFX.vapor, 14)
 	f.parte:Destroy()
+end
+
+function Peligros.mojar(posicion: Vector3, radio: number, cantidad: number): boolean
+	local alguno = false
+	for parte, f in fuegos do
+		if (parte.Position - posicion).Magnitude <= radio + 1.5 then
+			alguno = true
+			f.vida -= cantidad
+			parte:SetAttribute("Vida", math.max(0, f.vida))
+			if f.vida <= 0 then
+				apagar(f)
+			end
+		end
+	end
+	return alguno
 end
 
 function Peligros.brecha()
@@ -162,13 +240,14 @@ function Peligros.brecha()
 	marca:SetAttribute("Fuerza", 1)
 	CollectionService:AddTag(marca, "Brecha")
 	marca.Parent = carpeta
-	brechas[marca] = { parte = marca, ventana = ventana, reparacion = 0, originales = originales }
+	brechas[marca] = { parte = marca, ventana = ventana, reparacion = 0, originales = originales, viento = viento, tapon = nil }
 	Avion.danar(5)
 	aviso("💥 ¡AGUJERO EN EL FUSELAJE! Repáralo con la llave", "peligro")
 	Pasajeros.asustar(0.5)
 end
 
 local function cerrar(b: Brecha, silencioso: boolean?)
+	destapar(b, false)
 	brechas[b.parte] = nil
 	for p, t in b.originales do
 		p.CanCollide = true
@@ -367,6 +446,23 @@ local function usarExtintor(jugador: Player, mirada: Vector3?)
 	end
 	local dir = mirada or frontal
 	local H = Config.HERRAMIENTAS
+	for _, p in sueltos() do
+		local delta = p.Position - origen
+		local d = delta.Magnitude
+		if d < H.ALCANCE_EXTINTOR and d > 0.1 and delta.Unit:Dot(dir) > 0.6 then
+			p.AssemblyLinearVelocity += dir * 22 * (1 - d / H.ALCANCE_EXTINTOR)
+		end
+	end
+	Pasajeros.rociar(origen, dir, H.ALCANCE_EXTINTOR)
+	for _, c in CollectionService:GetTagged("Cocodrilo") do
+		local cuerpo = if c:IsA("Model") then c.PrimaryPart else nil
+		if cuerpo then
+			local delta = cuerpo.Position - origen
+			if delta.Magnitude < H.ALCANCE_EXTINTOR * 0.7 and delta.Unit:Dot(dir) > 0.6 then
+				Carga.aturdir(1.2)
+			end
+		end
+	end
 	for parte, f in fuegos do
 		local delta = parte.Position - origen
 		local d = delta.Magnitude
@@ -383,6 +479,23 @@ local function usarExtintor(jugador: Player, mirada: Vector3?)
 		if motor and (motor.Position - origen).Magnitude <= H.ALCANCE_EXTINTOR + 3 then
 			Avion.extinguirMotor(lado, 7)
 		end
+	end
+end
+
+local function usarAgua(jugador: Player, mirada: Vector3?)
+	local origen, frontal = frente(jugador)
+	if not origen or not frontal then
+		return
+	end
+	local dir = mirada or frontal
+	local objeto = Agarre.sostenido(jugador)
+	local punto = origen + dir * 3.5 + Vector3.new(0, -2, 0)
+	if objeto and objeto:IsA("BasePart") and Peligros.mojar(punto, 3.5, 100) then
+		efecto(objeto.Position, function(padre)
+			return VFX.salpicadura(padre, Color3.fromRGB(143, 211, 244))
+		end, 30)
+		Agarre.consumir(jugador)
+		RemotoAviso:FireClient(jugador, "💧 ¡Fuego apagado con agua!", "bien")
 	end
 end
 
@@ -429,11 +542,22 @@ function Peligros.iniciar()
 			usarExtintor(jugador, m)
 		elseif tipo == "Llave" then
 			usarLlave(jugador)
+		elseif tipo == "Agua" then
+			usarAgua(jugador, m)
 		end
 	end)
 	Players.PlayerRemoving:Connect(function(jugador)
 		ultimoUso[jugador] = nil
 		quemados[jugador] = nil
+	end)
+	Agarre.antesDeAgarrar(function(objeto)
+		if objeto:GetAttribute("Tapon") then
+			for _, b in brechas do
+				if b.tapon == objeto then
+					destapar(b, false)
+				end
+			end
+		end
 	end)
 
 	local acumulado = 0
@@ -449,9 +573,30 @@ function Peligros.iniciar()
 		if next(brechas) ~= nil then
 			lista = sueltos()
 		end
-		for parte in brechas do
+		for parte, b in brechas do
+			local tapon = b.tapon
+			if tapon and (not tapon.Parent or not tapon.Anchored) then
+				destapar(b, false)
+				tapon = nil
+			end
+			if tapon then
+				Avion.danar(0.1 * paso)
+				continue
+			end
 			Avion.danar(0.6 * paso)
 			local centro = parte.Position
+			for _, o in CollectionService:GetTagged("Objeto") do
+				if o:IsA("BasePart") and o.Parent and not o.Anchored and not Agarre.portador(o) then
+					local tipo = o:GetAttribute("Tipo")
+					if typeof(tipo) == "string" and TAPONES[tipo] and (o.Position - centro).Magnitude < 2.6 then
+						taponar(b, o)
+						break
+					end
+				end
+			end
+			if b.tapon then
+				continue
+			end
 			local salida = parte.CFrame.LookVector * -1
 			for _, p in lista do
 				local delta = centro - p.Position
@@ -467,6 +612,7 @@ function Peligros.iniciar()
 		local nuevos: { Vector3 } = {}
 		for parte, f in fuegos do
 			Avion.danar(0.35 * paso)
+			Carga.quemar(parte.Position, 2.5, 6 * paso)
 			if f.vida > 55 and rng:NextNumber() < 0.012 * paso * 10 then
 				local p = parte.Position + Vector3.new(rng:NextNumber(-4, 4), 0, rng:NextNumber(-4, 4))
 				table.insert(nuevos, Vector3.new(math.clamp(p.X, -5.5, 5.5), p.Y, math.clamp(p.Z, -62, 20)))

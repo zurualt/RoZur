@@ -738,21 +738,27 @@ def p_volante():
 
 
 def p_gases():
-    p = Prop("Gases", (1.2, 1.6, 1.3), 500)
+    p = Prop("Gases", (1.2, 1.6, 1.167), 500)
     prof = [(-0.8, 0.0), (0.8, 0.0), (0.8, 0.92), (0.58, 0.95), (-0.62, 0.8), (-0.8, 0.66)]
     p.add(bevel_sharp(prism(prof, 1.2, yzx()), 0.04, 1, 20), "dark")
     TM = frame((0, -0.62, 0.8), (1, 0, 0), (0, 1.2, 0.15))
     p.add(rbox((0.66, 0.95, 0.1), (0, 0.6, 0.05), 0.03, 1, m=TM), "black")
     for u in (-0.15, 0.15):
         p.add(decal(rect(u - 0.025, u + 0.025, 0.2, 1.0), TM, 0.101), "dark")
-        p.add(bar(TM @ Vector((u, 0.56, 0.08)), TM @ Vector((u, 0.46, 0.37)), 0.05, 0.05, 0.012, up=(0, 1, 0)), "metal")
-        p.add(rbox((0.13, 0.17, 0.11), (u, 0.455, 0.4), 0.035, 1, m=TM), "orange")
+        p.add(rbox((0.09, 0.09, 0.03), (u, 0.56, 0.11), 0.012, 1, m=TM), "black")
     for u, col in ((0.44, "cream"), (-0.44, "black")):
         p.add(bar(TM @ Vector((u, 0.5, 0.0)), TM @ Vector((u, 0.42, 0.26)), 0.04, 0.04, 0.01, up=(0, 1, 0)), "metal")
         p.add(rbox((0.1, 0.09, 0.07), (u, 0.415, 0.28), 0.025, 1, m=TM), col)
     FM = frame((0, -0.8, 0.66), (1, 0, 0), (0, 0.18, 0.14))
     for u, col in ((-0.3, "red"), (0.3, "teal")):
         p.add(cyl(0.05, 0.03, (u, 0.114, 0.0), seg=8, m=FM, cap0=False), col)
+    return p
+
+
+def p_palanca_gases():
+    p = Prop("PalancaGases", (0.13, 0.17, 0.42), 160)
+    p.add(bar((0, 0, 0.0), (0, 0, 0.34), 0.05, 0.05, 0.012, up=(0, 1, 0)), "metal")
+    p.add(rbox((0.13, 0.17, 0.11), (0, 0, 0.365), 0.035, 1), "orange")
     return p
 
 
@@ -865,7 +871,7 @@ BUILDERS = [
     lambda: p_maleta("Maleta1", "orange", "cream"),
     lambda: p_maleta("Maleta2", "teal", "orange"),
     lambda: p_maleta("Maleta3", "red", "cream"),
-    p_jaula, p_cuadro, p_volante, p_gases, p_asiento_piloto, p_carrito, p_cafetera, p_nevera, p_inodoro, p_boton,
+    p_jaula, p_cuadro, p_volante, p_gases, p_palanca_gases, p_asiento_piloto, p_carrito, p_cafetera, p_nevera, p_inodoro, p_boton,
 ]
 
 

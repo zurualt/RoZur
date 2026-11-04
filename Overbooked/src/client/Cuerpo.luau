@@ -62,7 +62,7 @@ end
 
 function Cuerpo.iniciar()
 	for _, d in avion:WaitForChild("Puertas"):GetChildren() do
-		if d:IsA("BasePart") and d:GetAttribute("Puerta") then
+		if d:IsA("BasePart") and d:GetAttribute("Puerta") and not d:GetAttribute("Interior") then
 			table.insert(puertas, d)
 		end
 	end
@@ -119,8 +119,9 @@ function Cuerpo.iniciar()
 		for brecha in brechas do
 			local delta = brecha.Position - pos
 			local d = delta.Magnitude
+			local fuerza = brecha:GetAttribute("Fuerza")
 			if d < 20 and d > 0.1 then
-				empuje += delta.Unit * 55 * (1 - d / 20)
+				empuje += delta.Unit * 55 * (1 - d / 20) * (if typeof(fuerza) == "number" then fuerza else 1)
 			end
 		end
 		if math.abs(pos.X) > 8.2 and pos.Y < 104 then

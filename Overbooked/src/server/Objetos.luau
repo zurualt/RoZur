@@ -143,8 +143,12 @@ function Objetos.iniciar()
 			end
 			local visual = d:GetAttribute("Visual")
 			if typeof(visual) == "string" then
-				local base = d:GetAttribute("Base")
-				Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)
+				if d:GetAttribute("Movil") then
+					Activos.vestirDinamico(d, visual)
+				else
+					local base = d:GetAttribute("Base")
+					Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)
+				end
 			end
 		end
 	end

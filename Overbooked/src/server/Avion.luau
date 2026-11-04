@@ -114,11 +114,45 @@ function Avion.rampa(abierta: boolean)
 	TweenService:Create(anguloRampa, TweenInfo.new(2.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), { Value = objetivo }):Play()
 end
 
+local bisagras: { [BasePart]: { cerrada: CFrame, valor: NumberValue, signo: number } } = {}
+
+local function bisagra(parte: BasePart)
+	local b = bisagras[parte]
+	if b then
+		return b
+	end
+	local cerrada = parte.CFrame
+	local medio = parte.Size.X / 2
+	local eje = cerrada * CFrame.new(medio, 0, 0)
+	local function en(a: number): CFrame
+		return eje * CFrame.Angles(0, a, 0) * CFrame.new(-medio, 0, 0)
+	end
+	local angulo = math.rad(100)
+	local signo = if math.abs(en(angulo).Position.X) > math.abs(en(-angulo).Position.X) then 1 else -1
+	local valor = Instance.new("NumberValue")
+	valor.Changed:Connect(function(v)
+		parte.CFrame = en(v * signo * angulo)
+	end)
+	local nueva = { cerrada = cerrada, valor = valor, signo = signo }
+	bisagras[parte] = nueva
+	return nueva
+end
+
 local function puerta(parte: BasePart, abierta: boolean)
+	if parte:GetAttribute("Abierta") == abierta and bisagras[parte] then
+		return
+	end
 	parte:SetAttribute("Abierta", abierta)
-	parte.CanCollide = not abierta
+	local b = bisagra(parte)
+	parte.CanCollide = false
 	parte.CanQuery = not abierta
-	parte.Transparency = if abierta then 1 else 0
+	local tween = TweenService:Create(b.valor, TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Value = if abierta then 1 else 0 })
+	tween.Completed:Connect(function(estadoTween)
+		if estadoTween == Enum.PlaybackState.Completed then
+			parte.CanCollide = not (parte:GetAttribute("Abierta") == true)
+		end
+	end)
+	tween:Play()
 	local aviso = parte:FindFirstChildOfClass("ProximityPrompt")
 	if aviso then
 		aviso.ActionText = if abierta then "Cerrar" else "Abrir"
@@ -127,7 +161,7 @@ end
 
 function Avion.puertas(abiertas: boolean)
 	for _, d in avion:GetDescendants() do
-		if d:IsA("BasePart") and d:GetAttribute("Puerta") then
+		if d:IsA("BasePart") and d:GetAttribute("Puerta") and not d:GetAttribute("Interior") then
 			puerta(d, abiertas)
 		end
 	end
@@ -541,7 +575,7 @@ local function prepararControles()
 		if d:IsA("BasePart") and d:GetAttribute("Puerta") then
 			local aviso = Instance.new("ProximityPrompt")
 			aviso.ActionText = "Abrir"
-			aviso.ObjectText = "Puerta"
+			aviso.ObjectText = if d:GetAttribute("Interior") then "Baño" else "Puerta"
 			aviso.MaxActivationDistance = 7
 			aviso.RequiresLineOfSight = false
 			aviso.Parent = d

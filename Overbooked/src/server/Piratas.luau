@@ -125,6 +125,10 @@ function Piratas.iniciar()
 		end
 		ultimoDisparo[jugador] = ahora + 0.11
 		local dir = direccion.Unit
+		local plano = dir * Vector3.new(1, 0, 1)
+		if plano.Magnitude > 0.05 then
+			asiento:SetAttribute("Mira", math.floor(math.atan2(-plano.X, -plano.Z) * 100) / 100)
+		end
 		local origen = asiento.Position + Vector3.new(0, 2.5, 0)
 		local t = Workspace:GetServerTimeNow()
 		for i = #piratas, 1, -1 do

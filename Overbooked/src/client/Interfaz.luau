@@ -168,15 +168,21 @@ local function construir()
 	textoResultados.TextXAlignment = Enum.TextXAlignment.Left
 	textoResultados.TextYAlignment = Enum.TextYAlignment.Top
 
-	ayuda = marco(gui, UDim2.fromOffset(360, 300), UDim2.new(1, -14, 1, -14), Vector2.new(1, 1), OSCURO, 0.15)
+	ayuda = marco(gui, UDim2.fromOffset(380, 388), UDim2.new(1, -14, 1, -14), Vector2.new(1, 1), OSCURO, 0.15)
 	esquina(ayuda, 14)
 	ayuda.Visible = false
 	local textoAyuda = texto(ayuda, table.concat({
 		"<b>CONTROLES</b>  (H para cerrar)",
 		"Clic: coger / soltar · Clic der.: lanzar",
-		"F: usar extintor o llave",
+		"F: usar extintor, llave o agua (apaga fuego)",
 		"E: interactuar (servir, coger comida, botones)",
+		"G: sentarte en un asiento libre · abrir/cerrar altillos",
 		"R (mantener): calmar a un pasajero asustado",
+		"",
+		"Lanza la comida al pasajero que la pide 🎯",
+		"Tapa un agujero lanzándole una maleta 🧳",
+		"El cocodrilo persigue la comida 🍔🐊",
+		"Sentado no te caes con las turbulencias",
 		"",
 		"<b>PILOTO</b>: siéntate en el asiento izquierdo",
 		"Shift acelera · W sube · A/D gira",
@@ -331,7 +337,7 @@ local function actualizarPista()
 	if objeto then
 		local tipo = Agarre.tipo(objeto)
 		local raciones = objeto:GetAttribute("Raciones")
-		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F: usar · Clic: soltar · Clic der.: lanzar" elseif typeof(raciones) == "number" then `🍔×{raciones} · E: servir · Clic: soltar` else "Clic: soltar · Clic der.: lanzar"
+		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F: usar · Clic: soltar · Clic der.: lanzar" elseif tipo == "Agua" then "E: servir · F: echar al fuego · Clic der.: lanzar" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif typeof(raciones) == "number" then `🍔×{raciones} · E: servir · Clic: soltar` else "Clic: soltar · Clic der.: lanzar"
 		return
 	end
 	local apuntado = Agarre.apuntado()
@@ -407,12 +413,48 @@ local function burbuja(modelo: Instance)
 			refrescar()
 			task.delay(2.6, refrescar)
 		end),
+		modelo:GetAttributeChangedSignal("ReaccionMarca"):Connect(function()
+			local r = modelo:GetAttribute("Reaccion")
+			emocion, emocionHasta = if typeof(r) == "string" then Config.ICONOS[r] or "💢" else "💢", os.clock() + 1.8
+			refrescar()
+			task.delay(1.9, refrescar)
+		end),
 	}
 	refrescar()
 	modelo.Destroying:Connect(function()
 		for _, c in conexiones do
 			c:Disconnect()
 		end
+		b:Destroy()
+	end)
+end
+
+local function estadoCocodrilo(modelo: Instance)
+	if not modelo:IsA("Model") then
+		return
+	end
+	local cuerpo = modelo:WaitForChild("Cuerpo", 5)
+	if not cuerpo or not cuerpo:IsA("BasePart") then
+		return
+	end
+	local b = Instance.new("BillboardGui")
+	b.Name = "EstadoCocodrilo"
+	b.Size = UDim2.fromOffset(52, 52)
+	b.StudsOffset = Vector3.new(0, 2.4, 0)
+	b.MaxDistance = 70
+	b.Adornee = cuerpo
+	b.ResetOnSpawn = false
+	local icono = texto(b, "", UDim2.fromScale(1, 1), UDim2.new(), Color3.new(1, 1, 1), 30)
+	icono.TextStrokeTransparency = 0.3
+	b.Parent = etiquetasGui
+	local function refrescar()
+		local estado = modelo:GetAttribute("Estado")
+		icono.Text = if estado == "Aturdido" then "💫" elseif estado == "Saciado" then "😋" else "😠"
+	end
+	local c = modelo:GetAttributeChangedSignal("Estado"):Connect(refrescar)
+	refrescar()
+	modelo.Destroying:Connect(function()
+		c:Disconnect()
 		b:Destroy()
 	end)
 end
@@ -565,6 +607,10 @@ function Interfaz.iniciar()
 		task.spawn(burbuja, modelo)
 	end
 	CollectionService:GetInstanceAddedSignal("Pasajero"):Connect(burbuja)
+	for _, modelo in CollectionService:GetTagged("Cocodrilo") do
+		task.spawn(estadoCocodrilo, modelo)
+	end
+	CollectionService:GetInstanceAddedSignal("Cocodrilo"):Connect(estadoCocodrilo)
 	for _, otro in Players:GetPlayers() do
 		seguirJugador(otro)
 	end

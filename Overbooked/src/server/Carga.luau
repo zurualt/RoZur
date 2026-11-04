@@ -4,9 +4,11 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
+local Debris = game:GetService("Debris")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Contratos = require(ReplicatedStorage.Shared.Contratos)
+local VFX = require(ReplicatedStorage.Shared.VFX)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
 local Avion = require(script.Parent.Avion)
@@ -49,6 +51,13 @@ local COLUMNAS = { -3.2, 0, 3.2 }
 local ORDEN = { Caja = 1, CajaFragil = 2, Maleta = 3 }
 local huecos: { Vector3 } = {}
 local enEspera = 0
+local saciadoHasta = 0
+local aturdidoHasta = 0
+local ultimoMordisco = 0
+local TROZOS = {
+	Caja = { nombre = "Astilla", tamano = Vector3.new(0.8, 0.2, 0.3), color = Color3.fromRGB(201, 139, 78), material = Enum.Material.Wood, cantidad = 7 },
+	CajaFragil = { nombre = "Esquirla", tamano = Vector3.new(0.5, 0.4, 0.1), color = Color3.fromRGB(143, 211, 244), material = Enum.Material.Glass, cantidad = 8 },
+}
 
 local function servidor(parte: BasePart)
 	if parte.Anchored or not parte:IsDescendantOf(Workspace) then
@@ -127,7 +136,9 @@ local function soltarCocodrilo(desde: BasePart)
 	local z = math.clamp(desde.Position.Z - (desde.Size.Z / 2 + 3.6), -58, 16)
 	cocodrilo = crearCocodrilo(CFrame.new(x, Config.SUELO_Y + 0.7, z))
 	cuenta.cocodrilo = "Suelto"
-	RemotoAviso:FireAllClients("🐊 ¡SE HA ESCAPADO EL COCODRILO! Cógelo y suéltalo junto a su jaula", "peligro")
+	saciadoHasta = 0
+	aturdidoHasta = 0
+	RemotoAviso:FireAllClients("🐊 ¡SE HA ESCAPADO EL COCODRILO! Atráelo con comida y suéltalo junto a su jaula", "peligro")
 	Pasajeros.asustar(0.6)
 end
 
@@ -232,6 +243,83 @@ function Carga.resumen(): (number, number, number, string)
 		end
 	end
 	return math.floor(intacto), cuenta.entregado, cuenta.perdido, cuenta.cocodrilo
+end
+
+local function romper(parte: BasePart, b: Bulto, tipo: string)
+	local trozo = TROZOS[tipo]
+	bultos[parte] = nil
+	cuenta.rotas += 1
+	local centro = parte.Position
+	local medio = parte.Size / 2
+	for _ = 1, trozo.cantidad do
+		local t = Instance.new("Part")
+		t.Name = trozo.nombre
+		t.Size = trozo.tamano
+		t.Color = trozo.color
+		t.Material = trozo.material
+		t.Transparency = if tipo == "CajaFragil" then 0.3 else 0
+		t.CanQuery = false
+		t.CanTouch = false
+		t.CollisionGroup = "Sostenido"
+		t.CFrame = CFrame.new(centro + Vector3.new(rng:NextNumber(-medio.X, medio.X), rng:NextNumber(-medio.Y, medio.Y), rng:NextNumber(-medio.Z, medio.Z))) * CFrame.Angles(rng:NextNumber(0, 6.28), rng:NextNumber(0, 6.28), 0)
+		t.AssemblyLinearVelocity = parte.AssemblyLinearVelocity * 0.4 + Vector3.new(rng:NextNumber(-12, 12), rng:NextNumber(6, 16), rng:NextNumber(-12, 12))
+		t.Parent = carpeta
+		servidor(t)
+		if Activos.tiene(trozo.nombre) then
+			Activos.vestirDinamico(t, trozo.nombre)
+		end
+		Debris:AddItem(t, rng:NextNumber(6, 9))
+	end
+	local marca = Instance.new("Part")
+	marca.Anchored = true
+	marca.CanCollide = false
+	marca.CanQuery = false
+	marca.CanTouch = false
+	marca.Transparency = 1
+	marca.Size = Vector3.one
+	marca.Position = centro
+	marca.Parent = carpeta
+	VFX.chispas(marca):Emit(30)
+	Debris:AddItem(marca, 1.5)
+	Agarre.soltarObjeto(parte)
+	parte:Destroy()
+	Pasajeros.asustar(0.2, centro, 12)
+	RemotoAviso:FireAllClients(if tipo == "CajaFragil" then `💥 ¡Se ha roto una caja frágil! -{b.valor}` else `💥 ¡Se ha roto una caja! -{b.valor}`, "peligro")
+end
+
+local function aplicarDano(parte: BasePart, b: Bulto, dano: number)
+	b.vida = math.max(0, b.vida - dano)
+	parte:SetAttribute("Vida", math.floor(b.vida))
+	if b.vida > 0 then
+		return
+	end
+	local tipo = parte:GetAttribute("Tipo")
+	if parte == jaula then
+		soltarCocodrilo(parte)
+	elseif typeof(tipo) == "string" and TROZOS[tipo] then
+		romper(parte, b, tipo)
+	elseif parte:GetAttribute("Rota") ~= true then
+		parte:SetAttribute("Rota", true)
+		cuenta.rotas += 1
+		parte.Color = parte.Color:Lerp(Color3.new(0.2, 0.2, 0.2), 0.5)
+	end
+end
+
+function Carga.quemar(posicion: Vector3, radio: number, cantidad: number)
+	for parte, b in bultos do
+		if parte.Parent and (parte.Position - posicion).Magnitude < radio + parte.Size.Magnitude / 2 then
+			aplicarDano(parte, b, cantidad)
+		end
+	end
+end
+
+function Carga.aturdir(segundos: number): boolean
+	local c = cocodrilo
+	if not c then
+		return false
+	end
+	aturdidoHasta = math.max(aturdidoHasta, os.clock() + segundos)
+	return true
 end
 
 function Carga.danarJaula(cantidad: number)
@@ -353,24 +441,72 @@ local function vigilarCocodrilo(dt: number)
 		cocodrilo = nil
 		return
 	end
+	local ahora = os.clock()
+	local estado = if ahora < aturdidoHasta then "Aturdido" elseif ahora < saciadoHasta then "Saciado" else "Suelto"
+	if c:GetAttribute("Estado") ~= estado then
+		c:SetAttribute("Estado", estado)
+	end
 	if Agarre.portador(c) or not Agarre.delServidor(cuerpo) then
 		return
 	end
+	if estado == "Aturdido" then
+		local v = cuerpo.AssemblyLinearVelocity
+		cuerpo.AssemblyLinearVelocity = Vector3.new(v.X * 0.5, v.Y, v.Z * 0.5)
+		return
+	end
+	local boca = cuerpo.Position + cuerpo.CFrame.LookVector * (cuerpo.Size.Z / 2)
 	local objetivo: BasePart? = nil
-	local mejor = 70
-	local ahora = os.clock()
-	for _, jugador in Players:GetPlayers() do
-		local raiz = Personajes.raiz(jugador)
-		if raiz then
-			local d = (raiz.Position - cuerpo.Position).Magnitude
-			if d < mejor then
-				objetivo, mejor = raiz, d
+	local comida: BasePart? = nil
+	local velocidad = if estado == "Saciado" then 3.5 else 11
+	if estado == "Suelto" then
+		local mejor = 34
+		for _, o in CollectionService:GetTagged("Objeto") do
+			if o:IsA("BasePart") and o.Parent and not Agarre.portador(o) then
+				local t = o:GetAttribute("Tipo")
+				if t == "Hamburguesa" or t == "Bandeja" then
+					local d = (o.Position - boca).Magnitude
+					if d < mejor then
+						comida, mejor = o, d
+					end
+				end
 			end
-			if d < 3.8 and (golpes[jugador] or 0) < ahora then
-				golpes[jugador] = ahora + 2.5
-				local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
-				Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
-				RemotoAviso:FireClient(jugador, "🐊 ¡Te ha mordido el cocodrilo!", "peligro")
+		end
+		objetivo = comida
+		local cebo = math.huge
+		local cercano = 70
+		for _, jugador in Players:GetPlayers() do
+			local raiz = Personajes.raiz(jugador)
+			if raiz then
+				local d = (raiz.Position - cuerpo.Position).Magnitude
+				local tipo = Agarre.tipo(jugador)
+				if (tipo == "Hamburguesa" or tipo == "Bandeja") and d < 40 and d < cebo then
+					cebo = d
+					objetivo, comida = raiz, nil
+				elseif cebo == math.huge and not comida and d < cercano then
+					objetivo, cercano = raiz, d
+				end
+				if d < 3.8 and (golpes[jugador] or 0) < ahora then
+					golpes[jugador] = ahora + 2.5
+					local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
+					Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
+					RemotoAviso:FireClient(jugador, "🐊 ¡Te ha mordido el cocodrilo!", "peligro")
+				end
+			end
+		end
+		local presa = comida
+		if presa and (presa.Position - boca).Magnitude < 2.8 then
+			Agarre.soltarObjeto(presa)
+			presa:Destroy()
+			saciadoHasta = ahora + 14
+			RemotoAviso:FireAllClients("🐊 ¡El cocodrilo se ha comido la hamburguesa! Ahora está tranquilo: llévalo a la jaula", "bien")
+			return
+		end
+		if ahora > ultimoMordisco then
+			local victima = Pasajeros.cercano(boca, 2.6)
+			if victima then
+				ultimoMordisco = ahora + 3
+				local p = victima.PrimaryPart
+				Pasajeros.golpear(victima, 75, if p then (p.Position - cuerpo.Position) * Vector3.new(1, 0, 1) else Vector3.yAxis, "Mordisco", false)
 			end
 		end
 	end
@@ -378,7 +514,7 @@ local function vigilarCocodrilo(dt: number)
 		local dir = (objetivo.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 		if dir.Magnitude > 0.5 then
 			local v = cuerpo.AssemblyLinearVelocity
-			local plano = dir.Unit * 11
+			local plano = dir.Unit * velocidad
 			cuerpo.AssemblyLinearVelocity = Vector3.new(plano.X, v.Y, plano.Z)
 			local giro = CFrame.lookAt(cuerpo.Position, cuerpo.Position + dir)
 			cuerpo.AssemblyAngularVelocity = Vector3.zero
@@ -426,16 +562,7 @@ function Carga.iniciar()
 			local cambio = (v - b.previa).Magnitude
 			b.previa = v
 			if ahora > b.gracia and cambio > b.umbral and not Agarre.portador(parte) then
-				local dano = (cambio - b.umbral) * (if b.umbral < 30 then 2.2 else 1.1)
-				b.vida = math.max(0, b.vida - dano)
-				parte:SetAttribute("Vida", math.floor(b.vida))
-				if parte == jaula and b.vida <= 0 then
-					soltarCocodrilo(parte)
-				elseif b.vida <= 0 and parte:GetAttribute("Rota") ~= true then
-					parte:SetAttribute("Rota", true)
-					cuenta.rotas += 1
-					parte.Color = parte.Color:Lerp(Color3.new(0.2, 0.2, 0.2), 0.5)
-				end
+				aplicarDano(parte, b, (cambio - b.umbral) * (if b.umbral < 30 then 2.2 else 1.1))
 			end
 		end
 		vigilarCocodrilo(paso)

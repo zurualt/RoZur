@@ -169,7 +169,7 @@ local function cajaEn(modelo: Model, base: CFrame): (Vector3, Vector3)
 	return minimo, maximo
 end
 
-local function colocar(visual: Model, base: CFrame, nombre: string)
+local function colocar(visual: Model, base: CFrame, nombre: string, escala: number?)
 	local r = visual:GetAttribute("Rotacion")
 	local giro = if typeof(r) == "CFrame" then r else Config.ROTACION_FBX
 	visual:PivotTo(base * giro)
@@ -177,15 +177,16 @@ local function colocar(visual: Model, base: CFrame, nombre: string)
 	if not esperada then
 		return
 	end
+	local e = escala or 1
 	local minimo, maximo = cajaEn(visual, base)
 	local medida = maximo - minimo
-	local tamano = esperada.maximo - esperada.minimo
+	local tamano = (esperada.maximo - esperada.minimo) * e
 	local mayorV = math.max(medida.X, medida.Y, medida.Z)
 	if mayorV > 1e-3 then
 		visual:ScaleTo(visual:GetScale() * math.max(tamano.X, tamano.Y, tamano.Z) / mayorV)
 		minimo, maximo = cajaEn(visual, base)
 	end
-	local desplazamiento = (esperada.minimo + esperada.maximo) / 2 - (minimo + maximo) / 2
+	local desplazamiento = (esperada.minimo + esperada.maximo) / 2 * e - (minimo + maximo) / 2
 	visual:PivotTo(visual:GetPivot() + base:VectorToWorldSpace(desplazamiento))
 end
 
@@ -226,13 +227,18 @@ function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
 	end)
 end
 
-function Activos.vestirDinamico(parte: BasePart, nombre: string)
+function Activos.vestirDinamico(parte: BasePart, nombre: string, escala: number?)
 	Activos.cuando(nombre, function(plantilla)
 		if not parte.Parent then
 			return
 		end
 		local visual = plantilla:Clone()
-		colocar(visual, parte.CFrame * CFrame.new(0, -parte.Size.Y / 2, 0), nombre)
+		colocar(visual, parte.CFrame * CFrame.new(0, -parte.Size.Y / 2, 0), nombre, escala)
+		for _, hijo in parte:GetChildren() do
+			if hijo:IsA("BasePart") then
+				ocultar(hijo)
+			end
+		end
 		for _, d in visual:GetDescendants() do
 			if d:IsA("BasePart") then
 				local soldadura = Instance.new("WeldConstraint")
@@ -255,7 +261,7 @@ function Activos.vestirAvion(avion: Model)
 		local exterior = avion:FindFirstChild("Exterior")
 		if exterior then
 			for _, d in exterior:GetDescendants() do
-				if d:IsA("BasePart") and d.Name ~= "Torreta" and not d:FindFirstAncestor("Torreta") and not (d.Parent and d.Parent.Name == "Tren") then
+				if d:IsA("BasePart") and d.Parent == exterior and d:GetAttribute("Visual") == nil then
 					d.Transparency = 1
 				end
 			end

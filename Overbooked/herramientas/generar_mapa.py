@@ -54,6 +54,15 @@ def part(nombre, tam, pos, color, material="SmoothPlastic", clase="Part", r=None
     return d
 
 
+def marca(nombre, tam, pos, visual, r=None, hijos=None, base=None, atributos=None):
+    a = {"Visual": visual}
+    if base is not None:
+        a["Base"] = base
+    if atributos:
+        a.update(atributos)
+    return part(nombre, tam, pos, "FFFFFF", r=r, transp=1, colision=False, sombra=False, atributos=a, hijos=hijos)
+
+
 def carpeta(nombre, hijos, clase="Folder", atributos=None):
     d = {"name": nombre, "className": clase, "children": hijos}
     if atributos:
@@ -100,51 +109,67 @@ FILA_SALIDA = 4
 def estructura():
     p = []
     p.append(part("Suelo", (INTERIOR * 2, G, 84.5), (0, SUELO_Y - G / 2, -20.25), MOQUETA, "Fabric"))
-    p.append(part("Pasillo", (2.2, 0.06, 52), (0, SUELO_Y + 0.03, -26), NARANJA, "Fabric", colision=False))
+    p.append(part("Pasillo", (2.2, 0.06, 37), (0, SUELO_Y + 0.03, -25.75), NARANJA, "Fabric", colision=False))
     p.append(part("Techo", (INTERIOR * 2, G, 74), (0, TECHO_Y + G / 2, -15), TECHO))
-    p.append(part("TechoCabina", (11.6, G, 10.5), (0, 108 + G / 2, -57.25), TECHO))
-    for x in (-2.6, 2.6):
-        p.append(part("Tira", (0.5, 0.15, 59), (x, TECHO_Y - 0.08, -22.5), "FFF6DD", "Neon", colision=False, sombra=False))
-    for i, z in enumerate((-58, -48, -36, -24, -12, 6, 16)):
-        p.append(part("Lampara", (1, 0.2, 1), (0, (TECHO_Y if z > -52 else 108) - 0.1, z), "FFF6DD", "Neon", colision=False, sombra=False,
-                      hijos=[luz(22 if z > -52 else 14, 1.0)]))
+    for z in (-48, -4, 6, 16):
+        p.append(part("Lampara", (1, 0.2, 1), (0, TECHO_Y - 0.1, z), "F2E6CC", "Neon", colision=False, sombra=False,
+                      hijos=[luz(20, 0.8)]))
+    for z in FILAS:
+        p.append(part("LuzFila", (0.4, 0.1, 0.4), (0, TECHO_Y - 0.4, z), "FFFFFF", transp=1, colision=False, sombra=False,
+                      hijos=[luz(16, 0.55)]))
+    p.append(part("Lampara", (1, 0.2, 1), (0, 107.9, -57), "F2E6CC", "Neon", colision=False, sombra=False, hijos=[luz(14, 0.8)]))
     for lado, sx in (("Izq", -1), ("Der", 1)):
         x = sx * MURO
-        p.append(part("ParedCabina" + lado, (G, 8, 10.5), (sx * 5.65, 104, -57.25), CREMA))
+        giro = rot(0, 90 * sx, 0)
         p.append(part("ParedCocina" + lado, (G, 10, 8), (x, 105, -48), CREMA))
         for i, z in enumerate(FILAS):
             if i == FILA_SALIDA:
-                p.append(part("Dintel" + lado, (G, 3.5, 3.4), (x, 108.25, z), CREMA))
-                p.append(part("Pared" + lado, (G, 10, 0.55), (x, 105, z - 1.975), CREMA))
-                p.append(part("Pared" + lado, (G, 10, 0.55), (x, 105, z + 1.975), CREMA))
+                p.append(marca("PanelSalida", (4.5, 10, 0.7), (sx * 7.05, 105, z), "PanelSalida", r=giro, hijos=[
+                    part("Dintel" + lado, (G, 3.5, 4.5), (x, 108.25, z), CREMA),
+                    part("Pared" + lado, (G, 6.5, 0.55), (x, 103.25, z - 1.975), CREMA),
+                    part("Pared" + lado, (G, 6.5, 0.55), (x, 103.25, z + 1.975), CREMA),
+                ]))
                 continue
-            p.append(part("Zocalo" + lado, (G, 3.5, 4.5), (x, SUELO_Y + 1.75, z), CREMA_OSC))
-            p.append(part("Altillo" + lado, (G, 3.5, 4.5), (x, TECHO_Y - 1.75, z), CREMA))
-            hijos = [
-                part("Pilar", (G, 3, 1.45), (x, 105, z - 1.525), CREMA),
-                part("Pilar", (G, 3, 1.45), (x, 105, z + 1.525), CREMA),
-                part("Cristal", (0.15, 2.2, 1.6), (x, 105, z), CRISTAL, "Glass", transp=0.5),
-            ]
-            p.append(carpeta("Ventana", hijos, "Model", {"Fila": i + 1, "Lado": lado}))
-        if lado == "Izq":
-            p.append(part("ParedTrasera" + lado, (G, 10, 8), (x, 105, -4), CREMA))
-        p.append(part("ParedBodega" + lado, (G, 10, 22), (x, 105, 11), "C9C2B5"))
+            p.append(marca("PanelVentana", (4.5, 10, 0.7), (sx * 7.05, 105, z), "PanelVentana", r=giro, hijos=[
+                part("Zocalo" + lado, (G, 3.9, 4.5), (x, SUELO_Y + 1.95, z), CREMA_OSC),
+                part("Altillo" + lado, (G, 3.9, 4.5), (x, TECHO_Y - 1.95, z), CREMA),
+                part("Pilar", (G, 2.2, 1.45), (x, 105, z - 1.525), CREMA),
+                part("Pilar", (G, 2.2, 1.45), (x, 105, z + 1.525), CREMA),
+            ]))
+            p.append(carpeta("Ventana", [part("Cristal", (0.15, 2.2, 1.6), (x, 105, z), CRISTAL, "Glass", transp=0.5)],
+                             "Model", {"Fila": i + 1, "Lado": lado}))
+        p.append(marca("BodegaPared", (22, 10, 0.7), (sx * 7.05, 105, 11), "BodegaPared", r=giro, hijos=[
+            part("ParedBodega" + lado, (G, 10, 22), (x, 105, 11), "C9C2B5"),
+        ]))
         p.append(part("Pilastra" + lado, (0.35, 10, 1), (sx * 6.35, 105, 22.5), "C9C2B5"))
         p.append(part("Relleno" + lado, (0.9, 10, 1), (sx * 6.25, 105, -52), CREMA))
-    p.append(part("ParabrisasBajo", (11, 3.5, G), (0, SUELO_Y + 1.75, -62.35), CREMA))
-    p.append(part("Parabrisas", (11, 4, 0.2), (0, 105.5, -62.35), CRISTAL, "Glass", transp=0.55))
-    p.append(part("ParabrisasAlto", (11, 0.5, G), (0, 107.75, -62.35), CREMA))
-    p.append(part("Parteluz", (0.4, 4, 0.4), (0, 105.5, -62.2), GRIS))
-    for nombre, z, hueco in (("MamparaCabina", -52, 2.0), ("MamparaBodega", 0, 2.5)):
+    p.append(part("ParedTraseraIzq", (G, 10, 8), (-MURO, 105, -4), CREMA))
+    p.append(part("ParedSalida", (G, 10, 3.25), (MURO, 105, -1.625), CREMA))
+    p.append(part("ParedSalida", (G, 10, 0.25), (MURO, 105, -7.875), CREMA))
+    p.append(marca("PanelSalida", (4.5, 10, 0.7), (7.05, 105, -5.5), "PanelSalida", r=rot(0, 90, 0), hijos=[
+        part("DintelSalida", (G, 3.5, 4.5), (MURO, 108.25, -5.5), CREMA),
+        part("ParedSalida", (G, 6.5, 0.55), (MURO, 103.25, -7.475), CREMA),
+        part("ParedSalida", (G, 6.5, 0.55), (MURO, 103.25, -3.525), CREMA),
+    ]))
+    for nombre, z, hueco, visual in (("MamparaCabina", -52, 2.0, "MamparaCabina"), ("MamparaBodega", 0, 2.5, "MamparaBodega")):
         ancho = INTERIOR - hueco
-        for sx in (-1, 1):
-            p.append(part(nombre, (ancho, 10, 0.6), (sx * (hueco + ancho / 2), 105, z), CREMA_OSC))
-        p.append(part(nombre, (hueco * 2, 2.5, 0.6), (0, 108.75, z), CREMA_OSC))
-    p.append(part("Altillos", (2.6, 2.8, 36), (-5.4, 108.4, -26), CREMA))
-    p.append(part("Altillos", (2.6, 2.8, 36), (5.4, 108.4, -26), CREMA))
-    p.append(part("BordeAltillos", (0.2, 0.3, 36), (-4.05, 107.1, -26), NARANJA, colision=False))
-    p.append(part("BordeAltillos", (0.2, 0.3, 36), (4.05, 107.1, -26), NARANJA, colision=False))
+        hijos = [part(nombre, (ancho, 10, 0.6), (sx * (hueco + ancho / 2), 105, z), CREMA_OSC) for sx in (-1, 1)]
+        hijos.append(part(nombre, (hueco * 2, 2.5, 0.6), (0, 108.75, z), CREMA_OSC))
+        p.append(marca(visual, (13.4, 10, 0.6), (0, 105, z), visual, hijos=hijos))
     return carpeta("Estructura", p)
+
+
+def altillos():
+    p = []
+    for i, z in enumerate(FILAS):
+        hijos = []
+        for sx in (-1, 1):
+            hijos.append(part("Caja", (2.6, 2.8, 4.5), (sx * 5.4, 108.4, z), CREMA))
+        p.append(marca("Techo", (13.4, 3.5, 4.5), (0, TECHO_Y - 1.75, z), "Techo", hijos=hijos))
+        for lado, sx in (("Izq", -1), ("Der", 1)):
+            p.append(part("PuertaAltillo", (4.3, 2.4, 0.15), (sx * 4.06, 108.1, z), CREMA, r=rot(0, 90 * sx, 0),
+                          atributos={"Visual": "PuertaAltillo", "Movil": True, "Fila": i + 1, "Lado": lado, "Altillo": True}))
+    return carpeta("Altillos", p)
 
 
 def asientos():
@@ -155,8 +180,9 @@ def asientos():
             if i == FILA_SALIDA and abs(x) > 5:
                 continue
             indice += 1
-            p.append(part("Asiento", (2.2, 1.2, 2.4), (x, 101.0, z), TURQUESA, "Fabric",
+            p.append(part("Asiento", (2.2, 1.2, 2.4), (x, 101.0, z), TURQUESA, "Fabric", clase="Seat",
                           atributos={"Fila": i + 1, "Columna": col, "Indice": indice, "Visual": "Asiento", "Base": SUELO_Y},
+                          extra={"Disabled": True},
                           hijos=[
                               part("Respaldo", (2.2, 2.8, 0.5), (x, 102.8, z + 0.95), TURQUESA, "Fabric"),
                               part("Cabecero", (1.8, 0.6, 0.56), (x, 103.9, z + 0.95), NARANJA, "Fabric", colision=False),
@@ -167,6 +193,15 @@ def asientos():
 
 def cabina():
     p = []
+    p.append(marca("CabinaPiloto", (11.6, 8, 10.5), (0, 104, -57.25), "CabinaPiloto", hijos=[
+        part("ParedCabinaIzq", (G, 8, 10.5), (-5.65, 104, -57.25), CREMA),
+        part("ParedCabinaDer", (G, 8, 10.5), (5.65, 104, -57.25), CREMA),
+        part("TechoCabina", (11.6, G, 10.5), (0, 108 + G / 2, -57.25), TECHO),
+        part("ParabrisasBajo", (11, 3.5, G), (0, SUELO_Y + 1.75, -62.35), CREMA),
+        part("ParabrisasAlto", (11, 0.5, G), (0, 107.75, -62.35), CREMA),
+        part("Parteluz", (0.4, 4, 0.4), (0, 105.5, -62.2), GRIS),
+    ]))
+    p.append(part("Parabrisas", (11, 4, 0.2), (0, 105.5, -62.35), CRISTAL, "Glass", transp=0.55))
     for nombre, x in (("AsientoPiloto", -2.6), ("AsientoCopiloto", 2.6)):
         p.append(part(nombre, (2.2, 1.2, 2.2), (x, 101.0, -57.5), GRIS, "Fabric", clase="Seat",
                       atributos={"Visual": "AsientoPiloto", "Base": SUELO_Y},
@@ -175,9 +210,10 @@ def cabina():
     p.append(part("Cuadro", (10.5, 2.8, 2), (0, 102.8, -61.2), GRIS, r=rot(0, 180, 0), atributos={"Visual": "Cuadro"}))
     p.append(part("Columna", (0.35, 0.35, 1.8), (-2.6, 102.6, -59.6), "1B1B21", r=rot(0, 180, 0), atributos={"Visual": "Volante"},
                   hijos=[part("Volante", (1.5, 0.3, 0.3), (-2.6, 103.0, -58.8), "1B1B21")]))
-    p.append(part("Gases", (1.2, 1.3, 2.0), (0, 100.65, -59.0), GRIS, atributos={"Visual": "Gases"},
-                  hijos=[part("Palanca", (0.2, 0.9, 0.2), (-0.25, 101.7, -59.3), NARANJA),
-                         part("Palanca", (0.2, 0.9, 0.2), (0.25, 101.7, -59.3), NARANJA)]))
+    p.append(part("Gases", (1.2, 1.3, 2.0), (0, 100.65, -59.0), GRIS, atributos={"Visual": "Gases"}))
+    for x in (-0.15, 0.15):
+        p.append(part("Palanca", (0.13, 0.42, 0.17), (x, 101.141, -59.159), NARANJA, colision=False, r=rot(-24, 0, 0),
+                      atributos={"Visual": "PalancaGases", "Movil": True}))
     botones = [("BotonExtintorMotor", -4.0, "D9443A"), ("BotonAutopiloto", -2.0, "4AB8F0"),
                ("BotonMotores", 0.0, "F5CD3D"), ("BotonCinturones", 2.0, "F27B2B"), ("BotonRampa", 4.0, "1FA6A0")]
     for nombre, x, c in botones:
@@ -194,10 +230,12 @@ def cabina():
 def cocina():
     p = []
     for sx in (-1, 1):
-        p.append(part("Encimera", (2.6, 3.5, 7.4), (sx * 5.4, 101.75, -48), METAL, "Metal"))
-        p.append(part("Armario", (2.6, 2.6, 7.4), (sx * 5.4, 108.7, -48), CREMA))
-    p.append(part("DispensadorHamburguesa", (1.6, 0.9, 1.6), (-5.4, 103.95, -50), "E9A64B",
-                  atributos={"Tipo": "Bandeja"}, hijos=[cartel("🍔", "Top", fondo="FFF4E0")]))
+        p.append(marca("CocinaModulo", (7.4, 10, 2.6), (sx * 5.4, 105, -48), "CocinaModulo", r=rot(0, 90 * sx, 0), hijos=[
+            part("Encimera", (2.6, 3.5, 7.4), (sx * 5.4, 101.75, -48), METAL, "Metal"),
+            part("Armario", (2.6, 3.6, 7.4), (sx * 5.4, 107.8, -48), CREMA),
+        ]))
+    p.append(part("DispensadorHamburguesa", (1.6, 0.9, 1.6), (-5.4, 103.95, -50), "E9A64B", r=rot(0, -90, 0),
+                  atributos={"Tipo": "Bandeja", "Visual": "Calentador"}, hijos=[cartel("🍔", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorCafe", (1.4, 1.6, 1.0), (5.6, 104.3, -50), "6B3A22", r=rot(0, 90, 0),
                   atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("☕", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA, r=rot(0, 90, 0),
@@ -213,26 +251,24 @@ def cocina():
 
 def bano_y_puertas():
     p = []
-    p.append(part("ParedBano", (0.4, 10, 2.6), (-3, 105, -6.7), CREMA_OSC))
-    p.append(part("ParedBano", (0.4, 10, 1.0), (-3, 105, -3.5), CREMA_OSC))
-    p.append(part("DintelBano", (0.4, 2.5, 2.4), (-3, 108.75, -4.8), CREMA_OSC))
-    p.append(part("FrenteBano", (3.7, 10, 0.4), (-4.85, 105, -8.0), CREMA_OSC))
-    p.append(part("FondoBano", (3.7, 10, 0.4), (-4.85, 105, -3.0), CREMA_OSC))
-    p.append(part("Inodoro", (1.4, 1.6, 2.0), (-5.6, 100.8, -6.0), "FFFFFF", r=rot(0, -90, 0), atributos={"Visual": "Inodoro"}))
-    p.append(part("CartelBano", (1.6, 1.0, 0.1), (-2.75, 107.0, -4.8), "FFFFFF", colision=False, r=rot(0, 90, 0),
+    p.append(marca("Bano", (5, 10, 3.7), (-4.85, 105, -5.5), "Bano", r=rot(0, -90, 0), hijos=[
+        part("ParedBano", (0.4, 10, 1.3), (-3, 105, -7.35), CREMA_OSC),
+        part("ParedBano", (0.4, 10, 1.3), (-3, 105, -3.65), CREMA_OSC),
+        part("DintelBano", (0.4, 3, 2.4), (-3, 108.5, -5.5), CREMA_OSC),
+        part("FrenteBano", (3.7, 10, 0.4), (-4.85, 105, -8.0), CREMA_OSC),
+        part("FondoBano", (3.7, 10, 0.4), (-4.85, 105, -3.0), CREMA_OSC),
+        part("Inodoro", (1.4, 1.6, 1.4), (-5.9, 100.8, -6.6), "FFFFFF"),
+        part("Lavabo", (1.2, 0.4, 1.4), (-6.0, 103.2, -4.0), "FFFFFF"),
+    ]))
+    p.append(part("CartelBano", (1.6, 1.0, 0.1), (-2.75, 108.4, -5.5), "FFFFFF", colision=False, r=rot(0, 90, 0),
                   hijos=[cartel("WC", "Back", "1B1B21")]))
-    p.append(part("PuertaAlaIzq", (G, 6.5, 3.4), (-MURO, 103.25, FILAS[FILA_SALIDA]), NARANJA,
-                  atributos={"Abierta": False, "Puerta": True}))
-    p.append(part("PuertaAlaDer", (G, 6.5, 3.4), (MURO, 103.25, FILAS[FILA_SALIDA]), NARANJA,
-                  atributos={"Abierta": False, "Puerta": True}))
-    p.append(part("PuertaSalida", (G, 6.5, 3.0), (MURO, 103.25, -5.5), NARANJA,
-                  atributos={"Abierta": False, "Puerta": True}))
-    p.append(part("ParedSalida", (G, 10, 4.0), (MURO, 105, -2.0), CREMA))
-    p.append(part("ParedSalida", (G, 10, 1.0), (MURO, 105, -7.5), CREMA))
-    p.append(part("DintelSalida", (G, 3.5, 3.0), (MURO, 108.25, -5.5), CREMA))
-    for nombre, z in (("CartelSalida", -5.5),):
-        p.append(part(nombre, (0.1, 0.8, 2.2), (6.6, 107.2, z), "1FA650", "Neon", colision=False,
-                      hijos=[cartel("SALIDA", "Left", "FFFFFF")]))
+    p.append(part("PuertaBano", (2.4, 7, 0.15), (-3, 103.5, -5.5), CREMA, r=rot(0, -90, 0),
+                  atributos={"Abierta": False, "Puerta": True, "Interior": True, "Visual": "PuertaBano", "Movil": True}))
+    for nombre, sx, z in (("PuertaAlaIzq", -1, FILAS[FILA_SALIDA]), ("PuertaAlaDer", 1, FILAS[FILA_SALIDA]), ("PuertaSalida", 1, -5.5)):
+        p.append(part(nombre, (3.4, 6.5, G), (sx * MURO, 103.25, z), NARANJA, r=rot(0, 90 * sx, 0),
+                      atributos={"Abierta": False, "Puerta": True, "Visual": "PuertaAla", "Movil": True}))
+    p.append(part("CartelSalida", (0.1, 0.8, 2.2), (6.6, 107.2, -5.5), "1FA650", "Neon", colision=False,
+                  hijos=[cartel("SALIDA", "Left", "FFFFFF")]))
     return carpeta("Puertas", p)
 
 
@@ -271,8 +307,11 @@ def exterior():
         p.append(part("Estabilizador" + lado, (11, 0.6, 5), (sx * 7.5, 108.5, 28), "FFF4E0"))
     p.append(part("Deriva", (0.8, 10, 7), (0, 116, 27), TURQUESA))
     p.append(part("Torreta", (2.2, 1.2, 2.2), (-24, 99.6, -21.5), GRIS, "Metal", clase="Seat",
-                  hijos=[part("BaseTorreta", (3, 0.6, 3), (-24, 99.3, -21.5), "1B1B21", "Metal"),
-                         part("Escudo", (3.2, 2.2, 0.4), (-24, 101.4, -23.0), GRIS, "Metal", colision=False),
+                  atributos={"Visual": "Torreta", "Base": 99.0},
+                  hijos=[part("BaseTorreta", (3, 0.6, 3), (-24, 99.3, -21.5), "1B1B21", "Metal")]))
+    p.append(part("Canones", (3, 2.2, 3.2), (-24, 101.1, -21.5), GRIS, "Metal", colision=False, transp=1,
+                  atributos={"Visual": "TorretaCanones", "Movil": True},
+                  hijos=[part("Escudo", (3.2, 2.2, 0.4), (-24, 101.4, -23.0), GRIS, "Metal", colision=False),
                          part("Canon", (0.35, 0.35, 3.2), (-24.5, 102.0, -24.4), "1B1B21", "Metal", colision=False),
                          part("Canon", (0.35, 0.35, 3.2), (-23.5, 102.0, -24.4), "1B1B21", "Metal", colision=False)]))
     p.append(part("Morro", (11, 3.5, 2), (0, 101.75, -63.5), "FFF4E0"))
@@ -296,7 +335,7 @@ def avion():
     return {
         "className": "Model",
         "attributes": {"Fase": "Aeropuerto"},
-        "children": [estructura(), asientos(), cabina(), cocina(), bano_y_puertas(), bodega(), exterior(),
+        "children": [estructura(), altillos(), asientos(), cabina(), cocina(), bano_y_puertas(), bodega(), exterior(),
                      marcadores(), carpeta("Peligros", []), carpeta("Objetos", []), carpeta("Pasajeros", [])],
     }
 

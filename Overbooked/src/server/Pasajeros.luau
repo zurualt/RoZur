@@ -78,6 +78,32 @@ local function levantar(p: Pasajero)
 	p.modelo:SetAttribute("Pedido", "")
 end
 
+local function coincide(pedido: string, tipo: string?): boolean
+	return tipo ~= nil and (tipo == pedido or (tipo == "Bandeja" and pedido == "Hamburguesa"))
+end
+
+local function quitarRacion(objeto: Instance): boolean
+	local raciones = objeto:GetAttribute("Raciones")
+	if typeof(raciones) == "number" and raciones > 1 then
+		objeto:SetAttribute("Raciones", raciones - 1)
+		return true
+	end
+	return false
+end
+
+local function atender(modelo: Model)
+	local s = modelo:GetAttribute("Satisfaccion")
+	modelo:SetAttribute("Satisfaccion", math.min(1, (if typeof(s) == "number" then s else 0.5) + P.SUBIDA_SERVIR))
+	modelo:SetAttribute("Pedido", "")
+	modelo:SetAttribute("Feliz", os.clock())
+	cuenta.servidos += 1
+end
+
+local function reaccion(modelo: Model, nombre: string)
+	modelo:SetAttribute("Reaccion", nombre)
+	modelo:SetAttribute("ReaccionMarca", os.clock())
+end
+
 local function crear(indice: number): Pasajero
 	local modelo = Instance.new("Model")
 	modelo.Name = "Pasajero" .. indice
@@ -141,24 +167,15 @@ local function crear(indice: number): Pasajero
 		if typeof(pedido) ~= "string" or pedido == "" then
 			return
 		end
-		local tipo = Agarre.tipo(jugador)
-		local bandeja = tipo == "Bandeja" and pedido == "Hamburguesa"
-		if tipo ~= pedido and not bandeja then
+		local objeto = Agarre.sostenido(jugador)
+		if not objeto or not coincide(pedido, Agarre.tipo(jugador)) then
 			RemotoAviso:FireClient(jugador, `Quiere {Config.ICONOS[pedido] or pedido}`, "info")
 			return
 		end
-		local objeto = Agarre.sostenido(jugador)
-		local raciones = if objeto then objeto:GetAttribute("Raciones") else nil
-		if bandeja and objeto and typeof(raciones) == "number" and raciones > 1 then
-			objeto:SetAttribute("Raciones", raciones - 1)
-		else
+		if not quitarRacion(objeto) then
 			Agarre.consumir(jugador)
 		end
-		local s = modelo:GetAttribute("Satisfaccion")
-		modelo:SetAttribute("Satisfaccion", math.min(1, (if typeof(s) == "number" then s else 0.5) + P.SUBIDA_SERVIR))
-		modelo:SetAttribute("Pedido", "")
-		modelo:SetAttribute("Feliz", os.clock())
-		cuenta.servidos += 1
+		atender(modelo)
 	end)
 	calmar.Triggered:Connect(function()
 		modelo:SetAttribute("Miedo", 0)
@@ -184,15 +201,22 @@ local function crear(indice: number): Pasajero
 				d.Transparency = 1
 			end
 		end
-		Activos.vestirDinamico(cuerpo, visual)
+		Activos.vestirDinamico(cuerpo, visual, P.ESCALA_VISUAL)
 	end
 	return p
+end
+
+function Pasajeros.ocupado(asiento: BasePart): boolean
+	if ocupacion[asiento] then
+		return true
+	end
+	return asiento:IsA("Seat") and asiento.Occupant ~= nil
 end
 
 local function libre(cerca: Vector3?, radio: number?): BasePart?
 	local mejor, distancia = nil, radio or math.huge
 	for _, asiento in asientos do
-		if not ocupacion[asiento] then
+		if not Pasajeros.ocupado(asiento) then
 			local d = if cerca then (asiento.Position - cerca).Magnitude else 0
 			if d < distancia then
 				mejor, distancia = asiento, d
@@ -292,6 +316,82 @@ function Pasajeros.succionar(centro: Vector3, fuerza: number, radio: number, cin
 			end
 			sumar(p.modelo, "Miedo", 0.05 * dt * 10)
 		end
+	end
+end
+
+function Pasajeros.desde(instancia: Instance): Model?
+	local actual: Instance? = instancia
+	while actual and actual ~= carpeta do
+		if actual:IsA("Model") and lista[actual] then
+			return actual
+		end
+		actual = actual.Parent
+	end
+	return nil
+end
+
+function Pasajeros.cercano(posicion: Vector3, radio: number): Model?
+	local mejor: Model? = nil
+	local distancia = radio
+	for modelo, p in lista do
+		local d = (p.cuerpo.Position - posicion).Magnitude
+		if d < distancia and not Agarre.portador(modelo) then
+			mejor, distancia = modelo, d
+		end
+	end
+	return mejor
+end
+
+function Pasajeros.servirCon(modelo: Model, objeto: BasePart): boolean
+	local pedido = modelo:GetAttribute("Pedido")
+	local tipo = objeto:GetAttribute("Tipo")
+	if typeof(pedido) ~= "string" or pedido == "" or typeof(tipo) ~= "string" or not coincide(pedido, tipo) then
+		return false
+	end
+	if not quitarRacion(objeto) then
+		Agarre.soltarObjeto(objeto)
+		objeto:Destroy()
+	end
+	atender(modelo)
+	return true
+end
+
+function Pasajeros.golpear(modelo: Model, impacto: number, direccion: Vector3, motivo: string, cinturones: boolean)
+	local p = lista[modelo]
+	if not p or Agarre.portador(modelo) then
+		return
+	end
+	sumar(modelo, "Miedo", math.clamp(impacto / 120, 0.1, 0.6))
+	sumar(modelo, "Satisfaccion", -(math.clamp(impacto / 400, 0.03, 0.2) + (if motivo == "Quemado" then 0.12 else 0)))
+	reaccion(modelo, motivo)
+	if impacto > (if cinturones then 85 else 45) then
+		local d = if direccion.Magnitude > 0.01 then direccion.Unit else Vector3.yAxis
+		empujar(p, d * math.min(impacto, 90) * 0.35 + Vector3.new(0, 8, 0))
+	end
+end
+
+function Pasajeros.rociar(origen: Vector3, direccion: Vector3, alcance: number)
+	local ahora = os.clock()
+	for modelo, p in lista do
+		local delta = p.cuerpo.Position - origen
+		local d = delta.Magnitude
+		if d < alcance and d > 0.1 and delta.Unit:Dot(direccion) > 0.6 and not Agarre.portador(modelo) then
+			if p.asiento then
+				local marca = modelo:GetAttribute("ReaccionMarca")
+				if typeof(marca) ~= "number" or ahora - marca > 2 then
+					reaccion(modelo, "Mojado")
+					sumar(modelo, "Satisfaccion", -0.02)
+				end
+			elseif Agarre.delServidor(p.cuerpo) then
+				p.cuerpo.AssemblyLinearVelocity += direccion * 18 * (1 - d / alcance)
+			end
+		end
+	end
+end
+
+function Pasajeros.reaccionar(modelo: Model, nombre: string)
+	if lista[modelo] then
+		reaccion(modelo, nombre)
 	end
 end
 
@@ -399,7 +499,7 @@ function Pasajeros.iniciar()
 					sumar(modelo, "Satisfaccion", -0.015)
 					m = math.min(1, m + 0.04)
 				end
-				modelo:SetAttribute("Miedo", math.max(0, m - P.MIEDO_DECAE))
+				modelo:SetAttribute("Miedo", math.max(0, m - P.MIEDO_DECAE * (if avion:GetAttribute("Mascarillas") == true then 2.5 else 1)))
 				if m > 0.6 then
 					sumar(modelo, "Satisfaccion", -0.012)
 				end

@@ -112,4 +112,35 @@ function VFX.viento(padre: Instance): ParticleEmitter
 	return e
 end
 
+function VFX.salpicadura(padre: Instance, color: Color3): ParticleEmitter
+	local e = emisor(padre, "Salpicadura", TEX_HUMO)
+	e.Color = ColorSequence.new(color)
+	e.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.35),
+		NumberSequenceKeypoint.new(1, 0.05),
+	})
+	e.Transparency = NumberSequence.new(0.15, 1)
+	e.Lifetime = NumberRange.new(0.35, 0.7)
+	e.Rate = 0
+	e.Speed = NumberRange.new(8, 16)
+	e.SpreadAngle = Vector2.new(70, 70)
+	e.Acceleration = Vector3.new(0, -50, 0)
+	e.EmissionDirection = Enum.NormalId.Top
+	return e
+end
+
+function VFX.vapor(padre: Instance): ParticleEmitter
+	local e = emisor(padre, "Vapor", TEX_HUMO)
+	e.Color = ColorSequence.new(Color3.fromRGB(235, 238, 242))
+	e.Size = NumberSequence.new(1, 4)
+	e.Transparency = NumberSequence.new(0.3, 1)
+	e.Lifetime = NumberRange.new(1, 1.8)
+	e.Rate = 0
+	e.Speed = NumberRange.new(3, 7)
+	e.SpreadAngle = Vector2.new(40, 40)
+	e.Acceleration = Vector3.new(0, 4, 0)
+	e.EmissionDirection = Enum.NormalId.Top
+	return e
+end
+
 return VFX

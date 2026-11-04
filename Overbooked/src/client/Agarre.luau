@@ -246,6 +246,10 @@ function Agarre.iniciar()
 		if usando and os.clock() - ultimoUso >= Config.HERRAMIENTAS.CADENCIA then
 			ultimoUso = os.clock()
 			RemotoUsar:FireServer(cf.LookVector)
+			local propia = personaje:FindFirstChild("HumanoidRootPart")
+			if tipoDe(objeto) == "Extintor" and Workspace.Gravity < 60 and propia and propia:IsA("BasePart") then
+				propia.AssemblyLinearVelocity -= cf.LookVector * 4
+			end
 		end
 	end)
 end
