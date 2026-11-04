@@ -60,39 +60,47 @@
     },
     "Lighting": {
       "$properties": {
-        "Ambient": [0.45, 0.47, 0.52],
-        "OutdoorAmbient": [0.62, 0.64, 0.7],
-        "Brightness": 2.4,
+        "Ambient": [0.26, 0.25, 0.27],
+        "OutdoorAmbient": [0.44, 0.44, 0.48],
+        "Brightness": 1.6,
+        "ExposureCompensation": -0.25,
         "ClockTime": 14.2,
         "GlobalShadows": true,
-        "EnvironmentDiffuseScale": 0.6,
-        "EnvironmentSpecularScale": 0.4
+        "EnvironmentDiffuseScale": 0.35,
+        "EnvironmentSpecularScale": 0.25
       },
       "Atmosfera": {
         "$className": "Atmosphere",
         "$properties": {
-          "Density": 0.28,
+          "Density": 0.3,
           "Offset": 0.12,
           "Color": [0.78, 0.86, 0.95],
           "Decay": [0.55, 0.68, 0.85],
-          "Glare": 0.15,
-          "Haze": 1.4
+          "Glare": 0.08,
+          "Haze": 0.7
         }
       },
       "Brillo": {
         "$className": "BloomEffect",
         "$properties": {
-          "Intensity": 0.35,
-          "Size": 28,
-          "Threshold": 1.4
+          "Intensity": 0.18,
+          "Size": 24,
+          "Threshold": 1.8
         }
       },
       "Color": {
         "$className": "ColorCorrectionEffect",
         "$properties": {
-          "Saturation": 0.12,
-          "Contrast": 0.06,
-          "Brightness": 0.02
+          "Saturation": -0.05,
+          "Contrast": 0.08,
+          "Brightness": 0,
+          "TintColor": [1, 0.96, 0.9]
+        }
+      },
+      "ColorGrading": {
+        "$className": "ColorGradingEffect",
+        "$properties": {
+          "TonemapperPreset": "Default"
         }
       }
     },

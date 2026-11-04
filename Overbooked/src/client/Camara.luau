@@ -91,6 +91,9 @@ local function poseSosteniendo(personaje: Model)
 	end
 	local hombro = if lleva then GIRO_HOMBRO else GIRO_HOMBRO_REPOSO
 	local codo = if lleva then GIRO_CODO else GIRO_CODO_REPOSO
+	if personaje == jugador.Character and not terceraPersona then
+		hombro = CFrame.Angles(math.clamp(math.asin(math.clamp(Workspace.CurrentCamera.CFrame.LookVector.Y, -1, 1)), -0.8, 1.2), 0, 0) * hombro
+	end
 	for _, m in datos.hombros do
 		local rot = m.C0.Rotation
 		m.Transform = rot:Inverse() * hombro * rot
