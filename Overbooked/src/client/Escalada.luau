@@ -22,6 +22,7 @@ local adjunto: Attachment? = nil
 local posicion: AlignPosition? = nil
 local orientacion: AlignOrientation? = nil
 local VELOCIDAD = 7
+local tactil = false
 
 local function cuerpo(): (Model?, Humanoid?, BasePart?)
 	local personaje = jugador.Character
@@ -156,6 +157,25 @@ function Escalada.iniciar()
 		limpiar()
 	end)
 	RunService.Heartbeat:Connect(function(dt: number)
+		local quiere = UserInputService.TouchEnabled and conPiolet()
+		if quiere ~= tactil then
+			tactil = quiere
+			if quiere then
+				ContextActionService:BindAction("PioletTactil", function(_, estado)
+					if estado == Enum.UserInputState.Begin then
+						if activo then
+							soltar(true)
+						else
+							agarrar()
+						end
+					end
+					return Enum.ContextActionResult.Sink
+				end, true)
+				ContextActionService:SetTitle("PioletTactil", "Piolet")
+			else
+				ContextActionService:UnbindAction("PioletTactil")
+			end
+		end
 		if not activo then
 			return
 		end
