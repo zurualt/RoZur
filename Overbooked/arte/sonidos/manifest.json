@@ -1,0 +1,122 @@
+[
+ {
+  "nombre": "GolpeMetal",
+  "archivo": "GolpeMetal.ogg",
+  "duracion": 1.516,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Choque metálico (clanc) con rebote corto."
+ },
+ {
+  "nombre": "Cristal",
+  "archivo": "Cristal.ogg",
+  "duracion": 1.027,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Cristal pequeño rompiéndose: crack y tintineo de esquirlas."
+ },
+ {
+  "nombre": "Madera",
+  "archivo": "Madera.ogg",
+  "duracion": 1.574,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Caja de madera rompiéndose: crujido, astillas y tablas cayendo."
+ },
+ {
+  "nombre": "Salpicadura",
+  "archivo": "Salpicadura.ogg",
+  "duracion": 1.501,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Salpicadura de líquido con gotitas."
+ },
+ {
+  "nombre": "Resbalon",
+  "archivo": "Resbalon.ogg",
+  "duracion": 1.101,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Resbalón de dibujo animado: chirrido de suela + silbato que sube (fiuuup)."
+ },
+ {
+  "nombre": "Extintor",
+  "archivo": "Extintor.ogg",
+  "duracion": 0.457,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Ráfaga corta de extintor (~0,4 s), apta para repetir."
+ },
+ {
+  "nombre": "Llave",
+  "archivo": "Llave.ogg",
+  "duracion": 0.455,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Llave inglesa/carraca: serie de clics metálicos."
+ },
+ {
+  "nombre": "Reparado",
+  "archivo": "Reparado.ogg",
+  "duracion": 1.945,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Jingle brillante de reparación completada."
+ },
+ {
+  "nombre": "Explosion",
+  "archivo": "Explosion.ogg",
+  "duracion": 4.406,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Explosión caricaturesca (boom redondo) para brecha en el casco o motor."
+ },
+ {
+  "nombre": "Succion",
+  "archivo": "Succion.ogg",
+  "duracion": 1.331,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Aire entrando a presión por un agujero: whoosh que crece y corta."
+ },
+ {
+  "nombre": "Trueno",
+  "archivo": "Trueno.ogg",
+  "duracion": 8.825,
+  "bucle": false,
+  "volumen": 0.75,
+  "descripcion": "Trueno: chasquido inicial y retumbo largo."
+ },
+ {
+  "nombre": "Pajaros",
+  "archivo": "Pajaros.ogg",
+  "duracion": 1.939,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Bandada de pájaros caricaturescos: graznidos y aleteos."
+ },
+ {
+  "nombre": "Cocodrilo",
+  "archivo": "Cocodrilo.ogg",
+  "duracion": 2.557,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Gruñido grave de cocodrilo seguido de un siseo."
+ },
+ {
+  "nombre": "Mordisco",
+  "archivo": "Mordisco.ogg",
+  "duracion": 0.876,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Mordisco: chasquido de mandíbulas (chomp)."
+ },
+ {
+  "nombre": "Comer",
+  "archivo": "Comer.ogg",
+  "duracion": 1.557,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Masticar caricaturesco: tres bocados (ñam ñam ñam)."
+ }
+]

@@ -500,8 +500,8 @@ def s_golpe_metal():
         r = R(s)
         rat = np.array([1, 2.76, 5.40, 8.93, 13.34])*r.uniform(0.98, 1.02, 5)
         x = modal(1.3, f*rat, [1, 0.75, 0.45, 0.25, 0.1], [0.55, 0.38, 0.22, 0.12, 0.06])
-        x += 0.5*modal(0.3, [f*0.38], [1], [0.06])
-        x += 0.35*rafaga(0.03, 0.0002, 0.003, bp(3200, 0.8), s+1)
+        put(x, modal(0.3, [f*0.38], [1], [0.06]), 0, 0.5)
+        put(x, rafaga(0.03, 0.0002, 0.003, bp(3200, 0.8), s+1), 0, 0.35)
         return a*x
     put(b, clank(430, 31, 1.0), 0)
     put(b, clank(455, 32, 0.35), 0.13)
@@ -608,7 +608,7 @@ def s_llave():
     for i, t0 in enumerate(tiempos):
         j = r.uniform(0.97, 1.03)
         x = modal(0.06, [2600*j, 4150*j, 5900*j, 950*j], [1, 0.6, 0.3, 0.5], [0.012, 0.008, 0.005, 0.009])
-        x += 0.4*rafaga(0.01, 0.0002, 0.0012, bp(3500, 0.9), 92+i)
+        put(x, rafaga(0.01, 0.0002, 0.0012, bp(3500, 0.9), 92+i), 0, 0.4)
         put(b, x, t0+r.uniform(-0.004, 0.004), 0.8+0.2*(i % 2))
     put(b, modal(0.15, [1800, 3100], [1, 0.5], [0.03, 0.015]), 0.3, 0.4)
     b = filt(b, lp(8000, 2))
@@ -1175,7 +1175,8 @@ def d_caja(v, rng):
 
 def d_aro(v, rng):
     x = modal(0.1, [1650, 2480, 3920, 820], [1, 0.6, 0.3, 0.4], [0.018, 0.011, 0.006, 0.012])
-    return (x+0.3*rafaga(0.01, 0.0001, 0.001, bp(3000, 1), int(rng.integers(1e6))))*v
+    put(x, rafaga(0.01, 0.0001, 0.001, bp(3000, 1), int(rng.integers(1e6))), 0, 0.3)
+    return x*v
 
 
 def d_shaker(v, rng):
@@ -1888,8 +1889,9 @@ def proc_loop(x, pico=-6.0, pct=99.97):
 
 def codificar(y, path, q):
     ch = 1 if y.ndim == 1 else y.shape[1]
+    pag = ['-page_duration', '50000'] if len(y) < 3*SR else []
     subprocess.run([FFMPEG, '-y', '-loglevel', 'error', '-f', 'f32le', '-ar', str(SR), '-ac', str(ch), '-i', 'pipe:0',
-                    '-c:a', 'libvorbis', '-q:a', str(q), '-map_metadata', '-1', path],
+                    '-c:a', 'libvorbis', '-q:a', str(q), '-map_metadata', '-1']+pag+[path],
                    input=np.ascontiguousarray(y, dtype='<f4').tobytes(), check=True)
 
 

@@ -17,6 +17,7 @@ local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
 local Sonidos = require(script.Parent.Sonidos)
+local Estadisticas = require(script.Parent.Estadisticas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -528,13 +529,16 @@ local function usarExtintor(jugador: Player, mirada: Vector3?)
 			parte:SetAttribute("Vida", math.max(0, f.vida))
 			if f.vida <= 0 then
 				apagar(f)
+				Estadisticas.sumar(jugador, "fuego")
 			end
 		end
 	end
 	for _, lado in { "Izq", "Der" } do
 		local motor = Avion.motorParte(lado)
 		if motor and (motor.Position - origen).Magnitude <= H.ALCANCE_EXTINTOR + 3 then
-			Avion.extinguirMotor(lado, 7)
+			if Avion.extinguirMotor(lado, 7) then
+				Estadisticas.sumar(jugador, "fuego", 2)
+			end
 		end
 	end
 end
@@ -549,6 +553,7 @@ local function usarAgua(jugador: Player, mirada: Vector3?)
 	local punto = origen + dir * 3.5 + Vector3.new(0, -2, 0)
 	if objeto and objeto:IsA("BasePart") and Peligros.mojar(punto, 3.5, 100) then
 		Sonidos.emitir("Salpicadura", objeto.Position)
+		Estadisticas.sumar(jugador, "fuego")
 		efecto(objeto.Position, function(padre)
 			return VFX.salpicadura(padre, Color3.fromRGB(143, 211, 244))
 		end, 30)
@@ -567,6 +572,7 @@ local function usarPiolet(jugador: Player)
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_PIOLET then
 			Sonidos.emitir("GolpeMetal", parte.Position, 0.15)
 			p.reparacion += H.REPARACION_PIOLET
+			Estadisticas.sumar(jugador, "reparar")
 			parte:SetAttribute("Reparacion", math.min(100, p.reparacion))
 			if p.reparacion >= 100 then
 				cerrarPanel(p)
@@ -587,6 +593,7 @@ local function usarLlave(jugador: Player)
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_LLAVE then
 			b.reparacion += H.REPARACION_LLAVE
 			parte:SetAttribute("Reparacion", math.min(100, b.reparacion))
+			Estadisticas.sumar(jugador, "reparar")
 			if b.reparacion >= 100 then
 				cerrar(b)
 			end
@@ -597,6 +604,7 @@ local function usarLlave(jugador: Player)
 		local motor = Avion.motorParte(lado)
 		if motor and (motor.Position - origen).Magnitude <= H.ALCANCE_LLAVE + 4 then
 			if Avion.repararMotor(lado, 5) then
+				Estadisticas.sumar(jugador, "reparar")
 				return
 			end
 		end

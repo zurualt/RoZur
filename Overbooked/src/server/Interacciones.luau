@@ -16,6 +16,7 @@ local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Sonidos = require(script.Parent.Sonidos)
+local Estadisticas = require(script.Parent.Estadisticas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -135,6 +136,8 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 		local donde = o.Position
 		if Pasajeros.servirCon(modelo, o) then
 			Sonidos.emitir("Servir", donde)
+			Estadisticas.sumar(lanzador, "servir")
+			Estadisticas.sumar(lanzador, "punteria")
 			if lanzador then
 				RemotoAviso:FireClient(lanzador, "🎯 ¡Pedido servido al vuelo!", "bien")
 			end

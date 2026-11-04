@@ -8,6 +8,7 @@ local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
 local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
+local Estadisticas = require(script.Parent.Estadisticas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -179,6 +180,7 @@ local function crear(indice: number): Pasajero
 			Agarre.consumir(jugador)
 		end
 		Sonidos.emitir("Servir", cuerpo.Position)
+		Estadisticas.sumar(jugador, "servir")
 		atender(modelo)
 	end)
 	calmar.Triggered:Connect(function()

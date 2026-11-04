@@ -16,6 +16,7 @@ local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
 local Sonidos = require(script.Parent.Sonidos)
+local Estadisticas = require(script.Parent.Estadisticas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -611,7 +612,7 @@ function Carga.iniciar()
 		RemotoAviso:FireClient(jugador, "🐊 ¡Está furioso! Dale de comer o atúrdelo antes de cogerlo", "peligro")
 		return false
 	end)
-	Agarre.alSoltar(function(_, objeto, raiz)
+	Agarre.alSoltar(function(soltador, objeto, raiz)
 		local b = bultos[raiz]
 		if b then
 			b.previa = raiz.AssemblyLinearVelocity
@@ -621,6 +622,7 @@ function Carga.iniciar()
 		local j = jaula
 		if c and objeto == c and j and j.Parent and (j.Position - raiz.Position).Magnitude < 6 then
 			enjaular(c)
+			Estadisticas.sumar(soltador, "cocodrilo")
 		end
 	end)
 	Players.PlayerRemoving:Connect(function(jugador)

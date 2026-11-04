@@ -8,6 +8,8 @@ local VFX = require(ReplicatedStorage.Shared.VFX)
 local Avion = require(script.Parent.Avion)
 local Pasajeros = require(script.Parent.Pasajeros)
 
+local Estadisticas = require(script.Parent.Estadisticas)
+
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
 local RemotoDisparar = Remotos:WaitForChild("Disparar") :: RemoteEvent
@@ -141,6 +143,7 @@ function Piratas.iniciar()
 				p.carpeta:SetAttribute("Vida", math.max(0, p.vida))
 				if p.vida <= 0 then
 					derribados += 1
+					Estadisticas.sumar(jugador, "piratas")
 					table.remove(piratas, i)
 					RemotoAviso:FireAllClients(`💥 ¡{jugador.DisplayName} ha derribado un pirata! +{RECOMPENSA}`, "bien")
 					local f = p.carpeta

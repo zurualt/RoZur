@@ -13,6 +13,7 @@ local Cabina = require(script.Parent.Cabina)
 local Aduana = require(script.Parent.Aduana)
 local Carga = require(script.Parent.Carga)
 local Datos = require(script.Parent.Datos)
+local Estadisticas = require(script.Parent.Estadisticas)
 local Interacciones = require(script.Parent.Interacciones)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
@@ -159,6 +160,7 @@ local function vuelo(contrato: Contratos.Contrato)
 	spawnAvion.Enabled = true
 	spawnAeropuerto.Enabled = false
 	fase("Vuelo")
+	Estadisticas.reiniciar()
 	Peligros.activar(contrato)
 	aviso("🛫 ¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
 	local inicio = os.clock()
@@ -195,6 +197,7 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		piratas = Piratas.bonus(),
 		confiscados = confiscados,
 		contrabando = contrabando,
+		premios = Estadisticas.premios(),
 	}
 	local total = 0
 	if tipo == "Aterrizado" then

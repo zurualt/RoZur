@@ -7,6 +7,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
+local Estadisticas = require(script.Parent.Estadisticas)
 local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
 
@@ -387,6 +388,9 @@ local function simular(dt: number)
 	end
 	local cab, ala, gas
 	local ahora = os.clock()
+	if piloto and not estado.enTierra then
+		Estadisticas.sumar(piloto, "pilotar", dt)
+	end
 	if piloto and ahora - entrada.momento < 0.6 then
 		cab, ala, gas = entrada.cabeceo, entrada.alabeo, entrada.gases
 		if estado.autopiloto and not (forzado and estado.fase == "Despegue") and (math.abs(cab) > 0.2 or math.abs(ala) > 0.2) then

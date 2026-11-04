@@ -1,5 +1,6 @@
 --!strict
 local Activos = require(script.Activos)
+local Estadisticas = require(script.Estadisticas)
 local Personajes = require(script.Personajes)
 local Datos = require(script.Datos)
 local Agarre = require(script.Agarre)
@@ -17,6 +18,7 @@ local Tienda = require(script.Tienda)
 local Partida = require(script.Partida)
 
 Activos.iniciar()
+Estadisticas.iniciar()
 Datos.iniciar()
 Personajes.iniciar()
 Agarre.iniciar()

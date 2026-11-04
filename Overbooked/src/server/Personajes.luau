@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 local StarterPlayer = game:GetService("StarterPlayer")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Estadisticas = require(script.Parent.Estadisticas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoRagdoll = Remotos:WaitForChild("Ragdoll") :: RemoteEvent
@@ -116,6 +117,7 @@ function Personajes.ragdoll(jugador: Player, duracion: number, impulso: Vector3)
 	end
 	datos.fin = math.max(datos.fin, os.clock() + duracion)
 	if not datos.activo then
+		Estadisticas.sumar(jugador, "caidas")
 		datos.activo = true
 		for _, m in datos.motores do
 			m.Enabled = false

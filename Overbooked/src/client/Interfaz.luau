@@ -593,6 +593,15 @@ local function resultados(datos: any)
 	if typeof(datos.contrabando) == "number" and datos.contrabando > 0 and datos.tipo ~= "Estrellado" then
 		table.insert(lineas, `🚨 Multa de aduanas: {datos.contrabando} maletas con contrabando (-{datos.contrabando * 150})`)
 	end
+	if typeof(datos.premios) == "table" and #datos.premios > 0 then
+		local partes = {}
+		for _, p in datos.premios :: { any } do
+			if typeof(p) == "table" and typeof(p.titulo) == "string" and typeof(p.nombre) == "string" then
+				table.insert(partes, `{p.icono} {p.titulo}: <b>{p.nombre}</b>`)
+			end
+		end
+		table.insert(lineas, "🏅 " .. table.concat(partes, "   ·   "))
+	end
 	if datos.piratas and datos.piratas > 0 then
 		table.insert(lineas, `🏴‍☠️ Piratas derribados: +{datos.piratas}`)
 	end
