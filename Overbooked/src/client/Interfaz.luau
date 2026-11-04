@@ -593,10 +593,10 @@ local function resultados(datos: any)
 		table.insert(lineas, `🎫 Billetes: +{datos.billetes}`)
 	end
 	if typeof(datos.confiscados) == "number" and datos.confiscados > 0 then
-		table.insert(lineas, `🛃 Contrabando requisado: {datos.confiscados} (+{datos.confiscados * 60})`)
+		table.insert(lineas, `🛃 Contrabando requisado: {datos.confiscados} (+{datos.confiscados * (if typeof(datos.bonusAduana) == "number" then datos.bonusAduana else 60)})`)
 	end
 	if typeof(datos.contrabando) == "number" and datos.contrabando > 0 and datos.tipo ~= "Estrellado" then
-		table.insert(lineas, `🚨 Multa de aduanas: {datos.contrabando} maletas con contrabando (-{datos.contrabando * 150})`)
+		table.insert(lineas, `🚨 Multa de aduanas: {datos.contrabando} maletas con contrabando (-{datos.contrabando * (if typeof(datos.multaAduana) == "number" then datos.multaAduana else 150)})`)
 	end
 	if typeof(datos.premios) == "table" and #datos.premios > 0 then
 		local partes = {}

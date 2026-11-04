@@ -252,14 +252,20 @@ function Activos.vestirDinamico(parte: BasePart, nombre: string, escala: number?
 	end)
 end
 
-function Activos.adjuntar(parte: BasePart, nombre: string, desplazamiento: CFrame, escala: number?, etiqueta: string?)
+function Activos.adjuntar(parte: BasePart, nombre: string, desplazamiento: CFrame, escala: number?, etiqueta: string?, valido: (() -> boolean)?)
 	Activos.cuando(nombre, function(plantilla)
 		local padre = parte.Parent
-		if not padre then
+		if not padre or (valido and not valido()) then
 			return
 		end
+		local nombreFinal = etiqueta or nombre
+		for _, h in padre:GetChildren() do
+			if h.Name == nombreFinal and h:IsA("Model") then
+				h:Destroy()
+			end
+		end
 		local visual = plantilla:Clone()
-		visual.Name = etiqueta or nombre
+		visual.Name = nombreFinal
 		colocar(visual, parte.CFrame * desplazamiento, nombre, escala)
 		for _, d in visual:GetDescendants() do
 			if d:IsA("BasePart") then

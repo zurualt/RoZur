@@ -21,6 +21,7 @@ local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
 local Tienda = require(script.Parent.Tienda)
+local Vehiculos = require(script.Parent.Vehiculos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -142,6 +143,7 @@ local function embarque(contrato: Contratos.Contrato)
 	Cabina.reiniciar()
 	Estado:SetAttribute("Condicion", contrato.condicion)
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo, contrato.condicion)
+	Vehiculos.reiniciar()
 	Carga.cargar(contrato)
 	aviso(`🧳 ¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
 	listos = false
@@ -174,6 +176,7 @@ local function vuelo(contrato: Contratos.Contrato)
 	spawnAeropuerto.Enabled = false
 	fase("Vuelo")
 	Estadisticas.reiniciar()
+	Tienda.aplicar()
 	Peligros.activar(contrato)
 	aviso("🛫 ¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
 	local inicio = os.clock()
@@ -210,6 +213,8 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		piratas = Piratas.bonus(),
 		confiscados = confiscados,
 		contrabando = contrabando,
+		bonusAduana = Aduana.BONUS,
+		multaAduana = Aduana.MULTA,
 		premios = Estadisticas.premios(),
 	}
 	local total = 0

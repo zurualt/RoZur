@@ -32,4 +32,10 @@ function Sonidos.emitir(nombre: string, posicion: Vector3?, intervalo: number?)
 	RemotoSonido:FireAllClients(nombre, posicion)
 end
 
+function Sonidos.emitirA(jugador: Player, nombre: string, posicion: Vector3?)
+	if Audio.IDS[nombre] then
+		RemotoSonido:FireClient(jugador, nombre, posicion)
+	end
+end
+
 return Sonidos

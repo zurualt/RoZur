@@ -1,6 +1,7 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
@@ -17,6 +18,7 @@ local Estado = ReplicatedStorage:WaitForChild("Estado")
 local CREMA = Color3.fromRGB(255, 244, 224)
 local VERDE = Color3.fromRGB(120, 220, 130)
 local FUENTE = Enum.Font.FredokaOne
+local comidaHasta = 0
 
 local pasos: { Paso } = {
 	{ texto = "Elige un vuelo: E en un quiosco de la terminal", hecho = false },
@@ -115,7 +117,7 @@ function Tutorial.iniciar()
 		local function servido(modelo: Instance)
 			if modelo:IsA("Model") then
 				modelo:GetAttributeChangedSignal("Feliz"):Connect(function()
-					if cerca(modelo, 16) then
+					if cerca(modelo, 16) and os.clock() < comidaHasta then
 						marcar(4)
 					end
 				end)
@@ -125,6 +127,16 @@ function Tutorial.iniciar()
 			servido(m)
 		end
 		local conexion = CollectionService:GetInstanceAddedSignal("Pasajero"):Connect(servido)
+		local uso = UserInputService.InputBegan:Connect(function(entrada, procesado)
+			if procesado or (entrada.KeyCode ~= Enum.KeyCode.F and entrada.KeyCode ~= Enum.KeyCode.ButtonX) then
+				return
+			end
+			local o = Agarre.sostenido()
+			local t = if o then Agarre.tipo(o) else ""
+			if t == "Extintor" or t == "Llave" then
+				marcar(5)
+			end
+		end)
 		refrescar()
 		while panel.Parent do
 			task.wait(0.5)
@@ -141,14 +153,13 @@ function Tutorial.iniciar()
 				marcar(2)
 			elseif tipo == "Bandeja" or tipo == "Cafe" or tipo == "Agua" or tipo == "Hamburguesa" then
 				marcar(3)
-			elseif tipo == "Extintor" or tipo == "Llave" then
-				marcar(5)
+				comidaHasta = os.clock() + 4
 			end
 			local piloto = avion:GetAttribute("Piloto")
 			if typeof(piloto) == "number" and piloto ~= 0 then
 				marcar(6)
 			end
-			if fase == "Resultados" then
+			if fase == "Resultados" and avion:GetAttribute("Fase") == "Aterrizado" then
 				marcar(7)
 			end
 			refrescar()
@@ -159,6 +170,7 @@ function Tutorial.iniciar()
 			if todos or vuelos() >= 2 then
 				task.wait(4)
 				conexion:Disconnect()
+				uso:Disconnect()
 				local gui = panel.Parent
 				if gui then
 					gui:Destroy()

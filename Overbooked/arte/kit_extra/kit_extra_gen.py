@@ -540,9 +540,27 @@ def p_piolet():
     p.add(rr_loft(0.135, 0.165, 0.05, 1, [(0.0, 0.33), (0.0, 0.37)], cap0=False, cap1=False), "dorange", 40)
     p.add(rr_loft(0.08, 0.105, 0.032, 1, [(0.0, 0.6), (0.0, 1.74)], cap0=False, cap1=False), "teal", 40)
     p.add(rr_loft(0.1, 0.125, 0.04, 1, [(0.0, 0.64), (0.0, 0.72)]), "dark", 40)
-    p.add(bb(-0.055, 0.055, -0.075, 0.075, 1.70, 1.90), "metal")
-    pick = [(-0.06, 1.90), (-0.14, 1.878), (-0.205, 1.83), (-0.25, 1.715), (-0.229, 1.77), (-0.213, 1.762),
-            (-0.197, 1.795), (-0.181, 1.787), (-0.163, 1.818), (-0.06, 1.835)]
+    p.add(rr_loft(0.11, 0.15, 0.025, 1, [(0.0, 1.70), (0.0, 1.90)]), "metal", 40)
+    cl = [Vector(c) for c in ((-0.04, 1.86), (-0.10, 1.853), (-0.16, 1.83), (-0.21, 1.787), (-0.25, 1.712))]
+    hh = [0.038, 0.032, 0.025, 0.016, 0.0]
+    top, bot = [], []
+    for i, c in enumerate(cl):
+        t = (cl[min(i + 1, 4)] - cl[max(i - 1, 0)]).normalized()
+        nout = Vector((t.y, -t.x))
+        if nout.y < 0:
+            nout = -nout
+        top.append(c + nout * hh[i])
+        bot.append(c - nout * hh[i])
+    teeth = []
+    for i in (3, 2, 1):
+        mid = (cl[i] + cl[i + 1]) / 2
+        t = (cl[i + 1] - cl[i]).normalized()
+        nout = Vector((t.y, -t.x))
+        if nout.y < 0:
+            nout = -nout
+        teeth.append(mid - nout * ((hh[i] + hh[i + 1]) / 2 + 0.014))
+        teeth.append(bot[i])
+    pick = [tuple(v) for v in top[:4]] + [tuple(top[4])] + [tuple(v) for v in teeth] + [tuple(bot[0])]
     p.add(prism(pick, 0.05, yzx((0, 0, 0))), "metal", 35)
     bm = bmesh.new()
     st = [(0.05, 1.83, 1.885, 0.10), (0.15, 1.805, 1.86, 0.17), (0.25, 1.775, 1.825, 0.25)]
@@ -555,8 +573,8 @@ def p_piolet():
     p.add(bm, "metal", 30)
     for sx, side in ((1, "+x"), (-1, "-x")):
         p.add(decal(circ(0.0, 1.80, 0.022, 6), fr((sx * 0.055, 0, 0), side), 0.004), "dark")
-    loop = [(0.0, 0.06, 0.69), (0.0, 0.12, 0.645), (0.0, 0.175, 0.54), (0.0, 0.198, 0.42), (0.0, 0.188, 0.32),
-            (0.0, 0.15, 0.265), (0.0, 0.118, 0.30), (0.0, 0.112, 0.42), (0.0, 0.11, 0.54), (0.0, 0.085, 0.64)]
+    loop = [(0.0, 0.06, 0.69), (0.0, 0.135, 0.63), (0.0, 0.19, 0.48), (0.0, 0.192, 0.33),
+            (0.0, 0.15, 0.265), (0.0, 0.115, 0.32), (0.0, 0.112, 0.48), (0.0, 0.088, 0.63)]
     p.add(tube(loop, lambda u: (0.03, 0.009), k=4, steps=1, closed=True, up=(1, 0, 0), phase=0.5), "teal", 50)
     return p
 
@@ -612,10 +630,10 @@ def p_escaner():
         y = -3.33 + 6.66 * i / 19
         p.add(lathe([(rr, -TX), (rr, TX)], 8, yzx((0, y, cz)), cap0=False, cap1=False, a0=math.pi / 8), "metal", 50)
     for sy in (-1, 1):
-        y0, y1 = sorted((sy * 3.42, sy * 3.5))
+        y0, y1 = sorted((sy * 3.42, sy * 3.496))
         p.add(bb(-1.44, 1.44, y0, y1, 0.66, 0.97), "yellow")
         side = "-y" if sy < 0 else "+y"
-        mf = fr((0, sy * 3.5, 0), side)
+        mf = fr((0, sy * 3.496, 0), side)
         for i in range(6):
             u = -1.34 + 0.46 * i
             p.add(decal([(u, 0.68), (u + 0.14, 0.68), (u + 0.33, 0.95), (u + 0.19, 0.95)], mf, 0.004), "black")
@@ -647,7 +665,7 @@ def p_escaner():
     phi = math.radians(40)
     nrm = Vector((math.sin(phi), -math.cos(phi), 0))
     wv = Vector((math.cos(phi), math.sin(phi), 0))
-    c = Vector((1.668, -1.95, 2.65))
+    c = Vector((1.684, -1.95, 2.65))
     mm = frame(c, wv, (0, 0, 1))
     p.add(rbox((0.8, 0.56, 0.08), bev=0.025, m=mm), "dark", 40)
     p.add(decal(rrect(0, 0, 0.7, 0.46, 0.03, 1), mm, 0.045), "screen")
@@ -705,7 +723,8 @@ def p_contenedor():
     for q in range(4):
         a0 = 45 + 90 * q + 6
         p.add(arc_strip(0.0, 1.11, 0.33, 0.39, a0, a0 + 78, 3, m, w), "black")
-    p.add(decal(stroke((-0.235, 1.345), (0.235, 0.875), 0.06), m, w + 0.002), "black")
+    p.add(decal(stroke((-0.235, 1.345), (0.235, 0.875), 0.12), m, w + 0.004), "yellow")
+    p.add(decal(stroke((-0.235, 1.345), (0.235, 0.875), 0.06), m, w + 0.008), "black")
     return p
 
 
@@ -770,7 +789,7 @@ def p_tienda():
         p.add(prism(vis, 0.022, M((0, 0, z + 0.011))), col, 30)
         p.add(cyl(0.025, 0.02, (x, 1.52, z + 0.19), seg=6), "cream")
     # toldo de rayas naranja / turquesa
-    prof = [(-0.86, 4.86), (-1.06, 4.96), (-1.36, 5.0), (-1.64, 4.97), (-1.86, 4.88), (-1.985, 4.76)]
+    prof = [(-0.86, 4.86), (-1.06, 4.96), (-1.36, 5.0), (-1.64, 4.97), (-1.87, 4.88), (-2.0, 4.76)]
     xs = [-4.0 + 0.8 * i for i in range(11)]
     rows = [[(x, y, z) for x in xs] for y, z in prof]
     aw = sheet(rows, 0.05)
@@ -831,7 +850,7 @@ def p_gorra_piloto():
     zb = 4.30
     p = Prop("GorraPiloto", (1.6, 1.8, 0.8), 600, hat={"zb": zb})
     prof = [(0.738, zb, 0.72), (0.742, zb + 0.24, 0.72), (0.752, zb + 0.29, 0.75), (0.80, zb + 0.56, 0.905),
-            (0.79, zb + 0.68, 0.92), (0.56, zb + 0.76, 0.92), (0.0, zb + 0.795)]
+            (0.79, zb + 0.68, 0.92), (0.56, zb + 0.765, 0.92), (0.0, zb + 0.80)]
     tilt = [0.0, 0.0, 0.015, 0.05, 0.05, 0.035, 0.0]
 
     def zm(i, a):
@@ -854,7 +873,7 @@ def p_gorra_piloto():
         for a in A:
             s = math.sin(math.pi * (a - A[0]) / (A[-1] - A[0])) ** 0.55
             xi, yi = 0.725 * math.cos(a), 0.725 * 0.72 * math.sin(a)
-            xo, yo = 0.80 * math.cos(a), 1.06 * math.sin(a)
+            xo, yo = 0.80 * math.cos(a), 1.075 * math.sin(a)
             x = xi + (xo - xi) * t * s
             y = yi + (yo - yi) * t * s
             z = zb + 0.036 + 0.05 * (1.0 - t * s) - 0.0 * t
@@ -949,7 +968,7 @@ def p_sombrero_vaquero():
     k = 0.73
     p = Prop("SombreroVaquero", (2.4, 2.2, 0.9), 600, hat={"zb": zb})
     prof = [(0.745, zb, k), (0.742, zb + 0.06, k), (0.735, zb + 0.22, 0.74), (0.715, zb + 0.58, 0.75),
-            (0.66, zb + 0.78, 0.76), (0.50, zb + 0.89, 0.77), (0.25, zb + 0.86, 0.77), (0.0, zb + 0.80)]
+            (0.66, zb + 0.79, 0.76), (0.50, zb + 0.90, 0.77), (0.25, zb + 0.87, 0.77), (0.0, zb + 0.81)]
 
     def rm(i, a):
         if i < 4:
@@ -959,7 +978,7 @@ def p_sombrero_vaquero():
 
     def zm(i, a):
         return -0.05 * max(0.0, -math.sin(a)) if 4 <= i <= 6 else 0.0
-    p.add(elathe(prof, 20, rmod=rm, zmod=zm, a0=math.radians(-90)), hat_role("tan", "dtan", zb), 40)
+    p.add(elathe(prof, 20, rmod=rm, zmod=zm, a0=math.radians(-90)), hat_role("tan", "dtan", zb), 62)
     p.add(elathe([(0.757, zb + 0.07, k), (0.753, zb + 0.2, 0.742)], 20, cap0=False, cap1=False, a0=math.radians(-90)), "teal", 40)
     p.add(decal(rrect(0, 0, 0.12, 0.1, 0.02, 1), fr((0.757, 0.0, zb + 0.135), "+x"), 0.006), "gold")
     rows = []
@@ -973,7 +992,7 @@ def p_sombrero_vaquero():
             z = zb + 0.04 + 0.3 * math.cos(a) ** 2 * t ** 1.8
             row.append((x, y, z))
         rows.append(row)
-    p.add(sheet(rows, 0.04, closed_u=True), lambda c, n: "tan" if n.z > -0.3 else "dtan", 40)
+    p.add(sheet(rows, 0.04, closed_u=True), lambda c, n: "tan" if n.z > -0.3 else "dtan", 55)
     return p
 
 
@@ -1008,7 +1027,7 @@ def p_corona():
 
     def ztop(a):
         ph = ((a + math.pi / 2) / (2 * math.pi / 5)) % 1.0
-        return zb + 0.3 + 0.27 * abs(1.0 - 2.0 * ph)
+        return zb + 0.32 + 0.297 * abs(1.0 - 2.0 * ph)
     for j in range(seg):
         a = -math.pi / 2 + 2 * math.pi * j / seg
         ca, sa = math.cos(a), math.sin(a)
@@ -1024,13 +1043,13 @@ def p_corona():
     p.add(bm, "gold", 40)
     for m_ in range(5):
         a = -math.pi / 2 + 2 * math.pi * m_ / 5
-        p.add(ico(0.048, (ro1 * math.cos(a) * 1.0, k * ro1 * math.sin(a), zb + 0.57 + 0.035)), "gold", 60)
+        p.add(ico(0.048, (ro1 * math.cos(a), k * ro1 * math.sin(a), zb + 0.62 + 0.035)), "gold", 60)
         nrm = Vector((math.cos(a), math.sin(a) / k, 0)).normalized()
         q = Vector(((ro0 + 0.012) * math.cos(a), k * (ro0 + 0.012) * math.sin(a), zb + 0.075))
         p.add(octa((0.055, 0.075, 0.03), Matrix.Translation(q + nrm * 0.008) @ frame_from_normal(nrm)), "velvet" if m_ % 2 == 0 else "teal", 30)
-    cush = [(0.625, zb, k), (0.615, zb + 0.12, k), (0.54, zb + 0.28, k), (0.34, zb + 0.39, k), (0.0, zb + 0.43)]
+    cush = [(0.625, zb, k), (0.615, zb + 0.13, k), (0.55, zb + 0.31, k), (0.35, zb + 0.45, k), (0.0, zb + 0.50)]
     p.add(elathe(cush, 16, k=k), hat_role("velvet", "ddark", zb), 50)
-    p.add(ico(0.065, (0, 0, zb + 0.47), 1), "gold", 60)
+    p.add(ico(0.065, (0, 0, zb + 0.545), 1), "gold", 60)
     return p
 
 
@@ -1040,52 +1059,50 @@ def p_auriculares2():
     tau = math.radians(12)
     for sx in (-1, 1):
         u = Vector((sx * math.cos(tau), 0, math.sin(tau)))
-        org = Vector((sx * 0.752, yc, zc))
+        org = Vector((sx * 0.742, yc, zc))
         m = frame(org, (0, 1, 0), u.cross(Vector((0, 1, 0))))
         p.add(lathe([(0.0, 0.215), (0.245, 0.215), (0.245, 0.0), (0.355, 0.0), (0.38, 0.05), (0.38, 0.115)], 12, m, cap0=False, cap1=False, a0=0.0), "rubber", 50)
-        p.add(lathe([(0.38, 0.115), (0.40, 0.135), (0.40, 0.29)], 12, m, cap0=False, cap1=False, a0=0.0), "orange", 50)
-        p.add(lathe([(0.40, 0.29), (0.31, 0.335), (0.0, 0.35)], 12, m, cap0=False, cap1=False, a0=0.0), lambda c, n: "cream", 30)
-        p.add(decal(circ(0, 0, 0.17, 12), m, 0.353), "teal")
+        p.add(lathe([(0.38, 0.115), (0.40, 0.135), (0.40, 0.27)], 12, m, cap0=False, cap1=False, a0=0.0), "orange", 50)
+        p.add(lathe([(0.40, 0.27), (0.30, 0.30), (0.0, 0.312)], 12, m, cap0=False, cap1=False, a0=0.0), "cream", 30)
+        p.add(decal(circ(0, 0, 0.17, 12), m, 0.312), "teal")
     ax = 0.8 * math.sqrt(1 - (yc / 0.688) ** 2)
 
-    def off_curve(d, a0, n):
+    def off_curve(dfn, a0, n):
         pts = []
         for i in range(n):
             a = a0 + (math.pi - 2 * a0) * i / (n - 1)
             ca, sa = math.cos(a), math.sin(a)
             nv = Vector((ca / ax, 0, sa)).normalized()
-            pts.append(Vector((ax * ca, yc, 3.55 + sa)) + nv * d)
+            pts.append(Vector((ax * ca, yc, 3.55 + sa)) + nv * dfn(a))
         return pts
-    strap = off_curve(0.185, math.asin(4.2 - 3.55), 11)
+    a0 = math.radians(35)
+    strap = off_curve(lambda a: 0.185, a0, 9)
     p.add(tube(strap, lambda u: (0.15, 0.05), k=6, steps=1, up=(0, 1, 0), caps=False), "teal", 60)
-    arc = off_curve(0.37, math.asin(4.16 - 3.55), 11)
+    arc = off_curve(lambda a: 0.2 + 0.2 * math.sin(a) ** 2, a0, 9)
     p.add(tube(arc, lambda u: 0.026, k=4, steps=1, up=(0, 1, 0), caps=False, phase=0.5), "metal", 60)
-    for sx in (-1, 1):
-        a = math.asin(4.2 - 3.55)
-        q = Vector((sx * ax * math.cos(a), yc, 3.55 + math.sin(a)))
-        nv = Vector((sx * math.cos(a) / ax, 0, math.sin(a))).normalized()
-        p.add(bar(q + nv * 0.16, q + nv * 0.42, 0.12, 0.07, up=(0, 1, 0)), "dark")
     return p
 
 
 def p_gorro_pato():
     zb = 4.35
     p = Prop("GorroPato", (1.4, 1.6, 1.2), 600, hat={"zb": zb})
-    prof = [(0.705, zb, 0.72), (0.735, zb + 0.08, 0.80), (0.72, zb + 0.21, 0.88), (0.64, zb + 0.35, 0.92),
-            (0.48, zb + 0.45, 0.94), (0.25, zb + 0.51, 0.95), (0.0, zb + 0.53)]
+    prof = [(0.705, zb, 0.72), (0.74, zb + 0.08, 0.82), (0.73, zb + 0.20, 0.90), (0.66, zb + 0.33, 0.94),
+            (0.50, zb + 0.44, 0.95), (0.27, zb + 0.51, 0.95), (0.0, zb + 0.53)]
     p.add(elathe(prof, 14, a0=math.radians(-90)), hat_role("duck", "yellow", zb), 60)
-    hc = Vector((0.0, -0.27, zb + 0.85))
-    hr = 0.33
+    hc = Vector((0.0, -0.2, zb + 0.84))
+    hr = 0.40
     p.add(ellipsoid((hr, hr * 0.95, hr), Matrix.Translation(hc), 12, 6), "duck", 60)
-    p.add(ellipsoid((0.18, 0.15, 0.065), Matrix.Translation((0, -0.64, zb + 0.78)) @ Matrix.Rotation(math.radians(-8), 4, "X"), 8, 5), "beak", 60)
-    p.add(ellipsoid((0.2, 0.24, 0.11), Matrix.Translation((0, 0.58, zb + 0.30)) @ Matrix.Rotation(math.radians(38), 4, "X"), 6, 4), "duck", 60)
+    p.add(ellipsoid((0.22, 0.17, 0.075), Matrix.Translation((0, -0.62, zb + 0.77)) @ Matrix.Rotation(math.radians(-10), 4, "X"), 8, 5), "beak", 60)
+    p.add(ellipsoid((0.22, 0.26, 0.12), Matrix.Translation((0, 0.55, zb + 0.34)) @ Matrix.Rotation(math.radians(40), 4, "X"), 6, 4), "duck", 60)
     for sx in (-1, 1):
-        p.add(ellipsoid((0.07, 0.3, 0.16), Matrix.Translation((sx * 0.665, 0.06, zb + 0.2)) @ Matrix.Rotation(math.radians(14), 4, "X"), 6, 4), "duck", 60)
-        d = Vector((sx * math.sin(math.radians(36)) * math.cos(math.radians(16)), -math.cos(math.radians(36)) * math.cos(math.radians(16)), math.sin(math.radians(16))))
-        d = Vector((d.x, d.y * 0.95, d.z))
-        ec = hc + Vector((d.x * hr, d.y * hr, d.z * hr)) * 0.985
+        p.add(ellipsoid((0.08, 0.3, 0.17), Matrix.Translation((sx * 0.675, 0.1, zb + 0.22)) @ Matrix.Rotation(math.radians(14), 4, "X"), 6, 4), "duck", 60)
+        az, el = math.radians(33), math.radians(20)
+        d = Vector((sx * math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)))
+        ec = hc + Vector((d.x * hr, d.y * hr * 0.95, d.z * hr)) * 0.99
         nrm = Vector((d.x, d.y / 0.95, d.z)).normalized()
-        p.add(ellipsoid((0.05, 0.065, 0.03), Matrix.Translation(ec) @ frame_from_normal(nrm), 6, 4), "black", 60)
+        fm = Matrix.Translation(ec) @ frame_from_normal(nrm)
+        p.add(ellipsoid((0.06, 0.08, 0.035), fm, 6, 4), "black", 60)
+        p.add(ellipsoid((0.018, 0.018, 0.012), fm @ Matrix.Translation((0.018 * sx, 0.03, 0.028)), 4, 3), "white", 60)
     return p
 
 
@@ -1481,6 +1498,7 @@ def sun(energy=3.6, rot=(46, 0, -32), angle=12):
 def camera_look(loc, target, lens):
     cd = bpy.data.cameras.new("Cam")
     cd.lens = lens
+    cd.sensor_fit = "HORIZONTAL"
     cd.clip_start = 0.05
     cd.clip_end = 2000
     co = bpy.data.objects.new("Cam", cd)
@@ -1606,7 +1624,7 @@ def sheet_1(objs, threads, outdir):
         o = inst(objs, "Escaner", (0, 0, 0), 0)
         put_prop("Maleta1", M((0.0, -2.7, 1.0), (90, 0, 8)) @ M((0, 0, 0)))
         put_prop("Maleta3", M((0.1, 2.5, 1.0), (90, 0, -5)))
-        made = tripulante(M((3.2, -3.2, 0), (0, 0, 20)), "Lima")
+        made = tripulante(M((2.75, 2.4, 0), (0, 0, 38)), "Lima")
         cam = camera_fit([o] + made, 20, 38, 50, 0.88, 0.84)
         return cam, "Escaner (+ tripulante y maletas para la escala)"
 
@@ -1621,8 +1639,8 @@ def sheet_1(objs, threads, outdir):
     def t_shop():
         studio(sun_rot=(46, 0, -28))
         o = inst(objs, "Tienda", (0, 0, 0), 0)
-        made = tripulante(M((-2.0, -1.35, 0), (0, 0, 160)), "Chicle")
-        cam = camera_fit([o], 14, -26, 50, 0.9, 0.86)
+        made = tripulante(M((2.7, -1.4, 0), (0, 0, -26)), "Chicle")
+        cam = camera_fit([o], 17, -26, 50, 0.86, 0.84)
         return cam, "Tienda (+ tripulante en la zona libre)"
 
     def t_bin():
@@ -1635,9 +1653,9 @@ def sheet_1(objs, threads, outdir):
 
     def t_axe():
         studio(sun_rot=(50, 0, -60))
-        a = inst(objs, "Piolet", (-0.32, 0, 0), 0)
-        b = inst(objs, "Piolet", (0.32, 0.0, 0), -50)
-        cam = camera_fit([a, b], 10, 80, 50, 0.84, 0.86)
+        a = inst(objs, "Piolet", (-0.3, 0.25, 0), 0)
+        b = inst(objs, "Piolet", (0.35, -0.3, 0), 62)
+        cam = camera_fit([a, b], 12, 62, 50, 0.84, 0.86)
         return cam, "Piolet (pico a -Y, azuela a +Y)"
 
     def t_hats():
@@ -1697,7 +1715,7 @@ def checks(objs):
                 else:
                     bad += 1
         for v in o.data.vertices:
-            if abs(v.co.x) < TX - 0.005 and v.co.z <= TZ0 + 1e-4:
+            if abs(v.co.x) <= TX + 1e-4 and v.co.z < TZ0 + 0.05:
                 top = max(top, v.co.z)
         msgs.append("ESCANER tunel: caras dentro del hueco libre = %d (cintas %d), punto mas alto de la cinta = %.4f" % (bad, flap, top))
     if "Tienda" in objs:

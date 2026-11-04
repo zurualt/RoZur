@@ -22,6 +22,7 @@ local CADUCIDAD_SESION = 300
 local almacen: DataStore? = nil
 local perfiles: { [Player]: Perfil } = {}
 local cargados: { [Player]: boolean } = {}
+local tiendaCargada: { [Player]: boolean } = {}
 local liberados: { [Player]: boolean } = {}
 local sesion = if game.JobId ~= "" then game.JobId else "estudio"
 
@@ -50,10 +51,12 @@ end
 
 local function leerGorros(v: any): { [string]: boolean }
 	local r: { [string]: boolean } = {}
+	local n = 0
 	if typeof(v) == "table" then
 		for nombre, tiene in v do
-			if typeof(nombre) == "string" and tiene == true and gorroValido(nombre) then
+			if typeof(nombre) == "string" and #nombre <= 40 and tiene == true and n < 64 then
 				r[nombre] = true
+				n += 1
 			end
 		end
 	end
@@ -64,11 +67,8 @@ local function leerMejoras(v: any): { [string]: number }
 	local r: { [string]: number } = {}
 	if typeof(v) == "table" then
 		for nombre, n in v do
-			if typeof(nombre) == "string" and typeof(n) == "number" and n == n then
-				local maximo = mejoraMaxima(nombre)
-				if maximo > 0 then
-					r[nombre] = math.clamp(math.floor(n), 0, maximo)
-				end
+			if typeof(nombre) == "string" and #nombre <= 40 and typeof(n) == "number" and n == n then
+				r[nombre] = math.clamp(math.floor(n), 0, 10)
 			end
 		end
 	end
@@ -132,19 +132,36 @@ local function liberarSinPerfil(tienda: DataStore, clave: string)
 	end)
 end
 
+local function futura(t: any): boolean
+	return typeof(t) == "table" and typeof(t.Version) == "number" and t.Version > VERSION
+end
+
+local function leerTienda(perfil: Perfil, t: { [string]: any })
+	perfil.Gorros = leerGorros(t.Gorros)
+	perfil.Mejoras = leerMejoras(t.Mejoras)
+	local g = t.Gorro
+	perfil.Gorro = if typeof(g) == "string" and perfil.Gorros[g] then g else ""
+end
+
 local function cargar(jugador: Player)
 	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0, Gorros = {}, Gorro = "", Mejoras = {} }
 	local tienda = almacen
 	if tienda then
 		local clave = "j_" .. jugador.UserId
-		for intento = 1, 6 do
+		local claveTienda = "t_" .. jugador.UserId
+		for intento = 1, 13 do
 			if not jugador.Parent then
 				return
 			end
-			local forzar = intento == 6
+			local forzar = intento == 13
 			local ocupada = false
+			local nueva = false
 			local ok, guardado = pcall(function()
 				return tienda:UpdateAsync(clave, function(anterior: any)
+					if futura(anterior) then
+						nueva = true
+						return nil
+					end
 					if bloqueada(anterior) and not forzar then
 						ocupada = true
 						return nil
@@ -155,25 +172,37 @@ local function cargar(jugador: Player)
 					return t
 				end)
 			end)
+			if ok and nueva then
+				warn("[Overbooked] Perfil guardado con una versión más nueva; esta sesión no guardará")
+				break
+			end
 			if ok and not ocupada then
 				if not jugador.Parent then
 					liberarSinPerfil(tienda, clave)
 					return
 				end
 				cargados[jugador] = true
-				if typeof(guardado) == "table" then
-					local t = guardado :: { [string]: any }
-					perfil.Dinero = numero(t, "Dinero")
-					perfil.Vuelos = numero(t, "Vuelos")
-					perfil.Mejor = numero(t, "Mejor")
-					perfil.Gorros = leerGorros(t.Gorros)
-					perfil.Mejoras = leerMejoras(t.Mejoras)
-					local g = t.Gorro
-					perfil.Gorro = if typeof(g) == "string" and perfil.Gorros[g] then g else ""
+				local t: { [string]: any } = if typeof(guardado) == "table" then guardado else {}
+				perfil.Dinero = numero(t, "Dinero")
+				perfil.Vuelos = numero(t, "Vuelos")
+				perfil.Mejor = numero(t, "Mejor")
+				leerTienda(perfil, t)
+				for intentoTienda = 1, 4 do
+					local okT, datosTienda = pcall(function()
+						return tienda:GetAsync(claveTienda)
+					end)
+					if okT then
+						if typeof(datosTienda) == "table" then
+							leerTienda(perfil, datosTienda)
+						end
+						tiendaCargada[jugador] = not futura(datosTienda)
+						break
+					end
+					task.wait(intentoTienda)
 				end
 				break
 			end
-			task.wait(if ok then 3 else intento)
+			task.wait(if ok then 5 else intento)
 		end
 	end
 	if jugador.Parent then
@@ -194,22 +223,47 @@ local function guardar(jugador: Player, liberar: boolean)
 	local copia = table.clone(perfil)
 	copia.Gorros = table.clone(perfil.Gorros)
 	copia.Mejoras = table.clone(perfil.Mejoras)
+	local escrito = false
 	for intento = 1, 4 do
 		local ok = pcall(function()
 			tienda:UpdateAsync("j_" .. jugador.UserId, function(anterior: any)
-				if not nuestra(anterior) then
+				escrito = false
+				if not nuestra(anterior) or futura(anterior) then
 					return nil
 				end
-				return {
-					Version = VERSION,
-					Dinero = copia.Dinero,
-					Vuelos = copia.Vuelos,
-					Mejor = copia.Mejor,
-					Gorros = copia.Gorros,
-					Gorro = copia.Gorro,
-					Mejoras = copia.Mejoras,
-					Sesion = if liberar then nil else { Job = sesion, Hora = os.time() },
-				}
+				local t = anterior :: { [string]: any }
+				t.Version = VERSION
+				t.Dinero = copia.Dinero
+				t.Vuelos = copia.Vuelos
+				t.Mejor = copia.Mejor
+				t.Gorros = nil
+				t.Gorro = nil
+				t.Mejoras = nil
+				t.Sesion = if liberar then nil else { Job = sesion, Hora = os.time() }
+				escrito = true
+				return t
+			end)
+		end)
+		if ok then
+			break
+		end
+		task.wait(intento)
+	end
+	if not escrito or not tiendaCargada[jugador] then
+		return
+	end
+	for intento = 1, 4 do
+		local ok = pcall(function()
+			tienda:UpdateAsync("t_" .. jugador.UserId, function(anterior: any)
+				if futura(anterior) then
+					return nil
+				end
+				local t: { [string]: any } = if typeof(anterior) == "table" then anterior else {}
+				t.Version = VERSION
+				t.Gorros = copia.Gorros
+				t.Gorro = copia.Gorro
+				t.Mejoras = copia.Mejoras
+				return t
 			end)
 		end)
 		if ok then
@@ -239,6 +293,10 @@ end
 
 function Datos.listo(jugador: Player): boolean
 	return perfiles[jugador] ~= nil
+end
+
+function Datos.guardable(jugador: Player): boolean
+	return cargados[jugador] == true and tiendaCargada[jugador] == true
 end
 
 function Datos.gastar(jugador: Player, cantidad: number): boolean
@@ -305,6 +363,7 @@ function Datos.iniciar()
 		guardar(jugador, true)
 		perfiles[jugador] = nil
 		cargados[jugador] = nil
+		tiendaCargada[jugador] = nil
 		liberados[jugador] = nil
 	end)
 	game:BindToClose(function()

@@ -47,6 +47,14 @@ local function arriba(n: Vector3, camara: CFrame): Vector3
 	return if u.Magnitude > 1e-3 then u.Unit else Vector3.zAxis
 end
 
+local function fuera(p: Vector3, n: Vector3): boolean
+	return (p - Vector3.new(0, 105, p.Z)):Dot(n) > 0
+end
+
+local function enCabina(p: Vector3): boolean
+	return math.abs(p.X) < 7.4 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 23
+end
+
 local function limpiar()
 	if posicion then
 		posicion:Destroy()
@@ -72,7 +80,9 @@ local function soltar(saltar: boolean)
 	end
 	if h then
 		h.PlatformStand = false
-		h:ChangeState(Enum.HumanoidStateType.Freefall)
+		if h.Health > 0 and not (personaje and personaje:GetAttribute("Ragdoll")) then
+			h:ChangeState(Enum.HumanoidStateType.Freefall)
+		end
 	end
 	if saltar and r then
 		r.AssemblyLinearVelocity = normal * 16 + Vector3.yAxis * 12
@@ -85,7 +95,7 @@ local function agarrar(): boolean
 		return false
 	end
 	local casco = avion:FindFirstChild("Casco")
-	if not casco then
+	if not casco or enCabina(r.Position) then
 		return false
 	end
 	parametros.FilterDescendantsInstances = { casco }
@@ -98,7 +108,7 @@ local function agarrar(): boolean
 	if not res then
 		res = Workspace:Raycast(r.Position, Vector3.new(0, -4, 0), parametros)
 	end
-	if not res then
+	if not res or not fuera(res.Position, res.Normal) then
 		return false
 	end
 	punto, normal = res.Position, res.Normal
@@ -192,7 +202,7 @@ function Escalada.iniciar()
 		if mov.Magnitude > 0.01 then
 			local nuevo = punto + mov.Unit * math.min(mov.Magnitude, 1) * VELOCIDAD * dt
 			local res = Workspace:Raycast(nuevo + normal * 1.5, -normal * 3, parametros)
-			if res then
+			if res and fuera(res.Position, res.Normal) then
 				punto, normal = res.Position, res.Normal
 				subir = arriba(normal, camara)
 			end

@@ -102,7 +102,7 @@ end
 
 local function derramar(o: BasePart)
 	local raciones = o:GetAttribute("Raciones")
-	local n = if typeof(raciones) == "number" then math.clamp(raciones, 0, 3) else 1
+	local n = if typeof(raciones) == "number" then math.clamp(raciones, 0, 6) else 1
 	local pos = o.Position
 	local v = o.AssemblyLinearVelocity
 	Agarre.soltarObjeto(o)

@@ -38,7 +38,7 @@ local function ponerGorro(jugador: Player)
 		end
 	end
 	local _, gorro = Datos.gorros(jugador)
-	if gorro == "" then
+	if gorro == "" or not Visuales.IDS[gorro] then
 		return
 	end
 	local cabeza = personaje:FindFirstChild("Head")
@@ -47,7 +47,10 @@ local function ponerGorro(jugador: Player)
 	end
 	local escala = personaje:GetScale()
 	local ancla = Visuales.ANCLAS[gorro] or Vector3.new(0, cabeza.Size.Y / 2 / escala, 0)
-	Activos.adjuntar(cabeza, gorro, CFrame.new(ancla * escala), escala, "Gorro")
+	Activos.adjuntar(cabeza, gorro, CFrame.new(ancla * escala), escala, "Gorro", function()
+		local _, actual = Datos.gorros(jugador)
+		return actual == gorro and jugador.Character == personaje
+	end)
 end
 
 local function gorroDe(nombre: string): Config.Gorro?
@@ -72,7 +75,10 @@ function Tienda.aplicar()
 	local maximos: { [string]: number } = {}
 	for _, jugador in Players:GetPlayers() do
 		for nombre, n in Datos.mejoras(jugador) do
-			maximos[nombre] = math.max(maximos[nombre] or 0, n)
+			local m = mejoraDe(nombre)
+			if m then
+				maximos[nombre] = math.max(maximos[nombre] or 0, math.min(n, #m.precios))
+			end
 		end
 	end
 	Mejoras.fijar(maximos)
@@ -84,6 +90,10 @@ local function pedir(jugador: Player, accion: any, nombre: any)
 		return
 	end
 	esperas[jugador] = ahora + 0.3
+	if (accion == "gorro" or accion == "mejora") and not Datos.guardable(jugador) then
+		RemotoAviso:FireClient(jugador, "No se ha podido cargar tu perfil: la tienda no está disponible en este servidor", "peligro")
+		return
+	end
 	if accion == "quitar" then
 		Datos.equipar(jugador, "")
 		ponerGorro(jugador)
@@ -100,7 +110,7 @@ local function pedir(jugador: Player, accion: any, nombre: any)
 			Datos.darGorro(jugador, g.nombre)
 			Datos.equipar(jugador, g.nombre)
 			ponerGorro(jugador)
-			Sonidos.emitir("Caja", nil, 0.2)
+			Sonidos.emitirA(jugador, "Caja")
 			RemotoAviso:FireClient(jugador, `🛍 ¡Has comprado: {g.titulo}!`, "bien")
 		else
 			RemotoAviso:FireClient(jugador, "No tienes dinero suficiente", "info")
@@ -117,7 +127,7 @@ local function pedir(jugador: Player, accion: any, nombre: any)
 		end
 		if Datos.gastar(jugador, precio) then
 			Datos.subirMejora(jugador, m.nombre)
-			Sonidos.emitir("Caja", nil, 0.2)
+			Sonidos.emitirA(jugador, "Caja")
 			RemotoAviso:FireClient(jugador, `🔧 {m.titulo}: nivel {nivel + 1}`, "bien")
 		else
 			RemotoAviso:FireClient(jugador, "No tienes dinero suficiente", "info")

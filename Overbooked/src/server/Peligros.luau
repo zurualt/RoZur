@@ -565,7 +565,8 @@ end
 
 local function usarPiolet(jugador: Player)
 	local origen = frente(jugador)
-	if not origen then
+	local raiz = Personajes.raiz(jugador)
+	if not origen or not raiz or raiz.Position.Y < 111 then
 		return
 	end
 	local H = Config.HERRAMIENTAS

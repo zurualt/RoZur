@@ -15,6 +15,7 @@ local Avion = require(script.Parent.Avion)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
+local Vehiculos = require(script.Parent.Vehiculos)
 local Sonidos = require(script.Parent.Sonidos)
 local Estadisticas = require(script.Parent.Estadisticas)
 
@@ -36,7 +37,6 @@ local Carga = {}
 
 local avion = Workspace:WaitForChild("Avion") :: Model
 local zona = avion:FindFirstChild("ZonaCarga", true) :: BasePart
-local carro = Workspace:WaitForChild("Aeropuerto"):FindFirstChild("CarroEquipaje", true) :: BasePart?
 local carpeta = Instance.new("Folder")
 carpeta.Name = "Carga"
 carpeta.Parent = avion
@@ -182,7 +182,7 @@ function Carga.cargar(contrato: Contratos.Contrato)
 		for _ = 1, c.cantidad do
 			local alto = Config.OBJETOS[c.tipo].tamano.Y
 			local cf
-			local enCarro = carro
+			local enCarro = Vehiculos.carro()
 			if c.tipo == "Jaula" then
 				cf = CFrame.new(-5.15, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
 			elseif c.tipo == "Maleta" and enCarro then

@@ -413,7 +413,7 @@ local function simular(dt: number)
 		end
 		if m.fuego then
 			m.vida = math.max(0, m.vida - 2.2 * dt)
-			estado.casco = math.max(0, estado.casco - 0.25 * dt)
+			Avion.danar(0.25 * dt)
 		end
 	end
 	if estado.combustible <= 0 then

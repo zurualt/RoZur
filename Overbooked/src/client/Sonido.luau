@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local Debris = game:GetService("Debris")
 local Workspace = game:GetService("Workspace")
 
 local Audio = require(ReplicatedStorage.Shared.Audio)
@@ -87,6 +88,8 @@ function Sonido.reproducir(nombre: string, donde: (Vector3 | BasePart)?, volumen
 			s:Destroy()
 		end)
 	end
+	local datos = Audio.DATOS[nombre]
+	Debris:AddItem(s, (if datos then datos.duracion else 8) / math.max(s.PlaybackSpeed, 0.5) + 2)
 	s:Play()
 end
 

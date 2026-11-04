@@ -454,7 +454,7 @@ def reg(nombre, tipo, vol, desc):
     return d
 
 
-@reg('Ding', 'sfx', 0.55, 'Campanita de cinturones, dos tonos suaves (agudo y grave).')
+@reg('Ding', 'sfx', -17, 'Campanita de cinturones, dos tonos suaves (agudo y grave).')
 def s_ding():
     b = buf(2.6)
     def campana(f):
@@ -465,7 +465,7 @@ def s_ding():
     return reverb(b, 'cabina', 0.12)[:, 0]
 
 
-@reg('AvisoMegafonia', 'sfx', 0.6, 'Gong de megafonía antes de un anuncio: tres notas ascendentes con color de altavoz.')
+@reg('AvisoMegafonia', 'sfx', -17, 'Gong de megafonía antes de un anuncio: tres notas ascendentes con color de altavoz.')
 def s_megafonia():
     b = buf(2.8)
     for t0, m, a in [(0.0, 77, 0.9), (0.3, 81, 0.85), (0.6, 84, 1.0)]:
@@ -475,7 +475,7 @@ def s_megafonia():
     return reverb(b, 'sala', 0.18)
 
 
-@reg('Golpe', 'sfx', 0.6, 'Golpe sordo y suave de cuerpo u objeto.')
+@reg('Golpe', 'sfx', -16, 'Golpe sordo y suave de cuerpo u objeto.')
 def s_golpe():
     b = buf(0.5)
     put(b, tono(0.45, 230, 88, 0.022, 0.07), 0, 0.8)
@@ -485,7 +485,7 @@ def s_golpe():
     return reverb(b, 'cuarto', 0.06)
 
 
-@reg('GolpeFuerte', 'sfx', 0.75, 'Impacto pesado con cuerpo grave y algo de escombro.')
+@reg('GolpeFuerte', 'sfx', -13, 'Impacto pesado con cuerpo grave y algo de escombro.')
 def s_golpe_fuerte():
     b = buf(1.8)
     put(b, tono(1.3, 160, 52, 0.045, 0.22, a=0.002, arm=((2, 0.3),)), 0, 0.75)
@@ -501,7 +501,7 @@ def s_golpe_fuerte():
     return reverb(b, 'cuarto', 0.12)
 
 
-@reg('GolpeMetal', 'sfx', 0.6, 'Choque metálico (clanc) con rebote corto.')
+@reg('GolpeMetal', 'sfx', -15, 'Choque metálico (clanc) con rebote corto.')
 def s_golpe_metal():
     b = buf(1.4)
     def clank(f, s, a):
@@ -518,7 +518,7 @@ def s_golpe_metal():
     return reverb(b, 'cuarto', 0.15)
 
 
-@reg('Cristal', 'sfx', 0.55, 'Cristal pequeño rompiéndose: crack y tintineo de esquirlas.')
+@reg('Cristal', 'sfx', -15, 'Cristal pequeño rompiéndose: crack y tintineo de esquirlas.')
 def s_cristal():
     b = buf(1.3)
     r = R(41)
@@ -539,7 +539,7 @@ def s_cristal():
     return reverb(b, 'cuarto', 0.14)
 
 
-@reg('Madera', 'sfx', 0.65, 'Caja de madera rompiéndose: crujido, astillas y tablas cayendo.')
+@reg('Madera', 'sfx', -15, 'Caja de madera rompiéndose: crujido, astillas y tablas cayendo.')
 def s_madera():
     b = buf(1.5)
     r = R(51)
@@ -557,7 +557,7 @@ def s_madera():
     return reverb(b, 'cuarto', 0.14)
 
 
-@reg('Salpicadura', 'sfx', 0.6, 'Salpicadura de líquido con gotitas.')
+@reg('Salpicadura', 'sfx', -16, 'Salpicadura de líquido con gotitas.')
 def s_salpicadura():
     b = buf(1.2)
     r = R(61)
@@ -578,7 +578,7 @@ def s_salpicadura():
     return reverb(b, 'cuarto', 0.1)
 
 
-@reg('Resbalon', 'sfx', 0.6, 'Resbalón de dibujo animado: chirrido de suela + silbato que sube (fiuuup).')
+@reg('Resbalon', 'sfx', -16, 'Resbalón de dibujo animado: chirrido de suela + silbato que sube (fiuuup).')
 def s_resbalon():
     b = buf(0.7)
     n = ns(0.06)
@@ -596,7 +596,7 @@ def s_resbalon():
     return reverb(b, 'cuarto', 0.1)
 
 
-@reg('Extintor', 'sfx', 0.6, 'Ráfaga corta de extintor (~0,4 s), apta para repetir.')
+@reg('Extintor', 'sfx', -17, 'Ráfaga corta de extintor (~0,4 s), apta para repetir.')
 def s_extintor():
     n = ns(0.44)
     t = tt(n)
@@ -608,7 +608,7 @@ def s_extintor():
     return x
 
 
-@reg('Llave', 'sfx', 0.55, 'Llave inglesa/carraca: serie de clics metálicos.')
+@reg('Llave', 'sfx', -17, 'Llave inglesa/carraca: serie de clics metálicos.')
 def s_llave():
     b = buf(0.6)
     r = R(91)
@@ -623,7 +623,7 @@ def s_llave():
     return reverb(b, 'cuarto', 0.1)
 
 
-@reg('Reparado', 'sfx', 0.6, 'Jingle brillante de reparación completada.')
+@reg('Reparado', 'sfx', -16, 'Jingle brillante de reparación completada.')
 def s_reparado():
     b = buf(1.8)
     r = R(101)
@@ -644,7 +644,7 @@ def s_reparado():
     return reverb(b, 'sala', 0.2)
 
 
-@reg('Explosion', 'sfx', 0.8, 'Explosión caricaturesca (boom redondo) para brecha en el casco o motor.')
+@reg('Explosion', 'sfx', -11, 'Explosión caricaturesca (boom redondo) para brecha en el casco o motor.')
 def s_explosion():
     b = buf(3.4)
     put(b, tono(2.5, 110, 46, 0.08, 0.45, a=0.004, arm=((2, 0.35), (3, 0.1))), 0, 0.7)
@@ -661,7 +661,7 @@ def s_explosion():
     return reverb(b, 'sala', 0.22)
 
 
-@reg('Succion', 'sfx', 0.65, 'Aire entrando a presión por un agujero: whoosh que crece y corta.')
+@reg('Succion', 'sfx', -14, 'Aire entrando a presión por un agujero: whoosh que crece y corta.')
 def s_succion():
     b = buf(1.4)
     n = ns(1.0)
@@ -676,7 +676,7 @@ def s_succion():
     return reverb(b, 'cuarto', 0.12)
 
 
-@reg('Trueno', 'sfx', 0.75, 'Trueno: chasquido inicial y retumbo largo.')
+@reg('Trueno', 'sfx', -13, 'Trueno: chasquido inicial y retumbo largo.')
 def s_trueno():
     b = buf(5.5)
     r = R(131)
@@ -697,7 +697,7 @@ def s_trueno():
     return reverb(b, 'grande', 0.3)
 
 
-@reg('Pajaros', 'sfx', 0.6, 'Bandada de pájaros caricaturescos: graznidos y aleteos.')
+@reg('Pajaros', 'sfx', -15, 'Bandada de pájaros caricaturescos: graznidos y aleteos.')
 def s_pajaros():
     b = buf(2.2)
     r = R(151)
@@ -725,7 +725,7 @@ def s_pajaros():
     return reverb(b, 'sala', 0.18)
 
 
-@reg('Cocodrilo', 'sfx', 0.7, 'Gruñido grave de cocodrilo seguido de un siseo.')
+@reg('Cocodrilo', 'sfx', -14, 'Gruñido grave de cocodrilo seguido de un siseo.')
 def s_cocodrilo():
     b = buf(2.1)
     n = ns(1.15)
@@ -744,7 +744,7 @@ def s_cocodrilo():
     return reverb(b, 'cuarto', 0.12)
 
 
-@reg('Mordisco', 'sfx', 0.65, 'Mordisco: chasquido de mandíbulas (chomp).')
+@reg('Mordisco', 'sfx', -15, 'Mordisco: chasquido de mandíbulas (chomp).')
 def s_mordisco():
     b = buf(0.5)
     put(b, modal(0.15, [520, 1320, 2350, 3400], [1, 0.7, 0.4, 0.2], [0.03, 0.016, 0.01, 0.006]), 0, 0.8)
@@ -757,7 +757,7 @@ def s_mordisco():
     return reverb(b, 'cuarto', 0.1)
 
 
-@reg('Comer', 'sfx', 0.55, 'Masticar caricaturesco: tres bocados (ñam ñam ñam).')
+@reg('Comer', 'sfx', -17, 'Masticar caricaturesco: tres bocados (ñam ñam ñam).')
 def s_comer():
     b = buf(1.0)
     r = R(201)
@@ -774,7 +774,7 @@ def s_comer():
     return reverb(b, 'cuarto', 0.08)
 
 
-@reg('PasajeroQueja', 'sfx', 0.7, 'Pasajero quejándose en jerigonza (sin palabras reales), voz de dibujo.')
+@reg('PasajeroQueja', 'sfx', -16, 'Pasajero quejándose en jerigonza (sin palabras reales), voz de dibujo.')
 def s_queja():
     sil = [('b', 'a', 0.17, 215, 245, 1.0), ('n', 'e', 0.15, 240, 215, 0.85), ('m', 'e', 0.17, 210, 185, 0.85),
            ('h', 'o', 0.13, 200, 175, 0.75), ('m', 'u', 0.26, 170, 135, 0.7)]
@@ -783,14 +783,14 @@ def s_queja():
     return reverb(y, 'cuarto', 0.06)
 
 
-@reg('PasajeroFeliz', 'sfx', 0.65, 'Pasajero contento: "¡mm-hm!" ascendente en jerigonza.')
+@reg('PasajeroFeliz', 'sfx', -16, 'Pasajero contento: "¡mm-hm!" ascendente en jerigonza.')
 def s_feliz():
     sil = [('m', 'm', 0.17, 240, 285, 0.8), ('h', 'm', 0.25, 300, 400, 1.0)]
     y = habla(sil, 1.25, 221, bw=(80, 110, 160, 250), asp=0.02, tilt_=0.8)
     return reverb(y, 'cuarto', 0.06)
 
 
-@reg('PasajeroGrito', 'sfx', 0.75, 'Grito caricaturesco "¡aaah!" (síntesis de formantes).')
+@reg('PasajeroGrito', 'sfx', -14, 'Grito caricaturesco "¡aaah!" (síntesis de formantes).')
 def s_grito():
     n = ns(1.25)
     t = tt(n)
@@ -806,7 +806,7 @@ def s_grito():
     return reverb(y, 'cuarto', 0.1)
 
 
-@reg('Servir', 'sfx', 0.55, 'Servir: plato apoyado con un "pop" agradable.')
+@reg('Servir', 'sfx', -17, 'Servir: plato apoyado con un "pop" agradable.')
 def s_servir():
     b = buf(0.6)
     put(b, modal(0.4, [1240, 2960, 4780, 6350], [1, 0.45, 0.25, 0.08], [0.09, 0.05, 0.03, 0.015]), 0.01, 0.35)
@@ -817,7 +817,7 @@ def s_servir():
     return reverb(b, 'cuarto', 0.1)
 
 
-@reg('Coger', 'sfx', 0.5, 'Coger objeto: whoosh corto ascendente y clic.')
+@reg('Coger', 'sfx', -18, 'Coger objeto: whoosh corto ascendente y clic.')
 def s_coger():
     b = buf(0.4)
     n = ns(0.17)
@@ -829,7 +829,7 @@ def s_coger():
     return b
 
 
-@reg('Lanzar', 'sfx', 0.55, 'Lanzar objeto: whoosh que se aleja.')
+@reg('Lanzar', 'sfx', -17, 'Lanzar objeto: whoosh que se aleja.')
 def s_lanzar():
     n = ns(0.5)
     t = tt(n)
@@ -858,7 +858,7 @@ def creak(dur, r0, r1, body, s, jit=0.25, amp_pts=None):
     return y
 
 
-@reg('PuertaAbrir', 'sfx', 0.65, 'Puerta pesada con bisagra abriéndose: cerrojo, crujido y tope.')
+@reg('PuertaAbrir', 'sfx', -15, 'Puerta pesada con bisagra abriéndose: cerrojo, crujido y tope.')
 def s_puerta_abrir():
     b = buf(1.9)
     put(b, modal(0.3, [310, 860, 1620, 2700], [1, 0.7, 0.4, 0.25], [0.05, 0.03, 0.02, 0.01]), 0, 0.7)
@@ -871,7 +871,7 @@ def s_puerta_abrir():
     return reverb(b, 'cuarto', 0.14)
 
 
-@reg('PuertaCerrar', 'sfx', 0.65, 'Puerta pesada cerrándose de golpe con pestillo.')
+@reg('PuertaCerrar', 'sfx', -14, 'Puerta pesada cerrándose de golpe con pestillo.')
 def s_puerta_cerrar():
     b = buf(1.2)
     n = ns(0.22)
@@ -886,7 +886,7 @@ def s_puerta_cerrar():
     return reverb(b, 'cuarto', 0.16)
 
 
-@reg('Altillo', 'sfx', 0.55, 'Compartimento superior: pop del pestillo y crujido de la tapa.')
+@reg('Altillo', 'sfx', -17, 'Compartimento superior: pop del pestillo y crujido de la tapa.')
 def s_altillo():
     b = buf(1.0)
     put(b, modal(0.12, [900, 2150, 3400], [1, 0.6, 0.3], [0.02, 0.012, 0.007]), 0, 0.6)
@@ -899,7 +899,7 @@ def s_altillo():
     return reverb(b, 'cuarto', 0.12)
 
 
-@reg('Mascarillas', 'sfx', 0.65, 'Caída de las mascarillas de oxígeno: paneles que saltan y repiqueteo de plástico.')
+@reg('Mascarillas', 'sfx', -15, 'Caída de las mascarillas de oxígeno: paneles que saltan y repiqueteo de plástico.')
 def s_mascarillas():
     b = buf(1.8)
     r = R(311)
@@ -919,7 +919,7 @@ def s_mascarillas():
     return reverb(b, 'cabina', 0.2)[:, 0]
 
 
-@reg('Boton', 'sfx', 0.5, 'Botón de cabina de mando: clic de pulsar y soltar.')
+@reg('Boton', 'sfx', -19, 'Botón de cabina de mando: clic de pulsar y soltar.')
 def s_boton():
     b = buf(0.14)
     put(b, modal(0.04, [3100, 5200, 720, 1500], [1, 0.4, 0.7, 0.4], [0.004, 0.003, 0.009, 0.006]), 0, 1.0)
@@ -928,7 +928,7 @@ def s_boton():
     return filt(b, lp(9000, 2))
 
 
-@reg('Rampa', 'sfx', 0.6, 'Rampa hidráulica bajando (~2 s): motor, siseo y topes.')
+@reg('Rampa', 'sfx', -16, 'Rampa hidráulica bajando (~2 s): motor, siseo y topes.')
 def s_rampa():
     D = 2.4
     b = buf(D)
@@ -954,7 +954,7 @@ def s_rampa():
     return reverb(b, 'cuarto', 0.12)
 
 
-@reg('Disparo', 'sfx', 0.6, 'Disparo de torreta caricaturesco (thump + pew), corto.')
+@reg('Disparo', 'sfx', -15, 'Disparo de torreta caricaturesco (thump + pew), corto.')
 def s_disparo():
     b = buf(0.5)
     put(b, tono(0.35, 300, 85, 0.016, 0.06, arm=((2, 0.25),)), 0, 0.85)
@@ -965,7 +965,7 @@ def s_disparo():
     return reverb(b, 'cuarto', 0.1)
 
 
-@reg('ImpactoPirata', 'sfx', 0.6, 'Impacto sobre el avión pirata: "ponk" con chapa y polvareda.')
+@reg('ImpactoPirata', 'sfx', -15, 'Impacto sobre el avión pirata: "ponk" con chapa y polvareda.')
 def s_impacto_pirata():
     b = buf(0.8)
     put(b, tono(0.2, 950, 340, 0.03, 0.045), 0, 0.8)
@@ -976,7 +976,7 @@ def s_impacto_pirata():
     return reverb(b, 'sala', 0.15)
 
 
-@reg('PirataCae', 'sfx', 0.65, 'Avión pirata cayendo: silbido descendente y golpe lejano.')
+@reg('PirataCae', 'sfx', -15, 'Avión pirata cayendo: silbido descendente y golpe lejano.')
 def s_pirata_cae():
     b = buf(4.2)
     n = ns(2.75)
@@ -994,7 +994,7 @@ def s_pirata_cae():
     return reverb(b, 'grande', 0.25)
 
 
-@reg('Caja', 'sfx', 0.6, 'Caja registradora y monedas para las ganancias (ka-ching).')
+@reg('Caja', 'sfx', -16, 'Caja registradora y monedas para las ganancias (ka-ching).')
 def s_caja():
     b = buf(1.6)
     r = R(371)
@@ -1239,7 +1239,7 @@ def d_conga(v, rng=None, f=215):
     return y*v
 
 
-@reg('Victoria', 'sfx', 0.6, 'Fanfarria corta original de éxito (~2,5 s), Fa mayor.')
+@reg('Victoria', 'sfx', -15, 'Fanfarria corta original de éxito (~2,5 s), Fa mayor.')
 def s_victoria():
     b = buf(3.4, st=True)
     rng = R(381)
@@ -1260,7 +1260,7 @@ def s_victoria():
     return reverb(b, 'estudio', 0.22)
 
 
-@reg('Derrota', 'sfx', 0.6, 'Jingle corto original de fracaso (~2,5 s), cómico y descendente.')
+@reg('Derrota', 'sfx', -15, 'Jingle corto original de fracaso (~2,5 s), cómico y descendente.')
 def s_derrota():
     b = buf(3.4, st=True)
     rng = R(391)
@@ -1288,7 +1288,7 @@ def s_derrota():
     return reverb(b, 'estudio', 0.2)
 
 
-@reg('Despegue', 'sfx', 0.75, 'Motor acelerando para el despegue (~5 s): silbido de turbina y rugido.')
+@reg('Despegue', 'sfx', -14, 'Motor acelerando para el despegue (~5 s): silbido de turbina y rugido.')
 def s_despegue():
     D = 5.2
     n = ns(D)
@@ -1311,7 +1311,7 @@ def s_despegue():
     return x
 
 
-@reg('Aterrizaje', 'sfx', 0.7, 'Aterrizaje (~2 s): chirrido de neumáticos, golpe del tren y rodadura.')
+@reg('Aterrizaje', 'sfx', -14, 'Aterrizaje (~2 s): chirrido de neumáticos, golpe del tren y rodadura.')
 def s_aterrizaje():
     b = buf(2.4)
     r = R(411)
@@ -1348,10 +1348,10 @@ def pasos(s):
 
 
 for _i in (1, 2, 3):
-    reg(f'Pasos{_i}', 'sfx', 0.4, f'Paso sobre moqueta, variante {_i}.')(lambda s=_i: pasos(420+s*10))
+    reg(f'Pasos{_i}', 'sfx', -21, f'Paso sobre moqueta, variante {_i}.')(lambda s=_i: pasos(420+s*10))
 
 
-@reg('UiClick', 'sfx', 0.45, 'Clic suave de interfaz.')
+@reg('UiClick', 'sfx', -20, 'Clic suave de interfaz.')
 def s_uiclick():
     b = buf(0.1)
     n = ns(0.08)
@@ -1360,7 +1360,7 @@ def s_uiclick():
     return filt(b, lp(7000, 1))
 
 
-@reg('UiAviso', 'sfx', 0.5, 'Notificación (toast): blip de dos notas ascendentes.')
+@reg('UiAviso', 'sfx', -18, 'Notificación (toast): blip de dos notas ascendentes.')
 def s_uiaviso():
     b = buf(0.55)
     for t0, m in [(0.0, 79), (0.09, 86)]:
@@ -1369,7 +1369,7 @@ def s_uiaviso():
     return filt(b, lp(8000, 1))
 
 
-@reg('UiPeligro', 'sfx', 0.55, 'Aviso de peligro (toast): dos golpes graves disonantes.')
+@reg('UiPeligro', 'sfx', -17, 'Aviso de peligro (toast): dos golpes graves disonantes.')
 def s_uipeligro():
     b = buf(0.75)
     for t0, notas, a in [(0.0, (62, 68), 1.0), (0.17, (61, 67), 0.9)]:
@@ -1393,7 +1393,7 @@ def periodico(n, fc, s, lo=1.0):
     return x/np.std(x)
 
 
-@reg('MotorAvion', 'loop', 0.5, 'Bucle de motores bimotor (turbohélice/turbofán), dron grave; admite cambiar PlaybackSpeed.')
+@reg('MotorAvion', 'loop', -24, 'Bucle de motores bimotor (turbohélice/turbofán), dron grave; admite cambiar PlaybackSpeed.')
 def l_motor():
     n = nl(8.0)
     t = tt(n)
@@ -1405,24 +1405,24 @@ def l_motor():
             fk = k*fb
             if fk > 4000:
                 break
-            a = (1/k**1.05)*Mlp(fk, 650, 1)*(1.3 if k in (2, 4) else 1.0)
+            a = (1/k**1.05)*Mlp(fk, 650, 1)*(1.3 if k in (2, 4) else 1.0)*(1+1.2*Mbp(fk, 260, 0.8))
             y += g*a*np.sin(TAU*fk*t+ph0[k])
     thr = 1+0.12*np.sin(TAU*fq(14.25, n)*t)
     y *= thr
     wh = 0
     for fw, a in [(fq(1630, n), 1.0), (fq(1646, n), 0.8), (fq(3262, n), 0.25)]:
         wh = wh+a*np.sin(TAU*fw*t+r.uniform(0, TAU))
-    roar = filt(ruido(n, 504), mul(Mtilt_f(-4.0, 200), lp(2600, 2), hp(35, 2)), 'circ')
+    roar = filt(ruido(n, 504), mul(Mtilt_f(-3.0, 200), lp(2600, 2), hp(60, 2)), 'circ')
     rum = filt(ruido(n, 505), mul(lp(85, 3), hp(22, 2)), 'circ')
     mod = 1+0.08*np.sin(TAU*fq(0.25, n)*t)+0.05*periodico(n, 1.5, 506)*0.3
-    x = 0.55*y/np.std(y)+0.05*wh+0.75*roar/np.std(roar)*mod+0.45*rum/np.std(rum)
+    x = 0.55*y/np.std(y)+0.05*wh+0.75*roar/np.std(roar)*mod+0.22*rum/np.std(rum)
     return x
 
 
 def Mtilt_f(d, f0): return lambda f: Mtilt(f, d, f0)
 
 
-@reg('VientoCabina', 'loop', 0.6, 'Bucle de viento que entra a chorro (puerta abierta o brecha en el casco).')
+@reg('VientoCabina', 'loop', -21, 'Bucle de viento que entra a chorro (puerta abierta o brecha en el casco).')
 def l_viento_cabina():
     n = nl(10.0)
     t = tt(n)
@@ -1436,27 +1436,27 @@ def l_viento_cabina():
     return x
 
 
-@reg('VientoExterior', 'loop', 0.6, 'Bucle estéreo de viento fuerte en el exterior (sobre el ala).')
+@reg('VientoExterior', 'loop', -22, 'Bucle estéreo de viento fuerte en el exterior (sobre el ala).')
 def l_viento_exterior():
     n = nl(12.0)
     t = tt(n)
     g = periodico(n, 0.8, 521)
     chans = []
     for c in range(2):
-        base = filt(ruido(n, 522+c), mul(Mtilt_f(-4.5, 300), hp(40, 2), lp(3200, 2)), 'circ')
+        base = filt(ruido(n, 522+c), mul(Mtilt_f(-3.0, 300), hp(70, 2), lp(3200, 2)), 'circ')
         gl = periodico(n, 1.5, 524+c)
         gust = 0.7+0.2*np.tanh(g)+0.1*np.tanh(gl)
         buff = filt(ruido(n, 526+c), mul(lp(90, 3), hp(18, 2)), 'circ')*(1+0.6*periodico(n, 9.0, 528+c)*0.5)
         cen = lambda tq, c=c: 950+250*np.sin(TAU*fq(0.15, n)*tq+c)
         wh = stft(ruido(n, 530+c), lambda tq, f: Mbp(f, cen(tq), 10)+0.6*Mbp(f, cen(tq)*1.47, 14), circ=True)
-        x = base/np.std(base)*gust+0.9*buff/np.std(buff)+0.3*wh/np.std(wh)*gust**2
+        x = base/np.std(base)*gust+0.45*buff/np.std(buff)+0.3*wh/np.std(wh)*gust**2
         chans.append(x)
     common = filt(ruido(n, 535), lp(120, 3), 'circ')
     common /= np.std(common)
-    return np.stack([chans[0]+0.4*common, chans[1]+0.4*common], 1)
+    return np.stack([chans[0]+0.25*common, chans[1]+0.25*common], 1)
 
 
-@reg('Alarma', 'loop', 0.45, 'Bucle de aviso maestro de cabina: doble pitido "bi-bo", grave y no estridente.')
+@reg('Alarma', 'loop', -21, 'Bucle de aviso maestro de cabina: doble pitido "bi-bo", grave y no estridente.')
 def l_alarma():
     n = ns(1.0)
     y = np.zeros(n)
@@ -1471,7 +1471,7 @@ def l_alarma():
     return y
 
 
-@reg('FuegoLoop', 'loop', 0.55, 'Bucle de fuego crepitante.')
+@reg('FuegoLoop', 'loop', -23, 'Bucle de fuego crepitante.')
 def l_fuego():
     n = nl(8.0)
     r = R(541)
@@ -1501,7 +1501,7 @@ def l_fuego():
     return roar+0.08*hiss+0.9*cr/np.abs(cr).max()*np.abs(roar).max()*0.55
 
 
-@reg('Lluvia', 'loop', 0.5, 'Bucle estéreo de lluvia de tormenta golpeando el fuselaje.')
+@reg('Lluvia', 'loop', -25, 'Bucle estéreo de lluvia de tormenta golpeando el fuselaje.')
 def l_lluvia():
     n = nl(12.0)
     r = R(551)
@@ -1549,7 +1549,7 @@ def jerga_stream(dur, s, f0b):
     return sils_all
 
 
-@reg('AmbienteTerminal', 'loop', 0.4, 'Bucle estéreo de tono de sala de terminal con murmullo lejano.')
+@reg('AmbienteTerminal', 'loop', -28, 'Bucle estéreo de tono de sala de terminal con murmullo lejano.')
 def l_terminal():
     n = nl(20.0)
     T = n/SR
@@ -1585,7 +1585,7 @@ def l_terminal():
     return x
 
 
-@reg('AmbienteCabina', 'loop', 0.4, 'Bucle estéreo del interior de cabina: zumbido de motores y ventilación.')
+@reg('AmbienteCabina', 'loop', -28, 'Bucle estéreo del interior de cabina: zumbido de motores y ventilación.')
 def l_cabina():
     n = nl(15.0)
     t = tt(n)
@@ -1601,7 +1601,7 @@ def l_cabina():
     el = np.sin(TAU*400*t)+0.3*np.sin(TAU*800*t+1)
     rum = filt(ruido(n, 615), mul(lp(70, 3), hp(20, 2)), 'circ')
     rum /= np.std(rum)
-    mono = 0.5*hum+0.012*el+0.45*rum
+    mono = 0.5*hum+0.012*el+0.28*rum
     return 0.8*air+np.stack([mono, mono], 1)
 
 
@@ -1687,7 +1687,7 @@ AERO_MEL = [
     [(0, 1, 70), (1, .5, 74), (1.5, 1, 79), (2.5, 1.5, 76)]]
 
 
-@reg('MusicaAeropuerto', 'musica', 0.35, 'Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases.')
+@reg('MusicaAeropuerto', 'musica', -24, 'Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases.')
 def m_aeropuerto():
     MIXG.clear()
     MIXG.update({'nyl': 0.23, 'ctb': 0.75, 'vib': 0.5, 'epi': 0.22, 'cel': 0.16, 'dsh': 0.55, 'dar': 0.6, 'dbo': 0.6, 'dcg': 0.55, 'dcl': 0.45})
@@ -1775,10 +1775,10 @@ def bajo_caminante(prog, bar, nxt_root):
     return out
 
 
-@reg('MusicaVuelo', 'musica', 0.35, 'Música original del vuelo: animada, cómica y algo tensa, Re menor, 125 BPM, 20 compases.')
+@reg('MusicaVuelo', 'musica', -24, 'Música original del vuelo: animada, cómica y algo tensa, Re menor, 125 BPM, 20 compases.')
 def m_vuelo():
     MIXG.clear()
-    MIXG.update({'pzb': 0.5, 'mar': 0.3, 'cla': 0.45, 'str': 0.2, 'dbo': 0.75, 'dca': 0.6, 'dhc': 0.45, 'dbl': 0.4, 'dbh': 0.4, 'dpa': 0.9, 'dcr': 0.25, 'fag': 0.4})
+    MIXG.update({'pzb': 0.5, 'mar': 0.3, 'cla': 0.45, 'str': 0.2, 'dbo': 0.75, 'dca': 0.6, 'dhc': 0.45, 'dbl': 0.4, 'dbh': 0.4, 'dpa': 0.9, 'dcr': 0.25, 'fag': 0.22})
     prog = VUELO+VUELO+VUELO_TAG
     mel = MEL_A+MEL_A2+MEL_TAG
     ev = []
@@ -1818,7 +1818,7 @@ def m_vuelo():
     return render_musica(125, 20, ev, 'estudio', 0.28, 703)
 
 
-@reg('MusicaCaos', 'musica', 0.38, 'Música original de emergencia: variante rápida e intensa del tema de vuelo, Re menor, 150 BPM, 24 compases.')
+@reg('MusicaCaos', 'musica', -23, 'Música original de emergencia: variante rápida e intensa del tema de vuelo, Re menor, 150 BPM, 24 compases.')
 def m_caos():
     MIXG.clear()
     MIXG.update({'sbj': 0.26, 'mar': 0.18, 'cla': 0.34, 'brl': 0.5, 'brs': 0.3, 'stt': 0.14, 'dbo': 0.5, 'dca': 0.45, 'dhc': 0.3,
@@ -1896,11 +1896,11 @@ def proc_sfx(x, pico=-1.0, cola=-50.0):
     return x*dbg(pico)/np.abs(x).max()
 
 
-def proc_loop(x, pico=-6.0, pct=99.97):
+def proc_loop(x, pico=-6.0, pct=99.97, maxgr=2.5):
     x = np.asarray(x, float)
     x = filt(x, hp(22, 2), 'circ')
     x = x-x.mean(axis=0)
-    ref = np.percentile(np.abs(x), pct)
+    ref = max(np.percentile(np.abs(x), pct), np.abs(x).max()*dbg(-maxgr))
     x = x*dbg(pico)/ref
     return limitador(x, dbg(pico), circ=True)
 
@@ -1909,7 +1909,7 @@ def codificar(y, path, q):
     ch = 1 if y.ndim == 1 else y.shape[1]
     pag = ['-page_duration', '50000'] if len(y) < 3*SR else []
     subprocess.run([FFMPEG, '-y', '-loglevel', 'error', '-f', 'f32le', '-ar', str(SR), '-ac', str(ch), '-i', 'pipe:0',
-                    '-c:a', 'libvorbis', '-q:a', str(q), '-map_metadata', '-1']+pag+[path],
+                    '-c:a', 'libvorbis', '-q:a', str(q), '-map_metadata', '-1']+pag+['-f', 'ogg', path],
                    input=np.ascontiguousarray(y, dtype='<f4').tobytes(), check=True)
 
 
@@ -1922,6 +1922,17 @@ def decodificar(path, ch):
 
 LIM = {'sfx': 120*1024, 'loop': 600*1024, 'musica': 1536*1024}
 QQ = {'sfx': 4, 'loop': 3, 'musica': 5}
+
+
+def sonoridad(z, tipo):
+    m = z if z.ndim == 1 else z
+    k = filt(m, lambda f: Mhp(f, 60, 2)*(1+(dbg(4)-1)*Mhp(f, 1500, 1)))
+    e = k**2 if k.ndim == 1 else (k**2).sum(1)
+    if tipo != 'sfx':
+        return 10*np.log10(e.mean()+1e-15)
+    w = min(len(e), ns(0.4))
+    c = np.convolve(e, np.ones(w)/w, 'valid')
+    return 10*np.log10(c.max()+1e-15)
 
 
 def analizar(z, tipo):
@@ -1952,23 +1963,33 @@ def exportar(nombre, x, tipo):
         y = proc_sfx(x)
         objetivo = -1.0
     else:
-        y = proc_loop(x, -6.0, 99.97 if tipo == 'loop' else 99.9)
+        y = proc_loop(x, -6.0, 99.97, 2.5 if tipo == 'loop' else 3.0)
         objetivo = -6.0
     ch = 1 if y.ndim == 1 else 2
     q = QQ[tipo]
-    for it in range(6):
-        codificar(y, path, q)
-        if os.path.getsize(path) > LIM[tipo] and q > 0:
+    tmp = path+'.tmp'
+    mejor = None
+    for off in (0.0, -0.3, 0.3, -0.6, 0.6, -0.9, 0.9):
+        yy = y*dbg(off)
+        codificar(yy, tmp, q)
+        while os.path.getsize(tmp) > LIM[tipo] and q > 0:
             q -= 1
-            codificar(y, path, q)
-        z = decodificar(path, ch)
+            codificar(yy, tmp, q)
+        z = decodificar(tmp, ch)
         pk_ = db(np.abs(z).max())
-        if abs(pk_-objetivo) <= 0.25 or it == 5:
+        err = abs(pk_-objetivo)+(3.0 if pk_ > objetivo+0.4 else 0.0)
+        if mejor is None or err < mejor[0]:
+            mejor = (err, off, z)
+            os.replace(tmp, path)
+        if err <= 0.12:
             break
-        y = y*dbg(objetivo-pk_)
+    if os.path.exists(tmp):
+        os.remove(tmp)
+    z = mejor[2]
+    y = y*dbg(mejor[1])
     assert len(z) == len(y), (nombre, len(z), len(y))
     info = analizar(z, tipo)
-    info.update({'dur': len(y)/SR, 'kb': os.path.getsize(path)/1024, 'q': q, 'ch': ch})
+    info.update({'dur': len(y)/SR, 'kb': os.path.getsize(path)/1024, 'q': q, 'ch': ch, 'lk': sonoridad(z, tipo)})
     return info
 
 
@@ -1981,26 +2002,28 @@ def main():
         previo = {e['nombre']: e for e in json.load(open(mpath, encoding='utf-8'))}
     filas = []
     man = []
-    for nombre, fn, tipo, vol, desc in SONIDOS:
+    for nombre, fn, tipo, nivel, desc in SONIDOS:
         if sel and nombre not in sel:
             if nombre in previo:
                 man.append(previo[nombre])
             continue
         x = fn()
         info = exportar(nombre, x, tipo)
+        vol = float(np.clip(round(20*dbg(nivel-info['lk']))/20, 0.05, 1.0))
+        info['vol'] = vol
         filas.append((nombre, tipo, info))
         man.append({'nombre': nombre, 'archivo': nombre+'.ogg', 'duracion': round(info['dur'], 3), 'bucle': tipo != 'sfx',
                     'volumen': vol, 'descripcion': desc})
-        print(f"{nombre:18s} {info['dur']:6.2f}s pk {info['pico']:6.2f} rms {info['rms']:6.1f} {info['kb']:6.1f}KB", flush=True)
+        print(f"{nombre:18s} {info['dur']:6.2f}s pk {info['pico']:6.2f} rms {info['rms']:6.1f} {info['kb']:6.1f}KB vol {vol:.2f}", flush=True)
     orden = [s[0] for s in SONIDOS]
     man.sort(key=lambda e: orden.index(e['nombre']) if e['nombre'] in orden else 999)
     with open(mpath, 'w', encoding='utf-8') as fh:
         json.dump(man, fh, ensure_ascii=False, indent=1)
     print()
-    print(f"{'nombre':18s} {'tipo':6s} {'ch':>2s} {'dur s':>6s} {'pico':>6s} {'rms':>6s} {'KB':>6s} {'q':>2s} {'cent':>6s} {'>10k%':>6s} {'2-5k%':>6s} {'dc':>8s} {'borde/costura':>13s}")
+    print(f"{'nombre':18s} {'tipo':6s} {'ch':>2s} {'dur s':>6s} {'pico':>6s} {'rms':>6s} {'KB':>6s} {'q':>2s} {'sonor':>6s} {'vol':>4s} {'cent':>6s} {'>10k%':>6s} {'2-5k%':>6s} {'dc':>8s} {'borde/costura':>13s}")
     for nombre, tipo, i in filas:
         extra = f"{i['bordes']:.1e}" if tipo == 'sfx' else f"{i['costura']:.2f}/{i['clic']:.2f}"
-        print(f"{nombre:18s} {tipo:6s} {i['ch']:2d} {i['dur']:6.2f} {i['pico']:6.2f} {i['rms']:6.1f} {i['kb']:6.1f} {i['q']:2d} {i['cen']:6.0f} {100*i['hf']:6.2f} {100*i['harsh']:6.1f} {i['dc']:8.1e} {extra:>13s}")
+        print(f"{nombre:18s} {tipo:6s} {i['ch']:2d} {i['dur']:6.2f} {i['pico']:6.2f} {i['rms']:6.1f} {i['kb']:6.1f} {i['q']:2d} {i['lk']:6.1f} {i['vol']:4.2f} {i['cen']:6.0f} {100*i['hf']:6.2f} {100*i['harsh']:6.1f} {i['dc']:8.1e} {extra:>13s}")
 
 
 if __name__ == '__main__':

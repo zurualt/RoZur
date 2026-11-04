@@ -430,5 +430,21 @@
   "bucle": true,
   "volumen": 0.35,
   "descripcion": "Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases."
+ },
+ {
+  "nombre": "MusicaVuelo",
+  "archivo": "MusicaVuelo.ogg",
+  "duracion": 38.4,
+  "bucle": true,
+  "volumen": 0.35,
+  "descripcion": "Música original del vuelo: animada, cómica y algo tensa, Re menor, 125 BPM, 20 compases."
+ },
+ {
+  "nombre": "MusicaCaos",
+  "archivo": "MusicaCaos.ogg",
+  "duracion": 38.4,
+  "bucle": true,
+  "volumen": 0.38,
+  "descripcion": "Música original de emergencia: variante rápida e intensa del tema de vuelo, Re menor, 150 BPM, 24 compases."
  }
 ]
