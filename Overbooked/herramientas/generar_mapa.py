@@ -191,7 +191,7 @@ def cocina():
         p.append(part("Encimera", (3, 3.5, 7.4), (sx * 5.5, 101.75, -48), METAL, "Metal"))
         p.append(part("Armario", (3, 2.6, 7.4), (sx * 5.5, 108.7, -48), CREMA))
     p.append(part("DispensadorHamburguesa", (1.6, 0.9, 1.6), (-5.4, 103.95, -50), "E9A64B",
-                  atributos={"Tipo": "Hamburguesa"}, hijos=[cartel("🍔", "Top", fondo="FFF4E0")]))
+                  atributos={"Tipo": "Bandeja"}, hijos=[cartel("🍔", "Top", fondo="FFF4E0")]))
     p.append(part("DispensadorCafe", (1.4, 1.6, 1.0), (5.6, 104.3, -50), "6B3A22", r=rot(0, 90, 0),
                   atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("☕", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA, r=rot(0, 90, 0),

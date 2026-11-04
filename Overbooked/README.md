@@ -32,7 +32,7 @@ Todo el código es Luau estricto, sin comentarios. El arte se genera en Blender 
 |---|---|---|
 | Partida | `src/server/Partida.luau` | Aeropuerto → embarque → vuelo → resultados, contratos y cobro |
 | Vuelo | `src/server/Avion.luau` | Simulación a 10 Hz, piloto y automático, motores, combustible, casco, rampa, puertas y botones |
-| Pasajeros | `src/server/Pasajeros.luau` | Pedidos 🍔 ☕ 💧 con paciencia, miedo, satisfacción; salen volando si no llevan cinturón |
+| Pasajeros | `src/server/Pasajeros.luau` | Pedidos 🍔 ☕ 💧 con paciencia, miedo y satisfacción (cada bandeja lleva 3 hamburguesas); salen volando si no llevan cinturón |
 | Carga | `src/server/Carga.luau` | Daños por golpes, cajas frágiles, entregas aéreas desde la rampa y el cocodrilo |
 | Peligros | `src/server/Peligros.luau` | Turbulencias, pájaros que incendian un motor, fuego que se extiende, agujeros que succionan, caída libre, tormenta y fallo de motor |
 | Agarrar | `src/server/Agarre.luau` + `src/client/Agarre.luau` | Física con propiedad de red para quien sostiene; se puede coger a pasajeros y lanzarlos por la puerta |
@@ -41,7 +41,8 @@ Todo el código es Luau estricto, sin comentarios. El arte se genera en Blender 
 | Mundo | `src/client/Mundo.luau` | El avión no se mueve: nubes, campos y pista se mueven a su alrededor en cada cliente |
 | Interfaz | `src/client/Interfaz.luau` | Ruta y progreso, panel del piloto, estado del avión, avisos, burbujas de pedidos, nombres con 🔊, tablero de contratos y resultados |
 | Boca con voz | `src/client/BocaVoz.luau` | La boca del tripulante se abre según el volumen del chat de voz |
-| Datos | `src/server/Datos.luau` | Dinero y vuelos guardados en DataStore |
+| Datos | `src/server/Datos.luau` | Dinero y vuelos en DataStore, con bloqueo de sesión para no pisar datos al cambiar de servidor |
+| Piratas | `src/server/Piratas.luau` + `src/client/Piratas.luau` | Aviones pirata que dañan el casco; se derriban desde la torreta del ala izquierda |
 
 Todos los números del juego están en `src/shared/Config.luau`.
 
@@ -63,7 +64,7 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | Lugar principal | `70554923634533` |
 | Grupo dueño | `783757619` |
 | Tripulante v2 | `87418247604950` |
-| Resto de modelos | `arte/ids_roblox.json` |
+| Resto de modelos (30: avión, pasajeros, cocodrilo y objetos) | `arte/ids_roblox.json` |
 
 ## Flujo de trabajo por API
 
@@ -82,4 +83,4 @@ Cada cliente conecta el `AudioDeviceInput` de cada jugador a un `AudioAnalyzer` 
 - **Probar en el servidor por API:** la clave aún no tiene el permiso *Luau Execution Sessions* (escritura), así que no he podido arrancar el juego en un servidor de Roblox para probarlo. Todo el código pasa el analizador de tipos de Luau en modo estricto.
 - **Orientación de los modelos:** cómo importa Roblox los FBX por API no se puede comprobar sin ese permiso. El código detecta solo los ejes de cada modelo, pero si alguno sale girado 180°, se corrige con `Config.ROTACION_FBX`.
 - **Sonidos:** ElevenLabs no es accesible desde esta sesión. El juego aún no tiene sonidos.
-- **Del tráiler, no hecho todavía:** torreta contra aviones pirata, escalar el fuselaje con piolet, vehículo de equipaje en tierra e inspección de aduanas.
+- **Del tráiler, no hecho todavía:** escalar el fuselaje con piolet, vehículo de equipaje en tierra e inspección de aduanas.

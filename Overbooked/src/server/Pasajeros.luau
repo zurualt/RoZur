@@ -141,11 +141,19 @@ local function crear(indice: number): Pasajero
 		if typeof(pedido) ~= "string" or pedido == "" then
 			return
 		end
-		if Agarre.tipo(jugador) ~= pedido then
+		local tipo = Agarre.tipo(jugador)
+		local bandeja = tipo == "Bandeja" and pedido == "Hamburguesa"
+		if tipo ~= pedido and not bandeja then
 			RemotoAviso:FireClient(jugador, `Quiere {Config.ICONOS[pedido] or pedido}`, "info")
 			return
 		end
-		Agarre.consumir(jugador)
+		local objeto = Agarre.sostenido(jugador)
+		local raciones = if objeto then objeto:GetAttribute("Raciones") else nil
+		if bandeja and objeto and typeof(raciones) == "number" and raciones > 1 then
+			objeto:SetAttribute("Raciones", raciones - 1)
+		else
+			Agarre.consumir(jugador)
+		end
 		local s = modelo:GetAttribute("Satisfaccion")
 		modelo:SetAttribute("Satisfaccion", math.min(1, (if typeof(s) == "number" then s else 0.5) + P.SUBIDA_SERVIR))
 		modelo:SetAttribute("Pedido", "")

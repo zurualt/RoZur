@@ -324,7 +324,8 @@ local function actualizarPista()
 	local objeto = Agarre.sostenido()
 	if objeto then
 		local tipo = Agarre.tipo(objeto)
-		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F: usar · Clic: soltar · Clic der.: lanzar" else "Clic: soltar · Clic der.: lanzar"
+		local raciones = objeto:GetAttribute("Raciones")
+		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F: usar · Clic: soltar · Clic der.: lanzar" elseif typeof(raciones) == "number" then `🍔×{raciones} · E: servir · Clic: soltar` else "Clic: soltar · Clic der.: lanzar"
 		return
 	end
 	local apuntado = Agarre.apuntado()

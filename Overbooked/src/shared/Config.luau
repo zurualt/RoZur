@@ -117,6 +117,14 @@ Config.OBJETOS = {
 		visual = "Hamburguesa",
 		nombre = "Hamburguesa",
 	},
+	Bandeja = {
+		tamano = Vector3.new(1.6, 0.5, 1.1),
+		color = Color3.fromRGB(169, 176, 184),
+		material = Enum.Material.Metal,
+		densidad = 0.6,
+		visual = "Bandeja",
+		nombre = "Bandeja de hamburguesas",
+	},
 	Cafe = {
 		tamano = Vector3.new(0.5, 0.7, 0.5),
 		color = Color3.fromRGB(217, 68, 58),

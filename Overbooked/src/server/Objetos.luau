@@ -49,6 +49,9 @@ function Objetos.crear(tipo: string, cframe: CFrame, padre: Instance?, visual: s
 	parte.CFrame = cframe
 	parte:SetAttribute("Tipo", tipo)
 	parte:SetAttribute("Portador", 0)
+	if tipo == "Bandeja" then
+		parte:SetAttribute("Raciones", 3)
+	end
 	CollectionService:AddTag(parte, "Agarrable")
 	CollectionService:AddTag(parte, "Objeto")
 	if tipo == "Extintor" then
