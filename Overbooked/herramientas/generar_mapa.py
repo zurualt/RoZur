@@ -167,7 +167,7 @@ def altillos():
             hijos.append(part("Caja", (2.6, 2.8, 4.5), (sx * 5.4, 108.4, z), CREMA))
         p.append(marca("Techo", (13.4, 3.5, 4.5), (0, TECHO_Y - 1.75, z), "Techo", hijos=hijos))
         for lado, sx in (("Izq", -1), ("Der", 1)):
-            p.append(part("PuertaAltillo", (4.3, 2.4, 0.15), (sx * 4.06, 108.1, z), CREMA, r=rot(0, 90 * sx, 0),
+            p.append(part("PuertaAltillo", (4.3, 2.4, 0.15), (sx * 4.025, 108.2, z), CREMA, r=rot(0, 90 * sx, 0),
                           atributos={"Visual": "PuertaAltillo", "Movil": True, "Fila": i + 1, "Lado": lado, "Altillo": True}))
     return carpeta("Altillos", p)
 
@@ -306,9 +306,10 @@ def exterior():
                       r=rot(0, 90, 0), colision=False))
         p.append(part("Estabilizador" + lado, (11, 0.6, 5), (sx * 7.5, 108.5, 28), "FFF4E0"))
     p.append(part("Deriva", (0.8, 10, 7), (0, 116, 27), TURQUESA))
-    p.append(part("Torreta", (2.2, 1.2, 2.2), (-24, 99.6, -21.5), GRIS, "Metal", clase="Seat",
-                  atributos={"Visual": "Torreta", "Base": 99.0},
-                  hijos=[part("BaseTorreta", (3, 0.6, 3), (-24, 99.3, -21.5), "1B1B21", "Metal")]))
+    p.append(marca("BaseTorreta", (3, 1.2, 4), (-24, 99.6, -21.5), "Torreta", base=99.0, hijos=[
+        part("PlacaTorreta", (3, 0.6, 3), (-24, 99.3, -21.5), "1B1B21", "Metal"),
+    ]))
+    p.append(part("Torreta", (1.2, 0.4, 1.0), (-24, 100.0, -20.0), GRIS, "Metal", clase="Seat", transp=1))
     p.append(part("Canones", (3, 2.2, 3.2), (-24, 101.1, -21.5), GRIS, "Metal", colision=False, transp=1,
                   atributos={"Visual": "TorretaCanones", "Movil": True},
                   hijos=[part("Escudo", (3.2, 2.2, 0.4), (-24, 101.4, -23.0), GRIS, "Metal", colision=False),
@@ -340,49 +341,105 @@ def avion():
     }
 
 
+def deco(nombre, visual, tam, x, base, z, giro=0.0, color=GRIS, colision=True, hijos=None, atributos=None,
+         material="SmoothPlastic", transp=0.0):
+    a = {"Visual": visual, "Base": base}
+    if atributos:
+        a.update(atributos)
+    return part(nombre, tam, (x, base + tam[1] / 2, z), color, material, r=rot(0, giro, 0), colision=colision,
+                atributos=a, hijos=hijos, transp=transp)
+
+
+def terminal():
+    t = []
+    cx, cz, base = 74.0, -20.0, 90.0
+    dx = cx - 58.0
+
+    def mundo(lx, lz):
+        return cx + lz, cz - lx
+
+    hijos = [
+        part("SueloTerminal", (53.6, 0.5, 53.2), (57.8 + dx, base + 0.25, cz), "E8E2D6", "Marble"),
+        part("TechoTerminal", (54, 1.8, 54), (cx, base + 14.1, cz), "FFF4E0"),
+        part("ParedFondo", (0.6, 15, 53.2), (cx + 26.3, base + 7.5, cz), "FFF4E0"),
+        part("ParedNorte", (51.6, 15, 0.6), (58.8 + dx, base + 7.5, cz - 26.3), "FFF4E0"),
+        part("ParedSur", (51.6, 15, 0.6), (58.8 + dx, base + 7.5, cz + 26.3), "FFF4E0"),
+        part("DintelEntrada", (0.8, 2.7, 15), (cx - 25.0, base + 11.85, cz), TURQUESA),
+    ]
+    for signo in (-1, 1):
+        hijos.append(part("Montante", (0.8, 13.2, 0.7), (cx - 25.0, base + 6.6, cz - signo * 7.85), TURQUESA))
+        hijos.append(part("Esquina", (1.0, 13.2, 1.1), (cx - 25.0, base + 6.6, cz - signo * 26.4), "FFF4E0"))
+    t.append(marca("Terminal", (54, 15, 54), (cx, base + 7.5, cz), "Terminal", r=rot(0, 90, 0), base=base, hijos=hijos))
+    for signo in (-1, 1):
+        for a, b in ((8.2, 11.488), (11.788, 15.076), (15.376, 18.664), (18.964, 22.252), (22.552, 25.84)):
+            lx = signo * (a + b) / 2
+            x, z = mundo(lx, -25.0)
+            t.append(part("CristalTerminal", (0.2, 10.8, b - a), (x, base + 6.6, z), CRISTAL, "Glass", transp=0.6))
+    x, z = mundo(0, 26.44)
+    t.append(marca("MarcoTablero", (18.6, 9.6, 0.8), (x, base + 2.7 + 4.8, z), "MarcoTablero", r=rot(0, 90, 0), base=base + 2.7))
+    t.append(part("Tablero", (17.6, 8.8, 0.2), (cx + 26.55, base + 7.5, cz), "1B1B21", r=rot(0, -90, 0), atributos={"Tablero": True}))
+    for i, dz in enumerate((-6, 0, 6)):
+        t.append(deco("PedestalContrato", "Kiosko", (2.4, 3, 2.4), 76 + dx, base + 0.5, cz + dz, 90, GRIS))
+        t.append(part("BotonContrato", (0.5, 1.6, 1.6), (76 + dx, base + 3.75, cz + dz), [NARANJA, TURQUESA, "F5CD3D"][i],
+                      forma="Cylinder", r=rot(0, 0, 90), atributos={"Contrato": i + 1}))
+    for x in (46, 54, 62):
+        t.append(deco("Mostrador", "Mostrador", (6, 3.5, 3), x + dx, base + 0.5, cz - 23, 180, TURQUESA))
+    for x in (52, 62):
+        for z in (cz - 14, cz + 14):
+            t.append(deco("Banco", "BancoEspera", (10, 2.2, 2), x + dx, base + 0.5, z, -90, NARANJA))
+    for z in (cz - 21, cz - 15, cz + 15, cz + 21):
+        t.append(deco("Planta", "Arbusto", (3, 2, 3), 81.5 + dx, base + 0.5, z, 0, "6BBF59", colision=False))
+    for x, z in ((45, cz - 13), (45, cz + 13), (70, cz - 13), (70, cz + 13)):
+        t.append(part("LuzTerminal", (0.4, 0.1, 0.4), (x + dx, base + 12.3, z), "FFFFFF", transp=1, colision=False, sombra=False,
+                      hijos=[luz(34, 0.9)]))
+    t.append(part("SpawnAeropuerto", (8, 0.4, 8), (62 + dx, base + 0.7, cz), "FFFFFF", clase="SpawnLocation", transp=1,
+                  colision=False, extra={"Enabled": True, "Neutral": True, "Duration": 0}))
+    return carpeta("Terminal", t)
+
+
 def aeropuerto():
     p = []
     p.append(part("Cesped", (700, 2, 700), (0, 89, 0), "6BBF59", "Grass"))
     p.append(part("Pista", (34, 0.2, 520), (0, 90.1, -40), "3A3D42", "Asphalt"))
     for z in range(-280, 220, 24):
         p.append(part("Raya", (0.8, 0.05, 10), (0, 90.22, z), "FFFFFF", colision=False))
-    p.append(part("Plataforma", (60, 0.4, 70), (52, 90.2, 10), "8A8F96", "Concrete"))
+    for x in (-15.8, 15.8):
+        p.append(part("Borde", (0.5, 0.05, 520), (x, 90.22, -40), "F5CD3D", colision=False))
+    p.append(part("Plataforma", (30, 0.4, 110), (32, 90.2, -5), "8A8F96", "Concrete"))
     p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart",
                   r=rot(0, 180, 0)))
-    p.append(part("CarroEquipaje", (7, 0.6, 5), (13, 91.0, 40), "34383F", "Metal",
-                  hijos=[part("BarandaCarro", (7, 1.2, 0.2), (13, 91.9, 42.4), NARANJA, "Metal"),
-                         part("BarandaCarro", (7, 1.2, 0.2), (13, 91.9, 37.6), NARANJA, "Metal"),
-                         part("RuedaCarro", (0.4, 1, 1), (10, 90.5, 38), "1B1B21", forma="Cylinder"),
-                         part("RuedaCarro", (0.4, 1, 1), (16, 90.5, 38), "1B1B21", forma="Cylinder"),
-                         part("RuedaCarro", (0.4, 1, 1), (10, 90.5, 42), "1B1B21", forma="Cylinder"),
-                         part("RuedaCarro", (0.4, 1, 1), (16, 90.5, 42), "1B1B21", forma="Cylinder")]))
-    t = []
-    t.append(part("SueloTerminal", (52, 1, 52), (58, 90.5, -20), "E8E2D6", "Marble"))
-    t.append(part("TechoTerminal", (54, 1, 54), (58, 104.5, -20), "FFF4E0"))
-    t.append(part("FranjaTerminal", (54.2, 1.2, 54.2), (58, 103.6, -20), NARANJA, colision=False))
-    t.append(part("ParedFondo", (52, 13, 1), (58, 97.5, -46.5), "FFF4E0"))
-    t.append(part("ParedEste", (1, 13, 52), (84.5, 97.5, -20), "FFF4E0"))
-    t.append(part("ParedSur", (52, 13, 1), (58, 97.5, 6.5), "FFF4E0"))
-    t.append(part("CristalOeste", (0.4, 12, 18), (31.5, 97, -35), CRISTAL, "Glass", transp=0.5))
-    t.append(part("CristalOeste", (0.4, 12, 18), (31.5, 97, -2), CRISTAL, "Glass", transp=0.5))
-    t.append(part("DintelOeste", (1, 4, 15), (31.5, 102, -18.5), "FFF4E0"))
-    for i, z in enumerate((-30, -22, -14)):
-        t.append(part("Mostrador", (3, 3.5, 6), (74, 92.75, z), TURQUESA))
-    for i, z in enumerate((-36, -10)):
-        t.append(part("Banco", (10, 1.2, 2), (48, 91.6, z), NARANJA))
-    t.append(part("Tablero", (18, 9, 0.6), (58, 98, -45.8), "1B1B21", atributos={"Tablero": True}))
-    t.append(part("Rotulo", (20, 2.4, 0.4), (58, 103.6, -46.0), NARANJA, colision=False,
-                  hijos=[cartel("OVERBOOKED!  ·  SALIDAS", "Back", "FFFFFF")]))
-    for i, x in enumerate((52, 58, 64)):
-        t.append(part("PedestalContrato", (2.4, 3, 2.4), (x, 92.5, -38), GRIS,
-                      hijos=[part("BotonContrato", (0.5, 1.6, 1.6), (x, 94.2, -38), [NARANJA, TURQUESA, "F5CD3D"][i],
-                                  forma="Cylinder", r=rot(0, 0, 90), atributos={"Contrato": i + 1})]))
-    t.append(part("SpawnAeropuerto", (8, 0.4, 8), (62, 91.2, -20), "FFFFFF", clase="SpawnLocation", transp=1,
-                  colision=False, extra={"Enabled": True, "Neutral": True, "Duration": 0}))
-    p.append(carpeta("Terminal", t))
+    p.append(part("CarroEquipaje", (7, 0.4, 5), (13, 91.1, 40), "34383F", "Metal",
+                  atributos={"Visual": "CarroEquipaje", "Base": 90.2},
+                  hijos=[part("BarandaCarro", (7, 0.8, 0.2), (13, 91.7, 42.4), NARANJA, "Metal"),
+                         part("BarandaCarro", (7, 0.8, 0.2), (13, 91.7, 37.6), NARANJA, "Metal"),
+                         part("RuedaCarro", (0.4, 0.9, 0.9), (10, 90.65, 38), "1B1B21", forma="Cylinder", colision=False),
+                         part("RuedaCarro", (0.4, 0.9, 0.9), (16, 90.65, 38), "1B1B21", forma="Cylinder", colision=False),
+                         part("RuedaCarro", (0.4, 0.9, 0.9), (10, 90.65, 42), "1B1B21", forma="Cylinder", colision=False),
+                         part("RuedaCarro", (0.4, 0.9, 0.9), (16, 90.65, 42), "1B1B21", forma="Cylinder", colision=False)]))
+    p.append(terminal())
+    d = []
+    d.append(deco("Torre", "TorreControl", (10, 40, 10), 44, 90, -95, 90, "FFF4E0"))
+    d.append(deco("Hangar", "Hangar", (50, 22, 40), 72, 90, 64, 90, "1FA6A0"))
+    d.append(deco("Tractor", "Tractor", (4, 3, 7), 24, 90.4, 50, 15, NARANJA))
+    d.append(deco("Escalera", "Escalera", (3, 9, 9), 25, 90.4, -48, 0, TURQUESA, colision=False))
     for i in range(6):
-        p.append(part("Cono", (1, 1.6, 1), (-14 + i * 5.6, 90.9, 36), NARANJA))
-    p.append(part("Manga", (1, 6, 1), (-30, 93, 40), "FFFFFF", hijos=[part("Tela", (0.6, 1.4, 3), (-30, 95.6, 41.4), NARANJA, colision=False)]))
+        d.append(deco("Cono", "Cono", (1, 1.6, 1), -14 + i * 5.6, 90.2, 36, 0, NARANJA))
+    for x, z in ((26, 2), (28, 9), (20, -30)):
+        d.append(deco("Cono", "Cono", (1, 1.6, 1), x, 90.4, z, 0, NARANJA))
+    d.append(deco("Manga", "Manga", (1.2, 7, 4), -30, 90, 40, 0, "FFFFFF", colision=False))
+    arboles = [(47, -58), (50, 16), (108, -56), (108, 14), (-40, -60), (-46, 8), (-38, 72), (36, 100), (96, 100),
+               (-52, -130), (40, -140), (-60, 130), (116, -20), (118, 40), (-70, -20)]
+    for x, z in arboles:
+        d.append(deco("Arbol", "Arbol", (1.2, 9, 1.2), x, 90, z, (x * 37 + z) % 360, "8A5A33"))
+    for x, z in ((45.5, -44), (45.5, -36), (45.5, -4), (45.5, 4), (104, -30), (104, -10)):
+        d.append(deco("Arbusto", "Arbusto", (3, 2, 3), x, 90, z, (x + z * 13) % 360, "6BBF59", colision=False))
+    for x in (-62, 132):
+        for i in range(22):
+            d.append(deco("Valla", "Valla", (8, 2.4, 0.3), x, 90, -88 + i * 8, 90, "A9B0B8"))
+    for x in (-17.5, 17.5):
+        for z in range(-280, 221, 25):
+            d.append(deco("LuzPista", "LuzPista", (0.4, 0.6, 0.4), x, 90, z, 0, "F5CD3D", colision=False))
+    p.append(carpeta("Decorado", d))
     return {"className": "Model", "children": p}
 
 

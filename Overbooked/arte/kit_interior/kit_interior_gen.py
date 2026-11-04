@@ -299,6 +299,11 @@ def sweep(path, prof, m=None, closed=False):
     return xf(bm, m)
 
 
+def rev(bm):
+    bmesh.ops.reverse_faces(bm, faces=bm.faces)
+    return bm
+
+
 def cw(pts):
     return list(pts) if area2(pts) < 0 else list(pts)[::-1]
 
@@ -559,7 +564,7 @@ def p_techo():
         p.add(xzprism(psu, -1.9, 1.9, 0.04), "cream2")
         for y in (-0.8, 0.8):
             for x in (5.0, 5.8):
-                p.add(lathe([(0.13, 0.081), (0.11, 0.03), (0.0, 0.0)], 8, M((sx * x, y, 0)), cap0=False), "light")
+                p.add(rev(lathe([(0.13, 0.081), (0.11, 0.03), (0.0, 0.0)], 8, M((sx * x, y, 0)), cap0=False)), "light")
             p.add(decal(circ(sx * 5.4, y, 0.065, 6), DOWN(0.075)), "orange")
         p.add(decal(rect(-0.3, 0.3, -0.04, 0.04), DOWN(0.075, sx * 5.4, 0.0)), "slate")
         lt = S([(2.35, 3.36), (2.35, 3.285), (2.38, 3.265), (2.82, 3.235), (2.85, 3.25), (2.85, 3.36)], sx)
@@ -579,7 +584,7 @@ def p_techo():
     pod = [(-0.75, 2.97), (-0.71, 2.92), (-0.43, 2.66), (-0.36, 2.62), (0.36, 2.62), (0.43, 2.66), (0.71, 2.92), (0.75, 2.97)]
     p.add(yprism(pod, -0.9, 0.9, 0.035), "lmetal")
     for x in (-0.62, -0.22, 0.22, 0.62):
-        p.add(lathe([(0.11, 2.63), (0.11, 2.6), (0.065, 2.57), (0.0, 2.53)], 8, M((x, 0, 0)), cap0=False),
+        p.add(rev(lathe([(0.11, 2.63), (0.11, 2.6), (0.065, 2.57), (0.0, 2.53)], 8, M((x, 0, 0)), cap0=False)),
               lambda c, n: "dark" if c.z > 2.585 else "metal")
     for sy in (-1, 1):
         A, B = Vector((0, sy * 0.71, 2.92)), Vector((0, sy * 0.43, 2.66))
@@ -659,7 +664,7 @@ def p_cocina():
     for x in (-2.7375, -0.9125, 0.9125, 2.7375):
         p.add(rbox((1.77, 0.06, 3.44), (x, -0.18, 7.8), 0.04, 1), "white")
         p.add(bar((x - 0.42, -0.24, 6.36), (x + 0.42, -0.24, 6.36), 0.08, 0.06, 0.018), "orange")
-    p.add(decal(rect(-3.55, 3.55, -0.12, 0.25), DOWN(5.995)), "light")
+    p.add(decal(rect(-3.55, 3.55, -0.12, 0.12), DOWN(5.995)), "light")
     p.add(bb(-3.7, 3.7, -0.3, 1.3, 9.6, 10.0, 0.03), "cream")
     p.add(decal(rect(-3.68, 3.68, 9.73, 9.83), WF(-0.305)), "orange")
     return p
@@ -797,11 +802,12 @@ def p_bano():
     fy0, fy1 = -1.75, -1.55
     inside = by_normal("cream", "white", "cream")
     fr = plate(u_outline(W, 10.0, hw, H, 0.2, 2), [], 0.2, frame((0, fy1, 0), (1, 0, 0), (0, 0, 1)))
+    bevel_where(fr, lambda e: all(abs(abs(v.co.x) - W) < 1e-4 for v in e.verts), 0.03)
     p.add(fr, inside)
     p.add(bb(-W, W, 1.65, D, 0.0, 10.0, 0.03), by_normal("white", "cream", "cream"))
     for sx in (-1, 1):
         x0, x1 = sorted((sx * 2.3, sx * W))
-        p.add(bb(x0, x1, fy0, 1.65, 0.0, 10.0, 0.03), lambda c, n: "white" if n.x * (1 if c.x > 0 else -1) < -0.5 else "cream")
+        p.add(bb(x0, x1, fy1, 1.65, 0.0, 10.0, 0.03), lambda c, n: "white" if n.x * (1 if c.x > 0 else -1) < -0.5 else "cream")
     tp = [(0.2, -0.1), (0.17, -0.13), (0.03, -0.13), (0.0, -0.1), (0.0, 0.16), (0.04, 0.2), (0.2, 0.2), (0.25, 0.17), (0.27, 0.1)]
     p.add(sweep(door_path(hw, H, 0.2, 2), tp, WF(-1.65)), lambda c, n: "white" if n.y > 0.4 else "teal", 40)
     sm = WF(-1.8105, 0.0, 7.95)
@@ -869,7 +875,9 @@ def p_cabina_piloto():
     inner = [(5.5, 6.6), (5.42, 7.0), (5.15, 7.4), (4.75, 7.65), (4.4, 7.7)]
     poly = [(W, 6.6), (W, 8.0), (-W, 8.0), (-W, 6.6)] + [(-x, z) for x, z in inner] + [(x, z) for x, z in reversed(inner)]
     p.add(xzprism(poly, yf, L), "cream2")
-    p.add(lathe([(0.55, 7.7), (0.52, 7.64), (0.0, 7.6)], 12, M((0, 0.8, 0)), cap0=False), "light")
+    p.add(rev(lathe([(0.55, 7.7), (0.52, 7.64), (0.0, 7.6)], 12, M((0, 0.8, 0)), cap0=False)), "light")
+    for y in (-1.9, 3.3):
+        p.add(bb(-4.45, 4.45, y - 0.13, y + 0.13, 7.62, 7.71, 0.03), "lmetal")
     panel = [(-4.92, 7.72), (-2.45, 7.72), (-2.6, 7.48), (-4.92, 6.92)]
     p.add(yprism(panel, -2.3, 2.3, 0.04), "dark")
     A, B = Vector((0, -2.6, 7.48)), Vector((0, -4.92, 6.92))
@@ -1069,13 +1077,13 @@ def p_torreta_canones():
     cx, cy, R, t = 0.0, 1.6, 2.2, 0.11
     amax = 35.0
     n = 8
-    zr = [0.25, 1.62, 1.86]
+    zr = [0.25, 1.52, 1.74]
     bm = bmesh.new()
     outer, inner = [], []
     for i in range(n + 1):
         a = math.radians(-amax + 2 * amax * i / n)
         u = a / math.radians(amax)
-        ztop = 2.2 - 0.34 * u * u
+        ztop = 2.2 - 0.3 * u * u
         zs = zr + [ztop - 0.07, ztop]
         oc, ic = [], []
         for k, z in enumerate(zs):
@@ -1098,7 +1106,7 @@ def p_torreta_canones():
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
 
     def srole(c, n_):
-        if 1.62 < c.z < 1.86 and math.hypot(c.x - cx, c.y - cy) > R - 0.05:
+        if 1.52 < c.z < 1.74 and math.hypot(c.x - cx, c.y - cy) > R - 0.05:
             return "cream"
         return "orange"
     p.add(bm, srole, 30)
@@ -1125,7 +1133,7 @@ def p_mascarilla():
     apex = m @ Vector((0, 0, 0.27 * k - 0.02))
     ye = apex.y - 0.16
     p.add(tube([tuple(apex), (0.07, apex.y - 0.06, 0.62), (-0.07, apex.y - 0.12, 0.98), (0.0, ye, 1.37)], lambda u: 0.026, k=4, steps=2, caps=False), "lmetal", 70)
-    p.add(cyl(0.045, 0.08, (0, ye, 1.347), seg=6, cap0=False), "white")
+    p.add(cyl(0.045, 0.08, (0, ye, 1.347), seg=6), "white")
     return p
 
 
@@ -1141,9 +1149,9 @@ def p_astilla():
         j2 = (j + 1) % n
         bm.faces.new((lo[j], lo[j2], hi[j2], hi[j]))
     bm.faces.new(list(reversed(lo)))
-    bm.faces.new(hi)
-    if area2(pts) < 0:
-        bmesh.ops.reverse_faces(bm, faces=bm.faces)
+    ctr = bm.verts.new((-0.02, 0.0, 0.2))
+    for j in range(n):
+        bm.faces.new((hi[j], hi[(j + 1) % n], ctr))
     p.add(bm, lambda c, n_: "bun" if abs(c.x) > 0.2 and abs(n_.z) < 0.6 else ("dwood" if n_.z < -0.5 else "wood"), 25)
     return p
 
@@ -1183,7 +1191,7 @@ def p_bolso():
     p.add(decal(rect(-0.6, 0.6, -0.022, 0.022), UP(0.804)), "black")
     p.add(rbox((0.08, 0.05, 0.03), (0.45, -0.04, 0.81), 0.0), "gold")
     for sy in (-1, 1):
-        ctrl = [(-0.37, sy * 0.33, 0.66), (-0.33, sy * 0.2, 0.9), (0.0, sy * 0.1, 0.97), (0.33, sy * 0.2, 0.9), (0.37, sy * 0.33, 0.66)]
+        ctrl = [(-0.37, sy * 0.28, 0.66), (-0.33, sy * 0.19, 0.9), (0.0, sy * 0.1, 0.97), (0.33, sy * 0.19, 0.9), (0.37, sy * 0.28, 0.66)]
         p.add(tube(ctrl, lambda u: 0.035, k=5, steps=1, caps=False), "dteal", 70)
     return p
 
@@ -1225,9 +1233,13 @@ def finalize(p):
     mn = Vector((1e9, 1e9, 1e9))
     mx = Vector((-1e9, -1e9, -1e9))
     for bm, role, ang in p.parts:
+        bmesh.ops.dissolve_degenerate(bm, dist=1e-5, edges=bm.edges[:])
         ng = [f for f in bm.faces if len(f.verts) > 4]
         if ng:
             bmesh.ops.triangulate(bm, faces=ng, quad_method="BEAUTY", ngon_method="BEAUTY")
+        dead = [f for f in bm.faces if f.calc_area() < 1e-8]
+        if dead:
+            bmesh.ops.delete(bm, geom=dead, context="FACES_ONLY")
         bm.normal_update()
         roles = [role(f.calc_center_median(), f.normal.copy()) if callable(role) else role for f in bm.faces]
         for v in bm.verts:
@@ -1292,13 +1304,18 @@ def palette_material(img):
     bsdf.inputs["Roughness"].default_value = 0.6
     if arg("--debug-backface"):
         geo = nt.nodes.new("ShaderNodeNewGeometry")
+        lp = nt.nodes.new("ShaderNodeLightPath")
+        mul = nt.nodes.new("ShaderNodeMath")
+        mul.operation = "MULTIPLY"
+        nt.links.new(geo.outputs["Backfacing"], mul.inputs[0])
+        nt.links.new(lp.outputs["Is Camera Ray"], mul.inputs[1])
         mix = nt.nodes.new("ShaderNodeMix")
         mix.data_type = "RGBA"
-        nt.links.new(geo.outputs["Backfacing"], mix.inputs[0])
+        nt.links.new(mul.outputs[0], mix.inputs[0])
         nt.links.new(tex.outputs["Color"], mix.inputs[6])
         mix.inputs[7].default_value = (1.0, 0.0, 1.0, 1.0)
         nt.links.new(mix.outputs[2], bsdf.inputs["Base Color"])
-        nt.links.new(geo.outputs["Backfacing"], bsdf.inputs["Emission Strength"])
+        nt.links.new(mul.outputs[0], bsdf.inputs["Emission Strength"])
         bsdf.inputs["Emission Color"].default_value = (1.0, 0.0, 1.0, 1.0)
     return mat
 
@@ -1643,7 +1660,8 @@ def studio(ground="D6EEF7", sky="BFE3F2", strength=0.62, sun_e=3.0, sun_rot=(50,
     world(bpy.context.scene, sky, strength)
     sun(sun_e, sun_rot)
     bpy.context.scene.view_settings.exposure = -0.25
-    plane("Ground", -300, 300, -300, 300, 0.0, flat_mat("GroundMat", ground, 0.95))
+    if ground:
+        plane("Ground", -300, 300, -300, 300, 0.0, flat_mat("GroundMat", ground, 0.95))
 
 
 def bin_door(objs, sx, y, open_deg=0.0):
@@ -1674,7 +1692,7 @@ def sheet_1(objs, threads, outdir):
         inst(objs, "PanelVentana", (7.05, y, 0), -90)
         inst(objs, "Techo", (0, y, 6.5))
         for sx in (-1, 1):
-            bin_door(objs, sx, y, 112.0 if (i == 1 and sx > 0) else 0.0)
+            bin_door(objs, sx, y, 92.0 if (i == 1 and sx > 0) else 0.0)
         for x in (-5.55, -3.35, 3.35, 5.55):
             if i == 1 and x < -5:
                 continue
@@ -1692,9 +1710,14 @@ def sheet_1(objs, threads, outdir):
     clear_temp()
 
 
+TILE_DIR = []
+
+
 def tile_paths(outdir, tag, n):
-    d = os.path.join(outdir, "_tiles")
-    os.makedirs(d, exist_ok=True)
+    import tempfile
+    if not TILE_DIR:
+        TILE_DIR.append(tempfile.mkdtemp(prefix="kit_interior_tiles_"))
+    d = TILE_DIR[0]
     return [os.path.join(d, "%s_%d.png" % (tag, i)) for i in range(n)]
 
 
@@ -1704,7 +1727,6 @@ TW, TH = 533, 450
 def sheet_2(objs, threads, outdir):
     scene = bpy.context.scene
     paths = tile_paths(outdir, "k2", 6)
-    tiles = []
 
     def t_cocina():
         studio()
@@ -1727,8 +1749,8 @@ def sheet_2(objs, threads, outdir):
 
     def t_bano():
         studio(sun_rot=(38, 0, -20))
-        o = inst(objs, "Bano", (0, 0, 0), -28)
-        cam = camera_fit([o], 40, -20, 50, 0.88, 0.84)
+        o = inst(objs, "Bano", (0, 0, 0), -24)
+        cam = camera_look(tuple(o.matrix_world @ Vector((1.0, -8.2, 5.4))), tuple(o.matrix_world @ Vector((-0.1, 0.3, 4.1))), 30.0)
         return cam, "Bano"
 
     def t_puertas():
@@ -1742,15 +1764,15 @@ def sheet_2(objs, threads, outdir):
         return cam, "Puertas: Ala (en panel), Ala, Salida, Bano"
 
     def t_altillo():
-        studio()
+        studio(ground=None, sky="C9E6F3")
         zt = 8.0
         t = inst(objs, "Techo", (0, 0, zt), 0)
-        for sx, ang in ((-1, 0.0), (1, 112.0)):
+        for sx, ang in ((-1, 0.0), (1, 92.0)):
             o = bin_door(objs, sx, 0.0, ang)
             o.matrix_world = M((0, 0, zt - 6.5)) @ o.matrix_world
         inst(objs, "Bolso", (5.3, -0.6, zt + 0.5), 90)
         inst(objs, "Bolso", (5.4, 1.1, zt + 0.5), 96)
-        cam = camera_fit([t], -9, 215, 50, 0.92, 0.8)
+        cam = camera_fit([t], -24, 212, 50, 0.92, 0.82)
         return cam, "Techo + PuertaAltillo (+ Bolso)"
     for i, fn in enumerate((t_cocina, t_mampara_c, t_mampara_b, t_bano, t_puertas, t_altillo)):
         render_setup(scene, threads, TW + (1 if i % 3 < 1600 % 3 else 0), TH)
@@ -1771,7 +1793,7 @@ def sheet_3(objs, threads, outdir):
         inst(objs, "CabinaPiloto", (0, 0, 0), 0)
         area((0, 1.0, 7.3), 3.0, 3.0, 160.0, (0, 0, 0), "FFF1D6")
         area((0, 6.5, 4.5), 5.0, 3.0, 220.0, (-90, 0, 0), "FFF6EA")
-        cam = camera_look((1.2, 4.6, 4.2), (-0.4, -5.0, 5.4), 16.0)
+        cam = camera_look((0.25, 3.9, 3.9), (0.0, -5.0, 5.3), 14.0)
         return cam, "CabinaPiloto (interior)"
 
     def t_cab_out():
@@ -1827,6 +1849,9 @@ def render_all(objs, which, threads, outdir):
         sheet_2(objs, threads, outdir)
     if not which or "3" in which:
         sheet_3(objs, threads, outdir)
+    if TILE_DIR:
+        import shutil
+        shutil.rmtree(TILE_DIR[0], ignore_errors=True)
 
 
 if __name__ == "__main__":

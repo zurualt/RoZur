@@ -1,0 +1,202 @@
+[
+  {
+    "nombre": "PanelVentana",
+    "archivo": "PanelVentana.fbx",
+    "tamano": [
+      4.5,
+      10.0,
+      0.7
+    ],
+    "triangulos": 498
+  },
+  {
+    "nombre": "PanelSalida",
+    "archivo": "PanelSalida.fbx",
+    "tamano": [
+      4.5,
+      10.0,
+      0.7
+    ],
+    "triangulos": 517
+  },
+  {
+    "nombre": "Techo",
+    "archivo": "Techo.fbx",
+    "tamano": [
+      13.4,
+      3.5,
+      4.5
+    ],
+    "triangulos": 972
+  },
+  {
+    "nombre": "PuertaAltillo",
+    "archivo": "PuertaAltillo.fbx",
+    "tamano": [
+      4.3,
+      2.4,
+      0.15
+    ],
+    "triangulos": 146
+  },
+  {
+    "nombre": "CocinaModulo",
+    "archivo": "CocinaModulo.fbx",
+    "tamano": [
+      7.4,
+      10.0,
+      2.6
+    ],
+    "triangulos": 1036
+  },
+  {
+    "nombre": "Calentador",
+    "archivo": "Calentador.fbx",
+    "tamano": [
+      1.6,
+      0.9,
+      1.6
+    ],
+    "triangulos": 326
+  },
+  {
+    "nombre": "MamparaCabina",
+    "archivo": "MamparaCabina.fbx",
+    "tamano": [
+      13.4,
+      10.0,
+      0.6
+    ],
+    "triangulos": 784
+  },
+  {
+    "nombre": "MamparaBodega",
+    "archivo": "MamparaBodega.fbx",
+    "tamano": [
+      13.4,
+      10.0,
+      0.6
+    ],
+    "triangulos": 644
+  },
+  {
+    "nombre": "Bano",
+    "archivo": "Bano.fbx",
+    "tamano": [
+      5.0,
+      10.0,
+      3.7
+    ],
+    "triangulos": 1276
+  },
+  {
+    "nombre": "CabinaPiloto",
+    "archivo": "CabinaPiloto.fbx",
+    "tamano": [
+      11.6,
+      8.0,
+      10.5
+    ],
+    "triangulos": 1744
+  },
+  {
+    "nombre": "PuertaAla",
+    "archivo": "PuertaAla.fbx",
+    "tamano": [
+      3.4,
+      6.5,
+      0.3
+    ],
+    "triangulos": 248
+  },
+  {
+    "nombre": "PuertaSalida",
+    "archivo": "PuertaSalida.fbx",
+    "tamano": [
+      3.0,
+      6.5,
+      0.3
+    ],
+    "triangulos": 248
+  },
+  {
+    "nombre": "PuertaBano",
+    "archivo": "PuertaBano.fbx",
+    "tamano": [
+      2.4,
+      7.0,
+      0.15
+    ],
+    "triangulos": 284
+  },
+  {
+    "nombre": "BodegaPared",
+    "archivo": "BodegaPared.fbx",
+    "tamano": [
+      22.0,
+      10.0,
+      0.7
+    ],
+    "triangulos": 1544
+  },
+  {
+    "nombre": "Torreta",
+    "archivo": "Torreta.fbx",
+    "tamano": [
+      3.0,
+      1.2,
+      4.0
+    ],
+    "triangulos": 660
+  },
+  {
+    "nombre": "TorretaCanones",
+    "archivo": "TorretaCanones.fbx",
+    "tamano": [
+      3.0,
+      2.2,
+      3.2
+    ],
+    "triangulos": 1168
+  },
+  {
+    "nombre": "Mascarilla",
+    "archivo": "Mascarilla.fbx",
+    "tamano": [
+      0.4,
+      1.4,
+      0.4
+    ],
+    "triangulos": 132
+  },
+  {
+    "nombre": "Astilla",
+    "archivo": "Astilla.fbx",
+    "tamano": [
+      0.8,
+      0.2,
+      0.3
+    ],
+    "triangulos": 42
+  },
+  {
+    "nombre": "Esquirla",
+    "archivo": "Esquirla.fbx",
+    "tamano": [
+      0.5,
+      0.4,
+      0.1
+    ],
+    "triangulos": 20
+  },
+  {
+    "nombre": "Bolso",
+    "archivo": "Bolso.fbx",
+    "tamano": [
+      1.6,
+      1.0,
+      0.8
+    ],
+    "triangulos": 282
+  }
+]

@@ -74,7 +74,7 @@ local function prepararAltillo(puerta: BasePart)
 	local function en(angulo: number): CFrame
 		return eje * CFrame.Angles(angulo, 0, 0) * CFrame.new(0, -medio, 0)
 	end
-	local angulo = math.rad(105)
+	local angulo = math.rad(92)
 	local signo = if math.abs(en(angulo).Position.X) < math.abs(en(-angulo).Position.X) then 1 else -1
 	local valor = Instance.new("NumberValue")
 	valor.Changed:Connect(function(v)

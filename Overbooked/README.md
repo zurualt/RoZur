@@ -76,6 +76,8 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | `src/` | Código (servidor, cliente y compartido) |
 | `mapa/` | Avión y aeropuerto en piezas de Roblox, generados por `herramientas/generar_mapa.py` |
 | `arte/` | Modelos de Blender (tripulante, avión, pasajeros, objetos) con sus generadores, FBX, renders y manifiestos |
+| `arte/kit_interior/` | Kit del interior del avión: paneles con ventanas, techo con altillos y sus puertas, cocina, baño, mamparas, cabina del piloto, pared de bodega, puertas, torreta en dos piezas, bolso, mascarilla y trozos de cajas |
+| `arte/kit_aeropuerto/` | Kit del aeropuerto: terminal, mostradores, bancos, quioscos, marco del tablero, torre de control, hangar, carro, tractor, escalerilla, árboles, arbustos, vallas, conos, luces de pista y manga de viento |
 | `arte/ids_roblox.json` | IDs de los modelos subidos a Roblox |
 | `herramientas/` | Scripts: mapa, subida de modelos y generación de `src/shared/Visuales.luau` |
 
@@ -87,7 +89,7 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | Lugar principal | `70554923634533` |
 | Grupo dueño | `783757619` |
 | Tripulante v2 | `87418247604950` |
-| Resto de modelos (30: avión, pasajeros, cocodrilo y objetos) | `arte/ids_roblox.json` |
+| Resto de modelos (66: avión, pasajeros, cocodrilo, objetos, kit del interior y kit del aeropuerto) | `arte/ids_roblox.json` |
 
 ## Flujo de trabajo por API
 
@@ -109,3 +111,4 @@ Cada cliente conecta el `AudioDeviceInput` de cada jugador a un `AudioAnalyzer` 
 - **Tripulante:** si el modelo importado no trae `Humanoid` o `HumanoidRootPart`, el juego usa personajes por defecto y lo avisa en la consola del servidor.
 - **Sonidos:** ElevenLabs no es accesible desde esta sesión. El juego aún no tiene sonidos.
 - **Del tráiler, no hecho todavía:** escalar el fuselaje con piolet, vehículo de equipaje en tierra e inspección de aduanas.
+- **Botones de la cabina:** los cinco usan el mismo modelo rojo; se distinguen por la etiqueta de color que tienen encima.

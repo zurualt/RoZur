@@ -57,7 +57,7 @@ local function orientar(modelo: Model, nombre: string): CFrame
 		return Config.ROTACION_FBX
 	end
 	local objetivo = forma(esperada.maximo - esperada.minimo)
-	local mejor, error = Config.ROTACION_FBX, math.huge
+	local mejor, error = CFrame.identity, math.huge
 	for _, r in ROTACIONES do
 		modelo:PivotTo(r)
 		local minimo, maximo = caja(modelo)
@@ -68,7 +68,7 @@ local function orientar(modelo: Model, nombre: string): CFrame
 		end
 	end
 	modelo:PivotTo(CFrame.identity)
-	return mejor
+	return mejor * Config.ROTACION_FBX
 end
 
 local function preparar(modelo: Model)

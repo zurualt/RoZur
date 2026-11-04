@@ -455,6 +455,7 @@ def p_terminal():
     H0, FL = 0.48, 0.5
     WO, WI = 26.6, 26.14
     FY0, FY1 = -25.4, -24.6
+    DT = FL + 10.0
     SO, CE, DK = 12.6, 13.2, 14.2
     slab = [(-27, -27), (-8.6, -27), (-8.6, -25.4), (8.6, -25.4), (8.6, -27), (27, -27), (27, 27), (-27, 27)]
     p.add(prism(slab, H0, M((0, 0, H0 / 2)), bev=0.06), "concrete")
@@ -523,34 +524,34 @@ def p_terminal():
     for s in (-1, 1):
         x0, x1 = sorted((s * 8.2, s * (WI - 0.3)))
         fm(x0, x1, FL, 1.2)
-        fm(x0, x1, 10.0, 10.3)
+        fm(x0, x1, DT, DT + 0.3)
         x0, x1 = sorted((s * (WI - 0.3), s * WI))
         fm(x0, x1, FL, 1.2)
         x0, x1 = sorted((s * (WI - 0.3), s * WI))
-        fm(x0, x1, 1.2, 10.0)
-        fm(x0, x1, 10.3, 12.0)
+        fm(x0, x1, 1.2, DT)
+        fm(x0, x1, DT + 0.3, 12.0)
         for k in range(1, 5):
             x = s * (8.2 + (BW + 0.3) * k - 0.15)
-            fm(x - 0.15, x + 0.15, 1.2, 10.0)
-            fm(x - 0.15, x + 0.15, 10.3, 12.0)
+            fm(x - 0.15, x + 0.15, 1.2, DT)
+            fm(x - 0.15, x + 0.15, DT + 0.3, 12.0)
         for b in range(5):
             u0, u1 = 8.2 + (BW + 0.3) * b, 8.2 + (BW + 0.3) * b + BW
             x0, x1 = sorted((s * u0, s * u1))
-            panes.append((x0, x1, 1.2, 10.0))
-            panes.append((x0, x1, 10.3, 12.0))
+            panes.append((x0, x1, 1.2, DT))
+            panes.append((x0, x1, DT + 0.3, 12.0))
         x0, x1 = sorted((s * 7.5, s * 8.2))
-        p.add(bb(x0, x1, -25.6, -24.4, FL, 10.0, 0.1, 2), "teal")
+        p.add(bb(x0, x1, -25.6, -24.4, FL, DT, 0.1, 2), "teal")
     TERM["panes"] = panes
     TERM["glass_y"] = -25.0
-    p.add(bb(-8.2, 8.2, -25.6, -24.4, 10.0, SO, 0.1, 2), "teal")
+    p.add(bb(-8.2, 8.2, -25.6, -24.4, DT, SO, 0.1, 2), "teal")
 
     def canopy(c, n):
         if n.z < -0.6:
             return "white"
         return "cream" if n.z > 0.6 else "orange"
-    p.add(bb(-9.4, 9.4, -27.0, -25.6, 10.0, 10.75, 0.24, 2), canopy)
+    p.add(bb(-9.4, 9.4, -27.0, -25.6, DT, DT + 0.75, 0.24, 2), canopy)
     for x in (-6.0, -2.0, 2.0, 6.0):
-        p.add(decal(circ(x, 0, 0.22, 8), fr((0, -26.25, 10.0), "-z"), 0.006), "yellow")
+        p.add(decal(circ(x, 0, 0.22, 8), fr((0, -26.25, DT), "-z"), 0.006), "yellow")
     p.add(bb(-WO, WO, -26.3, -24.4, SO, CE), "white")
     p.add(bb(-26.4, 26.4, -26.4, 26.4, CE, DK), lambda c, n: "concrete" if n.z > 0.5 else "tile")
     for k in range(1, 6):
@@ -643,7 +644,7 @@ def p_kiosko():
     p.add(decal(rrect(0, 1.0, 0.9, 1.0, 0.12, 1), fr((0, -0.9, 0), "-y"), 0.006), "cream")
     logo(p, fr((0, -0.912, 1.12), "-y"), 0.3, base=False, step=0.005)
     p.add(decal(rrect(0, 0.62, 0.6, 0.08, 0.03, 1), fr((0, -0.9, 0), "-y"), 0.012), "black")
-    head = [(-1.2, 1.95), (1.19, 1.95), (1.19, 3.0), (-0.84, 3.0), (-1.2, 2.45)]
+    head = [(-1.2, 1.95), (1.19, 1.95), (1.19, 3.0), (-0.87, 3.0), (-1.2, 2.45)]
     bm = prism(head, 2.38, yzx((0, 0, 0)))
     bevel_sharp(bm, 0.05, 2, 30)
     p.add(bm, lambda c, n: "dteal" if n.z < -0.5 else ("orange" if n.y < -0.9 else "cream"), 40)
@@ -651,8 +652,8 @@ def p_kiosko():
         sx = 1.19 if side == "+x" else -1.19
         p.add(decal(rect(-1.1, 1.1, 2.02, 2.2), fr((sx, 0, 0), side), 0.006), "orange")
     p.add(decal(rect(-1.1, 1.1, 2.02, 2.2), fr((0, 1.19, 0), "+y"), 0.006), "orange")
-    a = Vector((0, 0.36, 0.55)).normalized()
-    m = frame((0, -1.02, 2.725), (1, 0, 0), a)
+    a = Vector((0, 0.33, 0.55)).normalized()
+    m = frame((0, -1.035, 2.725), (1, 0, 0), a)
     p.add(decal(rrect(0, 0, 2.05, 0.44, 0.06, 1), m, 0.006), "black")
     p.add(decal(rrect(0, 0, 1.85, 0.32, 0.04, 1), m, 0.012), "glass")
     return p
@@ -686,33 +687,36 @@ def p_torre():
     for x in (-2.3, 2.3):
         p.add(decal(rrect(x, 2.3, 1.3, 1.1, 0.2, 1), md, 0.01), "white")
         p.add(decal(rrect(x, 2.3, 1.06, 0.86, 0.14, 1), md, 0.02), "glass")
-    a0 = math.pi / 12
+    a0 = math.pi / 16
     prof = [(2.7, 3.95), (2.45, 4.6), (2.15, 5.4), (2.1, 6.2), (2.1, 25.4), (2.1, 26.4), (2.1, 28.2)]
-    p.add(lathe(prof, 12, cap0=False, cap1=False, a0=a0),
+    p.add(lathe(prof, 16, cap0=False, cap1=False, a0=a0),
           lambda c, n: "teal" if c.z < 6.2 else ("orange" if 25.4 < c.z < 26.4 else "cream"))
-    ap = 2.1 * math.cos(math.pi / 12)
+    ap = 2.1 * math.cos(math.pi / 16)
     for z in (8.5, 12.0, 15.5, 19.0, 22.5):
         p.add(decal(pill(0, z, 1.0, 0.2, math.pi / 2), fr((0, -ap, 0), "-y"), 0.012), "glass")
         p.add(decal(pill(0, z, 1.0, 0.2, math.pi / 2), fr((0, ap, 0), "+y"), 0.012), "glass")
-    p.add(lathe([(2.1, 28.0), (2.6, 29.0), (3.6, 30.1), (4.4, 30.62)], 16, cap0=False, cap1=False), "teal")
-    p.add(cyl(4.75, 0.4, (0, 0, 30.6), seg=16, bev=0.1), "cream")
-    k8 = 8
+    p.add(lathe([(2.1, 28.0), (2.6, 29.0), (3.6, 30.1), (4.4, 30.62)], 24, cap0=False, cap1=False), "teal")
+    p.add(cyl(4.75, 0.4, (0, 0, 30.6), seg=24, bev=0.1), "cream")
+    k8 = 12
     for i in range(k8):
         a = 2 * math.pi * (i + 0.5) / k8
         p.add(bar((4.55 * math.cos(a), 4.55 * math.sin(a), 31.0), (4.55 * math.cos(a), 4.55 * math.sin(a), 31.85), 0.1, 0.1, caps=False), "dark")
-    p.add(lathe([(4.62, 31.82), (4.62, 31.96), (4.48, 31.96), (4.48, 31.82)], 16, closed=True), "orange")
+    p.add(lathe([(4.62, 31.82), (4.62, 31.96), (4.48, 31.96), (4.48, 31.82)], 24, closed=True), "orange")
     o8 = math.pi / 8
     p.add(lathe([(3.95, 31.0), (3.95, 31.5)], 8, cap0=False, cap1=False, a0=o8), "cream")
-    p.add(lathe([(3.95, 31.5), (4.5, 34.3)], 8, cap0=False, cap1=False, a0=o8), "glass")
+    p.add(lathe([(3.95, 31.5), (4.41, 33.85)], 8, cap0=False, cap1=False, a0=o8), "glass")
+    p.add(lathe([(4.41, 33.85), (4.5, 34.3)], 8, cap0=False, cap1=False, a0=o8), "dteal")
     p.add(lathe([(4.5, 34.3), (4.52, 34.8)], 8, cap0=False, cap1=False, a0=o8), "cream")
     for i in range(8):
         a = o8 + 2 * math.pi * i / 8
         p.add(bar((3.95 * math.cos(a), 3.95 * math.sin(a), 31.45), (4.5 * math.cos(a), 4.5 * math.sin(a), 34.35), 0.2, 0.2, caps=False), "dark")
-    p.add(lathe([(4.4, 34.7), (5.0, 34.85), (5.0, 35.3), (4.6, 35.5), (3.0, 35.85), (0.0, 36.0)], 16, a0=0.0),
+    p.add(lathe([(4.4, 34.7), (5.0, 34.85), (5.0, 35.3), (4.6, 35.5), (3.0, 35.85), (0.0, 36.0)], 24, a0=0.0),
           lambda c, n: "white" if n.z < -0.5 else ("orange" if c.z < 35.35 else "cream"))
-    p.add(cyl(0.1, 3.5, (0, 0, 35.95), seg=6), "white")
+    p.add(cyl(0.14, 3.5, (0, 0, 35.95), seg=8), "white")
+    p.add(cyl(0.3, 0.3, (0, 0, 35.9), seg=8), "dark")
     p.add(lathe([(0.1, 39.4), (0.22, 39.55), (0.2, 39.85), (0.0, 40.0)], 8, cap0=False), "red")
-    p.add(cyl(0.1, 1.6, (-2.3, 0.0, 35.6), seg=6), "dark")
+    p.add(cyl(0.12, 1.6, (-2.3, 0.0, 35.6), seg=8), "dark")
+    p.add(cyl(0.32, 0.25, (-2.3, 0.0, 35.75), seg=8), "dark")
     p.add(rbox((2.4, 0.26, 0.5), (-2.3, 0.0, 37.3), 0.08, 1, rot=(0, 0, 30)), "white")
     p.add(lathe([(0.7, 35.55), (0.66, 35.9), (0.45, 36.25), (0.0, 36.4)], 10, M((2.3, 0, 0)), cap0=False), "white")
     return p
@@ -1283,8 +1287,8 @@ def sheet_interior(st):
     st.quad(-34, 34, -33, -27, 0.004, mat_rgb(WALK, 0.9))
     st.put("Terminal", 0, 0)
     glass_panes(st)
-    st.put("MarcoTablero", 0, 26.1, 0, 2.7)
-    board_fill(st, -9.0, 26.29, 3.0, 18.0, 9.0)
+    st.put("MarcoTablero", 0, 26.44, 0, 2.7)
+    board_fill(st, -9.0, 26.63, 3.0, 18.0, 9.0)
     red = mat_rgb("D9443A", 0.4)
     for x in (-6.5, 0.0, 6.5):
         st.put("Kiosko", x, 7.0)
@@ -1432,6 +1436,8 @@ def main():
             json.dump(manifest, fh, ensure_ascii=False, indent=2)
     if "Terminal" in objs:
         print("GLASS y=%.2f panes=%d" % (TERM["glass_y"], len(TERM["panes"])))
+        for pn in TERM["panes"]:
+            print("PANE x %.3f..%.3f z %.2f..%.2f" % pn)
     print("ALL BUDGETS OK" if ok else "SOME PIECES OVER BUDGET")
     if arg("--no-render"):
         return

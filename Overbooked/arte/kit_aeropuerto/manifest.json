@@ -1,0 +1,162 @@
+[
+  {
+    "nombre": "Terminal",
+    "archivo": "Terminal.fbx",
+    "tamano": [
+      54.0,
+      15.0,
+      54.0
+    ],
+    "triangulos": 6084
+  },
+  {
+    "nombre": "Mostrador",
+    "archivo": "Mostrador.fbx",
+    "tamano": [
+      6.0,
+      3.5,
+      3.0
+    ],
+    "triangulos": 758
+  },
+  {
+    "nombre": "BancoEspera",
+    "archivo": "BancoEspera.fbx",
+    "tamano": [
+      10.0,
+      2.2,
+      2.0
+    ],
+    "triangulos": 1168
+  },
+  {
+    "nombre": "Kiosko",
+    "archivo": "Kiosko.fbx",
+    "tamano": [
+      2.4,
+      3.0,
+      2.4
+    ],
+    "triangulos": 294
+  },
+  {
+    "nombre": "MarcoTablero",
+    "archivo": "MarcoTablero.fbx",
+    "tamano": [
+      18.6,
+      9.6,
+      0.8
+    ],
+    "triangulos": 156
+  },
+  {
+    "nombre": "TorreControl",
+    "archivo": "TorreControl.fbx",
+    "tamano": [
+      10.0,
+      40.0,
+      10.0
+    ],
+    "triangulos": 1718
+  },
+  {
+    "nombre": "CarroEquipaje",
+    "archivo": "CarroEquipaje.fbx",
+    "tamano": [
+      7.0,
+      1.9,
+      5.0
+    ],
+    "triangulos": 736
+  },
+  {
+    "nombre": "Tractor",
+    "archivo": "Tractor.fbx",
+    "tamano": [
+      4.0,
+      3.0,
+      7.0
+    ],
+    "triangulos": 1410
+  },
+  {
+    "nombre": "Escalera",
+    "archivo": "Escalera.fbx",
+    "tamano": [
+      3.0,
+      9.0,
+      9.0
+    ],
+    "triangulos": 956
+  },
+  {
+    "nombre": "Arbol",
+    "archivo": "Arbol.fbx",
+    "tamano": [
+      6.0,
+      9.0,
+      6.0
+    ],
+    "triangulos": 482
+  },
+  {
+    "nombre": "Arbusto",
+    "archivo": "Arbusto.fbx",
+    "tamano": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "triangulos": 240
+  },
+  {
+    "nombre": "Valla",
+    "archivo": "Valla.fbx",
+    "tamano": [
+      8.0,
+      2.4,
+      0.3
+    ],
+    "triangulos": 136
+  },
+  {
+    "nombre": "LuzPista",
+    "archivo": "LuzPista.fbx",
+    "tamano": [
+      0.4,
+      0.6,
+      0.4
+    ],
+    "triangulos": 58
+  },
+  {
+    "nombre": "Cono",
+    "archivo": "Cono.fbx",
+    "tamano": [
+      1.0,
+      1.6,
+      1.0
+    ],
+    "triangulos": 134
+  },
+  {
+    "nombre": "Manga",
+    "archivo": "Manga.fbx",
+    "tamano": [
+      1.2,
+      7.0,
+      4.0
+    ],
+    "triangulos": 368
+  },
+  {
+    "nombre": "Hangar",
+    "archivo": "Hangar.fbx",
+    "tamano": [
+      50.0,
+      22.0,
+      40.0
+    ],
+    "triangulos": 2100
+  }
+]
