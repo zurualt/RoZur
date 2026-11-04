@@ -469,7 +469,7 @@ function Peligros.iniciar()
 			Avion.danar(0.35 * paso)
 			if f.vida > 55 and rng:NextNumber() < 0.012 * paso * 10 then
 				local p = parte.Position + Vector3.new(rng:NextNumber(-4, 4), 0, rng:NextNumber(-4, 4))
-				table.insert(nuevos, Vector3.new(math.clamp(p.X, -6, 6), p.Y, math.clamp(p.Z, -62, 20)))
+				table.insert(nuevos, Vector3.new(math.clamp(p.X, -5.5, 5.5), p.Y, math.clamp(p.Z, -62, 20)))
 			end
 			for _, jugador in Players:GetPlayers() do
 				local raiz = Personajes.raiz(jugador)
