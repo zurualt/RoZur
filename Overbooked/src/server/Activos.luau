@@ -11,15 +11,6 @@ local plantillas: { [string]: Model } = {}
 local pendientes: { [string]: { (Model) -> () } } = {}
 local fallidos: { [string]: boolean } = {}
 
-local ROTACIONES = {
-	CFrame.identity,
-	CFrame.Angles(-math.pi / 2, 0, 0),
-	CFrame.Angles(math.pi / 2, 0, 0),
-	CFrame.Angles(0, math.pi / 2, 0),
-	CFrame.Angles(0, 0, math.pi / 2),
-	CFrame.Angles(-math.pi / 2, 0, math.pi / 2),
-}
-
 local ESQUINAS = {
 	Vector3.new(1, 1, 1),
 	Vector3.new(1, 1, -1),
@@ -30,46 +21,6 @@ local ESQUINAS = {
 	Vector3.new(-1, -1, 1),
 	Vector3.new(-1, -1, -1),
 }
-
-local function caja(modelo: Model): (Vector3, Vector3)
-	local minimo = Vector3.one * math.huge
-	local maximo = -Vector3.one * math.huge
-	for _, d in modelo:GetDescendants() do
-		if d:IsA("BasePart") then
-			local cf, s = d.CFrame, d.Size / 2
-			for _, signo in ESQUINAS do
-				local p = cf:PointToWorldSpace(s * signo)
-				minimo = minimo:Min(p)
-				maximo = maximo:Max(p)
-			end
-		end
-	end
-	return minimo, maximo
-end
-
-local function forma(v: Vector3): Vector3
-	return v / math.max(v.X, v.Y, v.Z, 1e-3)
-end
-
-local function orientar(modelo: Model, nombre: string): CFrame
-	local esperada = Visuales.CAJAS[nombre]
-	if not esperada then
-		return Config.ROTACION_FBX
-	end
-	local objetivo = forma(esperada.maximo - esperada.minimo)
-	local mejor, error = CFrame.identity, math.huge
-	for _, r in ROTACIONES do
-		modelo:PivotTo(r)
-		local minimo, maximo = caja(modelo)
-		local d = forma(maximo - minimo) - objetivo
-		local e = math.abs(d.X) + math.abs(d.Y) + math.abs(d.Z)
-		if e < error - 0.02 then
-			mejor, error = r, e
-		end
-	end
-	modelo:PivotTo(CFrame.identity)
-	return mejor * Config.ROTACION_FBX
-end
 
 local function preparar(modelo: Model)
 	for _, d in modelo:GetDescendants() do
@@ -122,7 +73,6 @@ local function cargar(nombre: string, id: number)
 	end
 	preparar(modelo)
 	modelo.PrimaryPart = primera
-	modelo:SetAttribute("Rotacion", orientar(modelo, nombre))
 	plantillas[nombre] = modelo
 	local cola = pendientes[nombre]
 	if cola then
@@ -170,9 +120,7 @@ local function cajaEn(modelo: Model, base: CFrame): (Vector3, Vector3)
 end
 
 local function colocar(visual: Model, base: CFrame, nombre: string, escala: number?)
-	local r = visual:GetAttribute("Rotacion")
-	local giro = if typeof(r) == "CFrame" then r else Config.ROTACION_FBX
-	visual:PivotTo(base * giro)
+	visual:PivotTo(base * Config.ROTACION_FBX)
 	local esperada = Visuales.CAJAS[nombre]
 	if not esperada then
 		return

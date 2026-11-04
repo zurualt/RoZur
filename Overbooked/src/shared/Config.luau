@@ -12,7 +12,7 @@ local Config = {}
 
 Config.ASSET_TRIPULANTE = 87418247604950
 Config.ALTURA_TRIPULANTE = 4.67
-Config.ROTACION_FBX = CFrame.identity
+Config.ROTACION_FBX = CFrame.Angles(math.pi / 2, 0, 0)
 
 
 Config.COLORES_JUGADOR = {

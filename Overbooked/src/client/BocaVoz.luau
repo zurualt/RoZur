@@ -234,7 +234,7 @@ function BocaVoz.iniciar()
 	end
 	Players.PlayerAdded:Connect(seguir)
 	Players.PlayerRemoving:Connect(soltar)
-	RunService.PreRender:Connect(paso)
+	RunService.PreSimulation:Connect(paso)
 end
 
 return BocaVoz

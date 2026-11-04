@@ -123,7 +123,7 @@ Cada cliente conecta el `AudioDeviceInput` de cada jugador a un `AudioAnalyzer` 
 ## Pendiente
 
 - **Probar en el servidor por API:** la clave aún no tiene el permiso *Luau Execution Sessions* (escritura), así que no he podido arrancar el juego en un servidor de Roblox. Lo que sí está comprobado: todo el código pasa el analizador de tipos de Luau en modo estricto, dos revisiones de código de Roblox (sus hallazgos están corregidos) y la vista previa en Blender del mapa con todos los modelos colocados.
-- **Orientación de los modelos:** cómo importa Roblox los FBX por API no se puede comprobar sin ese permiso. El código detecta solo los ejes de cada modelo. Si los asientos o los pasajeros salen mirando hacia atrás, se corrige con `Config.ROTACION_FBX = CFrame.Angles(0, math.pi, 0)`.
+- **Orientación de los modelos:** comprobado en Studio con los 78 modelos: todos se importan igual y se colocan con `Config.ROTACION_FBX = CFrame.Angles(math.pi / 2, 0, 0)`. Mirar solo la forma de la caja no distingue un modelo de su versión boca abajo, por eso ya no se detecta por modelo.
 - **Tripulante:** si el modelo importado no trae `Humanoid` o `HumanoidRootPart`, el juego usa personajes por defecto y lo avisa en la consola del servidor.
 - **Sonidos:** ElevenLabs no es accesible desde esta sesión, así que los efectos y la música se generan por código (`arte/sonidos/sonidos_gen.py`) y se suben como audio por la API. Si se habilita ElevenLabs, se pueden sustituir archivo por archivo con el mismo nombre.
 - **Del tráiler:** piolet, tractor de equipaje y aduana ya están hechos.

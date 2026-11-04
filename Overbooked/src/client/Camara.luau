@@ -23,6 +23,8 @@ local HOMBROS = { "RightUpperArm", "LeftUpperArm" }
 local CODOS = { "RightLowerArm", "LeftLowerArm" }
 local GIRO_HOMBRO = CFrame.Angles(math.rad(78), 0, 0)
 local GIRO_CODO = CFrame.Angles(math.rad(18), 0, 0)
+local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(55), 0, 0)
+local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(45), 0, 0)
 
 function Camara.sacudir(cantidad: number)
 	trauma = math.min(1, trauma + cantidad)
@@ -74,8 +76,12 @@ local function motores(personaje: Model, nombres: { string }): { Motor6D }
 end
 
 local function poseSosteniendo(personaje: Model)
+	if personaje:GetAttribute("Ragdoll") then
+		return
+	end
 	local sosteniendo = personaje:GetAttribute("Sosteniendo")
-	if typeof(sosteniendo) ~= "string" or sosteniendo == "" or personaje:GetAttribute("Ragdoll") then
+	local lleva = typeof(sosteniendo) == "string" and sosteniendo ~= ""
+	if not lleva and (personaje ~= jugador.Character or terceraPersona) then
 		return
 	end
 	local datos = articulaciones[personaje]
@@ -83,13 +89,15 @@ local function poseSosteniendo(personaje: Model)
 		datos = { hombros = motores(personaje, HOMBROS), codos = motores(personaje, CODOS) }
 		articulaciones[personaje] = datos
 	end
+	local hombro = if lleva then GIRO_HOMBRO else GIRO_HOMBRO_REPOSO
+	local codo = if lleva then GIRO_CODO else GIRO_CODO_REPOSO
 	for _, m in datos.hombros do
 		local rot = m.C0.Rotation
-		m.Transform = rot:Inverse() * GIRO_HOMBRO * rot
+		m.Transform = rot:Inverse() * hombro * rot
 	end
 	for _, m in datos.codos do
 		local rot = m.C0.Rotation
-		m.Transform = rot:Inverse() * GIRO_CODO * rot
+		m.Transform = rot:Inverse() * codo * rot
 	end
 end
 
@@ -98,7 +106,7 @@ function Camara.iniciar()
 	local camara = Workspace.CurrentCamera
 	camara.FieldOfView = 80
 
-	RunService.PreRender:Connect(function()
+	RunService.PreSimulation:Connect(function()
 		local foco = camara.CFrame.Position
 		for _, otro in Players:GetPlayers() do
 			local personaje = otro.Character

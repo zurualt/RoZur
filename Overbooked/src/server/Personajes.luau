@@ -223,10 +223,24 @@ local function cargarPlantilla()
 		return
 	end
 	for _, d in modelo:GetDescendants() do
-		if d:IsA("BaseScript") then
+		if d:IsA("BaseScript") or d:IsA("BallSocketConstraint") then
 			d:Destroy()
 		elseif d:IsA("BasePart") then
 			d.Anchored = false
+		elseif d:IsA("AnimationConstraint") then
+			local a0, a1 = d.Attachment0, d.Attachment1
+			local p0 = a0 and a0.Parent
+			local p1 = a1 and a1.Parent
+			if a0 and a1 and p0 and p1 and p0:IsA("BasePart") and p1:IsA("BasePart") then
+				local motor = Instance.new("Motor6D")
+				motor.Name = d.Name
+				motor.Part0 = p0
+				motor.Part1 = p1
+				motor.C0 = a0.CFrame
+				motor.C1 = a1.CFrame
+				motor.Parent = p1
+			end
+			d:Destroy()
 		end
 	end
 	modelo.PrimaryPart = raiz
