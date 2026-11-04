@@ -24,6 +24,7 @@ local RemotoSacudida = Remotos:WaitForChild("Sacudida") :: UnreliableRemoteEvent
 local RemotoUsar = Remotos:WaitForChild("Usar") :: RemoteEvent
 
 type Fuego = { parte: BasePart, vida: number }
+type Panel = { parte: BasePart, reparacion: number }
 type Brecha = { parte: BasePart, ventana: Model, reparacion: number, originales: { [BasePart]: number }, viento: ParticleEmitter, tapon: BasePart?, sinTapon: number }
 
 local Peligros = {}
@@ -32,6 +33,7 @@ local avion = Workspace:WaitForChild("Avion") :: Model
 local carpeta = avion:WaitForChild("Peligros") :: Folder
 local fuegos: { [BasePart]: Fuego } = {}
 local brechas: { [BasePart]: Brecha } = {}
+local paneles: { [BasePart]: Panel } = {}
 local activo = false
 local rng = Random.new()
 local turbulenciaEvento = 0
@@ -268,6 +270,47 @@ local function cerrar(b: Brecha, silencioso: boolean?)
 	end
 end
 
+local function panelSuelto()
+	local n = 0
+	for _ in paneles do
+		n += 1
+	end
+	if n >= 2 then
+		return
+	end
+	local z = rng:NextNumber(-40, 10)
+	local x = rng:NextNumber(-1.5, 1.5)
+	local parte = Instance.new("Part")
+	parte.Name = "PanelSuelto"
+	parte.Size = Vector3.new(2.6, 0.25, 2.2)
+	parte.Color = Color3.fromRGB(233, 228, 214)
+	parte.Material = Enum.Material.Metal
+	parte.Anchored = true
+	parte.CanCollide = false
+	parte.CanQuery = false
+	local bisagra = CFrame.new(x, 113.7, z - 1.1)
+	parte.CFrame = bisagra * CFrame.new(0, 0, 1.1)
+	local chispas = VFX.chispas(parte)
+	chispas.Rate = 6
+	parte:SetAttribute("Reparacion", 0)
+	parte:SetAttribute("Bisagra", bisagra)
+	CollectionService:AddTag(parte, "PanelSuelto")
+	parte.Parent = carpeta
+	paneles[parte] = { parte = parte, reparacion = 0 }
+	Avion.danar(3)
+	Sonidos.emitir("GolpeMetal", parte.Position)
+	aviso("🔩 ¡Panel suelto en el techo! Sal al ala, trepa con el piolet y clávalo a martillazos (F)", "peligro")
+end
+
+local function cerrarPanel(p: Panel, silencioso: boolean?)
+	paneles[p.parte] = nil
+	if not silencioso then
+		Sonidos.emitir("Reparado", p.parte.Position)
+		aviso("🔩 ¡Panel del techo arreglado!", "bien")
+	end
+	p.parte:Destroy()
+end
+
 local function pajaros()
 	aviso("🐦 ¡Bandada de pájaros delante!", "peligro")
 	avion:SetAttribute("Bandada", os.clock())
@@ -338,6 +381,7 @@ local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
 	{ f = tormenta, peso = 1, riesgo = 2 },
 	{ f = falloMotor, peso = 1, riesgo = 2 },
 	{ f = Piratas.lanzar, peso = 2, riesgo = 2 },
+	{ f = panelSuelto, peso = 2, riesgo = 1 },
 	{
 		f = function()
 			Avion.desconectarAutopiloto()
@@ -412,6 +456,9 @@ function Peligros.detener()
 	table.clear(fuegos)
 	for _, b in brechas do
 		cerrar(b, true)
+	end
+	for _, p in paneles do
+		cerrarPanel(p, true)
 	end
 	Workspace.Gravity = Config.GRAVEDAD
 	Piratas.detener()
@@ -510,6 +557,25 @@ local function usarAgua(jugador: Player, mirada: Vector3?)
 	end
 end
 
+local function usarPiolet(jugador: Player)
+	local origen = frente(jugador)
+	if not origen then
+		return
+	end
+	local H = Config.HERRAMIENTAS
+	for parte, p in paneles do
+		if (parte.Position - origen).Magnitude <= H.ALCANCE_PIOLET then
+			Sonidos.emitir("GolpeMetal", parte.Position, 0.15)
+			p.reparacion += H.REPARACION_PIOLET
+			parte:SetAttribute("Reparacion", math.min(100, p.reparacion))
+			if p.reparacion >= 100 then
+				cerrarPanel(p)
+			end
+			return
+		end
+	end
+end
+
 local function usarLlave(jugador: Player)
 	local origen = frente(jugador)
 	if not origen then
@@ -556,6 +622,8 @@ function Peligros.iniciar()
 			usarLlave(jugador)
 		elseif tipo == "Agua" then
 			usarAgua(jugador, m)
+		elseif tipo == "Piolet" then
+			usarPiolet(jugador)
 		end
 	end)
 	Players.PlayerRemoving:Connect(function(jugador)
@@ -622,6 +690,9 @@ function Peligros.iniciar()
 		end
 		local ahora = os.clock()
 		local nuevos: { Vector3 } = {}
+		for _ in paneles do
+			Avion.danar(0.25 * paso)
+		end
 		for parte, f in fuegos do
 			Avion.danar(0.35 * paso)
 			Carga.quemar(parte.Position, 2.5, 6 * paso)

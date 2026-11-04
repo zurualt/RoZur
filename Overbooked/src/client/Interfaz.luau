@@ -184,6 +184,7 @@ local function construir()
 		"Tapa un agujero lanzándole una maleta 🧳",
 		"El cocodrilo persigue la comida 🍔🐊",
 		"Sentado no te caes con las turbulencias",
+		"Piolet (bodega): trepa por fuera del avión 🧗",
 		"",
 		"<b>PILOTO</b>: siéntate en el asiento izquierdo",
 		"Shift acelera · W sube · A/D gira",
@@ -339,7 +340,7 @@ local function actualizarPista()
 	if objeto then
 		local tipo = Agarre.tipo(objeto)
 		local raciones = objeto:GetAttribute("Raciones")
-		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F: usar · Clic: soltar · Clic der.: lanzar" elseif tipo == "Agua" then "E: servir · F: echar al fuego · Clic der.: lanzar" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif typeof(raciones) == "number" then `🍔×{raciones} · E: servir · Clic: soltar` else "Clic: soltar · Clic der.: lanzar"
+		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F: usar · Clic: soltar · Clic der.: lanzar" elseif tipo == "Agua" then "E: servir · F: echar al fuego · Clic der.: lanzar" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "F: clavarte al casco por fuera · Espacio: soltarte · F junto al panel: martillear" elseif typeof(raciones) == "number" then `🍔×{raciones} · E: servir · Clic: soltar` else "Clic: soltar · Clic der.: lanzar"
 		return
 	end
 	local apuntado = Agarre.apuntado()

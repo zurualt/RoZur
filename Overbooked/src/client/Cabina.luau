@@ -1,4 +1,5 @@
 --!strict
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -130,6 +131,12 @@ function Cabina.iniciar()
 	RunService.RenderStepped:Connect(function(dt: number)
 		local t = os.clock()
 		luzCabina(t)
+		for _, panel in CollectionService:GetTagged("PanelSuelto") do
+			local b = panel:GetAttribute("Bisagra")
+			if panel:IsA("BasePart") and typeof(b) == "CFrame" then
+				panel.CFrame = b * CFrame.Angles(math.rad(19 + 19 * math.sin(t * 26)), 0, 0) * CFrame.new(0, 0, 1.1)
+			end
+		end
 		local camara = Workspace.CurrentCamera
 		local cerca = (camara.CFrame.Position - columna.Position).Magnitude < 70
 		local k = math.min(1, dt * 8)

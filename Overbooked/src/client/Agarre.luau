@@ -241,7 +241,7 @@ function Agarre.iniciar()
 		end
 		if o then
 			local tipo = tipoDe(objeto)
-			if tipo == "Extintor" or tipo == "Llave" then
+			if tipo == "Extintor" or tipo == "Llave" or tipo == "Piolet" then
 				o.CFrame = cf.Rotation
 			else
 				local plano = cf.LookVector * Vector3.new(1, 0, 1)

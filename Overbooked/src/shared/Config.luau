@@ -105,6 +105,8 @@ Config.HERRAMIENTAS = {
 	DANO_EXTINTOR = 9,
 	ALCANCE_LLAVE = 9,
 	REPARACION_LLAVE = 8,
+	REPARACION_PIOLET = 10,
+	ALCANCE_PIOLET = 6,
 	CADENCIA = 0.18,
 }
 
@@ -188,6 +190,14 @@ Config.OBJETOS = {
 		densidad = 0.6,
 		visual = "Carrito",
 		nombre = "Carrito",
+	},
+	Piolet = {
+		tamano = Vector3.new(0.5, 1.9, 0.25),
+		color = Color3.fromRGB(242, 123, 43),
+		material = Enum.Material.Metal,
+		densidad = 1.2,
+		visual = "Piolet",
+		nombre = "Piolet",
 	},
 	Bolso = {
 		tamano = Vector3.new(1.6, 1, 0.8),

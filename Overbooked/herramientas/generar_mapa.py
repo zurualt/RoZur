@@ -281,6 +281,8 @@ def bodega():
     p.append(part("ZonaCarga", (8, 5, 15), (0, 103, 12), "FFFFFF", transp=1, colision=False, sombra=False))
     p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (6.0, SUELO_Y + 0.15, 1.0), GRIS, atributos={"Tipo": "Extintor"}))
     p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (-6.0, SUELO_Y + 0.15, 1.0), GRIS, atributos={"Tipo": "Llave"}))
+    for x in (-6.0, 6.0):
+        p.append(part("SoportePiolet", (1.2, 0.3, 1.2), (x, SUELO_Y + 0.15, 20.0), GRIS, atributos={"Tipo": "Piolet"}))
     p.append(part("BotonRampaBodega", (0.4, 0.9, 0.9), (6.5, 103.5, 19.5), TURQUESA, forma="Cylinder"))
     angulo = -90.0
     largo = 9.6
@@ -324,6 +326,43 @@ def exterior():
     return carpeta("Exterior", p)
 
 
+def casco():
+    p = []
+    radio, cy, z0, z1 = 8.45, 105.0, -48.0, 18.0
+    huecos = {1: [(-25.4, -21.6)], -1: [(-25.4, -21.6)]}
+    huecos_der = [(-7.4, -3.6)]
+    n = 16
+    ancho = 2 * radio * math.tan(math.pi / n) + 0.05
+    for k in range(-1, 10):
+        for lado in (1, -1):
+            if lado == -1 and k in (4,):
+                continue
+            ang = math.radians(k * 22.5)
+            if lado == -1:
+                ang = math.pi - ang
+            x = radio * math.cos(ang)
+            y = cy + radio * math.sin(ang)
+            giro = math.degrees(ang) - 90
+            tramos = [(z0, z1)]
+            if k in (-1, 0):
+                cortes = list(huecos[lado]) + (huecos_der if lado == 1 else [])
+                for a, b in sorted(cortes):
+                    nuevos = []
+                    for u, w in tramos:
+                        if b <= u or a >= w:
+                            nuevos.append((u, w))
+                        else:
+                            if a > u:
+                                nuevos.append((u, a))
+                            if b < w:
+                                nuevos.append((b, w))
+                    tramos = nuevos
+            for u, w in tramos:
+                p.append(part("Casco", (ancho, 0.4, w - u), (x, y, (u + w) / 2), "FFFFFF", r=rot(0, 0, giro), transp=1,
+                              sombra=False, atributos={"Escalable": True}))
+    return carpeta("Casco", p)
+
+
 def marcadores():
     return carpeta("Marcadores", [
         part("SpawnAvion", (4, 0.4, 4), (0, SUELO_Y + 0.2, -47), "FFFFFF", clase="SpawnLocation", transp=1,
@@ -336,7 +375,7 @@ def avion():
     return {
         "className": "Model",
         "attributes": {"Fase": "Aeropuerto"},
-        "children": [estructura(), altillos(), asientos(), cabina(), cocina(), bano_y_puertas(), bodega(), exterior(),
+        "children": [estructura(), altillos(), asientos(), cabina(), cocina(), bano_y_puertas(), bodega(), exterior(), casco(),
                      marcadores(), carpeta("Peligros", []), carpeta("Objetos", []), carpeta("Pasajeros", [])],
     }
 

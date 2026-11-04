@@ -111,7 +111,7 @@ function Cuerpo.iniciar()
 		if not humanoide or not raiz or not raiz:IsA("BasePart") or humanoide.SeatPart or humanoide.Health <= 0 then
 			return
 		end
-		if not enAire() then
+		if not enAire() or (personaje and personaje:GetAttribute("Escalando") == true) then
 			return
 		end
 		local pos = raiz.Position
@@ -126,6 +126,9 @@ function Cuerpo.iniciar()
 		end
 		if math.abs(pos.X) > 8.2 and pos.Y < 104 then
 			empuje += Vector3.new(math.sign(pos.X) * 6, 0, 28)
+		end
+		if pos.Y > 111.2 and math.abs(pos.X) < 10 then
+			empuje += Vector3.new(math.sign(pos.X) * 5, 0, 36)
 		end
 		for _, d in puertas do
 			if d:GetAttribute("Abierta") then
