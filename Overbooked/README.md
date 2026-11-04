@@ -83,6 +83,7 @@ Todos los números del juego están en `src/shared/Config.luau`.
 3. Regenerar los visuales: `python3 herramientas/generar_visuales.py`
 4. Construir: `rojo build default.project.json -o overbooked.rbxlx`
 5. Publicar: `POST https://apis.roblox.com/universes/v1/10774639088/places/70554923634533/versions?versionType=Published` con el archivo `.rbxlx`
+6. Probar en un servidor de Roblox: `python3 herramientas/probar.py` ejecuta `herramientas/pruebas/servidor.luau` con la API de ejecución de Luau. Comprueba cómo se importó el tripulante (Humanoid, HumanoidRootPart, huesos de la boca, articulaciones), cuántos modelos de Blender se han colocado, si cargó el casco y la fase de la partida. Necesita el permiso *Luau Execution Sessions*.
 
 ## Boca que se abre al hablar por voz
 
