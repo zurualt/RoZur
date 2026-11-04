@@ -168,7 +168,7 @@ function Peligros.brecha()
 	Pasajeros.asustar(0.5)
 end
 
-local function cerrar(b: Brecha)
+local function cerrar(b: Brecha, silencioso: boolean?)
 	brechas[b.parte] = nil
 	for p, t in b.originales do
 		p.CanCollide = true
@@ -176,7 +176,9 @@ local function cerrar(b: Brecha)
 	end
 	b.ventana:SetAttribute("Rota", false)
 	b.parte:Destroy()
-	aviso("🔧 ¡Agujero reparado!", "bien")
+	if not silencioso then
+		aviso("🔧 ¡Agujero reparado!", "bien")
+	end
 end
 
 local function pajaros()
@@ -321,7 +323,7 @@ function Peligros.detener()
 	end
 	table.clear(fuegos)
 	for _, b in brechas do
-		cerrar(b)
+		cerrar(b, true)
 	end
 	Workspace.Gravity = Config.GRAVEDAD
 	Piratas.detener()
@@ -408,7 +410,7 @@ local function usarLlave(jugador: Player)
 			end
 		end
 	end
-	Carga.danarJaula(-6)
+	Carga.repararJaula(origen, H.ALCANCE_LLAVE + 3, 6)
 end
 
 function Peligros.iniciar()
@@ -443,11 +445,15 @@ function Peligros.iniciar()
 		local paso = acumulado
 		acumulado = 0
 		local cinturones = Avion.estado.cinturones
+		local lista: { BasePart } = {}
+		if next(brechas) ~= nil then
+			lista = sueltos()
+		end
 		for parte in brechas do
 			Avion.danar(0.6 * paso)
 			local centro = parte.Position
 			local salida = parte.CFrame.LookVector * -1
-			for _, p in sueltos() do
+			for _, p in lista do
 				local delta = centro - p.Position
 				local d = delta.Magnitude
 				if d < 24 and d > 0.1 then
@@ -458,12 +464,12 @@ function Peligros.iniciar()
 			Pasajeros.succionar(centro, 1.2, 22, cinturones, paso)
 		end
 		local ahora = os.clock()
+		local nuevos: { Vector3 } = {}
 		for parte, f in fuegos do
 			Avion.danar(0.35 * paso)
 			if f.vida > 55 and rng:NextNumber() < 0.012 * paso * 10 then
 				local p = parte.Position + Vector3.new(rng:NextNumber(-4, 4), 0, rng:NextNumber(-4, 4))
-				p = Vector3.new(math.clamp(p.X, -6, 6), p.Y, math.clamp(p.Z, -62, 20))
-				Peligros.fuego(p)
+				table.insert(nuevos, Vector3.new(math.clamp(p.X, -6, 6), p.Y, math.clamp(p.Z, -62, 20)))
 			end
 			for _, jugador in Players:GetPlayers() do
 				local raiz = Personajes.raiz(jugador)
@@ -474,6 +480,9 @@ function Peligros.iniciar()
 					RemotoAviso:FireClient(jugador, "🔥 ¡Te has quemado!", "peligro")
 				end
 			end
+		end
+		for _, p in nuevos do
+			Peligros.fuego(p)
 		end
 	end)
 end

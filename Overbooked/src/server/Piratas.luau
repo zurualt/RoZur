@@ -159,6 +159,10 @@ function Piratas.iniciar()
 		end
 		acumulado = 0
 		local ahora = os.clock()
+		if Avion.estado.enTierra then
+			Piratas.detener()
+			return
+		end
 		if ahora > fin then
 			RemotoAviso:FireAllClients("🏴‍☠️ Los piratas se retiran", "info")
 			Piratas.detener()

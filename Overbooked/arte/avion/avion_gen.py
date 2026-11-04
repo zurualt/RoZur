@@ -409,17 +409,17 @@ def ring_pts(y, zc, W, Ht, Hb, nt, nb, th_kb):
 
 def herm(y):
     t = (y - 12.0) / 10.0
-    p0, p1, m1 = -3.75, 0.0, 10.0
+    p0, p1, m1 = -3.75, -1.0, 5.0
     return (2 * t ** 3 - 3 * t ** 2 + 1) * p0 + (-2 * t ** 3 + 3 * t ** 2) * p1 + (t ** 3 - t ** 2) * m1
 
 
 def tail_params(y):
-    zt = 13.75 - 1.15 * ss(14.0, 30.0, y)
-    zb = -3.75 if y <= 12 else (herm(y) if y <= 22 else y - 22.0)
-    W = R0 - 2.05 * ss(14.0, 30.0, y)
+    zt = 13.75 - 1.15 * ss(22.0, 30.0, y)
+    zb = -3.75 if y <= 12 else (herm(y) if y <= 22 else -1.0 + (y - 22.0) * 9.0 / 8.0)
+    W = R0 - 2.05 * ss(22.0, 30.0, y)
     zc = 0.5 * (zt + zb)
-    nb = 2.0 + 2.5 * ss(12.0, 22.0, y)
-    nt = 2.0 + 0.4 * ss(14.0, 30.0, y)
+    nb = 2.0 + 3.0 * ss(12.0, 22.0, y)
+    nt = 2.0 + 0.4 * ss(22.0, 30.0, y)
     cb = min(1.0, (6.0 / W) ** (nb / 2.0))
     th_kb = -math.degrees(math.acos(cb))
     return zc, W, zt - zc, zc - zb, nt, nb, th_kb
@@ -516,14 +516,21 @@ def window(yc, sx):
     return out
 
 
-def rounded_rect(y0, y1, s0, s1, rc, per=4):
+def rounded_rect(y0, y1, s0, s1, rc, per=4, step=1.2):
     pts = []
     corners = [((y1 - rc, s0 + rc), -90), ((y1 - rc, s1 - rc), 0), ((y0 + rc, s1 - rc), 90), ((y0 + rc, s0 + rc), 180)]
     for (cy, cs), a0 in corners:
         for k in range(per + 1):
             a = math.radians(a0 + 90.0 * k / per)
             pts.append((cy + rc * math.cos(a), cs + rc * math.sin(a)))
-    return pts
+    out = []
+    for i, p in enumerate(pts):
+        q = pts[(i + 1) % len(pts)]
+        d = math.hypot(q[0] - p[0], q[1] - p[1])
+        n = max(1, int(math.ceil(d / step)))
+        for k in range(n):
+            out.append((p[0] + (q[0] - p[0]) * k / n, p[1] + (q[1] - p[1]) * k / n))
+    return out
 
 
 def outline(sx, y0, y1, z0, z1, rc, radius, k, off):
@@ -682,9 +689,9 @@ def main():
     print("BBOX", mn, mx)
     if not RENDER:
         return
-    render_setup(scene, ground_z=-10.0, ground_size=400, ground_hex="D9D4C7", sun_rot=(50, 10, -40))
+    render_setup(scene, ground_z=-10.0, ground_size=5000, ground_hex="D9D4C7", sun_rot=(50, 10, -40))
     shoot(scene, "avion_1", dict(loc=(-78.0, -112.0, 42.0), target=(0.0, -16.0, 1.0), lens=40))
-    shoot(scene, "avion_2", dict(loc=(-160.0, -18.0, 14.0), target=(0.0, -18.0, 3.0), ortho=106))
+    shoot(scene, "avion_2", dict(loc=(-250.0, -18.0, 5.0), target=(0.0, -18.0, 2.0), lens=80))
 
 
 main()

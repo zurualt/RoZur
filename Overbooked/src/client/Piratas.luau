@@ -15,6 +15,7 @@ type Visual = {
 	raiz: BasePart,
 	partes: { BasePart },
 	offsets: { CFrame },
+	marcos: { CFrame },
 	anterior: Vector3,
 }
 
@@ -75,7 +76,7 @@ local function crear(f: Instance)
 	pieza(modelo, Vector3.new(3.4, 0.2, 0.3), Color3.fromRGB(30, 30, 30), CFrame.new(0, 0, -6.6), partes, offsets)
 	pieza(modelo, Vector3.new(0.15, 1.6, 2.2), Color3.fromRGB(20, 20, 20), CFrame.new(0, 3.4, 5.6), partes, offsets)
 	modelo.Parent = Workspace
-	visuales[f] = { modelo = modelo, raiz = raiz, partes = partes, offsets = offsets, anterior = posicion(f, Workspace:GetServerTimeNow()) }
+	visuales[f] = { modelo = modelo, raiz = raiz, partes = partes, offsets = offsets, marcos = table.clone(offsets), anterior = posicion(f, Workspace:GetServerTimeNow()) }
 	f:GetAttributeChangedSignal("Vida"):Connect(function()
 		local vida = f:GetAttribute("Vida")
 		if typeof(vida) == "number" and vida <= 0 then
@@ -157,7 +158,7 @@ function Piratas.iniciar()
 			local avance = pos - v.anterior
 			v.anterior = pos
 			local base = if avance.Magnitude > 0.01 then CFrame.lookAt(pos, pos + avance) else CFrame.new(pos)
-			local marcos = table.create(#v.partes)
+			local marcos = v.marcos
 			for i, o in v.offsets do
 				marcos[i] = base * o
 			end

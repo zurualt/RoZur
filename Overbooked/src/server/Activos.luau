@@ -182,7 +182,9 @@ function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
 		end
 		local visual = plantilla:Clone()
 		local y = baseY or (marcador.Position.Y - marcador.Size.Y / 2)
-		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * marcador.CFrame.Rotation, nombre)
+		local frente = marcador.CFrame.LookVector * Vector3.new(1, 0, 1)
+		local giro = if frente.Magnitude > 0.01 then CFrame.lookAt(Vector3.zero, frente) else CFrame.identity
+		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * giro, nombre)
 		anclar(visual)
 		ocultar(marcador)
 		visual.Parent = marcador

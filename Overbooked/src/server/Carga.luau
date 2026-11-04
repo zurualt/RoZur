@@ -24,6 +24,7 @@ type Bulto = {
 	vida: number,
 	umbral: number,
 	previa: Vector3,
+	gracia: number,
 }
 
 local Carga = {}
@@ -41,12 +42,28 @@ local golpes: { [Player]: number } = {}
 local rng = Random.new()
 
 local UMBRALES = { Maleta = 55, Caja = 42, CajaFragil = 24, Jaula = 38 }
+local MALETAS = { "Maleta1", "Maleta2", "Maleta3" }
 local COLORES_MALETA = { Color3.fromRGB(242, 123, 43), Color3.fromRGB(31, 166, 160), Color3.fromRGB(217, 68, 58) }
+local COLUMNAS = { -2.7, 0, 2.7 }
 
-local function posicionLibre(): CFrame
-	local s = zona.Size
-	local p = zona.Position + Vector3.new(rng:NextNumber(-s.X / 2, s.X / 2), rng:NextNumber(0, s.Y / 2), rng:NextNumber(-s.Z / 2, s.Z / 2))
-	return CFrame.new(p) * CFrame.Angles(0, rng:NextNumber(0, math.pi * 2), 0)
+local function servidor(parte: BasePart)
+	if parte.Anchored or not parte:IsDescendantOf(Workspace) then
+		return
+	end
+	pcall(function()
+		if parte:GetNetworkOwner() ~= nil then
+			parte:SetNetworkOwner(nil)
+		end
+	end)
+end
+
+local function hueco(indice: number, alto: number): CFrame
+	local fila = (indice - 1) // #COLUMNAS
+	local columna = COLUMNAS[(indice - 1) % #COLUMNAS + 1]
+	local piso = fila // 5
+	local z = zona.Position.Z - zona.Size.Z / 2 + 1.8 + (fila % 5) * 3.3
+	local y = Config.SUELO_Y + alto / 2 + 0.1 + piso * 3.2
+	return CFrame.new(zona.Position.X + columna, y, z)
 end
 
 local function crearCocodrilo(cf: CFrame): Model
@@ -78,6 +95,7 @@ local function crearCocodrilo(cf: CFrame): Model
 	CollectionService:AddTag(modelo, "Agarrable")
 	CollectionService:AddTag(modelo, "Cocodrilo")
 	modelo.Parent = carpeta
+	servidor(cuerpo)
 	if Activos.tiene("Cocodrilo") then
 		boca.Transparency = 1
 		Activos.vestirDinamico(cuerpo, "Cocodrilo")
@@ -89,9 +107,10 @@ local function soltarCocodrilo(desde: BasePart)
 	if cocodrilo then
 		return
 	end
-	cocodrilo = crearCocodrilo(desde.CFrame * CFrame.new(0, 1.5, 0))
+	local salida = desde.CFrame * CFrame.new(0, 0, -(desde.Size.Z / 2 + 3.6))
+	cocodrilo = crearCocodrilo(CFrame.new(salida.Position.X, Config.SUELO_Y + 0.7, salida.Position.Z) * desde.CFrame.Rotation)
 	cuenta.cocodrilo = "Suelto"
-	RemotoAviso:FireAllClients("🐊 ¡SE HA ESCAPADO EL COCODRILO! Mételo en su jaula", "peligro")
+	RemotoAviso:FireAllClients("🐊 ¡SE HA ESCAPADO EL COCODRILO! Cógelo y suéltalo junto a su jaula", "peligro")
 	Pasajeros.asustar(0.6)
 end
 
@@ -107,6 +126,7 @@ local function registrar(parte: BasePart, tipo: string, valor: number, entrega: 
 		vida = 100,
 		umbral = UMBRALES[tipo] or 45,
 		previa = Vector3.zero,
+		gracia = os.clock() + 2,
 	}
 	if entrega then
 		local marca = Instance.new("Highlight")
@@ -119,11 +139,21 @@ end
 
 function Carga.cargar(contrato: Contratos.Contrato)
 	Carga.limpiar()
+	local indice = 0
 	for _, c in contrato.carga do
 		for _ = 1, c.cantidad do
-			local parte = Objetos.crear(c.tipo, posicionLibre(), carpeta)
-			if c.tipo == "Maleta" then
-				parte.Color = COLORES_MALETA[rng:NextInteger(1, #COLORES_MALETA)]
+			local alto = Config.OBJETOS[c.tipo].tamano.Y
+			local cf
+			if c.tipo == "Jaula" then
+				cf = CFrame.new(-5.5, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
+			else
+				indice += 1
+				cf = hueco(indice, alto) * CFrame.Angles(0, rng:NextNumber(-0.3, 0.3), 0)
+			end
+			local variante = if c.tipo == "Maleta" then rng:NextInteger(1, #MALETAS) else 0
+			local parte = Objetos.crear(c.tipo, cf, carpeta, if variante > 0 then MALETAS[variante] else nil)
+			if variante > 0 then
+				parte.Color = COLORES_MALETA[variante]
 			end
 			if c.tipo == "Jaula" then
 				jaula = parte
@@ -139,6 +169,10 @@ function Carga.limpiar()
 	for parte in bultos do
 		Agarre.soltarObjeto(parte)
 	end
+	local c = cocodrilo
+	if c then
+		Agarre.soltarObjeto(c)
+	end
 	carpeta:ClearAllChildren()
 	table.clear(bultos)
 	cocodrilo = nil
@@ -152,12 +186,12 @@ end
 function Carga.sueltos(): { BasePart }
 	local lista: { BasePart } = {}
 	for parte in bultos do
-		if parte.Parent and not parte.Anchored and not Agarre.portador(parte) then
+		if parte.Parent and not parte.Anchored and not Agarre.portador(parte) and Agarre.delServidor(parte) then
 			table.insert(lista, parte)
 		end
 	end
 	local c = cocodrilo
-	if c and c.PrimaryPart and not Agarre.portador(c) then
+	if c and c.PrimaryPart and not Agarre.portador(c) and Agarre.delServidor(c.PrimaryPart) then
 		table.insert(lista, c.PrimaryPart)
 	end
 	return lista
@@ -167,7 +201,7 @@ function Carga.resumen(): (number, number, number, string)
 	local intacto = 0
 	for _, b in bultos do
 		if b.parte.Parent and not b.entrega then
-			intacto += b.valor * b.vida / 100
+			intacto += b.valor * math.clamp(b.vida, 0, 100) / 100
 		end
 	end
 	return math.floor(intacto), cuenta.entregado, cuenta.perdido, cuenta.cocodrilo
@@ -180,12 +214,26 @@ function Carga.danarJaula(cantidad: number)
 	end
 	local b = bultos[j]
 	if b then
-		b.vida = math.max(0, b.vida - cantidad)
+		b.vida = math.clamp(b.vida - cantidad, 0, 100)
 		j:SetAttribute("Vida", math.floor(b.vida))
 		if b.vida <= 0 then
 			soltarCocodrilo(j)
 		end
 	end
+end
+
+function Carga.repararJaula(origen: Vector3, alcance: number, cantidad: number): boolean
+	local j = jaula
+	if not j or not j.Parent or cocodrilo or (j.Position - origen).Magnitude > alcance then
+		return false
+	end
+	local b = bultos[j]
+	if not b or b.vida >= 100 then
+		return false
+	end
+	b.vida = math.min(100, b.vida + cantidad)
+	j:SetAttribute("Vida", math.floor(b.vida))
+	return true
 end
 
 local function caida(parte: BasePart, b: Bulto?)
@@ -207,6 +255,22 @@ local function caida(parte: BasePart, b: Bulto?)
 	parte:Destroy()
 end
 
+local function enjaular(c: Model)
+	local j = jaula
+	if j then
+		local b = bultos[j]
+		if b then
+			b.vida = 60
+			j:SetAttribute("Vida", 60)
+		end
+	end
+	Agarre.soltarObjeto(c)
+	c:Destroy()
+	cocodrilo = nil
+	cuenta.cocodrilo = "Enjaulado"
+	RemotoAviso:FireAllClients("🐊 ¡Cocodrilo enjaulado otra vez!", "bien")
+end
+
 local function vigilarCocodrilo(dt: number)
 	local c = cocodrilo
 	if not c then
@@ -226,25 +290,13 @@ local function vigilarCocodrilo(dt: number)
 		cocodrilo = nil
 		return
 	end
-	local j = jaula
-	if j and j.Parent and (j.Position - cuerpo.Position).Magnitude < 4.5 and not Agarre.portador(c) then
-		local b = bultos[j]
-		if b then
-			b.vida = 60
-			j:SetAttribute("Vida", 60)
-		end
-		Agarre.soltarObjeto(c)
-		c:Destroy()
-		cocodrilo = nil
-		cuenta.cocodrilo = "Enjaulado"
-		RemotoAviso:FireAllClients("🐊 ¡Cocodrilo enjaulado otra vez!", "bien")
-		return
-	end
 	if Agarre.portador(c) then
 		return
 	end
+	servidor(cuerpo)
 	local objetivo: BasePart? = nil
 	local mejor = 70
+	local ahora = os.clock()
 	for _, jugador in Players:GetPlayers() do
 		local raiz = Personajes.raiz(jugador)
 		if raiz then
@@ -252,8 +304,8 @@ local function vigilarCocodrilo(dt: number)
 			if d < mejor then
 				objetivo, mejor = raiz, d
 			end
-			if d < 3.8 and (golpes[jugador] or 0) < os.clock() then
-				golpes[jugador] = os.clock() + 2.5
+			if d < 3.8 and (golpes[jugador] or 0) < ahora then
+				golpes[jugador] = ahora + 2.5
 				local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 				Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
 				RemotoAviso:FireClient(jugador, "🐊 ¡Te ha mordido el cocodrilo!", "peligro")
@@ -274,6 +326,21 @@ local function vigilarCocodrilo(dt: number)
 end
 
 function Carga.iniciar()
+	Agarre.alSoltar(function(_, objeto, raiz)
+		local b = bultos[raiz]
+		if b then
+			b.previa = raiz.AssemblyLinearVelocity
+			b.gracia = os.clock() + 0.5
+		end
+		local c = cocodrilo
+		local j = jaula
+		if c and objeto == c and j and j.Parent and (j.Position - raiz.Position).Magnitude < 6 then
+			enjaular(c)
+		end
+	end)
+	Players.PlayerRemoving:Connect(function(jugador)
+		golpes[jugador] = nil
+	end)
 	local acumulado = 0
 	RunService.Heartbeat:Connect(function(dt)
 		acumulado += dt
@@ -282,6 +349,7 @@ function Carga.iniciar()
 		end
 		local paso = acumulado
 		acumulado = 0
+		local ahora = os.clock()
 		for parte, b in bultos do
 			if not parte.Parent then
 				bultos[parte] = nil
@@ -294,7 +362,7 @@ function Carga.iniciar()
 			local v = parte.AssemblyLinearVelocity
 			local cambio = (v - b.previa).Magnitude
 			b.previa = v
-			if cambio > b.umbral and not Agarre.portador(parte) then
+			if ahora > b.gracia and cambio > b.umbral and not Agarre.portador(parte) then
 				local dano = (cambio - b.umbral) * (if b.umbral < 30 then 2.2 else 1.1)
 				b.vida = math.max(0, b.vida - dano)
 				parte:SetAttribute("Vida", math.floor(b.vida))

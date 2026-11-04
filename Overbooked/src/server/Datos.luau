@@ -58,7 +58,7 @@ local function cargar(jugador: Player)
 		local ok, guardado = reintentar(function()
 			return tienda:GetAsync("j_" .. jugador.UserId)
 		end)
-		if ok then
+		if ok and jugador.Parent then
 			cargados[jugador] = true
 			if typeof(guardado) == "table" then
 				local t = guardado :: { [string]: any }

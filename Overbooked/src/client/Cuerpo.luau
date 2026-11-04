@@ -18,6 +18,7 @@ local jugador = Players.LocalPlayer
 local avion = Workspace:WaitForChild("Avion") :: Model
 local enRagdoll = false
 local puertas: { BasePart } = {}
+local brechas: { [BasePart]: boolean } = {}
 local rng = Random.new()
 
 local function partes(personaje: Model, colision: boolean)
@@ -60,11 +61,26 @@ local function enAire(): boolean
 end
 
 function Cuerpo.iniciar()
-	for _, d in avion:GetDescendants() do
+	for _, d in avion:WaitForChild("Puertas"):GetChildren() do
 		if d:IsA("BasePart") and d:GetAttribute("Puerta") then
 			table.insert(puertas, d)
 		end
 	end
+	for _, b in CollectionService:GetTagged("Brecha") do
+		if b:IsA("BasePart") then
+			brechas[b] = true
+		end
+	end
+	CollectionService:GetInstanceAddedSignal("Brecha"):Connect(function(b)
+		if b:IsA("BasePart") then
+			brechas[b] = true
+		end
+	end)
+	CollectionService:GetInstanceRemovedSignal("Brecha"):Connect(function(b)
+		if b:IsA("BasePart") then
+			brechas[b] = nil
+		end
+	end)
 	RemotoRagdoll.OnClientEvent:Connect(function(duracion, impulso)
 		if typeof(duracion) == "number" and typeof(impulso) == "Vector3" then
 			ragdoll(duracion, impulso)
@@ -100,13 +116,11 @@ function Cuerpo.iniciar()
 		end
 		local pos = raiz.Position
 		local empuje = Vector3.zero
-		for _, brecha in CollectionService:GetTagged("Brecha") do
-			if brecha:IsA("BasePart") then
-				local delta = brecha.Position - pos
-				local d = delta.Magnitude
-				if d < 20 and d > 0.1 then
-					empuje += delta.Unit * 55 * (1 - d / 20)
-				end
+		for brecha in brechas do
+			local delta = brecha.Position - pos
+			local d = delta.Magnitude
+			if d < 20 and d > 0.1 then
+				empuje += delta.Unit * 55 * (1 - d / 20)
 			end
 		end
 		if math.abs(pos.X) > 8.2 and pos.Y < 104 then

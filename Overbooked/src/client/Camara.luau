@@ -17,6 +17,12 @@ local inclinacion = 0
 local cabeceo = 0
 local fovExtra = 0
 local terceraPersona = false
+local aplicado = CFrame.identity
+local articulaciones: { [Model]: { hombros: { Motor6D }, codos: { Motor6D } } } = setmetatable({}, { __mode = "k" }) :: any
+local HOMBROS = { "RightUpperArm", "LeftUpperArm" }
+local CODOS = { "RightLowerArm", "LeftLowerArm" }
+local GIRO_HOMBRO = CFrame.Angles(math.rad(78), 0, 0)
+local GIRO_CODO = CFrame.Angles(math.rad(18), 0, 0)
 
 function Camara.sacudir(cantidad: number)
 	trauma = math.min(1, trauma + cantidad)
@@ -52,32 +58,38 @@ local function brazos(personaje: Model)
 	end
 end
 
+local function motores(personaje: Model, nombres: { string }): { Motor6D }
+	local lista: { Motor6D } = {}
+	for _, nombre in nombres do
+		local parte = personaje:FindFirstChild(nombre)
+		if parte then
+			for _, m in parte:GetChildren() do
+				if m:IsA("Motor6D") then
+					table.insert(lista, m)
+				end
+			end
+		end
+	end
+	return lista
+end
+
 local function poseSosteniendo(personaje: Model)
 	local sosteniendo = personaje:GetAttribute("Sosteniendo")
 	if typeof(sosteniendo) ~= "string" or sosteniendo == "" or personaje:GetAttribute("Ragdoll") then
 		return
 	end
-	for _, nombre in { "RightUpperArm", "LeftUpperArm" } do
-		local parte = personaje:FindFirstChild(nombre)
-		if parte then
-			for _, m in parte:GetChildren() do
-				if m:IsA("Motor6D") then
-					local rot = m.C0.Rotation
-					m.Transform = rot:Inverse() * CFrame.Angles(math.rad(78), 0, 0) * rot
-				end
-			end
-		end
+	local datos = articulaciones[personaje]
+	if not datos then
+		datos = { hombros = motores(personaje, HOMBROS), codos = motores(personaje, CODOS) }
+		articulaciones[personaje] = datos
 	end
-	for _, nombre in { "RightLowerArm", "LeftLowerArm" } do
-		local parte = personaje:FindFirstChild(nombre)
-		if parte then
-			for _, m in parte:GetChildren() do
-				if m:IsA("Motor6D") then
-					local rot = m.C0.Rotation
-					m.Transform = rot:Inverse() * CFrame.Angles(math.rad(18), 0, 0) * rot
-				end
-			end
-		end
+	for _, m in datos.hombros do
+		local rot = m.C0.Rotation
+		m.Transform = rot:Inverse() * GIRO_HOMBRO * rot
+	end
+	for _, m in datos.codos do
+		local rot = m.C0.Rotation
+		m.Transform = rot:Inverse() * GIRO_CODO * rot
 	end
 end
 
@@ -97,6 +109,13 @@ function Camara.iniciar()
 		end
 	end)
 
+	RunService:BindToRenderStep("OverbookedDeshacer", Enum.RenderPriority.Camera.Value - 1, function()
+		if aplicado ~= CFrame.identity then
+			local cam = Workspace.CurrentCamera
+			cam.CFrame = cam.CFrame * aplicado:Inverse()
+			aplicado = CFrame.identity
+		end
+	end)
 	RunService:BindToRenderStep("OverbookedCamara", Enum.RenderPriority.Camera.Value + 1, function(dt)
 		tiempo += dt
 		local cam = Workspace.CurrentCamera
@@ -122,7 +141,9 @@ function Camara.iniciar()
 			extra *= CFrame.Angles(ruido(tiempo, 1) * 0.06 * t, ruido(tiempo, 2) * 0.06 * t, ruido(tiempo, 3) * 0.08 * t)
 			trauma = math.max(0, trauma - dt * 1.4)
 		end
-		cam.CFrame = cam.CFrame * extra * CFrame.Angles(cabeceo, 0, inclinacion)
+		local total = extra * CFrame.Angles(cabeceo, 0, inclinacion)
+		cam.CFrame = cam.CFrame * total
+		aplicado = total
 		fovExtra = math.max(0, fovExtra - dt * 18)
 		cam.FieldOfView = 80 + fovExtra
 		if personaje and not terceraPersona then

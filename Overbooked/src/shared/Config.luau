@@ -173,6 +173,14 @@ Config.OBJETOS = {
 		visual = "CajaFragil",
 		nombre = "Caja frágil",
 	},
+	Carrito = {
+		tamano = Vector3.new(1.6, 3.2, 2.6),
+		color = Color3.fromRGB(242, 123, 43),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 0.6,
+		visual = "Carrito",
+		nombre = "Carrito",
+	},
 	Jaula = {
 		tamano = Vector3.new(3, 2.6, 7),
 		color = Color3.fromRGB(52, 56, 63),

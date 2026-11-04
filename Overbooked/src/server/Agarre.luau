@@ -1,6 +1,8 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
+local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
@@ -17,6 +19,7 @@ local Agarre = {}
 local sostenidos: { [Player]: Instance } = {}
 local portadores: { [Instance]: Player } = {}
 local devoluciones: { [Instance]: number } = {}
+local esperas: { [Player]: number } = {}
 local antesDeAgarrar: { (Instance) -> () } = {}
 local alSoltar: { (Player, Instance, BasePart) -> () } = {}
 
@@ -48,19 +51,33 @@ local function marcarPersonaje(jugador: Player, tipo: string)
 end
 
 local function propiedad(raiz: BasePart, jugador: Player?)
-	if raiz.Anchored or not raiz:IsDescendantOf(workspace) then
+	if raiz.Anchored or not raiz:IsDescendantOf(Workspace) then
 		return
 	end
 	pcall(function()
-		if jugador then
-			raiz:SetNetworkOwner(jugador)
-		else
-			raiz:SetNetworkOwnershipAuto()
-		end
+		raiz:SetNetworkOwner(jugador)
 	end)
 end
 
-local function soltarInterno(jugador: Player, velocidad: Vector3?)
+local function grupo(objeto: Instance, nombre: string)
+	if objeto:IsA("BasePart") then
+		objeto.CollisionGroup = nombre
+	end
+	for _, d in objeto:GetDescendants() do
+		if d:IsA("BasePart") and d.CanCollide then
+			d.CollisionGroup = nombre
+		end
+	end
+end
+
+function Agarre.delServidor(parte: BasePart): boolean
+	local ok, dueno = pcall(function()
+		return parte:GetNetworkOwner()
+	end)
+	return ok and dueno == nil and not devoluciones[parte]
+end
+
+local function soltarInterno(jugador: Player)
 	local objeto = sostenidos[jugador]
 	if not objeto then
 		return
@@ -72,19 +89,19 @@ local function soltarInterno(jugador: Player, velocidad: Vector3?)
 		return
 	end
 	objeto:SetAttribute("Portador", 0)
+	grupo(objeto, "Default")
 	local raiz = Agarre.raiz(objeto)
 	if not raiz then
 		return
 	end
-	if velocidad and not raiz.Anchored then
-		raiz.AssemblyLinearVelocity = velocidad
-	end
 	local marca = os.clock() + Config.AGARRE.DEVOLVER_PROPIEDAD
 	devoluciones[objeto] = marca
 	task.delay(Config.AGARRE.DEVOLVER_PROPIEDAD, function()
-		if devoluciones[objeto] == marca and not portadores[objeto] and raiz.Parent then
+		if devoluciones[objeto] == marca then
 			devoluciones[objeto] = nil
-			propiedad(raiz, nil)
+			if not portadores[objeto] and raiz.Parent then
+				propiedad(raiz, nil)
+			end
 		end
 	end)
 	for _, f in alSoltar do
@@ -103,11 +120,12 @@ local function tomar(jugador: Player, objeto: Instance): boolean
 	if not raiz or raiz.Anchored then
 		return false
 	end
-	soltarInterno(jugador, nil)
+	soltarInterno(jugador)
 	sostenidos[jugador] = objeto
 	portadores[objeto] = jugador
 	devoluciones[objeto] = nil
 	objeto:SetAttribute("Portador", jugador.UserId)
+	grupo(objeto, "Sostenido")
 	local tipo = objeto:GetAttribute("Tipo")
 	marcarPersonaje(jugador, if typeof(tipo) == "string" then tipo else objeto.Name)
 	propiedad(raiz, jugador)
@@ -122,7 +140,7 @@ end
 
 function Agarre.soltar(jugador: Player)
 	if sostenidos[jugador] then
-		soltarInterno(jugador, nil)
+		soltarInterno(jugador)
 		RemotoSostener:FireClient(jugador, nil)
 	end
 end
@@ -181,11 +199,31 @@ function Agarre.alSoltar(f: (Player, Instance, BasePart) -> ())
 	table.insert(alSoltar, f)
 end
 
+local function visible(jugador: Player, raiz: BasePart, agarrable: Instance): boolean
+	local personaje = jugador.Character
+	local cabeza = personaje and personaje:FindFirstChild("Head")
+	if not personaje or not cabeza or not cabeza:IsA("BasePart") then
+		return false
+	end
+	local parametros = RaycastParams.new()
+	parametros.FilterType = Enum.RaycastFilterType.Exclude
+	parametros.FilterDescendantsInstances = { personaje, agarrable }
+	local delta = raiz.Position - cabeza.Position
+	return Workspace:Raycast(cabeza.Position, delta, parametros) == nil
+end
+
 function Agarre.iniciar()
+	pcall(function()
+		PhysicsService:RegisterCollisionGroup("Sostenido")
+		PhysicsService:RegisterCollisionGroup("Jugadores")
+		PhysicsService:CollisionGroupSetCollidable("Sostenido", "Jugadores", false)
+	end)
 	RemotoAgarrar.OnServerEvent:Connect(function(jugador, objeto)
-		if typeof(objeto) ~= "Instance" then
+		local ahora = os.clock()
+		if typeof(objeto) ~= "Instance" or (esperas[jugador] or 0) > ahora then
 			return
 		end
+		esperas[jugador] = ahora + 0.25
 		local agarrable = Agarre.agarrable(objeto)
 		if not agarrable then
 			return
@@ -195,7 +233,7 @@ function Agarre.iniciar()
 		if not raiz or not raizJugador then
 			return
 		end
-		if (raiz.Position - raizJugador.Position).Magnitude > Config.AGARRE.DISTANCIA + 4 then
+		if (raiz.Position - raizJugador.Position).Magnitude > Config.AGARRE.DISTANCIA + 4 or not visible(jugador, raiz, agarrable) then
 			RemotoSostener:FireClient(jugador, nil)
 			return
 		end
@@ -204,16 +242,13 @@ function Agarre.iniciar()
 		end
 	end)
 
-	RemotoSoltar.OnServerEvent:Connect(function(jugador, velocidad)
-		local v: Vector3? = nil
-		if typeof(velocidad) == "Vector3" and velocidad == velocidad then
-			v = if velocidad.Magnitude > Config.AGARRE.VELOCIDAD_MAX then velocidad.Unit * Config.AGARRE.VELOCIDAD_MAX else velocidad
-		end
-		soltarInterno(jugador, v)
+	RemotoSoltar.OnServerEvent:Connect(function(jugador)
+		soltarInterno(jugador)
 	end)
 
 	Players.PlayerRemoving:Connect(function(jugador)
-		soltarInterno(jugador, nil)
+		soltarInterno(jugador)
+		esperas[jugador] = nil
 	end)
 
 	local acumulado = 0

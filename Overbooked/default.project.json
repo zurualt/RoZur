@@ -46,6 +46,7 @@
     "Workspace": {
       "$properties": {
         "Gravity": 196.2,
+        "StreamingEnabled": false,
         "FallenPartsDestroyHeight": -400
       },
       "Avion": {

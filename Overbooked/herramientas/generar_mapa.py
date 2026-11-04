@@ -166,13 +166,13 @@ def cabina():
                       atributos={"Visual": "AsientoPiloto", "Base": SUELO_Y},
                       hijos=[part("Respaldo", (2.2, 3.2, 0.5), (x, 103.0, -56.4), GRIS, "Fabric"),
                              part("Raya", (0.5, 3.0, 0.52), (x, 103.0, -56.4), TURQUESA, "Fabric", colision=False)]))
-    p.append(part("Cuadro", (10.5, 2.8, 2), (0, 102.8, -62.2), GRIS, atributos={"Visual": "Cuadro"}))
+    p.append(part("Cuadro", (10.5, 2.8, 2), (0, 102.8, -62.2), GRIS, r=rot(0, 180, 0), atributos={"Visual": "Cuadro"}))
     p.append(part("Visera", (10.5, 0.5, 1.4), (0, 104.4, -62.5), "1B1B21"))
     for i, x in enumerate((-4.2, -3.0, -1.5, 1.5, 3.0, 4.2)):
         colores = ["55D66B", "F5CD3D", "55D66B", "4AB8F0", "F27B2B", "55D66B"]
         p.append(part("Indicador", (0.15, 0.7, 0.7), (x, 103.3, -61.15), colores[i], "Neon", forma="Cylinder",
                       r=rot(0, 90, 0), colision=False, sombra=False))
-    p.append(part("Columna", (0.35, 0.35, 1.8), (-2.6, 102.6, -60.4), "1B1B21", atributos={"Visual": "Volante"},
+    p.append(part("Columna", (0.35, 0.35, 1.8), (-2.6, 102.6, -60.4), "1B1B21", r=rot(0, 180, 0), atributos={"Visual": "Volante"},
                   hijos=[part("Volante", (1.5, 0.3, 0.3), (-2.6, 103.0, -59.5), "1B1B21")]))
     p.append(part("Gases", (1.2, 1.3, 2.0), (0, 100.65, -59.0), GRIS, atributos={"Visual": "Gases"},
                   hijos=[part("Palanca", (0.2, 0.9, 0.2), (-0.25, 101.7, -59.3), NARANJA),
@@ -192,12 +192,14 @@ def cocina():
         p.append(part("Armario", (3, 2.6, 7.4), (sx * 5.5, 108.7, -48), CREMA))
     p.append(part("DispensadorHamburguesa", (1.6, 0.9, 1.6), (-5.4, 103.95, -50), "E9A64B",
                   atributos={"Tipo": "Hamburguesa"}, hijos=[cartel("🍔", "Top", fondo="FFF4E0")]))
-    p.append(part("DispensadorCafe", (1.4, 1.6, 1.0), (5.6, 104.3, -50), "6B3A22",
-                  atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("☕", "Left", fondo="FFF4E0")]))
-    p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA,
-                  atributos={"Tipo": "Agua", "Visual": "Nevera"}, hijos=[cartel("💧", "Left", fondo="FFF4E0")]))
+    p.append(part("DispensadorCafe", (1.4, 1.6, 1.0), (5.6, 104.3, -50), "6B3A22", r=rot(0, 90, 0),
+                  atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("☕", "Front", fondo="FFF4E0")]))
+    p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA, r=rot(0, 90, 0),
+                  atributos={"Tipo": "Agua", "Visual": "Nevera"}, hijos=[cartel("💧", "Front", fondo="FFF4E0")]))
     p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (-6.3, 101.5, -44.6), GRIS, atributos={"Tipo": "Extintor"}))
     p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (6.3, 101.5, -44.6), GRIS, atributos={"Tipo": "Llave"}))
+    p.append(part("SoporteCarrito", (1.8, 0.1, 2.8), (-2.6, SUELO_Y + 0.05, -45.2), GRIS, transp=1, colision=False,
+                  atributos={"Tipo": "Carrito"}))
     p.append(part("CartelCocina", (4, 1.2, 0.2), (0, 108.6, -51.6), NARANJA, colision=False,
                   hijos=[cartel("COCINA", "Back", "FFFFFF")]))
     return carpeta("Cocina", p)
@@ -210,7 +212,7 @@ def bano_y_puertas():
     p.append(part("DintelBano", (0.4, 2.5, 2.4), (-3, 108.75, -4.8), CREMA_OSC))
     p.append(part("FrenteBano", (4, 10, 0.4), (-5, 105, -8.0), CREMA_OSC))
     p.append(part("FondoBano", (4, 10, 0.4), (-5, 105, -3.0), CREMA_OSC))
-    p.append(part("Inodoro", (1.4, 1.6, 2.0), (-5.6, 100.8, -6.0), "FFFFFF", atributos={"Visual": "Inodoro"}))
+    p.append(part("Inodoro", (1.4, 1.6, 2.0), (-5.6, 100.8, -6.0), "FFFFFF", r=rot(0, -90, 0), atributos={"Visual": "Inodoro"}))
     p.append(part("CartelBano", (1.6, 1.0, 0.1), (-2.75, 107.0, -4.8), "FFFFFF", colision=False, r=rot(0, 90, 0),
                   hijos=[cartel("WC", "Back", "1B1B21")]))
     p.append(part("PuertaAlaIzq", (0.6, 6.5, 3.4), (-7.5, 103.25, FILAS[FILA_SALIDA]), NARANJA,
@@ -238,8 +240,7 @@ def bodega():
     p.append(part("ZonaPasajerosCaidos", (2, 2, 2), (0, 101.5, -26), "FFFFFF", transp=1, colision=False, sombra=False))
     p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (6.3, 101.5, 2.5), GRIS, atributos={"Tipo": "Extintor"}))
     p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (-6.3, 101.5, 2.5), GRIS, atributos={"Tipo": "Llave"}))
-    p.append(part("BotonRampaBodega", (0.4, 0.9, 0.9), (6.8, 103.5, 19.5), TURQUESA, forma="Cylinder",
-                  atributos={"Visual": "Boton"}))
+    p.append(part("BotonRampaBodega", (0.4, 0.9, 0.9), (6.8, 103.5, 19.5), TURQUESA, forma="Cylinder"))
     angulo = -90.0
     largo = 9.6
     a = math.radians(angulo)

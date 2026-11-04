@@ -1,5 +1,6 @@
 --!strict
 local InsertService = game:GetService("InsertService")
+local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -175,6 +176,16 @@ local function alPersonaje(jugador: Player, personaje: Model)
 	pintar(personaje, Personajes.color(jugador))
 	prepararRagdoll(jugador, personaje)
 	personaje:SetAttribute("Sosteniendo", "")
+	for _, d in personaje:GetDescendants() do
+		if d:IsA("BasePart") then
+			d.CollisionGroup = "Jugadores"
+		end
+	end
+	personaje.DescendantAdded:Connect(function(d)
+		if d:IsA("BasePart") then
+			d.CollisionGroup = "Jugadores"
+		end
+	end)
 	personaje.Destroying:Connect(function()
 		ragdolls[personaje] = nil
 	end)
@@ -225,10 +236,18 @@ local function cargarPlantilla()
 end
 
 function Personajes.iniciar()
+	pcall(function()
+		PhysicsService:RegisterCollisionGroup("Jugadores")
+		PhysicsService:RegisterCollisionGroup("Sostenido")
+		PhysicsService:CollisionGroupSetCollidable("Sostenido", "Jugadores", false)
+	end)
 	local function alEntrar(jugador: Player)
 		asignarColor(jugador)
 		jugador.CharacterAdded:Connect(function(personaje)
 			alPersonaje(jugador, personaje)
+		end)
+		jugador.CharacterRemoving:Connect(function(personaje)
+			ragdolls[personaje] = nil
 		end)
 		local personaje = jugador.Character
 		if personaje then

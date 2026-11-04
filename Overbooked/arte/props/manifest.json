@@ -1,0 +1,222 @@
+[
+  {
+    "nombre": "Asiento",
+    "archivo": "Asiento.fbx",
+    "tamano": [
+      2.2,
+      4.2,
+      2.4
+    ],
+    "triangulos": 768
+  },
+  {
+    "nombre": "Bandeja",
+    "archivo": "Bandeja.fbx",
+    "tamano": [
+      1.6,
+      0.5,
+      1.1
+    ],
+    "triangulos": 890
+  },
+  {
+    "nombre": "Hamburguesa",
+    "archivo": "Hamburguesa.fbx",
+    "tamano": [
+      0.7,
+      0.55,
+      0.7
+    ],
+    "triangulos": 388
+  },
+  {
+    "nombre": "Cafe",
+    "archivo": "Cafe.fbx",
+    "tamano": [
+      0.4,
+      0.6,
+      0.4
+    ],
+    "triangulos": 240
+  },
+  {
+    "nombre": "Agua",
+    "archivo": "Agua.fbx",
+    "tamano": [
+      0.3,
+      0.8,
+      0.3
+    ],
+    "triangulos": 244
+  },
+  {
+    "nombre": "Extintor",
+    "archivo": "Extintor.fbx",
+    "tamano": [
+      0.6,
+      1.7,
+      0.6
+    ],
+    "triangulos": 553
+  },
+  {
+    "nombre": "Llave",
+    "archivo": "Llave.fbx",
+    "tamano": [
+      0.5,
+      1.8,
+      0.15
+    ],
+    "triangulos": 376
+  },
+  {
+    "nombre": "Caja",
+    "archivo": "Caja.fbx",
+    "tamano": [
+      3.0,
+      3.0,
+      3.0
+    ],
+    "triangulos": 444
+  },
+  {
+    "nombre": "CajaFragil",
+    "archivo": "CajaFragil.fbx",
+    "tamano": [
+      2.0,
+      2.0,
+      2.0
+    ],
+    "triangulos": 552
+  },
+  {
+    "nombre": "Maleta1",
+    "archivo": "Maleta1.fbx",
+    "tamano": [
+      1.6,
+      1.2,
+      0.7
+    ],
+    "triangulos": 384
+  },
+  {
+    "nombre": "Maleta2",
+    "archivo": "Maleta2.fbx",
+    "tamano": [
+      1.6,
+      1.2,
+      0.7
+    ],
+    "triangulos": 384
+  },
+  {
+    "nombre": "Maleta3",
+    "archivo": "Maleta3.fbx",
+    "tamano": [
+      1.6,
+      1.2,
+      0.7
+    ],
+    "triangulos": 384
+  },
+  {
+    "nombre": "Jaula",
+    "archivo": "Jaula.fbx",
+    "tamano": [
+      3.0,
+      2.6,
+      7.0
+    ],
+    "triangulos": 1056
+  },
+  {
+    "nombre": "Cuadro",
+    "archivo": "Cuadro.fbx",
+    "tamano": [
+      10.0,
+      3.2,
+      2.2
+    ],
+    "triangulos": 2176
+  },
+  {
+    "nombre": "Volante",
+    "archivo": "Volante.fbx",
+    "tamano": [
+      1.4,
+      1.4,
+      1.2
+    ],
+    "triangulos": 576
+  },
+  {
+    "nombre": "Gases",
+    "archivo": "Gases.fbx",
+    "tamano": [
+      1.2,
+      1.3,
+      1.6
+    ],
+    "triangulos": 444
+  },
+  {
+    "nombre": "AsientoPiloto",
+    "archivo": "AsientoPiloto.fbx",
+    "tamano": [
+      2.4,
+      4.6,
+      2.6
+    ],
+    "triangulos": 868
+  },
+  {
+    "nombre": "Carrito",
+    "archivo": "Carrito.fbx",
+    "tamano": [
+      1.6,
+      3.2,
+      2.6
+    ],
+    "triangulos": 584
+  },
+  {
+    "nombre": "Cafetera",
+    "archivo": "Cafetera.fbx",
+    "tamano": [
+      1.4,
+      1.6,
+      1.0
+    ],
+    "triangulos": 482
+  },
+  {
+    "nombre": "Nevera",
+    "archivo": "Nevera.fbx",
+    "tamano": [
+      1.8,
+      1.3,
+      1.2
+    ],
+    "triangulos": 342
+  },
+  {
+    "nombre": "Inodoro",
+    "archivo": "Inodoro.fbx",
+    "tamano": [
+      1.4,
+      2.2,
+      2.0
+    ],
+    "triangulos": 580
+  },
+  {
+    "nombre": "Boton",
+    "archivo": "Boton.fbx",
+    "tamano": [
+      0.8,
+      0.4,
+      0.8
+    ],
+    "triangulos": 190
+  }
+]

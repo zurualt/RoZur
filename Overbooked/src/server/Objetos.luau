@@ -1,5 +1,6 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
@@ -24,7 +25,18 @@ local orden: { BasePart } = {}
 local esperas: { [Player]: number } = {}
 local alPerder: { (BasePart) -> () } = {}
 
-function Objetos.crear(tipo: string, cframe: CFrame, padre: Instance?): BasePart
+function Objetos.servidor(parte: BasePart)
+	if parte.Anchored or not parte:IsDescendantOf(Workspace) then
+		return
+	end
+	pcall(function()
+		if parte:GetNetworkOwner() ~= nil then
+			parte:SetNetworkOwner(nil)
+		end
+	end)
+end
+
+function Objetos.crear(tipo: string, cframe: CFrame, padre: Instance?, visual: string?): BasePart
 	local def = Config.OBJETOS[tipo]
 	local parte = Instance.new("Part")
 	parte.Name = tipo
@@ -47,8 +59,10 @@ function Objetos.crear(tipo: string, cframe: CFrame, padre: Instance?): BasePart
 		VFX.rocio(boquilla)
 	end
 	parte.Parent = padre or carpeta
-	if def.visual then
-		Activos.vestirDinamico(parte, def.visual)
+	Objetos.servidor(parte)
+	local v = visual or def.visual
+	if v then
+		Activos.vestirDinamico(parte, v)
 	end
 	if not padre then
 		table.insert(orden, parte)
@@ -69,7 +83,7 @@ end
 function Objetos.sueltos(): { BasePart }
 	local lista: { BasePart } = {}
 	for _, hijo in carpeta:GetChildren() do
-		if hijo:IsA("BasePart") and not hijo.Anchored and not Agarre.portador(hijo) then
+		if hijo:IsA("BasePart") and not hijo.Anchored and not Agarre.portador(hijo) and Agarre.delServidor(hijo) then
 			table.insert(lista, hijo)
 		end
 	end
@@ -132,6 +146,9 @@ function Objetos.iniciar()
 		end
 	end
 	Activos.vestirAvion(avion)
+	Players.PlayerRemoving:Connect(function(jugador)
+		esperas[jugador] = nil
+	end)
 
 	task.spawn(function()
 		while true do

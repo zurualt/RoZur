@@ -52,6 +52,15 @@ local function meterJugadores()
 		local raiz = Personajes.raiz(jugador)
 		local personaje = jugador.Character
 		if raiz and personaje and not dentroDelAvion(raiz.Position) then
+			local humanoide = personaje:FindFirstChildOfClass("Humanoid")
+			local asiento = humanoide and humanoide.SeatPart
+			if humanoide and asiento then
+				local soldadura = asiento:FindFirstChild("SeatWeld")
+				if soldadura then
+					soldadura:Destroy()
+				end
+				humanoide.Sit = false
+			end
 			i += 1
 			personaje:PivotTo(CFrame.new(rng:NextNumber(-1, 1), Config.SUELO_Y + 3.2, -46 + (i % 6) * 1.5))
 		end
@@ -145,7 +154,7 @@ local function vuelo(contrato: Contratos.Contrato)
 	aviso("🛫 ¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
 	local inicio = os.clock()
 	while not resultado do
-		if Avion.fase() == "Despegue" and not Avion.estado.autopiloto and os.clock() - inicio > Config.PARTIDA.DESPEGUE_AUTO and not Avion.piloto() then
+		if Avion.fase() == "Despegue" and not Avion.estado.autopiloto and os.clock() - inicio > Config.PARTIDA.DESPEGUE_AUTO and Avion.estado.gases < 0.1 then
 			Avion.estado.autopiloto = true
 			aviso("Nadie pilota... el piloto automático despega por vosotros", "info")
 		end

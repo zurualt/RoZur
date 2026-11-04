@@ -25,7 +25,7 @@ local rng = Random.new()
 
 local carpeta = Instance.new("Folder")
 carpeta.Name = "CieloLocal"
-local suelo: Part
+local suelos: { Part } = {}
 local pista: Part
 local campos: { Pieza } = {}
 local nubes: { Nube } = {}
@@ -55,7 +55,9 @@ local function nueva(tamano: Vector3, color: Color3, material: Enum.Material, fo
 end
 
 local function construir()
-	suelo = nueva(Vector3.new(RADIO * 4, 2, RADIO * 4), Color3.fromRGB(107, 191, 89), Enum.Material.Grass)
+	for _ = 1, 9 do
+		table.insert(suelos, nueva(Vector3.new(2048, 2, 2048), Color3.fromRGB(107, 191, 89), Enum.Material.Grass))
+	end
 	pista = nueva(Vector3.new(34, 0.4, 520), Color3.fromRGB(58, 61, 66), Enum.Material.Asphalt)
 	local colores = {
 		Color3.fromRGB(150, 200, 90),
@@ -92,7 +94,9 @@ local function construir()
 		end
 		table.insert(nubes, nube)
 	end
-	table.insert(partes, suelo)
+	for _, s in suelos do
+		table.insert(partes, s)
+	end
 	table.insert(partes, pista)
 	for _, c in campos do
 		table.insert(partes, c.parte)
@@ -160,7 +164,11 @@ local function actualizar(dt: number)
 		i += 1
 		marcos[i] = cf
 	end
-	poner(actitud * CFrame.new(0, alturaSuelo - 1, 0))
+	for gx = -1, 1 do
+		for gz = -1, 1 do
+			poner(actitud * CFrame.new(gx * 2048, alturaSuelo - 1, gz * 2048))
+		end
+	end
 	recorrido += velocidad * dt
 	local zPista = if fase == "Aproximacion" or fase == "Frenando" or fase == "Aterrizado" then -(numero("Total") - numero("Distancia")) * 30 else -200 + recorrido
 	poner(actitud * CFrame.new(0, alturaSuelo + 0.25, zPista))

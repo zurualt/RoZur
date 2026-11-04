@@ -32,6 +32,8 @@ local VERDE = Color3.fromRGB(85, 190, 95)
 local FUENTE = Enum.Font.FredokaOne
 
 local gui: ScreenGui
+local etiquetasGui: Folder
+local contratoCache: { [string]: any }? = nil
 local textoFase: TextLabel
 local textoRuta: TextLabel
 local relleno: Frame
@@ -105,6 +107,9 @@ local function construir()
 	gui.ResetOnSpawn = false
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.Parent = jugador:WaitForChild("PlayerGui")
+	etiquetasGui = Instance.new("Folder")
+	etiquetasGui.Name = "OverbookedEtiquetas"
+	etiquetasGui.Parent = jugador:WaitForChild("PlayerGui")
 
 	local barra = marco(gui, UDim2.fromOffset(560, 74), UDim2.new(0.5, 0, 0, 14), Vector2.new(0.5, 0), CREMA, 0.08)
 	esquina(barra, 16)
@@ -238,13 +243,18 @@ local NOMBRES_FASE = {
 	Estrellado = "💥 ¡ESTRELLADOS!",
 }
 
-local function contratoActual(): { [string]: any }?
+local function decodificarContrato()
 	local json = Estado:GetAttribute("Contrato")
 	if typeof(json) ~= "string" then
-		return nil
+		contratoCache = nil
+		return
 	end
 	local ok, datos = pcall(HttpService.JSONDecode, HttpService, json)
-	return if ok and typeof(datos) == "table" then datos else nil
+	contratoCache = if ok and typeof(datos) == "table" then datos else nil
+end
+
+local function contratoActual(): { [string]: any }?
+	return contratoCache
 end
 
 local function actualizarBarra()
@@ -350,7 +360,7 @@ local function burbuja(modelo: Instance)
 	esquina(fondoPaciencia, 3)
 	local paciencia = marco(fondoPaciencia, UDim2.fromScale(1, 1), UDim2.new(), Vector2.zero, VERDE, 0)
 	esquina(paciencia, 3)
-	b.Parent = gui
+	b.Parent = etiquetasGui
 	local emocion = ""
 	local emocionHasta = 0
 	local function refrescar()
@@ -423,7 +433,7 @@ local function etiqueta(otro: Player, personaje: Model)
 	nombre.TextStrokeTransparency = 0.3
 	local voz = texto(b, "🔊", UDim2.fromOffset(28, 28), UDim2.fromOffset(0, 1), Color3.new(1, 1, 1))
 	voz.Visible = false
-	b.Parent = gui
+	b.Parent = etiquetasGui
 	etiquetas[otro] = { gui = b, voz = voz }
 end
 
@@ -552,6 +562,8 @@ function Interfaz.iniciar()
 		end
 	end)
 	Estado:GetAttributeChangedSignal("Contratos"):Connect(tablero)
+	Estado:GetAttributeChangedSignal("Contrato"):Connect(decodificarContrato)
+	decodificarContrato()
 	Workspace.ChildAdded:Connect(function(hijo)
 		if hijo.Name == "Aeropuerto" then
 			task.wait(1)

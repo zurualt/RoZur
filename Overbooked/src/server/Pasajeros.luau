@@ -71,6 +71,9 @@ local function levantar(p: Pasajero)
 	end
 	p.asiento = nil
 	p.cuerpo.Anchored = false
+	pcall(function()
+		p.cuerpo:SetNetworkOwner(nil)
+	end)
 	p.modelo:SetAttribute("Estado", "Suelto")
 	p.modelo:SetAttribute("Pedido", "")
 end
@@ -240,6 +243,8 @@ local function empujar(p: Pasajero, velocidad: Vector3)
 	end
 	if p.asiento then
 		levantar(p)
+	elseif not Agarre.delServidor(p.cuerpo) then
+		return
 	end
 	p.cuerpo.AssemblyLinearVelocity += velocidad
 	p.cuerpo.AssemblyAngularVelocity += Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(-6, 6), rng:NextNumber(-6, 6))
@@ -269,7 +274,7 @@ function Pasajeros.succionar(centro: Vector3, fuerza: number, radio: number, cin
 	for _, p in lista do
 		local delta = centro - p.cuerpo.Position
 		local d = delta.Magnitude
-		if d < radio and d > 0.1 and not Agarre.portador(p.modelo) then
+		if d < radio and d > 0.1 and not Agarre.portador(p.modelo) and (p.asiento or Agarre.delServidor(p.cuerpo)) then
 			if p.asiento then
 				if not cinturones and rng:NextNumber() < (1 - d / radio) * 0.25 * dt * 10 then
 					levantar(p)

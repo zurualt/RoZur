@@ -986,8 +986,8 @@ def build_croc():
         for sx in (-1, 1):
             w, zb, zt = croc_section(ly)
             ctrl = [Vector((sx * (w - 0.27), ly + 0.04, 0.5)), Vector((sx * (w - 0.1), ly, 0.3)), Vector((sx * 0.54, ly - 0.05, 0.1))]
-            prims.append((tube(ctrl, lambda u: 0.17 - 0.03 * u, k=9, steps=3, cap_rings=1), GREEN, 60.0))
-            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.54, ly - 0.12, 0.07)), 10, 6)
+            prims.append((tube(ctrl, lambda u: 0.17 - 0.03 * u, k=8, steps=3, cap_rings=1), GREEN, 60.0))
+            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.54, ly - 0.12, 0.07)), 9, 5)
             for v in foot.verts:
                 v.co.z = max(v.co.z, 0.0)
             prims.append((foot, GREEN, 60.0))
