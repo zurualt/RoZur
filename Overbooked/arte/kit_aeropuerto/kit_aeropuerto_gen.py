@@ -401,7 +401,7 @@ def rrect(cx, cy, w, h, r, cs=2):
 
 def logo(p, m, r, base=True, step=None, seg=20):
     st = step if step is not None else max(0.006, 0.004 * r)
-    w = 0.0
+    w = st
     if base:
         p.add(decal(circ(0, 0, r, seg), m, w), "cream")
         w += st
@@ -537,10 +537,12 @@ def p_terminal():
     p.add(bb(-9.4, 9.4, -27.0, -25.5, 10.0, 10.55, 0.2, 2), canopy)
     for x in (-6.0, -2.0, 2.0, 6.0):
         p.add(decal(circ(x, 0, 0.22, 8), fr((0, -26.25, 10.0), "-z"), 0.006), "yellow")
-    for s in (-1, 1):
-        p.add(bar((s * 8.8, -26.55, 10.5), (s * 8.8, -25.9, SO + 0.05), 0.12, 0.12), "dark")
     p.add(bb(-WO, WO, -26.3, -24.4, SO, CE), "white")
-    p.add(bb(-26.4, 26.4, -26.4, 26.4, CE, DK), lambda c, n: "metal" if n.z > 0.5 else "tile")
+    p.add(bb(-26.4, 26.4, -26.4, 26.4, CE, DK), lambda c, n: "concrete" if n.z > 0.5 else "tile")
+    for k in range(1, 6):
+        u = -26.3 + 52.6 * k / 6
+        p.add(decal(rect(u - 0.06, u + 0.06, -26.3, 26.3), M((0, 0, DK)), 0.008), "metal")
+        p.add(decal(rect(-26.3, 26.3, u - 0.06, u + 0.06), M((0, 0, DK)), 0.012), "metal")
     prof = [(0.0, SO), (0.0, 13.35), (0.0, 14.1), (0.0, 14.6), (0.07, 14.9), (0.25, 15.0), (0.45, 15.0), (0.6, 14.88), (0.6, SO)]
 
     def fascia(c, n):
@@ -561,9 +563,9 @@ def p_terminal():
     for y in (-19.3, -9.3, 0.9, 11.1, 21.0):
         for x in (-18.0, -9.0, 0.0, 9.0, 18.0):
             p.add(decal(rrect(x, -y, 4.0, 1.4, 0.4), fr((0, 0, CE), "-z"), 0.01), "white")
-    for x, y in ((-9.0, -11.0), (9.0, 11.0)):
-        p.add(bb(x - 7.0, x + 7.0, y - 1.5, y + 1.5, DK, 14.5, 0.1, 1), lambda c, n: "glass" if n.z > 0.5 else "white")
-    for x, y in ((-17.5, 9.0), (16.5, -9.5), (-4.0, 18.5)):
+    for x, y in ((-8.8, -13.15), (8.8, 13.15), (-8.8, 4.38), (8.8, -4.38)):
+        p.add(bb(x - 6.0, x + 6.0, y - 1.6, y + 1.6, DK, 14.55, 0.12, 1), lambda c, n: "glass" if n.z > 0.5 else "white")
+    for x, y in ((-20.5, 8.8), (20.5, -8.8), (-20.5, -17.6), (20.5, 17.6)):
         p.add(bb(x - 1.6, x + 1.6, y - 1.1, y + 1.1, DK, 14.8, 0.12, 2), "white")
         p.add(decal(circ(x - 0.6, y, 0.62, 12), M((0, 0, 14.8)), 0.006), "dark")
         p.add(decal(circ(x - 0.6, y, 0.18, 6), M((0, 0, 14.8)), 0.012), "metal")
@@ -1236,7 +1238,7 @@ def sheet_exterior(st):
         st.put("Cono", x, y, 20)
     for k in range(9):
         st.put("LuzPista", -32.0 + 8.0 * k, -33.6)
-    st.camera((-66, -84, 36), (0, -4, 5.0), 38)
+    st.camera((-58, -86, 24), (2, -6, 6.0), 36)
 
 
 def board_fill(st, x0, y, z0, w, h):
@@ -1285,9 +1287,8 @@ def sheet_interior(st):
         st.put("Cono", x, y, 10)
     for y in (-19.3, -9.3, 0.9, 11.1, 21.0):
         for x in (-18.0, 0.0, 18.0):
-            st.area((x, y, 12.9), 6.0, 900, sy=2.0)
-    st.area((0, 20, 9), 14.0, 1200, sy=4.0, rot=(-90, 0, 0))
-    st.camera((-3.0, -44.0, 6.4), (0.5, 8.0, 4.6), 24)
+            st.area((x, y, 12.9), 6.0, 380, sy=2.0, color=(1.0, 0.93, 0.82))
+    st.camera((-2.5, -38.5, 6.6), (0.5, 8.0, 4.0), 22)
 
 
 def sheet_ramp(st):
@@ -1318,10 +1319,26 @@ def sheet_ramp(st):
         st.put("Arbusto", x, yy, 10)
     for k in range(10):
         st.put("Valla", -40.0 + 8.0 * k, -36.0, 0)
-    st.camera((-30, -72, 26), (4, 16, 9), 33)
+    st.camera((-10, -60, 15), (5, 14, 8.5), 30)
 
 
-SHEETS = [("aero_1.png", sheet_exterior), ("aero_2.png", sheet_interior), ("aero_3.png", sheet_ramp)]
+def sheet_catalog(st):
+    ground(st)
+    st.quad(-60, 60, -60, 60, 0.0, mat_rgb(WALK, 0.9))
+    x = -30.0
+    for nm in ("Mostrador", "BancoEspera", "Kiosko", "CarroEquipaje", "Tractor", "Escalera", "Manga"):
+        w = st.objs[nm].dimensions.x
+        st.put(nm, x + w / 2, 0.0, -20)
+        x += w + 2.0
+    x = -22.0
+    for nm in ("Arbol", "Arbusto", "Valla", "LuzPista", "Cono", "MarcoTablero"):
+        w = st.objs[nm].dimensions.x
+        st.put(nm, x + w / 2, 14.0, -20)
+        x += w + 2.0
+    st.camera((-6, -34, 16), (0, 5, 2.0), 40)
+
+
+SHEETS = [("aero_1.png", sheet_exterior), ("aero_2.png", sheet_interior), ("aero_3.png", sheet_ramp), ("aero_kit.png", sheet_catalog)]
 
 
 def render_sheets(objs, which, threads, outdir):
@@ -1330,7 +1347,7 @@ def render_sheets(objs, which, threads, outdir):
     for o in objs.values():
         o.hide_render = True
     for si, (fname, fn) in enumerate(SHEETS):
-        if which and str(si + 1) not in which:
+        if (which and str(si + 1) not in which) or (not which and si >= 3):
             continue
         st = Stage(objs)
         fn(st)

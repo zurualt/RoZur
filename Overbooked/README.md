@@ -29,8 +29,9 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 |---|---|---|
 | Coger / soltar | Clic | R2 |
 | Lanzar | Clic derecho | L2 |
-| Usar extintor o llave | F (mantener) | X |
+| Usar extintor, llave o agua | F (mantener) | X |
 | Interactuar (servir, coger comida, botones, puertas) | E | — |
+| Sentarse en un asiento libre · abrir/cerrar altillos | G | — |
 | Calmar a un pasajero | R (mantener) | — |
 | Pilotar: subir / bajar · girar | W / S · A / D | Stick izquierdo |
 | Pilotar: más / menos gases | Shift / Ctrl o Q | R2 / L2 |
@@ -54,7 +55,18 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Datos | `src/server/Datos.luau` | Dinero y vuelos en DataStore, con bloqueo de sesión para no pisar datos al cambiar de servidor |
 | Piratas | `src/server/Piratas.luau` + `src/client/Piratas.luau` | Aviones pirata que dañan el casco; se derriban desde la torreta del ala izquierda |
 
+| Interacciones | `src/server/Interacciones.luau` | Lo que vuela golpea: pasajeros que se enfadan o salen del asiento, jugadores que caen, cocodrilo aturdido. La comida lanzada al pasajero que la pide cuenta como servida. Café y agua dejan charcos resbaladizos; el agua apaga el fuego; las bandejas se derraman |
+| Cabina | `src/server/Cabina.luau` + `src/client/Cabina.luau` | Altillos que se abren con las turbulencias y sueltan bolsos (se guardan soltándolos junto al altillo abierto), asientos para jugadores (sentado no te caes), mascarillas de oxígeno, luces que parpadean y de emergencia, volante, palancas y torreta animados |
+
 Todos los números del juego están en `src/shared/Config.luau`.
+
+### Cómo se relaciona todo
+
+- **Fuego:** se apaga con el extintor, con agua (F con la botella o lanzándola) y con los charcos de agua. Daña la carga que tenga cerca.
+- **Agujeros:** succionan objetos, pasajeros y jugadores. Una maleta, caja, carrito o bolso lanzado al agujero lo tapa hasta que lo repares con la llave; una sacudida fuerte puede hacerlo saltar. Al abrirse, caen las mascarillas.
+- **Cocodrilo:** persigue la comida suelta o a quien la lleva. Si se come una hamburguesa se calma unos segundos; un golpe o el extintor lo aturden. Muerde a los pasajeros por los que pasa.
+- **Turbulencias:** abren altillos, tiran la comida de las bandejas y el café de las manos, mueven la carga y las mascarillas, y hacen parpadear las luces.
+- **Carga:** las cajas se rompen en astillas y las frágiles en cristales.
 
 ## Carpetas
 

@@ -160,7 +160,7 @@ plantillas = {}
 def plantilla(nombre):
     if nombre in plantillas:
         return plantillas[nombre]
-    for carpeta in ("props", "pasajeros", "avion"):
+    for carpeta in ("props", "pasajeros", "avion", "kit_interior", "kit_aeropuerto"):
         ruta = os.path.join(ARTE, carpeta, nombre + ".fbx")
         if os.path.exists(ruta):
             ob = importar(ruta)
@@ -270,13 +270,15 @@ def main():
         if nombre == "ZonaCarga":
             zona = props
         visual = atributos.get("Visual")
-        if visual:
+        if visual and atributos.get("Movil"):
+            colocar(visual, cframe(props["CFrame"]["CFrame"]) @ Matrix.Translation(Vector((0, -props["Size"][1] / 2, 0))))
+        elif visual:
             colocar(visual, base_marcador(props, atributos))
     pasajeros = ["PasajeroAbuela", "PasajeroTurista", "PasajeroEjecutivo", "PasajeroNino", "PasajeroDeportista", "PasajeroRockero"]
     elegidos = rng.sample(asientos, 22)
     for props in elegidos:
         cf = props["CFrame"]["CFrame"]["position"]
-        colocar(rng.choice(pasajeros), Matrix.Translation(Vector((cf[0], 101.6, cf[2] + 0.25))))
+        colocar(rng.choice(pasajeros), Matrix.Translation(Vector((cf[0], 101.6, cf[2] + 0.25))) @ Matrix.Scale(0.85, 4))
     tamanos = {"Extintor": 1.8, "Llave": 1.8, "Carrito": 3.2}
     for props, atributos in soportes:
         tipo = atributos.get("Tipo")
