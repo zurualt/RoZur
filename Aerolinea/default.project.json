@@ -1,0 +1,19 @@
+{
+  "name": "Aerolinea",
+  "tree": {
+    "$className": "DataModel",
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+    "VoiceChatService": {
+      "$properties": {
+        "EnableDefaultVoice": true,
+        "UseAudioApi": "Enabled"
+      }
+    }
+  }
+}

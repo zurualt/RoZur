@@ -1,9 +1,18 @@
-# Tripulante v1
+# Tripulante v2
 
-Personaje jugable de la tripulación. Estilo indie (cara tipo PEAK), diseño propio de la aerolínea.
+Personaje jugable de la tripulación. Estilo indie: cuerpo cápsula delgado, ojos esféricos y boca que se abre al hablar por voz. Diseño propio de la aerolínea.
 
 ![Cuatro tripulantes](renders/lineup.png)
 ![Vistas frontal, 3/4, lateral y trasera](renders/turnaround.png)
+![Boca cerrada, hablando y gritando](renders/boca_voz.png)
+![Prueba de brazos en posturas extremas](renders/brazos_prueba.png)
+
+## Cambios de la v2
+
+- Cuerpo más delgado (un 15 % menos ancho) y más alargado.
+- Ojos esféricos blancos con pupila y brillo.
+- Boca con dos huesos (`BocaSup` y `BocaInf`) para abrirse con el volumen de la voz.
+- Brazos y manos más finos y separados del cuerpo, con más resolución en el codo y una transición de pesos más suave.
 
 ## Archivos
 
@@ -18,17 +27,17 @@ Personaje jugable de la tripulación. Estilo indie (cara tipo PEAK), diseño pro
 ## Especificaciones
 
 - **Altura:** 4,67 studs con los auriculares.
-- **Esqueleto:** R15 con huesos, jerarquía oficial de Roblox: `Root → HumanoidRootNode → LowerTorso → …`. Root en el origen y LowerTorso en el mismo punto que HumanoidRootNode, como pide la especificación.
+- **Esqueleto:** R15 con huesos, jerarquía oficial de Roblox: `Root → HumanoidRootNode → LowerTorso → …`. Root en el origen y LowerTorso en el mismo punto que HumanoidRootNode, como pide la especificación. Además, dos huesos extra hijos de `Head` para la boca: `BocaSup` y `BocaInf`.
 - **Mallas:** 15 objetos con los nombres oficiales (`Head_Geo`, `UpperTorso_Geo`, …), todos con pesos. Como mucho 2 huesos por vértice (el límite es 4).
 - **Pose:** brazos abajo (pose I).
-- **Triángulos:** 7.252 en total, dentro de los límites oficiales de Roblox para cuerpos de avatar:
+- **Triángulos:** 7.856 en total, dentro de los límites oficiales de Roblox para cuerpos de avatar:
 
 | Pieza | Triángulos | Límite |
 |---|---|---|
-| Cabeza | 2.496 | 4.000 |
+| Cabeza | 2.820 | 4.000 |
 | Torso | 1.724 | 1.750 |
-| Cada brazo | 892 | 1.248 |
-| Cada pierna | 624 | 1.248 |
+| Cada brazo | 952 | 1.248 |
+| Cada pierna | 704 | 1.248 |
 
 El cuerpo que queda tapado por el chaleco está borrado, así que no gasta triángulos.
 
@@ -49,6 +58,8 @@ En Blender, el color se cambia en el nodo `PlayerColor` del material.
 | 6 | Crema `#FFF4E0` |
 | 7 | Zapato `#4A3428` |
 | 8 | Suela `#EDE3CF` |
+| 9 | Blanco ojos `#F7F7F2` |
+| 10 | Interior boca `#2B1219` |
 
 ## Importar en Roblox Studio
 
@@ -67,4 +78,4 @@ Sin `--render` solo genera el `.blend`, el `.fbx` y la paleta, en unos segundos.
 
 ## Pendiente de probar
 
-No he podido abrir Roblox Studio desde aquí. El FBX está comprobado reimportándolo en Blender (esqueleto, 15 mallas, pesos y textura), pero falta probarlo dentro de Studio.
+No he podido abrir Roblox Studio desde aquí. El FBX está comprobado reimportándolo en Blender (esqueleto, 15 mallas, pesos y textura), pero falta probarlo dentro de Studio. Lo más importante es comprobar que, al importarlo como R15, Roblox conserva los huesos `BocaSup` y `BocaInf` dentro de la cabeza.

@@ -10,7 +10,7 @@ OUT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else
 if len(sys.argv) > 1 and os.path.isdir(sys.argv[-1]):
     OUT = sys.argv[-1]
 
-ZCB, ZCT, RB, RT, DEPTH = 2.05, 3.55, 1.04, 0.96, 0.86
+ZCB, ZCT, RB, RT, DEPTH = 2.05, 3.55, 0.88, 0.80, 0.86
 
 PALETTE = {
     "body": (0, (1.0, 1.0, 1.0, 0.0)),
@@ -22,6 +22,8 @@ PALETTE = {
     "cream": (6, "FFF4E0"),
     "shoe": (7, "4A3428"),
     "sole": (8, "EDE3CF"),
+    "white": (9, "F7F7F2"),
+    "mouth": (10, "2B1219"),
 }
 
 PLAYER_COLORS = {
@@ -325,6 +327,36 @@ def build_vest():
     return bm
 
 
+def build_mouth(hit):
+    cols, rows, w = 11, 4, 0.15
+    bm = bmesh.new()
+    ls = bm.verts.layers.float.new("ws")
+    li = bm.verts.layers.float.new("wi")
+    grid = []
+    for ri in range(rows + 1):
+        v = ri / rows
+        row = []
+        for ci in range(cols + 1):
+            u = -1.0 + 2.0 * ci / cols
+            zt = 3.70 + 0.035 * u * u
+            t = 0.012 + 0.03 * math.sqrt(max(0.0, 1.0 - u * u))
+            loc, n = hit(u * w, zt - v * t)
+            vert = bm.verts.new(loc + n * 0.012)
+            c = max(0.0, 1.0 - u * u) ** 0.6
+            vert[ls] = (1.0 - v) * c
+            vert[li] = v * c
+            row.append(vert)
+        grid.append(row)
+    for ri in range(rows):
+        for ci in range(cols):
+            bm.faces.new((grid[ri][ci], grid[ri][ci + 1], grid[ri + 1][ci + 1], grid[ri + 1][ci]))
+    bm.normal_update()
+    if sum(f.normal.y for f in bm.faces) > 0:
+        bmesh.ops.reverse_faces(bm, faces=bm.faces)
+    bm.normal_update()
+    return bm
+
+
 def chain_weights(bones, bounds, blend):
     def fn(s):
         w = {bones[0]: 1.0}
@@ -361,25 +393,20 @@ def build_character():
         add(ellipsoid((0.065, 0.022, 0.15), mat, 8, 5), "teal", "UpperTorso", "core")
 
     for sx in (-1, 1):
-        loc, n = hit(sx * 0.27, 3.98)
-        fr = Matrix.Translation(loc - n * 0.012) @ frame_from_normal(-n)
-        add(ellipsoid((0.075, 0.12, 0.045), fr, 12, 8), "black", "Head", {"Head": 1.0})
-        hl = fr @ Matrix.Translation((sx * 0.022, 0.045, -0.04))
-        add(ellipsoid((0.022, 0.022, 0.012), hl, 8, 6), "cream", "Head", {"Head": 1.0})
+        loc, n = hit(sx * 0.24, 3.99)
+        ctr = loc - n * 0.05
+        add(ellipsoid((0.13, 0.13, 0.13), Matrix.Translation(ctr), 14, 10), "white", "Head", {"Head": 1.0})
+        fr = Matrix.Translation(ctr + n * 0.112) @ frame_from_normal(n)
+        add(ellipsoid((0.064, 0.07, 0.036), fr, 12, 8), "black", "Head", {"Head": 1.0})
+        add(ellipsoid((0.019, 0.019, 0.012), fr @ Matrix.Translation((0.022, 0.028, 0.03)), 6, 4), "white", "Head", {"Head": 1.0})
         pts = []
-        for x, z in ((0.16, 4.185), (0.28, 4.225), (0.40, 4.18)):
+        for x, z in ((0.12, 4.215), (0.24, 4.255), (0.36, 4.22)):
             l2, n2 = hit(sx * x, z)
             pts.append(l2 + n2 * 0.004)
         brow, _ = tube(pts, lambda u: 0.03 * (0.55 + 0.45 * math.sin(math.pi * u)), k=6, steps=3, cap_rings=2)
         add(brow, "black", "Head", {"Head": 1.0})
 
-    mouth_pts = []
-    for i in range(7):
-        x = -0.13 + 0.26 * i / 6
-        l2, n2 = hit(x, 3.66 + 0.05 * (x / 0.13) ** 2)
-        mouth_pts.append(l2 + n2 * 0.004)
-    mouth, _ = tube(mouth_pts, lambda u: 0.026 * (0.55 + 0.45 * math.sin(math.pi * u)), k=6, steps=2, cap_rings=2)
-    add(mouth, "black", "Head", {"Head": 1.0})
+    add(build_mouth(hit), "mouth", "Head", "mouth", angle=80.0)
 
     band_pts = []
     a0 = math.asin(3.93 - ZCT)
@@ -391,12 +418,13 @@ def build_character():
         band_pts.append(Vector((RT * ca + 0.07 * nx / nl, 0.05, ZCT + sa + 0.07 * nz / nl)))
     band, _ = tube(band_pts, lambda u: 0.05, k=8, steps=2, up=Vector((0, 1, 0)))
     add(band, "dark", "Head", {"Head": 1.0})
+    cr = r_at(3.93)
     for sx in (-1, 1):
         rot = Matrix.Rotation(math.radians(90), 4, "Y")
-        add(cylinder(0.22, 0.16, Matrix.Translation((sx * 0.95, 0.05, 3.93)) @ rot, 16), "dark", "Head", {"Head": 1.0}, angle=40.0)
-        add(cylinder(0.155, 0.06, Matrix.Translation((sx * 1.05, 0.05, 3.93)) @ rot, 16), "teal", "Head", {"Head": 1.0}, angle=40.0)
+        add(cylinder(0.2, 0.15, Matrix.Translation((sx * (cr + 0.06), 0.05, 3.93)) @ rot, 16), "dark", "Head", {"Head": 1.0}, angle=40.0)
+        add(cylinder(0.14, 0.05, Matrix.Translation((sx * (cr + 0.15), 0.05, 3.93)) @ rot, 16), "teal", "Head", {"Head": 1.0}, angle=40.0)
 
-    mic_raw = [(-1.04, -0.06, 3.87), (-0.98, -0.42, 3.74), (-0.72, -0.72, 3.66), (-0.36, -0.86, 3.66)]
+    mic_raw = [(-0.86, -0.06, 3.87), (-0.80, -0.38, 3.74), (-0.58, -0.62, 3.64), (-0.31, -0.72, 3.62)]
     mic_pts = []
     for x, y, z in mic_raw:
         th = math.atan2(y / DEPTH, x)
@@ -406,7 +434,7 @@ def build_character():
     add(mic, "dark", "Head", {"Head": 1.0})
     add(ellipsoid((0.065, 0.065, 0.065), Matrix.Translation(mic_pts[-1]), 10, 6), "black", "Head", {"Head": 1.0})
 
-    loc, n = hit(0.48, 2.95)
+    loc, n = hit(0.40, 2.95)
     fr = Matrix.Translation(loc + n * 0.08) @ frame_from_normal(n)
     add(cylinder(0.062, 0.03, fr, 8), "gold", "UpperTorso", "core", angle=40.0)
     for sx in (-1, 1):
@@ -418,32 +446,32 @@ def build_character():
         add(bm_, "gold", core_part, "core")
 
     for side, sx in (("Left", 1), ("Right", -1)):
-        ctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.80, 0.0, 3.03), (0.98, 0.0, 3.0), (1.13, 0.0, 2.42), (1.22, 0.0, 1.86))]
-        arm, cs = tube(ctrl, lambda u: 0.165 - 0.03 * u, k=10, steps=4, cap_rings=3)
+        ctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.72, 0.0, 3.04), (0.84, 0.0, 3.0), (1.10, 0.0, 2.48), (1.24, 0.0, 1.98))]
+        arm, cs = tube(ctrl, lambda u: 0.135 - 0.025 * u, k=10, steps=5, cap_rings=3)
         s_el, s_wr = cs[2], cs[3]
-        wf = chain_weights([side + "UpperArm", side + "LowerArm", side + "Hand"], [s_el, s_wr - 0.05], 0.08)
+        wf = chain_weights([side + "UpperArm", side + "LowerArm", side + "Hand"], [s_el, s_wr - 0.04], 0.11)
         add(arm, "body", (lambda c, s, se=s_el, sd=side: sd + ("UpperArm" if s < se else "LowerArm")), wf, s_layer=True)
         hp = side + "Hand"
-        add(ellipsoid((0.12, 0.2, 0.19), Matrix.Translation((sx * 1.25, 0.0, 1.69)), 12, 8), "body", hp, {hp: 1.0})
-        for fy_ in (-0.11, 0.0, 0.11):
-            fpts = [Vector((sx * 1.25, fy_, 1.62)), Vector((sx * 1.275, fy_, 1.5)), Vector((sx * 1.225, fy_, 1.4))]
-            fbm, _ = tube(fpts, lambda u: 0.066 - 0.008 * u, k=6, steps=3, cap_rings=2)
+        add(ellipsoid((0.1, 0.17, 0.16), Matrix.Translation((sx * 1.275, 0.0, 1.83)), 12, 8), "body", hp, {hp: 1.0})
+        for fy_ in (-0.095, 0.0, 0.095):
+            fpts = [Vector((sx * 1.275, fy_, 1.77)), Vector((sx * 1.297, fy_, 1.67)), Vector((sx * 1.255, fy_, 1.585))]
+            fbm, _ = tube(fpts, lambda u: 0.056 - 0.007 * u, k=6, steps=3, cap_rings=2)
             add(fbm, "body", hp, {hp: 1.0})
-        tpts = [Vector((sx * 1.24, -0.12, 1.74)), Vector((sx * 1.215, -0.27, 1.63))]
-        tbm, _ = tube(tpts, lambda u: 0.066, k=6, steps=2, cap_rings=2)
+        tpts = [Vector((sx * 1.265, -0.10, 1.87)), Vector((sx * 1.243, -0.225, 1.78))]
+        tbm, _ = tube(tpts, lambda u: 0.056, k=6, steps=2, cap_rings=2)
         add(tbm, "body", hp, {hp: 1.0})
 
-        lctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.47, 0.0, 1.45), (0.49, 0.0, 0.85), (0.5, 0.0, 0.24))]
-        leg, lcs = tube(lctrl, lambda u: 0.25 - 0.04 * u, k=10, steps=4, cap_rings=3)
+        lctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.39, 0.0, 1.45), (0.41, 0.0, 0.85), (0.42, 0.0, 0.24))]
+        leg, lcs = tube(lctrl, lambda u: 0.215 - 0.035 * u, k=10, steps=6, cap_rings=3)
         s_kn, s_an = lcs[1], lcs[2]
-        lw = chain_weights([side + "UpperLeg", side + "LowerLeg", side + "Foot"], [s_kn, s_an - 0.06], 0.09)
+        lw = chain_weights([side + "UpperLeg", side + "LowerLeg", side + "Foot"], [s_kn, s_an - 0.06], 0.15)
         add(leg, "body", (lambda c, s, sk=s_kn, sd=side: sd + ("UpperLeg" if s < sk else "LowerLeg")), lw, s_layer=True)
         fp = side + "Foot"
-        shoe = ellipsoid((0.29, 0.41, 0.2), Matrix.Translation((sx * 0.5, -0.1, 0.17)), 14, 9)
+        shoe = ellipsoid((0.25, 0.37, 0.18), Matrix.Translation((sx * 0.42, -0.09, 0.155)), 14, 9)
         for v in shoe.verts:
-            v.co.z = max(v.co.z, 0.035)
+            v.co.z = max(v.co.z, 0.03)
         add(shoe, "shoe", fp, {fp: 1.0})
-        sole = ellipsoid((0.3, 0.42, 0.06), Matrix.Translation((sx * 0.5, -0.1, 0.05)), 14, 6)
+        sole = ellipsoid((0.26, 0.38, 0.055), Matrix.Translation((sx * 0.42, -0.09, 0.045)), 14, 6)
         for v in sole.verts:
             v.co.z = max(v.co.z, 0.0)
         add(sole, "sole", fp, {fp: 1.0})
@@ -456,6 +484,8 @@ def assemble():
         bm.verts.index_update()
         bm.normal_update()
         sl = bm.verts.layers.float.get("s") if pr.s_layer else None
+        lws = bm.verts.layers.float.get("ws")
+        lwi = bm.verts.layers.float.get("wi")
         cos_lim = math.cos(math.radians(pr.angle))
         uv = swatch_uv(pr.role)
         vmaps = {}
@@ -476,6 +506,9 @@ def assemble():
                     a["v"].append(v.co.copy())
                     if pr.weights == "core":
                         w = core_weights(v.co.z)
+                    elif pr.weights == "mouth":
+                        w = {"Head": max(0.0, 1.0 - v[lws] - v[lwi]), "BocaSup": v[lws], "BocaInf": v[lwi]}
+                        w = {k: x for k, x in w.items() if x > 1e-4}
                     elif callable(pr.weights):
                         w = pr.weights(v[sl])
                     else:
@@ -557,18 +590,20 @@ BONES = [
     ("LowerTorso", "HumanoidRootNode", (0, 0, 2.05), (0, 0, 2.45)),
     ("UpperTorso", "LowerTorso", (0, 0, 2.45), (0, 0, 3.5)),
     ("Head", "UpperTorso", (0, 0, 3.5), (0, 0, 4.55)),
-    ("LeftUpperArm", "UpperTorso", (0.98, 0, 3.0), (1.13, 0, 2.42)),
-    ("LeftLowerArm", "LeftUpperArm", (1.13, 0, 2.42), (1.22, 0, 1.86)),
-    ("LeftHand", "LeftLowerArm", (1.22, 0, 1.86), (1.24, 0, 1.4)),
-    ("RightUpperArm", "UpperTorso", (-0.98, 0, 3.0), (-1.13, 0, 2.42)),
-    ("RightLowerArm", "RightUpperArm", (-1.13, 0, 2.42), (-1.22, 0, 1.86)),
-    ("RightHand", "RightLowerArm", (-1.22, 0, 1.86), (-1.24, 0, 1.4)),
-    ("LeftUpperLeg", "LowerTorso", (0.47, 0, 1.35), (0.49, 0, 0.85)),
-    ("LeftLowerLeg", "LeftUpperLeg", (0.49, 0, 0.85), (0.5, 0, 0.24)),
-    ("LeftFoot", "LeftLowerLeg", (0.5, 0, 0.24), (0.5, -0.4, 0.12)),
-    ("RightUpperLeg", "LowerTorso", (-0.47, 0, 1.35), (-0.49, 0, 0.85)),
-    ("RightLowerLeg", "RightUpperLeg", (-0.49, 0, 0.85), (-0.5, 0, 0.24)),
-    ("RightFoot", "RightLowerLeg", (-0.5, 0, 0.24), (-0.5, -0.4, 0.12)),
+    ("BocaSup", "Head", (0, -0.69, 3.71), (0, -0.69, 3.81)),
+    ("BocaInf", "Head", (0, -0.69, 3.66), (0, -0.69, 3.56)),
+    ("LeftUpperArm", "UpperTorso", (0.84, 0, 3.0), (1.10, 0, 2.48)),
+    ("LeftLowerArm", "LeftUpperArm", (1.10, 0, 2.48), (1.24, 0, 1.98)),
+    ("LeftHand", "LeftLowerArm", (1.24, 0, 1.98), (1.27, 0, 1.55)),
+    ("RightUpperArm", "UpperTorso", (-0.84, 0, 3.0), (-1.10, 0, 2.48)),
+    ("RightLowerArm", "RightUpperArm", (-1.10, 0, 2.48), (-1.24, 0, 1.98)),
+    ("RightHand", "RightLowerArm", (-1.24, 0, 1.98), (-1.27, 0, 1.55)),
+    ("LeftUpperLeg", "LowerTorso", (0.40, 0, 1.35), (0.41, 0, 0.85)),
+    ("LeftLowerLeg", "LeftUpperLeg", (0.41, 0, 0.85), (0.42, 0, 0.24)),
+    ("LeftFoot", "LeftLowerLeg", (0.42, 0, 0.24), (0.42, -0.36, 0.12)),
+    ("RightUpperLeg", "LowerTorso", (-0.40, 0, 1.35), (-0.41, 0, 0.85)),
+    ("RightLowerLeg", "RightUpperLeg", (-0.41, 0, 0.85), (-0.42, 0, 0.24)),
+    ("RightFoot", "RightLowerLeg", (-0.42, 0, 0.24), (-0.42, -0.36, 0.12)),
 ]
 
 
@@ -631,6 +666,9 @@ def pose(rig, rots):
         bpy.context.view_layer.update()
         pb = rig.pose.bones[bone]
         m = pb.matrix.copy()
+        if axis == "T":
+            pb.matrix = Matrix.Translation(Vector(deg)) @ m
+            continue
         h = m.translation.copy()
         r = Matrix.Rotation(math.radians(deg), 4, axis)
         pb.matrix = Matrix.Translation(h) @ r @ Matrix.Translation(-h) @ m
@@ -770,38 +808,50 @@ def main():
     for o in objs:
         o.hide_render = True
     render_setup(scene, (1600, 900))
-    names = list(PLAYER_COLORS)
-    poses = [
-        [("RightUpperArm", "Y", 150), ("RightLowerArm", "Y", 25), ("Head", "Y", 8)],
-        [],
-        [("LeftUpperArm", "X", -55), ("RightUpperArm", "X", -55), ("LeftLowerArm", "X", -45), ("RightLowerArm", "X", -45)],
-        [("UpperTorso", "X", 8), ("LeftUpperLeg", "X", -38), ("LeftLowerLeg", "X", 45), ("RightUpperLeg", "X", 28), ("RightLowerLeg", "X", 20), ("RightUpperArm", "X", -40), ("RightLowerArm", "X", -50), ("LeftUpperArm", "X", 35), ("LeftLowerArm", "X", -30)],
-    ]
-    rigs = []
-    for i, nm in enumerate(names):
-        m = palette_material("Tripulante_" + nm, img, PLAYER_COLORS[nm])
-        r2 = clone(rig, objs, coll, m, (-4.2 + 2.8 * i, 0, 0), rot_z=[12, 4, -4, -14][i])
-        rigs.append(r2)
-    bpy.context.view_layer.update()
-    for r2, p in zip(rigs, poses):
-        pose(r2, p)
-    cam = camera(scene, (0.6, -14.5, 5.0), (0, 0, 2.15), lens=42)
-    scene.render.filepath = os.path.join(rdir, "lineup.png")
-    bpy.ops.render.render(write_still=True)
+    mats = {nm: palette_material("Tripulante_" + nm, img, hx) for nm, hx in PLAYER_COLORS.items()}
 
-    for r2 in rigs:
-        r2.hide_render = True
-        for ch in r2.children:
-            ch.hide_render = True
-    m = palette_material("Tripulante_Turn", img, PLAYER_COLORS["Lavanda"])
-    for i, rz in enumerate((0, -40, -90, 180)):
-        clone(rig, objs, coll, m, (-4.5 + 3.0 * i, 0, 0), rot_z=rz)
-    bpy.context.view_layer.update()
-    scene.render.resolution_x, scene.render.resolution_y = (1600, 640)
-    bpy.data.objects.remove(cam)
-    camera(scene, (0, -20, 2.4), (0, 0, 2.4), ortho=13.2)
-    scene.render.filepath = os.path.join(rdir, "turnaround.png")
-    bpy.ops.render.render(write_still=True)
+    def boca(k):
+        return [("BocaSup", "T", (0.0, -0.004 * k, 0.05 * k)), ("BocaInf", "T", (0.0, -0.02 * k, -0.24 * k))]
 
+    def shot(name, cast, cam, res, samples):
+        made = []
+        for nm, loc, rz, p in cast:
+            made.append((clone(rig, objs, coll, mats[nm], loc, rot_z=rz), p))
+        bpy.context.view_layer.update()
+        for r2, p in made:
+            pose(r2, p)
+        co = camera(scene, **cam)
+        scene.render.resolution_x, scene.render.resolution_y = res
+        scene.cycles.samples = samples
+        scene.render.filepath = os.path.join(rdir, name + ".png")
+        bpy.ops.render.render(write_still=True)
+        for r2, _ in made:
+            for ch in list(r2.children):
+                bpy.data.objects.remove(ch)
+            bpy.data.objects.remove(r2)
+        bpy.data.objects.remove(co)
+
+    wave = [("RightUpperArm", "Y", 150), ("RightLowerArm", "Y", 25), ("Head", "Y", 8)]
+    carry = [("LeftUpperArm", "X", -55), ("RightUpperArm", "X", -55), ("LeftLowerArm", "X", -45), ("RightLowerArm", "X", -45)]
+    run = [("UpperTorso", "X", 8), ("LeftUpperLeg", "X", -38), ("LeftLowerLeg", "X", 45), ("RightUpperLeg", "X", 28), ("RightLowerLeg", "X", 20), ("RightUpperArm", "X", -40), ("RightLowerArm", "X", -50), ("LeftUpperArm", "X", 35), ("LeftLowerArm", "X", -30)]
+    shot("lineup", [
+        ("Lima", (-4.2, 0, 0), 12, wave + boca(0.55)),
+        ("Lavanda", (-1.4, 0, 0), 4, []),
+        ("Chicle", (1.4, 0, 0), -4, carry + boca(1.0)),
+        ("Sol", (4.2, 0, 0), -14, run + boca(0.3)),
+    ], dict(loc=(0.6, -14.5, 5.0), target=(0, 0, 2.15), lens=42), (1600, 900), 96)
+    shot("turnaround", [("Lavanda", (-4.5 + 3.0 * i, 0, 0), rz, []) for i, rz in enumerate((0, -40, -90, 180))],
+         dict(loc=(0, -20, 2.4), target=(0, 0, 2.4), ortho=13.2), (1600, 640), 96)
+    shot("boca_voz", [
+        ("Lima", (-2.0, 0, 0), 0, []),
+        ("Lavanda", (0.0, 0, 0), 0, boca(0.5)),
+        ("Chicle", (2.0, 0, 0), 0, boca(1.0)),
+    ], dict(loc=(0, -6.4, 3.9), target=(0, 0, 3.72), lens=38), (1600, 700), 64)
+    shot("brazos_prueba", [
+        ("Sol", (-4.2, 0, 0), 20, [("LeftUpperArm", "Y", -150), ("RightUpperArm", "Y", 150)] + boca(0.6)),
+        ("Lima", (-1.4, 0, 0), 30, [("LeftUpperArm", "X", -75), ("RightUpperArm", "X", -75), ("LeftLowerArm", "X", -35), ("RightLowerArm", "X", -35)]),
+        ("Lavanda", (1.4, 0, 0), 30, [("LeftUpperArm", "Y", -88), ("RightUpperArm", "Y", 88), ("LeftLowerArm", "X", -90), ("RightLowerArm", "X", -90)]),
+        ("Chicle", (4.2, 0, 0), 25, [("UpperTorso", "X", 15), ("LeftUpperArm", "X", 60), ("RightUpperArm", "X", 60), ("LeftLowerArm", "X", -40), ("RightLowerArm", "X", -40), ("LeftUpperLeg", "X", -60), ("RightUpperLeg", "X", -60), ("LeftLowerLeg", "X", 80), ("RightLowerLeg", "X", 80)]),
+    ], dict(loc=(0.6, -14.5, 5.0), target=(0, 0, 2.15), lens=42), (1600, 900), 64)
 
 main()
