@@ -1,4 +1,4 @@
-# Aerolínea (nombre provisional)
+# Overbooked!
 
 Juego cooperativo de tripulación de avión caótica. El código va en Luau estricto, optimizado y sin comentarios. El arte (modelos, animaciones, efectos) se hace en Blender y los sonidos en ElevenLabs.
 
@@ -7,9 +7,20 @@ Juego cooperativo de tripulación de avión caótica. El código va en Luau estr
 | Carpeta | Qué hay | Dónde aparece en Studio |
 |---|---|---|
 | `src/client` | Scripts del jugador | `StarterPlayer.StarterPlayerScripts.Client` |
-| `arte/tripulante` | Personaje jugable (Blender, FBX, renders) | Se importa a mano, ver su README |
+| `arte/tripulante` | Personaje jugable (Blender, FBX, renders) | Asset `87418247604950` |
 
-Rojo se conecta igual que en Catch It: abre una terminal en la carpeta `Aerolinea`, ejecuta `rokit install` la primera vez y luego `rojo serve`. Los pasos completos están en el README de Catch It.
+Rojo se conecta igual que en Catch It: abre una terminal en la carpeta `Overbooked`, ejecuta `rokit install` la primera vez y luego `rojo serve`. Los pasos completos están en el README de Catch It.
+
+## IDs en Roblox
+
+| Qué | ID |
+|---|---|
+| Experiencia (universo) | `10774639088` |
+| Lugar principal | `70554923634533` |
+| Grupo dueño | `783757619` |
+| Tripulante v2 (modelo) | `87418247604950` |
+
+Todo se sube y se prueba con la API de Open Cloud: los modelos con la API de assets, el lugar con la de publicación y las pruebas con la de ejecución de Luau.
 
 ## Boca que se abre al hablar por voz
 

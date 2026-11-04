@@ -61,7 +61,10 @@ En Blender, el color se cambia en el nodo `PlayerColor` del material.
 | 9 | Blanco ojos `#F7F7F2` |
 | 10 | Interior boca `#2B1219` |
 
-## Importar en Roblox Studio
+## En Roblox
+
+Subido con la API de assets al grupo del juego: modelo `87418247604950`. Si alguna vez hay que importarlo a mano en Studio:
+
 
 1. Abre el importador 3D y elige `tripulante.fbx`.
 2. En **Rig Type** deja **R15 / Default**.
