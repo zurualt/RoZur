@@ -137,7 +137,8 @@ local function embarque(contrato: Contratos.Contrato)
 	Tienda.aplicar()
 	Avion.embarque(contrato.distancia)
 	Cabina.reiniciar()
-	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo)
+	Estado:SetAttribute("Condicion", contrato.condicion)
+	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo, contrato.condicion)
 	Carga.cargar(contrato)
 	aviso(`🧳 ¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
 	for t = Config.PARTIDA.EMBARQUE, 1, -1 do
@@ -223,6 +224,7 @@ local function limpiar()
 	Objetos.limpiar()
 	Interacciones.limpiar()
 	Cabina.reiniciar()
+	Estado:SetAttribute("Condicion", "")
 	Workspace.Gravity = Config.GRAVEDAD
 end
 

@@ -17,6 +17,7 @@ export type Contrato = {
 	multaPasajero: number,
 	entregaAerea: boolean,
 	titulo: string,
+	condicion: string,
 }
 
 local CIUDADES = {
@@ -45,6 +46,32 @@ local TITULOS = {
 
 local Contratos = {}
 
+Contratos.CONDICIONES = {
+	Normal = { icono = "", texto = "", peso = 5 },
+	Nocturno = { icono = "🌙", texto = "Vuelo nocturno (+15 %)", peso = 2 },
+	Niebla = { icono = "🌫", texto = "Niebla en destino (+20 %)", peso = 2 },
+	VIP = { icono = "💎", texto = "Pasajeros VIP: pagan más y se impacientan antes", peso = 2 },
+	Hambre = { icono = "🍔", texto = "Pasaje hambriento: piden el doble", peso = 2 },
+	Fragil = { icono = "🍷", texto = "Carga frágil de lujo", peso = 1 },
+} :: { [string]: { icono: string, texto: string, peso: number } }
+
+local ORDEN_CONDICIONES = { "Normal", "Nocturno", "Niebla", "VIP", "Hambre", "Fragil" }
+
+local function condicion(rng: Random): string
+	local total = 0
+	for _, n in ORDEN_CONDICIONES do
+		total += Contratos.CONDICIONES[n].peso
+	end
+	local tirada = rng:NextNumber() * total
+	for _, n in ORDEN_CONDICIONES do
+		tirada -= Contratos.CONDICIONES[n].peso
+		if tirada <= 0 then
+			return n
+		end
+	end
+	return "Normal"
+end
+
 local function elegir<T>(lista: { T }, rng: Random): T
 	return lista[rng:NextInteger(1, #lista)]
 end
@@ -69,6 +96,22 @@ function Contratos.generar(rng: Random, origen: string): Contrato
 		table.insert(carga, { tipo = "Jaula", cantidad = 1, valor = 400, entrega = false })
 	end
 	local pasajeros = rng:NextInteger(10, 20) + riesgo * 4
+	local c = condicion(rng)
+	local pago = 18 + riesgo * 8
+	local multa = 60
+	if c == "Nocturno" then
+		pago *= 1.15
+	elseif c == "Niebla" then
+		pago *= 1.2
+	elseif c == "VIP" then
+		pago *= 1.6
+		multa *= 1.5
+		pasajeros = math.floor(pasajeros * 0.7)
+	elseif c == "Hambre" then
+		pago *= 1.1
+	elseif c == "Fragil" then
+		table.insert(carga, { tipo = "CajaFragil", cantidad = rng:NextInteger(3, 5), valor = 140, entrega = false })
+	end
 	return {
 		origen = origen,
 		destino = destino,
@@ -76,10 +119,11 @@ function Contratos.generar(rng: Random, origen: string): Contrato
 		pasajeros = math.min(pasajeros, 32),
 		carga = carga,
 		riesgo = riesgo,
-		pagoPasajero = 18 + riesgo * 8,
-		multaPasajero = 60,
+		pagoPasajero = math.floor(pago),
+		multaPasajero = math.floor(multa),
 		entregaAerea = entregaAerea,
 		titulo = elegir(TITULOS, rng),
+		condicion = c,
 	}
 end
 

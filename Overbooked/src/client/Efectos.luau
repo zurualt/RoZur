@@ -21,6 +21,7 @@ local base = {
 	densidad = if atmosfera then atmosfera.Density else 0.3,
 }
 local tormenta = false
+local Estado = game:GetService("ReplicatedStorage"):WaitForChild("Estado")
 local proximoRayo = 0
 
 local function pantalla()
@@ -44,14 +45,24 @@ local function destellar(color: Color3, fuerza: number, duracion: number)
 	TweenService:Create(destello, TweenInfo.new(duracion), { BackgroundTransparency = 1 }):Play()
 end
 
-local function ambiente(oscuro: boolean)
+local function ambiente()
+	local fase = Estado:GetAttribute("Fase")
+	local condicion = if fase == "Vuelo" then Estado:GetAttribute("Condicion") else ""
+	local reloj, brillo, densidad = base.reloj, base.brillo, base.densidad
+	if condicion == "Nocturno" then
+		reloj, brillo = 22.5, 0.55
+	elseif condicion == "Niebla" then
+		densidad = 0.62
+	end
+	if tormenta then
+		reloj = if condicion == "Nocturno" then reloj else 18.6
+		brillo = math.min(brillo, 0.9)
+		densidad = math.max(densidad, 0.55)
+	end
 	local info = TweenInfo.new(3)
-	TweenService:Create(Lighting, info, {
-		ClockTime = if oscuro then 18.6 else base.reloj,
-		Brightness = if oscuro then 0.9 else base.brillo,
-	}):Play()
+	TweenService:Create(Lighting, info, { ClockTime = reloj, Brightness = brillo }):Play()
 	if atmosfera then
-		TweenService:Create(atmosfera, info, { Density = if oscuro then 0.55 else base.densidad }):Play()
+		TweenService:Create(atmosfera, info, { Density = densidad }):Play()
 	end
 end
 
@@ -96,8 +107,10 @@ function Efectos.iniciar()
 	pantalla()
 	avion:GetAttributeChangedSignal("Tormenta"):Connect(function()
 		tormenta = avion:GetAttribute("Tormenta") == true
-		ambiente(tormenta)
+		ambiente()
 	end)
+	Estado:GetAttributeChangedSignal("Fase"):Connect(ambiente)
+	Estado:GetAttributeChangedSignal("Condicion"):Connect(ambiente)
 	avion:GetAttributeChangedSignal("CaidaLibre"):Connect(function()
 		if avion:GetAttribute("CaidaLibre") then
 			Camara.impulsoFov(16)

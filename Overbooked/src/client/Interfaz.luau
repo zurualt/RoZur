@@ -10,6 +10,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Visuales = require(ReplicatedStorage.Shared.Visuales)
+local Contratos = require(ReplicatedStorage.Shared.Contratos)
 local Agarre = require(script.Parent.Agarre)
 local BocaVoz = require(script.Parent.BocaVoz)
 local Piloto = require(script.Parent.Piloto)
@@ -558,6 +559,7 @@ local function tablero()
 			`Riesgo {riesgo(o.riesgo)}`,
 			`💰 ~{estimado}`,
 			if o.entregaAerea then "🪂 Incluye entrega aérea" else "",
+			if typeof(o.condicion) == "string" and Contratos.CONDICIONES[o.condicion] and o.condicion ~= "Normal" then `{Contratos.CONDICIONES[o.condicion].icono} {Contratos.CONDICIONES[o.condicion].texto}` else "",
 		}, "\n"), UDim2.new(1, -20, 1, -20), UDim2.fromOffset(10, 10), CREMA, 30)
 		t.TextYAlignment = Enum.TextYAlignment.Top
 	end

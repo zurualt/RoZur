@@ -559,7 +559,7 @@ def s_salpicadura():
     n = ns(0.9)
     sp = stft(ruido(n, 62), lambda t, f: Mlp(f, 1400+6000*np.exp(-np.maximum(t, 0)/0.06), 2)*Mhp(f, 250, 2))
     put(b, sp*ad(n, 0.004, 0.12), 0.005, 0.55)
-    put(b, sp[::-1][:ns(0.5)]*0+stft(ruido(ns(0.5), 63), lambda t, f: Mbp(f, 900+1500*np.exp(-np.maximum(t, 0)/0.08), 0.8))*ad(ns(0.5), 0.01, 0.08), 0.1, 0.3)
+    put(b, stft(ruido(ns(0.5), 63), lambda t, f: Mbp(f, 900+1500*np.exp(-np.maximum(t, 0)/0.08), 0.8))*ad(ns(0.5), 0.01, 0.08), 0.1, 0.3)
     for i in range(24):
         t0 = 0.05+0.65*r.uniform()**1.4
         f = r.uniform(900, 3200)
@@ -1187,7 +1187,7 @@ def d_hat(v, rng, abierto=False):
     n = ns(0.5 if abierto else 0.09)
     t = tt(n)
     nz = filt(rng.standard_normal(n), mul(hp(7000, 2), lp(13000, 2)))
-    met = sum(np.sign(np.sin(TAU*fr*t))*0.0+np.sin(TAU*fr*t) for fr in (3140, 4410, 5310, 6280, 7150, 8370))/6
+    met = sum(np.sin(TAU*fr*t) for fr in (3140, 4410, 5310, 6280, 7150, 8370))/6
     met = filt(met, hp(6000, 2))
     return (nz+0.6*met)*ad(n, 0.0005, 0.18 if abierto else 0.025)*v
 
@@ -1683,7 +1683,7 @@ def m_aeropuerto():
             else:
                 ev += [(b0+st, 1.4, 'ctb', root, 0.9, 0.0, 0.08), (b0+st+1.5, 0.45, 'ctb', quinta(root), 0.7, 0.0, 0.08)]
             for j, m in enumerate(vc):
-                ev.append((b0+st, ln-0.1, 'epi', m+12, 0.35, -0.3+0.2*j, 0.35))
+                ev.append((b0+st, ln-0.1, 'epi', m, 0.35, -0.3+0.2*j, 0.35))
         pos = [0, 1.0, 2.5, 3.5] if bar % 2 == 0 else [0.5, 2.0, 3.0]
         for q in pos:
             _, root, vc = acorde_en(AERO, bar, q)
@@ -1936,14 +1936,14 @@ def exportar(nombre, x, tipo):
         objetivo = -6.0
     ch = 1 if y.ndim == 1 else 2
     q = QQ[tipo]
-    for it in range(4):
+    for it in range(6):
         codificar(y, path, q)
         if os.path.getsize(path) > LIM[tipo] and q > 0:
             q -= 1
-            continue
+            codificar(y, path, q)
         z = decodificar(path, ch)
         pk_ = db(np.abs(z).max())
-        if abs(pk_-objetivo) <= 0.25 or it == 3:
+        if abs(pk_-objetivo) <= 0.25 or it == 5:
             break
         y = y*dbg(objetivo-pk_)
     assert len(z) == len(y), (nombre, len(z), len(y))

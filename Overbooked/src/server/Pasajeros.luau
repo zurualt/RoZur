@@ -32,6 +32,7 @@ local lista: { [Model]: Pasajero } = {}
 local rng = Random.new()
 local cuenta = { embarcados = 0, perdidos = 0, servidos = 0 }
 local riesgo = 1
+local condicion = "Normal"
 
 local function soldar(a: BasePart, b: BasePart)
 	local w = Instance.new("WeldConstraint")
@@ -232,9 +233,10 @@ local function libre(cerca: Vector3?, radio: number?): BasePart?
 	return mejor
 end
 
-function Pasajeros.embarcar(cantidad: number, nivelRiesgo: number)
+function Pasajeros.embarcar(cantidad: number, nivelRiesgo: number, nuevaCondicion: string?)
 	Pasajeros.limpiar()
 	riesgo = nivelRiesgo
+	condicion = nuevaCondicion or "Normal"
 	local orden: { BasePart } = {}
 	for _, asiento in asientos do
 		if not Pasajeros.ocupado(asiento) then
@@ -489,9 +491,9 @@ function Pasajeros.iniciar()
 				if p.asiento then
 					local pedido = modelo:GetAttribute("Pedido")
 					if pedido == "" then
-						if rng:NextNumber() < P.PEDIDO_PROB * (0.8 + riesgo * 0.2) then
+						if rng:NextNumber() < P.PEDIDO_PROB * (0.8 + riesgo * 0.2) * (if condicion == "Hambre" then 2.2 elseif condicion == "VIP" then 1.3 else 1) then
 							modelo:SetAttribute("Pedido", Config.COMIDA[rng:NextInteger(1, #Config.COMIDA)])
-							local maximo = P.PACIENCIA + 6 * Mejoras.nivel("Cocina")
+							local maximo = math.floor((P.PACIENCIA + 6 * Mejoras.nivel("Cocina")) * (if condicion == "VIP" then 0.7 else 1))
 							modelo:SetAttribute("PacienciaMax", maximo)
 							modelo:SetAttribute("Paciencia", maximo)
 						end
