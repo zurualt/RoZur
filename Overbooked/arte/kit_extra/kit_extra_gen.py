@@ -760,7 +760,10 @@ def p_tienda():
             mw = fr((xs_, 0, 0), side)
             u0, u1 = sorted((FY + 0.05, 1.95)) if (side == "+x") else sorted((-1.95, -(FY + 0.05)))
             p.add(decal(rect(u0, u1, 0.0, 0.55), mw, 0.0), "teal")
-    p.add(bb(-3.8, 3.8, 1.8, 2.0, 0.0, 4.84), lambda c, n: "lteal" if n.y < -0.5 else "cream")
+    p.add(bb(-3.8, 3.8, 1.8, 1.996, 0.0, 4.84), lambda c, n: "lteal" if n.y < -0.5 else "cream")
+    mb = fr((0, 2.0, 0), "+y")
+    p.add(decal(rect(-3.8, 3.8, 0.0, 0.55), mb, 0.0), "teal")
+    p.add(decal(rect(-3.8, 3.8, 3.9, 4.08), mb, 0.0), "orange")
     p.add(bb(-4.0, 4.0, FY - 0.05, 2.0, 4.82, 4.98, 0.03, 1), lambda c, n: "cream")
     p.add(decal(rect(-3.7, 3.7, -(FY + 0.17), -(FY + 0.05)), fr((0, 0, 4.816), "-z"), 0.0), "glow")
     # estanterias
@@ -1018,7 +1021,7 @@ def p_gorro_cono():
 
 def p_corona():
     zb = 4.40
-    k = 0.8
+    k = 0.804
     p = Prop("Corona", (1.3, 1.3, 0.7), 600, hat={"zb": zb})
     seg = 20
     bm = bmesh.new()
@@ -1027,7 +1030,7 @@ def p_corona():
 
     def ztop(a):
         ph = ((a + math.pi / 2) / (2 * math.pi / 5)) % 1.0
-        return zb + 0.32 + 0.297 * abs(1.0 - 2.0 * ph)
+        return zb + 0.32 + 0.3 * abs(1.0 - 2.0 * ph)
     for j in range(seg):
         a = -math.pi / 2 + 2 * math.pi * j / seg
         ca, sa = math.cos(a), math.sin(a)
@@ -1043,7 +1046,7 @@ def p_corona():
     p.add(bm, "gold", 40)
     for m_ in range(5):
         a = -math.pi / 2 + 2 * math.pi * m_ / 5
-        p.add(ico(0.048, (ro1 * math.cos(a), k * ro1 * math.sin(a), zb + 0.62 + 0.035)), "gold", 60)
+        p.add(ico(0.048, (ro1 * math.cos(a), k * ro1 * math.sin(a), ztop(a) + 0.032)), "gold", 60)
         nrm = Vector((math.cos(a), math.sin(a) / k, 0)).normalized()
         q = Vector(((ro0 + 0.012) * math.cos(a), k * (ro0 + 0.012) * math.sin(a), zb + 0.075))
         p.add(octa((0.055, 0.075, 0.03), Matrix.Translation(q + nrm * 0.008) @ frame_from_normal(nrm)), "velvet" if m_ % 2 == 0 else "teal", 30)
@@ -1086,16 +1089,20 @@ def p_auriculares2():
 def p_gorro_pato():
     zb = 4.35
     p = Prop("GorroPato", (1.4, 1.6, 1.2), 600, hat={"zb": zb})
-    prof = [(0.705, zb, 0.72), (0.74, zb + 0.08, 0.82), (0.73, zb + 0.20, 0.90), (0.66, zb + 0.33, 0.94),
-            (0.50, zb + 0.44, 0.95), (0.27, zb + 0.51, 0.95), (0.0, zb + 0.53)]
-    p.add(elathe(prof, 14, a0=math.radians(-90)), hat_role("duck", "yellow", zb), 60)
-    hc = Vector((0.0, -0.2, zb + 0.84))
+    prof = [(0.705, zb, 0.72), (0.745, zb + 0.1, 0.82), (0.74, zb + 0.25, 0.90), (0.67, zb + 0.41, 0.94),
+            (0.51, zb + 0.54, 0.95), (0.28, zb + 0.61, 0.95), (0.0, zb + 0.63)]
+    bulge = [0.0, 0.04, 0.08, 0.08, 0.05, 0.0, 0.0]
+
+    def rm(i, a):
+        return 1.0 + bulge[i] * max(0.0, -math.sin(a)) ** 2
+    p.add(elathe(prof, 14, rmod=rm, a0=math.radians(-90)), hat_role("duck", "yellow", zb), 60)
+    hc = Vector((0.0, -0.2, zb + 0.92))
     hr = 0.40
     p.add(ellipsoid((hr, hr * 0.95, hr), Matrix.Translation(hc), 12, 6), "duck", 60)
-    p.add(ellipsoid((0.22, 0.17, 0.075), Matrix.Translation((0, -0.62, zb + 0.77)) @ Matrix.Rotation(math.radians(-10), 4, "X"), 8, 5), "beak", 60)
-    p.add(ellipsoid((0.22, 0.26, 0.12), Matrix.Translation((0, 0.55, zb + 0.34)) @ Matrix.Rotation(math.radians(40), 4, "X"), 6, 4), "duck", 60)
+    p.add(ellipsoid((0.22, 0.17, 0.075), Matrix.Translation((0, -0.62, zb + 0.85)) @ Matrix.Rotation(math.radians(-10), 4, "X"), 8, 5), "beak", 60)
+    p.add(ellipsoid((0.22, 0.27, 0.12), Matrix.Translation((0, 0.55, zb + 0.43)) @ Matrix.Rotation(math.radians(42), 4, "X"), 6, 4), "duck", 60)
     for sx in (-1, 1):
-        p.add(ellipsoid((0.08, 0.3, 0.17), Matrix.Translation((sx * 0.675, 0.1, zb + 0.22)) @ Matrix.Rotation(math.radians(14), 4, "X"), 6, 4), "duck", 60)
+        p.add(ellipsoid((0.08, 0.3, 0.17), Matrix.Translation((sx * 0.68, 0.1, zb + 0.27)) @ Matrix.Rotation(math.radians(14), 4, "X"), 6, 4), "duck", 60)
         az, el = math.radians(33), math.radians(20)
         d = Vector((sx * math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)))
         ec = hc + Vector((d.x * hr, d.y * hr * 0.95, d.z * hr)) * 0.99
@@ -1653,17 +1660,17 @@ def sheet_1(objs, threads, outdir):
 
     def t_axe():
         studio(sun_rot=(50, 0, -60))
-        a = inst(objs, "Piolet", (-0.3, 0.25, 0), 0)
-        b = inst(objs, "Piolet", (0.35, -0.3, 0), 62)
-        cam = camera_fit([a, b], 12, 62, 50, 0.84, 0.86)
+        a = inst(objs, "Piolet", (-0.75, 0.45, 0), 0)
+        b = inst(objs, "Piolet", mw=M((-0.25, -0.5, 0.125), (0, 90, 14)))
+        cam = camera_fit([a, b], 26, 38, 50, 0.86, 0.84)
         return cam, "Piolet (pico a -Y, azuela a +Y)"
 
     def t_hats():
         studio(sun_rot=(52, 0, -36))
-        lay = [("GorraPiloto", -3.0, 1.0), ("GorroHelice", -1.0, 1.0), ("GorroChef", 1.0, 1.0), ("SombreroVaquero", 3.2, 1.0),
-               ("GorroCono", -3.0, -1.2), ("Corona", -1.0, -1.2), ("Auriculares2", 1.1, -1.2), ("GorroPato", 3.2, -1.2)]
+        lay = [("GorraPiloto", -2.9, 0.9), ("GorroHelice", -1.15, 0.9), ("GorroChef", 0.55, 0.9), ("SombreroVaquero", 2.7, 0.9),
+               ("GorroCono", -2.9, -1.1), ("Corona", -1.15, -1.1), ("Auriculares2", 0.6, -1.1), ("GorroPato", 2.6, -1.1)]
         made = [inst(objs, n, (x, y, 0), -18) for n, x, y in lay]
-        cam = camera_fit(made, 26, -12, 50, 0.92, 0.84)
+        cam = camera_fit(made, 24, -12, 50, 0.94, 0.88)
         return cam, "Gorros (cosmeticos)"
     for i, fn in enumerate((t_scan, t_tunnel, t_shop, t_bin, t_axe, t_hats)):
         render_setup(scene, threads, TW + (1 if i % 3 < 1600 % 3 else 0), TH)
@@ -1677,11 +1684,11 @@ def sheet_1(objs, threads, outdir):
 def sheet_2(objs, threads, outdir, anchors):
     scene = bpy.context.scene
     paths = tile_paths("e2", 8)
-    cols = ["Lavanda", "Lima", "Chicle", "Sol"]
+    cols = ["Lavanda", "Lima", "Chicle", "Sol", "Sol", "Lavanda", "Chicle", "Lima"]
     for i, name in enumerate(HATS):
         render_setup(scene, threads, 400, 450)
         studio(sun_rot=(50, 0, -40))
-        made = tripulante(Matrix(), cols[i % 4])
+        made = tripulante(Matrix(), cols[i])
         hc = TRIP["head_centre"] if TRIP else HEAD_CENTRE
         org = hc + Vector((anchors[name][0], anchors[name][2], anchors[name][1]))
         h = inst(objs, name, tuple(org), 0)

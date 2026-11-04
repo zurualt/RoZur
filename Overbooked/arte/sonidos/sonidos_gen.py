@@ -539,7 +539,7 @@ def s_cristal():
     return reverb(b, 'cuarto', 0.14)
 
 
-@reg('Madera', 'sfx', -15, 'Caja de madera rompiéndose: crujido, astillas y tablas cayendo.')
+@reg('Madera', 'sfx', -16, 'Caja de madera rompiéndose: crujido, astillas y tablas cayendo.')
 def s_madera():
     b = buf(1.5)
     r = R(51)
@@ -886,7 +886,7 @@ def s_puerta_cerrar():
     return reverb(b, 'cuarto', 0.16)
 
 
-@reg('Altillo', 'sfx', -17, 'Compartimento superior: pop del pestillo y crujido de la tapa.')
+@reg('Altillo', 'sfx', -18, 'Compartimento superior: pop del pestillo y crujido de la tapa.')
 def s_altillo():
     b = buf(1.0)
     put(b, modal(0.12, [900, 2150, 3400], [1, 0.6, 0.3], [0.02, 0.012, 0.007]), 0, 0.6)
@@ -1619,7 +1619,7 @@ def render_musica(bpm, compases, eventos, ir, enviar, s):
             x = fn(v, rng)
         else:
             x = fn(m2f(nota), durb*spb, v)
-        st = pan(x*MIXG.get(inst, 1.0), p)
+        st = pan(x*MIXG.get(inst, 1.0), float(np.clip(1.5*p, -0.85, 0.85)))
         i0 = int(round((beat*spb+j)*SR)) % L
         put(dry, st, i0, wrap=True)
         if snd > 0:
@@ -1687,7 +1687,7 @@ AERO_MEL = [
     [(0, 1, 70), (1, .5, 74), (1.5, 1, 79), (2.5, 1.5, 76)]]
 
 
-@reg('MusicaAeropuerto', 'musica', -24, 'Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases.')
+@reg('MusicaAeropuerto', 'musica', -24, 'Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases (38,4 s, igual que las otras dos pistas; los compases de las tres coinciden cada 9,6 s).')
 def m_aeropuerto():
     MIXG.clear()
     MIXG.update({'nyl': 0.23, 'ctb': 0.75, 'vib': 0.5, 'epi': 0.22, 'cel': 0.16, 'dsh': 0.55, 'dar': 0.6, 'dbo': 0.6, 'dcg': 0.55, 'dcl': 0.45})
@@ -1775,7 +1775,7 @@ def bajo_caminante(prog, bar, nxt_root):
     return out
 
 
-@reg('MusicaVuelo', 'musica', -24, 'Música original del vuelo: animada, cómica y algo tensa, Re menor, 125 BPM, 20 compases.')
+@reg('MusicaVuelo', 'musica', -24, 'Música original del vuelo: animada, cómica y algo tensa, Re menor (relativo de Fa), 125 BPM, 20 compases (38,4 s).')
 def m_vuelo():
     MIXG.clear()
     MIXG.update({'pzb': 0.5, 'mar': 0.3, 'cla': 0.45, 'str': 0.2, 'dbo': 0.75, 'dca': 0.6, 'dhc': 0.45, 'dbl': 0.4, 'dbh': 0.4, 'dpa': 0.9, 'dcr': 0.25, 'fag': 0.22})
@@ -1818,7 +1818,7 @@ def m_vuelo():
     return render_musica(125, 20, ev, 'estudio', 0.28, 703)
 
 
-@reg('MusicaCaos', 'musica', -23, 'Música original de emergencia: variante rápida e intensa del tema de vuelo, Re menor, 150 BPM, 24 compases.')
+@reg('MusicaCaos', 'musica', -23, 'Música original de emergencia: variante rápida e intensa del tema de vuelo (mismas armonías y motivo), Re menor, 150 BPM, 24 compases (38,4 s).')
 def m_caos():
     MIXG.clear()
     MIXG.update({'sbj': 0.26, 'mar': 0.18, 'cla': 0.34, 'brl': 0.5, 'brs': 0.3, 'stt': 0.14, 'dbo': 0.5, 'dca': 0.45, 'dhc': 0.3,
@@ -1930,7 +1930,7 @@ def sonoridad(z, tipo):
     e = k**2 if k.ndim == 1 else (k**2).sum(1)
     if tipo != 'sfx':
         return 10*np.log10(e.mean()+1e-15)
-    w = min(len(e), ns(0.4))
+    w = min(len(e), ns(0.15))
     c = np.convolve(e, np.ones(w)/w, 'valid')
     return 10*np.log10(c.max()+1e-15)
 

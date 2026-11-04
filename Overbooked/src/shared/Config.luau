@@ -192,7 +192,7 @@ Config.OBJETOS = {
 		nombre = "Carrito",
 	},
 	Piolet = {
-		tamano = Vector3.new(0.5, 1.9, 0.25),
+		tamano = Vector3.new(0.25, 1.9, 0.5),
 		color = Color3.fromRGB(242, 123, 43),
 		material = Enum.Material.Metal,
 		densidad = 1.2,

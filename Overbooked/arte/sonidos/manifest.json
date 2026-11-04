@@ -4,7 +4,7 @@
   "archivo": "Ding.ogg",
   "duracion": 2.672,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.25,
   "descripcion": "Campanita de cinturones, dos tonos suaves (agudo y grave)."
  },
  {
@@ -12,7 +12,7 @@
   "archivo": "AvisoMegafonia.ogg",
   "duracion": 2.943,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.3,
   "descripcion": "Gong de megafonía antes de un anuncio: tres notas ascendentes con color de altavoz."
  },
  {
@@ -20,7 +20,7 @@
   "archivo": "Golpe.ogg",
   "duracion": 0.421,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.65,
   "descripcion": "Golpe sordo y suave de cuerpo u objeto."
  },
  {
@@ -28,7 +28,7 @@
   "archivo": "GolpeFuerte.ogg",
   "duracion": 1.286,
   "bucle": false,
-  "volumen": 0.75,
+  "volumen": 0.65,
   "descripcion": "Impacto pesado con cuerpo grave y algo de escombro."
  },
  {
@@ -36,7 +36,7 @@
   "archivo": "GolpeMetal.ogg",
   "duracion": 1.418,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.5,
   "descripcion": "Choque metálico (clanc) con rebote corto."
  },
  {
@@ -52,7 +52,7 @@
   "archivo": "Madera.ogg",
   "duracion": 0.914,
   "bucle": false,
-  "volumen": 0.65,
+  "volumen": 1.0,
   "descripcion": "Caja de madera rompiéndose: crujido, astillas y tablas cayendo."
  },
  {
@@ -68,7 +68,7 @@
   "archivo": "Resbalon.ogg",
   "duracion": 0.628,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.2,
   "descripcion": "Resbalón de dibujo animado: chirrido de suela + silbato que sube (fiuuup)."
  },
  {
@@ -76,7 +76,7 @@
   "archivo": "Extintor.ogg",
   "duracion": 0.456,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.4,
   "descripcion": "Ráfaga corta de extintor (~0,4 s), apta para repetir."
  },
  {
@@ -84,7 +84,7 @@
   "archivo": "Llave.ogg",
   "duracion": 0.464,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.8,
   "descripcion": "Llave inglesa/carraca: serie de clics metálicos."
  },
  {
@@ -92,7 +92,7 @@
   "archivo": "Reparado.ogg",
   "duracion": 1.925,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.4,
   "descripcion": "Jingle brillante de reparación completada."
  },
  {
@@ -100,7 +100,7 @@
   "archivo": "Explosion.ogg",
   "duracion": 2.617,
   "bucle": false,
-  "volumen": 0.8,
+  "volumen": 0.7,
   "descripcion": "Explosión caricaturesca (boom redondo) para brecha en el casco o motor."
  },
  {
@@ -124,7 +124,7 @@
   "archivo": "Pajaros.ogg",
   "duracion": 1.852,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.4,
   "descripcion": "Bandada de pájaros caricaturescos: graznidos y aleteos."
  },
  {
@@ -132,7 +132,7 @@
   "archivo": "Cocodrilo.ogg",
   "duracion": 1.864,
   "bucle": false,
-  "volumen": 0.7,
+  "volumen": 0.8,
   "descripcion": "Gruñido grave de cocodrilo seguido de un siseo."
  },
  {
@@ -140,7 +140,7 @@
   "archivo": "Mordisco.ogg",
   "duracion": 0.267,
   "bucle": false,
-  "volumen": 0.65,
+  "volumen": 0.95,
   "descripcion": "Mordisco: chasquido de mandíbulas (chomp)."
  },
  {
@@ -148,7 +148,7 @@
   "archivo": "Comer.ogg",
   "duracion": 0.756,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.7,
   "descripcion": "Masticar caricaturesco: tres bocados (ñam ñam ñam)."
  },
  {
@@ -156,7 +156,7 @@
   "archivo": "PasajeroQueja.ogg",
   "duracion": 1.055,
   "bucle": false,
-  "volumen": 0.7,
+  "volumen": 0.6,
   "descripcion": "Pasajero quejándose en jerigonza (sin palabras reales), voz de dibujo."
  },
  {
@@ -164,7 +164,7 @@
   "archivo": "PasajeroFeliz.ogg",
   "duracion": 0.538,
   "bucle": false,
-  "volumen": 0.65,
+  "volumen": 0.3,
   "descripcion": "Pasajero contento: \"¡mm-hm!\" ascendente en jerigonza."
  },
  {
@@ -172,7 +172,7 @@
   "archivo": "PasajeroGrito.ogg",
   "duracion": 1.304,
   "bucle": false,
-  "volumen": 0.75,
+  "volumen": 0.35,
   "descripcion": "Grito caricaturesco \"¡aaah!\" (síntesis de formantes)."
  },
  {
@@ -180,7 +180,7 @@
   "archivo": "Servir.ogg",
   "duracion": 0.425,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.6,
   "descripcion": "Servir: plato apoyado con un \"pop\" agradable."
  },
  {
@@ -188,7 +188,7 @@
   "archivo": "Coger.ogg",
   "duracion": 0.223,
   "bucle": false,
-  "volumen": 0.5,
+  "volumen": 0.8,
   "descripcion": "Coger objeto: whoosh corto ascendente y clic."
  },
  {
@@ -196,7 +196,7 @@
   "archivo": "Lanzar.ogg",
   "duracion": 0.506,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.5,
   "descripcion": "Lanzar objeto: whoosh que se aleja."
  },
  {
@@ -204,7 +204,7 @@
   "archivo": "PuertaAbrir.ogg",
   "duracion": 1.58,
   "bucle": false,
-  "volumen": 0.65,
+  "volumen": 0.95,
   "descripcion": "Puerta pesada con bisagra abriéndose: cerrojo, crujido y tope."
  },
  {
@@ -220,7 +220,7 @@
   "archivo": "Altillo.ogg",
   "duracion": 0.732,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.95,
   "descripcion": "Compartimento superior: pop del pestillo y crujido de la tapa."
  },
  {
@@ -228,7 +228,7 @@
   "archivo": "Mascarillas.ogg",
   "duracion": 1.284,
   "bucle": false,
-  "volumen": 0.65,
+  "volumen": 0.75,
   "descripcion": "Caída de las mascarillas de oxígeno: paneles que saltan y repiqueteo de plástico."
  },
  {
@@ -236,7 +236,7 @@
   "archivo": "Boton.ogg",
   "duracion": 0.096,
   "bucle": false,
-  "volumen": 0.5,
+  "volumen": 0.85,
   "descripcion": "Botón de cabina de mando: clic de pulsar y soltar."
  },
  {
@@ -244,7 +244,7 @@
   "archivo": "Rampa.ogg",
   "duracion": 2.427,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.75,
   "descripcion": "Rampa hidráulica bajando (~2 s): motor, siseo y topes."
  },
  {
@@ -252,7 +252,7 @@
   "archivo": "Disparo.ogg",
   "duracion": 0.367,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.55,
   "descripcion": "Disparo de torreta caricaturesco (thump + pew), corto."
  },
  {
@@ -260,7 +260,7 @@
   "archivo": "ImpactoPirata.ogg",
   "duracion": 0.573,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.8,
   "descripcion": "Impacto sobre el avión pirata: \"ponk\" con chapa y polvareda."
  },
  {
@@ -268,7 +268,7 @@
   "archivo": "PirataCae.ogg",
   "duracion": 4.598,
   "bucle": false,
-  "volumen": 0.65,
+  "volumen": 0.35,
   "descripcion": "Avión pirata cayendo: silbido descendente y golpe lejano."
  },
  {
@@ -276,7 +276,7 @@
   "archivo": "Caja.ogg",
   "duracion": 1.429,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.45,
   "descripcion": "Caja registradora y monedas para las ganancias (ka-ching)."
  },
  {
@@ -284,7 +284,7 @@
   "archivo": "Victoria.ogg",
   "duracion": 2.954,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.55,
   "descripcion": "Fanfarria corta original de éxito (~2,5 s), Fa mayor."
  },
  {
@@ -292,7 +292,7 @@
   "archivo": "Derrota.ogg",
   "duracion": 3.111,
   "bucle": false,
-  "volumen": 0.6,
+  "volumen": 0.55,
   "descripcion": "Jingle corto original de fracaso (~2,5 s), cómico y descendente."
  },
  {
@@ -300,7 +300,7 @@
   "archivo": "Despegue.ogg",
   "duracion": 5.202,
   "bucle": false,
-  "volumen": 0.75,
+  "volumen": 0.85,
   "descripcion": "Motor acelerando para el despegue (~5 s): silbido de turbina y rugido."
  },
  {
@@ -316,7 +316,7 @@
   "archivo": "Pasos1.ogg",
   "duracion": 0.203,
   "bucle": false,
-  "volumen": 0.4,
+  "volumen": 0.45,
   "descripcion": "Paso sobre moqueta, variante 1."
  },
  {
@@ -324,7 +324,7 @@
   "archivo": "Pasos2.ogg",
   "duracion": 0.203,
   "bucle": false,
-  "volumen": 0.4,
+  "volumen": 0.55,
   "descripcion": "Paso sobre moqueta, variante 2."
  },
  {
@@ -332,7 +332,7 @@
   "archivo": "Pasos3.ogg",
   "duracion": 0.189,
   "bucle": false,
-  "volumen": 0.4,
+  "volumen": 0.6,
   "descripcion": "Paso sobre moqueta, variante 3."
  },
  {
@@ -340,7 +340,7 @@
   "archivo": "UiClick.ogg",
   "duracion": 0.087,
   "bucle": false,
-  "volumen": 0.45,
+  "volumen": 0.5,
   "descripcion": "Clic suave de interfaz."
  },
  {
@@ -348,7 +348,7 @@
   "archivo": "UiAviso.ogg",
   "duracion": 0.558,
   "bucle": false,
-  "volumen": 0.5,
+  "volumen": 0.3,
   "descripcion": "Notificación (toast): blip de dos notas ascendentes."
  },
  {
@@ -356,7 +356,7 @@
   "archivo": "UiPeligro.ogg",
   "duracion": 0.636,
   "bucle": false,
-  "volumen": 0.55,
+  "volumen": 0.5,
   "descripcion": "Aviso de peligro (toast): dos golpes graves disonantes."
  },
  {
@@ -364,7 +364,7 @@
   "archivo": "MotorAvion.ogg",
   "duracion": 8.011,
   "bucle": true,
-  "volumen": 0.5,
+  "volumen": 0.45,
   "descripcion": "Bucle de motores bimotor (turbohélice/turbofán), dron grave; admite cambiar PlaybackSpeed."
  },
  {
@@ -372,7 +372,7 @@
   "archivo": "VientoCabina.ogg",
   "duracion": 10.008,
   "bucle": true,
-  "volumen": 0.6,
+  "volumen": 0.75,
   "descripcion": "Bucle de viento que entra a chorro (puerta abierta o brecha en el casco)."
  },
  {
@@ -380,7 +380,7 @@
   "archivo": "VientoExterior.ogg",
   "duracion": 12.005,
   "bucle": true,
-  "volumen": 0.6,
+  "volumen": 0.45,
   "descripcion": "Bucle estéreo de viento fuerte en el exterior (sobre el ala)."
  },
  {
@@ -388,7 +388,7 @@
   "archivo": "Alarma.ogg",
   "duracion": 1.0,
   "bucle": true,
-  "volumen": 0.45,
+  "volumen": 0.35,
   "descripcion": "Bucle de aviso maestro de cabina: doble pitido \"bi-bo\", grave y no estridente."
  },
  {
@@ -404,7 +404,7 @@
   "archivo": "Lluvia.ogg",
   "duracion": 12.005,
   "bucle": true,
-  "volumen": 0.5,
+  "volumen": 0.45,
   "descripcion": "Bucle estéreo de lluvia de tormenta golpeando el fuselaje."
  },
  {
@@ -412,7 +412,7 @@
   "archivo": "AmbienteTerminal.ogg",
   "duracion": 19.992,
   "bucle": true,
-  "volumen": 0.4,
+  "volumen": 0.25,
   "descripcion": "Bucle estéreo de tono de sala de terminal con murmullo lejano."
  },
  {
@@ -420,7 +420,7 @@
   "archivo": "AmbienteCabina.ogg",
   "duracion": 15.0,
   "bucle": true,
-  "volumen": 0.4,
+  "volumen": 0.2,
   "descripcion": "Bucle estéreo del interior de cabina: zumbido de motores y ventilación."
  },
  {
@@ -428,8 +428,8 @@
   "archivo": "MusicaAeropuerto.ogg",
   "duracion": 38.4,
   "bucle": true,
-  "volumen": 0.35,
-  "descripcion": "Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases."
+  "volumen": 0.4,
+  "descripcion": "Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases (38,4 s, igual que las otras dos pistas; los compases de las tres coinciden cada 9,6 s)."
  },
  {
   "nombre": "MusicaVuelo",
@@ -437,14 +437,14 @@
   "duracion": 38.4,
   "bucle": true,
   "volumen": 0.35,
-  "descripcion": "Música original del vuelo: animada, cómica y algo tensa, Re menor, 125 BPM, 20 compases."
+  "descripcion": "Música original del vuelo: animada, cómica y algo tensa, Re menor (relativo de Fa), 125 BPM, 20 compases (38,4 s)."
  },
  {
   "nombre": "MusicaCaos",
   "archivo": "MusicaCaos.ogg",
   "duracion": 38.4,
   "bucle": true,
-  "volumen": 0.38,
-  "descripcion": "Música original de emergencia: variante rápida e intensa del tema de vuelo, Re menor, 150 BPM, 24 compases."
+  "volumen": 0.4,
+  "descripcion": "Música original de emergencia: variante rápida e intensa del tema de vuelo (mismas armonías y motivo), Re menor, 150 BPM, 24 compases (38,4 s)."
  }
 ]
