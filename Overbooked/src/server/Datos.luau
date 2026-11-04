@@ -16,6 +16,7 @@ local CADUCIDAD_SESION = 300
 local almacen: DataStore? = nil
 local perfiles: { [Player]: Perfil } = {}
 local cargados: { [Player]: boolean } = {}
+local liberados: { [Player]: boolean } = {}
 local sesion = if game.JobId ~= "" then game.JobId else "estudio"
 
 local function numero(t: { [string]: any }, clave: string): number
@@ -60,6 +61,26 @@ local function bloqueada(guardado: any): boolean
 	return s.Job ~= sesion and os.time() - s.Hora < CADUCIDAD_SESION
 end
 
+local function nuestra(guardado: any): boolean
+	if typeof(guardado) ~= "table" then
+		return false
+	end
+	local s = guardado.Sesion
+	return typeof(s) == "table" and s.Job == sesion
+end
+
+local function liberarSinPerfil(tienda: DataStore, clave: string)
+	pcall(function()
+		tienda:UpdateAsync(clave, function(anterior: any)
+			if not nuestra(anterior) then
+				return nil
+			end
+			anterior.Sesion = nil
+			return anterior
+		end)
+	end)
+end
+
 local function cargar(jugador: Player)
 	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0 }
 	local tienda = almacen
@@ -85,6 +106,7 @@ local function cargar(jugador: Player)
 			end)
 			if ok and not ocupada then
 				if not jugador.Parent then
+					liberarSinPerfil(tienda, clave)
 					return
 				end
 				cargados[jugador] = true
@@ -111,11 +133,14 @@ local function guardar(jugador: Player, liberar: boolean)
 	if not perfil or not tienda or not cargados[jugador] then
 		return
 	end
+	if liberados[jugador] and not liberar then
+		return
+	end
 	local copia = table.clone(perfil)
 	for intento = 1, 4 do
 		local ok = pcall(function()
 			tienda:UpdateAsync("j_" .. jugador.UserId, function(anterior: any)
-				if bloqueada(anterior) then
+				if not nuestra(anterior) then
 					return nil
 				end
 				return {
@@ -166,14 +191,17 @@ function Datos.iniciar()
 	end
 	Players.PlayerAdded:Connect(cargar)
 	Players.PlayerRemoving:Connect(function(jugador)
+		liberados[jugador] = true
 		guardar(jugador, true)
 		perfiles[jugador] = nil
 		cargados[jugador] = nil
+		liberados[jugador] = nil
 	end)
 	game:BindToClose(function()
 		local hilos = 0
 		for _, jugador in Players:GetPlayers() do
 			hilos += 1
+			liberados[jugador] = true
 			task.spawn(function()
 				guardar(jugador, true)
 				hilos -= 1

@@ -143,6 +143,7 @@ end
 
 local function vuelo(contrato: Contratos.Contrato)
 	Carga.dejarEnTierra()
+	Pasajeros.resentar()
 	meterJugadores()
 	Avion.despegar()
 	task.wait(2.3)
@@ -154,10 +155,12 @@ local function vuelo(contrato: Contratos.Contrato)
 	Peligros.activar(contrato)
 	aviso("🛫 ¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
 	local inicio = os.clock()
+	local forzado = false
 	while not resultado do
-		if Avion.fase() == "Despegue" and not Avion.estado.autopiloto and os.clock() - inicio > Config.PARTIDA.DESPEGUE_AUTO then
-			Avion.estado.autopiloto = true
-			aviso("Nadie pilota... el piloto automático despega por vosotros", "info")
+		if not forzado and Avion.fase() == "Despegue" and os.clock() - inicio > Config.PARTIDA.DESPEGUE_AUTO then
+			forzado = true
+			Avion.forzarDespegue()
+			aviso(if Avion.piloto() then "El piloto automático ayuda con el despegue" else "Nadie pilota... el piloto automático despega por vosotros", "info")
 		end
 		task.wait(0.25)
 	end
@@ -251,7 +254,8 @@ function Partida.iniciar()
 	Players.PlayerAdded:Connect(function(jugador)
 		task.delay(6, function()
 			if jugador.Parent then
-				RemotoAviso:FireClient(jugador, "✈ ¡Bienvenido a Overbooked! Elige un vuelo en el tablero de la terminal · H: controles", "info")
+				local enTierra = Estado:GetAttribute("Fase") == "Aeropuerto" or Estado:GetAttribute("Fase") == "Embarque"
+				RemotoAviso:FireClient(jugador, if enTierra then "✈ ¡Bienvenido a Overbooked! Elige un vuelo en el tablero de la terminal · H: controles" else "✈ ¡Bienvenido a bordo! Ayuda a la tripulación · H: controles", "info")
 			end
 		end)
 	end)

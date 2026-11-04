@@ -120,7 +120,10 @@ local function soltarCocodrilo(desde: BasePart)
 	if cocodrilo then
 		return
 	end
-	local x = math.clamp(desde.Position.X, -4.5, 4.5)
+	local x = math.clamp(desde.Position.X, -5.5, 5.5)
+	if math.abs(x) > 4.5 then
+		x = math.sign(x) * 5.5
+	end
 	local z = math.clamp(desde.Position.Z - (desde.Size.Z / 2 + 3.6), -58, 16)
 	cocodrilo = crearCocodrilo(CFrame.new(x, Config.SUELO_Y + 0.7, z))
 	cuenta.cocodrilo = "Suelto"
@@ -165,7 +168,7 @@ function Carga.cargar(contrato: Contratos.Contrato)
 			local cf
 			local enCarro = carro
 			if c.tipo == "Jaula" then
-				cf = CFrame.new(-5.5, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
+				cf = CFrame.new(-5.15, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
 			elseif c.tipo == "Maleta" and enCarro then
 				local k = enEspera
 				enEspera += 1
@@ -250,13 +253,30 @@ function Carga.dejarEnTierra(): number
 	local perdidas = 0
 	for parte, b in bultos do
 		local p = parte.Position
-		local dentro = math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 23
+		local dentro = math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 22
 		if not dentro then
 			bultos[parte] = nil
 			perdidas += 1
 			cuenta.perdido += b.valor
+			if parte == jaula then
+				jaula = nil
+				cuenta.cocodrilo = "Perdido"
+			end
 			Agarre.soltarObjeto(parte)
 			parte:Destroy()
+		end
+	end
+	local c = cocodrilo
+	local cuerpo = c and c.PrimaryPart
+	if c and cuerpo then
+		local p = cuerpo.Position
+		if not (math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 22) then
+			cuenta.cocodrilo = "Perdido"
+			cuenta.perdido += 400
+			Agarre.soltarObjeto(c)
+			c:Destroy()
+			cocodrilo = nil
+			perdidas += 1
 		end
 	end
 	if perdidas > 0 then
@@ -333,10 +353,9 @@ local function vigilarCocodrilo(dt: number)
 		cocodrilo = nil
 		return
 	end
-	if Agarre.portador(c) then
+	if Agarre.portador(c) or not Agarre.delServidor(cuerpo) then
 		return
 	end
-	servidor(cuerpo)
 	local objetivo: BasePart? = nil
 	local mejor = 70
 	local ahora = os.clock()

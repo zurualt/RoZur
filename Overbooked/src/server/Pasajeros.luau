@@ -295,6 +295,17 @@ function Pasajeros.succionar(centro: Vector3, fuerza: number, radio: number, cin
 	end
 end
 
+function Pasajeros.resentar()
+	for _, p in lista do
+		if not p.asiento and not Agarre.portador(p.modelo) then
+			local asiento = libre(nil, nil)
+			if asiento then
+				sentar(p, asiento)
+			end
+		end
+	end
+end
+
 function Pasajeros.resumen(): (number, number, number, number)
 	local total, satisfaccion = 0, 0
 	for modelo in lista do

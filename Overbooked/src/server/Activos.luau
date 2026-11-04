@@ -101,7 +101,9 @@ local function cargar(nombre: string, id: number)
 			resultado = r
 			break
 		end
-		task.wait(intento * 2)
+		if intento < 3 then
+			task.wait(intento * 2)
+		end
 	end
 	if not resultado then
 		fallar(nombre, `No se pudo cargar el modelo {nombre} ({id})`)

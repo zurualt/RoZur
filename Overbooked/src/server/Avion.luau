@@ -88,6 +88,7 @@ anguloRampa.Value = -90
 local enfriamientos: { [string]: number } = {}
 local ultimoAtributo: { [string]: any } = {}
 local terminado = false
+local forzado = false
 
 local function atributo(nombre: string, valor: any)
 	if ultimoAtributo[nombre] ~= valor then
@@ -203,6 +204,11 @@ function Avion.desconectarAutopiloto(motivo: string?)
 	end
 end
 
+function Avion.forzarDespegue()
+	forzado = true
+	estado.autopiloto = true
+end
+
 function Avion.piloto(): Player?
 	return piloto
 end
@@ -262,6 +268,7 @@ end
 
 function Avion.despegar()
 	terminado = false
+	forzado = false
 	avion:SetAttribute("Aterrizaje", "")
 	estado.fase = "Despegue"
 	estado.enTierra = true
@@ -345,7 +352,7 @@ local function simular(dt: number)
 	local ahora = os.clock()
 	if piloto and ahora - entrada.momento < 0.6 then
 		cab, ala, gas = entrada.cabeceo, entrada.alabeo, entrada.gases
-		if estado.autopiloto and (math.abs(cab) > 0.2 or math.abs(ala) > 0.2) then
+		if estado.autopiloto and not (forzado and estado.fase == "Despegue") and (math.abs(cab) > 0.2 or math.abs(ala) > 0.2) then
 			Avion.desconectarAutopiloto("Piloto automático desconectado por el piloto")
 		end
 		if estado.autopiloto then
@@ -401,6 +408,7 @@ local function simular(dt: number)
 			tren(false)
 			if estado.fase == "Despegue" then
 				estado.fase = "Vuelo"
+				forzado = false
 				aviso("¡Hemos despegado! Rumbo al destino", "bien")
 			end
 		end

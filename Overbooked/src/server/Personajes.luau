@@ -192,10 +192,20 @@ local function alPersonaje(jugador: Player, personaje: Model)
 end
 
 local function cargarPlantilla()
-	local ok, resultado = pcall(function()
-		return InsertService:LoadAsset(Config.ASSET_TRIPULANTE)
-	end)
-	if not ok or not resultado then
+	local resultado: Model? = nil
+	for intento = 1, 3 do
+		local ok, r = pcall(function()
+			return InsertService:LoadAsset(Config.ASSET_TRIPULANTE)
+		end)
+		if ok and r then
+			resultado = r
+			break
+		end
+		if intento < 3 then
+			task.wait(intento * 2)
+		end
+	end
+	if not resultado then
 		warn("[Overbooked] No se pudo cargar el tripulante; se usan personajes por defecto")
 		return
 	end
@@ -225,6 +235,9 @@ local function cargarPlantilla()
 	end
 	humanoide.BreakJointsOnDeath = false
 	humanoide.RequiresNeck = false
+	if not humanoide:FindFirstChildOfClass("Animator") then
+		Instance.new("Animator").Parent = humanoide
+	end
 	local fondo = math.huge
 	for _, d in modelo:GetDescendants() do
 		if d:IsA("BasePart") and d ~= raiz then
@@ -243,8 +256,9 @@ local function cargarPlantilla()
 	while not modelo:FindFirstChild("Animate") do
 		for _, jugador in Players:GetPlayers() do
 			local personaje = jugador.Character
+			local h = personaje and personaje:FindFirstChildOfClass("Humanoid")
 			local animar = personaje and personaje:FindFirstChild("Animate")
-			if animar and animar:IsA("BaseScript") then
+			if h and h.RigType == Enum.HumanoidRigType.R15 and animar and animar:IsA("BaseScript") then
 				animar:Clone().Parent = modelo
 				break
 			end
@@ -254,6 +268,11 @@ local function cargarPlantilla()
 		end
 	end
 	modelo.Parent = StarterPlayer
+	local estado = ReplicatedStorage:FindFirstChild("Estado")
+	local fase = if estado then estado:GetAttribute("Fase") else nil
+	if fase == "Vuelo" or fase == "Resultados" then
+		return
+	end
 	for _, jugador in Players:GetPlayers() do
 		task.spawn(function()
 			jugador:LoadCharacter()
