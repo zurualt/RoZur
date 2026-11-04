@@ -12,6 +12,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local Agarre = require(script.Parent.Agarre)
 local BocaVoz = require(script.Parent.BocaVoz)
 local Piloto = require(script.Parent.Piloto)
+local Sonido = require(script.Parent.Sonido)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -193,7 +194,7 @@ local function construir()
 	}, "\n"), UDim2.new(1, -24, 1, -20), UDim2.fromOffset(12, 10), CREMA, 16)
 	textoAyuda.TextXAlignment = Enum.TextXAlignment.Left
 	textoAyuda.TextYAlignment = Enum.TextYAlignment.Top
-	local indicacion = texto(gui, "H: controles", UDim2.fromOffset(140, 22), UDim2.new(1, -14, 1, -14), Color3.new(1, 1, 1), 14)
+	local indicacion = texto(gui, "H: controles · M: música", UDim2.fromOffset(200, 22), UDim2.new(1, -14, 1, -14), Color3.new(1, 1, 1), 14)
 	indicacion.AnchorPoint = Vector2.new(1, 1)
 	indicacion.TextStrokeTransparency = 0.5
 	ayuda:GetPropertyChangedSignal("Visible"):Connect(function()
@@ -206,6 +207,7 @@ end
 
 local function aviso(contenido: string, tipo: string)
 	local color = if tipo == "peligro" then ROJO elseif tipo == "bien" then VERDE else TURQUESA
+	Sonido.reproducir(if tipo == "peligro" then "UiPeligro" elseif tipo == "bien" then "Reparado" else "UiAviso", nil, if tipo == "bien" then 0.5 else 0.8, 1)
 	local caja = marco(listaAvisos, UDim2.fromOffset(600, 38), UDim2.new(), Vector2.zero, OSCURO, 0.2)
 	caja.LayoutOrder = math.floor(os.clock() * 100)
 	esquina(caja, 10)
@@ -558,6 +560,10 @@ end
 local function resultados(datos: any)
 	if typeof(datos) ~= "table" then
 		return
+	end
+	Sonido.reproducir(if datos.tipo == "Estrellado" then "Derrota" else "Victoria", nil, 1, 1)
+	if typeof(datos.total) == "number" and datos.total > 0 then
+		task.delay(1.2, Sonido.reproducir, "Caja", nil, 1, 1)
 	end
 	tituloResultados.Text = if datos.tipo == "Estrellado" then "💥 ¡ESTRELLADOS!" elseif datos.aterrizaje == "Perfecto" then "🏆 ¡ATERRIZAJE PERFECTO!" else "✅ ¡VUELO COMPLETADO!"
 	local lineas = {

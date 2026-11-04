@@ -6,6 +6,7 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Camara = require(script.Parent.Camara)
+local Sonido = require(script.Parent.Sonido)
 
 local Efectos = {}
 
@@ -123,6 +124,7 @@ function Efectos.iniciar()
 			proximoRayo = os.clock() + rng:NextNumber(2.5, 7)
 			destellar(Color3.new(1, 1, 1), 0.65, 0.35)
 			Camara.sacudir(0.25)
+			task.delay(rng:NextNumber(0.2, 0.9), Sonido.reproducir, "Trueno", nil, rng:NextNumber(0.6, 1))
 		end
 	end)
 end

@@ -8,6 +8,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local Piloto = require(script.Parent.Piloto)
+local Sonido = require(script.Parent.Sonido)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAgarrar = Remotos:WaitForChild("Agarrar") :: RemoteEvent
@@ -122,6 +123,9 @@ local function soltar(lanzar: boolean)
 	limpiar()
 	r.AssemblyLinearVelocity = velocidad
 	RemotoSoltar:FireServer(velocidad)
+	if lanzar then
+		Sonido.reproducir("Lanzar", nil, 0.8)
+	end
 end
 
 local function rayo(): RaycastResult?
@@ -153,6 +157,7 @@ local function intentarAgarrar()
 	end
 	RemotoAgarrar:FireServer(objeto)
 	empezar(objeto)
+	Sonido.reproducir("Coger", nil, 0.6)
 end
 
 function Agarre.sostenido(): Instance?

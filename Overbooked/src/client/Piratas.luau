@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Camara = require(script.Parent.Camara)
+local Sonido = require(script.Parent.Sonido)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoDisparar = Remotos:WaitForChild("Disparar") :: RemoteEvent
@@ -86,6 +87,7 @@ local function crear(f: Instance)
 			explosion.DestroyJointRadiusPercent = 0
 			explosion.Position = raiz.Position
 			explosion.Parent = Workspace
+			Sonido.reproducir("PirataCae", raiz.Position, 1.2)
 		end
 	end)
 	f.Destroying:Connect(function()
@@ -169,6 +171,7 @@ function Piratas.iniciar()
 			local camara = Workspace.CurrentCamera
 			local dir = camara.CFrame.LookVector
 			RemotoDisparar:FireServer(dir)
+			Sonido.reproducir("Disparo", nil, 0.7)
 			trazador(camara.CFrame.Position + dir * 3 - camara.CFrame.UpVector * 0.8, dir)
 			Camara.sacudir(0.12)
 		end

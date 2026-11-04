@@ -16,6 +16,7 @@
         "Ragdoll": { "$className": "RemoteEvent" },
         "Aviso": { "$className": "RemoteEvent" },
         "Sacudida": { "$className": "UnreliableRemoteEvent" },
+        "Sonido": { "$className": "UnreliableRemoteEvent" },
         "Resultados": { "$className": "RemoteEvent" },
         "Disparar": { "$className": "RemoteEvent" }
       },

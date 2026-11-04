@@ -12,6 +12,7 @@ local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
+local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -48,6 +49,9 @@ function Cabina.parpadeo(segundos: number)
 end
 
 local function moverAltillo(a: Altillo, abierto: boolean)
+	if abierto ~= a.abierto then
+		Sonidos.emitir("Altillo", a.puerta.Position, 0.1)
+	end
 	a.abierto = abierto
 	a.puerta:SetAttribute("Abierta", abierto)
 	a.puerta.CanCollide = not abierto
@@ -243,6 +247,7 @@ local function guardar(jugador: Player, objeto: Instance, raiz: BasePart)
 	for _, a in altillos do
 		if a.abierto and a.contenido < 3 and (a.puerta.Position - raiz.Position).Magnitude < 4.5 then
 			a.contenido += 1
+			Sonidos.emitir("Servir", raiz.Position)
 			raiz:Destroy()
 			RemotoAviso:FireClient(jugador, "🧳 Bolso guardado en el altillo", "bien")
 			return

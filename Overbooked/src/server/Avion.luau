@@ -7,6 +7,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
+local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoPiloto = Remotos:WaitForChild("Piloto") :: UnreliableRemoteEvent
@@ -143,6 +144,7 @@ local function puerta(parte: BasePart, abierta: boolean)
 		return
 	end
 	parte:SetAttribute("Abierta", abierta)
+	Sonidos.emitir(if abierta then "PuertaAbrir" else "PuertaCerrar", parte.Position, 0.1)
 	local b = bisagra(parte)
 	parte.CanCollide = false
 	parte.CanQuery = not abierta
@@ -506,6 +508,7 @@ local function boton(nombre: string, accion: string, objeto: string, duracion: n
 	aviso.KeyboardKeyCode = Enum.KeyCode.E
 	aviso.Parent = parte
 	aviso.Triggered:Connect(function(jugador)
+		Sonidos.emitir("Boton", parte.Position, 0.1)
 		f(jugador, aviso)
 	end)
 end

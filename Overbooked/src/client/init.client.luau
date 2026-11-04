@@ -1,4 +1,5 @@
 --!strict
+local Sonido = require(script:WaitForChild("Sonido"))
 local BocaVoz = require(script:WaitForChild("BocaVoz"))
 local Camara = require(script:WaitForChild("Camara"))
 local Mundo = require(script:WaitForChild("Mundo"))
@@ -10,6 +11,7 @@ local Interfaz = require(script:WaitForChild("Interfaz"))
 local Piratas = require(script:WaitForChild("Piratas"))
 local Cabina = require(script:WaitForChild("Cabina"))
 
+Sonido.iniciar()
 BocaVoz.iniciar()
 Camara.iniciar()
 Mundo.iniciar()

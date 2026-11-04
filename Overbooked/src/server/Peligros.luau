@@ -16,6 +16,7 @@ local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
+local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -94,6 +95,7 @@ local function destapar(b: Brecha, disparado: boolean)
 	tapon.Anchored = false
 	Objetos.servidor(tapon)
 	if disparado then
+		Sonidos.emitir("Succion", b.parte.Position)
 		b.sinTapon = os.clock() + 2
 		tapon.AssemblyLinearVelocity = b.parte.CFrame.LookVector * 30 + Vector3.new(0, 10, 0)
 		aviso("💨 ¡El tapón ha salido disparado!", "peligro")
@@ -108,6 +110,7 @@ local function taponar(b: Brecha, objeto: BasePart)
 	objeto.AssemblyLinearVelocity = Vector3.zero
 	objeto.CFrame = CFrame.lookAt(centro + dentro * (objeto.Size.Z / 2 + 0.05), centro + dentro * 4)
 	objeto:SetAttribute("Tapon", true)
+	Sonidos.emitir("GolpeFuerte", centro)
 	b.tapon = objeto
 	b.parte:SetAttribute("Fuerza", 0)
 	b.viento.Rate = 6
@@ -176,6 +179,7 @@ end
 local function apagar(f: Fuego)
 	fuegos[f.parte] = nil
 	efecto(f.parte.Position, VFX.vapor, 14)
+	Sonidos.emitir("Succion", f.parte.Position, 0.3)
 	f.parte:Destroy()
 end
 
@@ -237,6 +241,8 @@ function Peligros.brecha()
 	viento.Rate = 80
 	local chispas = VFX.chispas(marca)
 	chispas:Emit(40)
+	Sonidos.emitir("Explosion", centro)
+	task.delay(0.25, Sonidos.emitir, "Succion", centro)
 	marca:SetAttribute("Reparacion", 0)
 	marca:SetAttribute("Fuerza", 1)
 	CollectionService:AddTag(marca, "Brecha")
@@ -257,6 +263,7 @@ local function cerrar(b: Brecha, silencioso: boolean?)
 	b.ventana:SetAttribute("Rota", false)
 	b.parte:Destroy()
 	if not silencioso then
+		Sonidos.emitir("Reparado", b.parte.Position)
 		aviso("🔧 ¡Agujero reparado!", "bien")
 	end
 end
@@ -282,6 +289,7 @@ end
 
 local function caidaLibre()
 	aviso("🎢 ¡Caída libre! Agarraos a algo", "peligro")
+	Sonidos.emitir("PasajeroGrito", Config.CENTRO_AVION)
 	Workspace.Gravity = 26
 	Pasajeros.flotar(Avion.estado.cinturones)
 	for _, p in sueltos() do
@@ -445,6 +453,7 @@ local function usarExtintor(jugador: Player, mirada: Vector3?)
 	if not origen or not frontal then
 		return
 	end
+	Sonidos.emitir("Extintor", origen, 0.32)
 	local dir = mirada or frontal
 	local H = Config.HERRAMIENTAS
 	for _, p in sueltos() do
@@ -492,6 +501,7 @@ local function usarAgua(jugador: Player, mirada: Vector3?)
 	local objeto = Agarre.sostenido(jugador)
 	local punto = origen + dir * 3.5 + Vector3.new(0, -2, 0)
 	if objeto and objeto:IsA("BasePart") and Peligros.mojar(punto, 3.5, 100) then
+		Sonidos.emitir("Salpicadura", objeto.Position)
 		efecto(objeto.Position, function(padre)
 			return VFX.salpicadura(padre, Color3.fromRGB(143, 211, 244))
 		end, 30)
@@ -505,6 +515,7 @@ local function usarLlave(jugador: Player)
 	if not origen then
 		return
 	end
+	Sonidos.emitir("Llave", origen, 0.3)
 	local H = Config.HERRAMIENTAS
 	for parte, b in brechas do
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_LLAVE then
@@ -622,6 +633,7 @@ function Peligros.iniciar()
 				local raiz = Personajes.raiz(jugador)
 				if raiz and (raiz.Position - parte.Position).Magnitude < 3.2 and (quemados[jugador] or 0) < ahora then
 					quemados[jugador] = ahora + 2
+					Sonidos.emitir("GolpeFuerte", raiz.Position)
 					local dir = (raiz.Position - parte.Position) * Vector3.new(1, 0, 1)
 					Personajes.ragdoll(jugador, 1.2, (if dir.Magnitude > 0 then dir.Unit else Vector3.xAxis) * 30 + Vector3.new(0, 30, 0))
 					RemotoAviso:FireClient(jugador, "🔥 ¡Te has quemado!", "peligro")

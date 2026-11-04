@@ -6,6 +6,7 @@ local Workspace = game:GetService("Workspace")
 local Config = require(ReplicatedStorage.Shared.Config)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
+local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -175,6 +176,7 @@ local function crear(indice: number): Pasajero
 		if not quitarRacion(objeto) then
 			Agarre.consumir(jugador)
 		end
+		Sonidos.emitir("Servir", cuerpo.Position)
 		atender(modelo)
 	end)
 	calmar.Triggered:Connect(function()

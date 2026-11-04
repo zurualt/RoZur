@@ -15,6 +15,7 @@ local Avion = require(script.Parent.Avion)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
+local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -135,6 +136,7 @@ local function soltarCocodrilo(desde: BasePart)
 	end
 	local z = math.clamp(desde.Position.Z - (desde.Size.Z / 2 + 3.6), -58, 16)
 	cocodrilo = crearCocodrilo(CFrame.new(x, Config.SUELO_Y + 0.7, z))
+	Sonidos.emitir("GolpeMetal", desde.Position)
 	cuenta.cocodrilo = "Suelto"
 	saciadoHasta = 0
 	aturdidoHasta = 0
@@ -280,6 +282,7 @@ local function romper(parte: BasePart, b: Bulto, tipo: string)
 	marca.Position = centro
 	marca.Parent = carpeta
 	VFX.chispas(marca):Emit(30)
+	Sonidos.emitir(if tipo == "CajaFragil" then "Cristal" else "Madera", centro)
 	Debris:AddItem(marca, 1.5)
 	Agarre.soltarObjeto(parte)
 	parte:Destroy()
@@ -288,6 +291,9 @@ local function romper(parte: BasePart, b: Bulto, tipo: string)
 end
 
 local function aplicarDano(parte: BasePart, b: Bulto, dano: number)
+	if dano > 8 then
+		Sonidos.emitir(if dano > 25 then "GolpeFuerte" else "Golpe", parte.Position, 0.15)
+	end
 	b.vida = math.max(0, b.vida - dano)
 	parte:SetAttribute("Vida", math.floor(b.vida))
 	if b.vida > 0 then
@@ -419,6 +425,9 @@ local function enjaular(c: Model)
 	c:Destroy()
 	cocodrilo = nil
 	cuenta.cocodrilo = "Enjaulado"
+	if j then
+		Sonidos.emitir("GolpeMetal", j.Position)
+	end
 	RemotoAviso:FireAllClients("🐊 ¡Cocodrilo enjaulado otra vez!", "bien")
 end
 
@@ -489,6 +498,7 @@ local function vigilarCocodrilo(dt: number)
 					golpes[jugador] = ahora + 2.5
 					local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 					Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
+					Sonidos.emitir("Mordisco", boca)
 					RemotoAviso:FireClient(jugador, "🐊 ¡Te ha mordido el cocodrilo!", "peligro")
 				end
 			end
@@ -497,6 +507,7 @@ local function vigilarCocodrilo(dt: number)
 		if presa and (presa.Position - boca).Magnitude < 2.8 then
 			Agarre.soltarObjeto(presa)
 			presa:Destroy()
+			Sonidos.emitir("Comer", boca)
 			saciadoHasta = ahora + 14
 			RemotoAviso:FireAllClients("🐊 ¡El cocodrilo se ha comido la hamburguesa! Ahora está tranquilo: llévalo a la jaula", "bien")
 			return
@@ -505,6 +516,7 @@ local function vigilarCocodrilo(dt: number)
 			local victima = Pasajeros.cercano(boca, 2.6)
 			if victima then
 				ultimoMordisco = ahora + 3
+				Sonidos.emitir("Mordisco", boca)
 				local p = victima.PrimaryPart
 				Pasajeros.golpear(victima, 75, if p then (p.Position - cuerpo.Position) * Vector3.new(1, 0, 1) else Vector3.yAxis, "Mordisco", false)
 			end
@@ -540,6 +552,7 @@ function Carga.iniciar()
 			golpes[jugador] = ahora + 2.5
 			local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 			Personajes.ragdoll(jugador, 1.6, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 40 + Vector3.new(0, 22, 0))
+			Sonidos.emitir("Mordisco", cuerpo.Position)
 		end
 		RemotoAviso:FireClient(jugador, "🐊 ¡Está furioso! Dale de comer o atúrdelo antes de cogerlo", "peligro")
 		return false

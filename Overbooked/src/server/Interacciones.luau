@@ -15,6 +15,7 @@ local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
+local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -55,6 +56,7 @@ local function salpicar(posicion: Vector3, tipo: string)
 	marca.Size = Vector3.one
 	marca.Position = posicion
 	marca.Parent = carpetaPeligros
+	Sonidos.emitir("Salpicadura", posicion)
 	VFX.salpicadura(marca, LIQUIDOS[tipo] or Color3.new(1, 1, 1)):Emit(28)
 	Debris:AddItem(marca, 1.5)
 end
@@ -104,6 +106,7 @@ local function derramar(o: BasePart)
 	local v = o.AssemblyLinearVelocity
 	Agarre.soltarObjeto(o)
 	o:Destroy()
+	Sonidos.emitir("GolpeMetal", pos)
 	for i = 1, n do
 		local h = Objetos.crear("Hamburguesa", CFrame.new(pos + Vector3.new(rng:NextNumber(-0.6, 0.6), 0.3 + i * 0.3, rng:NextNumber(-0.6, 0.6))))
 		h.AssemblyLinearVelocity = v * 0.3 + Vector3.new(rng:NextNumber(-8, 8), rng:NextNumber(6, 12), rng:NextNumber(-8, 8))
@@ -129,13 +132,16 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	local lanzador = if l and ahora - l.hora < 4 then l.jugador else nil
 	local modelo = Pasajeros.desde(golpeado)
 	if modelo then
+		local donde = o.Position
 		if Pasajeros.servirCon(modelo, o) then
+			Sonidos.emitir("Servir", donde)
 			if lanzador then
 				RemotoAviso:FireClient(lanzador, "🎯 ¡Pedido servido al vuelo!", "bien")
 			end
 			return o.Parent == nil, true
 		end
 		Pasajeros.golpear(modelo, fuerza, dir, if tipo == "Cafe" then "Quemado" elseif tipo == "Agua" then "Mojado" else "Golpe", Avion.estado.cinturones)
+		Sonidos.emitir(if fuerza > 45 then "GolpeFuerte" else "Golpe", donde)
 		if LIQUIDOS[tipo] then
 			local pos = o.Position
 			Agarre.soltarObjeto(o)
@@ -148,6 +154,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	local cocodrilo = golpeado:FindFirstAncestorWhichIsA("Model")
 	if cocodrilo and CollectionService:HasTag(cocodrilo, "Cocodrilo") then
 		if fuerza > 18 and Carga.aturdir(3.5) then
+			Sonidos.emitir("GolpeMetal", o.Position)
 			if lanzador then
 				RemotoAviso:FireClient(lanzador, "🐊💫 ¡Cocodrilo aturdido!", "bien")
 			end
@@ -158,6 +165,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	local jugador = jugadorDe(golpeado)
 	if jugador and not (jugador == lanzador and l and ahora - l.hora < 0.8) and fuerza > 40 then
 		Personajes.ragdoll(jugador, 1.1, dir * math.min(fuerza, 80) * 0.5 + Vector3.new(0, 18, 0))
+		Sonidos.emitir("GolpeFuerte", o.Position)
 		RemotoAviso:FireClient(jugador, if lanzador and lanzador ~= jugador then `💢 ¡{lanzador.DisplayName} te ha dado!` else "💢 ¡Cuidado con lo que vuela!", "peligro")
 		return false, true
 	end
@@ -265,6 +273,7 @@ local function resbalar(ahora: number)
 			local delta = (raiz.Position - c.parte.Position) * Vector3.new(1, 0, 1)
 			if delta.Magnitude < c.parte.Size.Y / 2 and raiz.Position.Y - c.parte.Position.Y < 4.5 then
 				resbalones[jugador] = ahora + 2.5
+				Sonidos.emitir("Resbalon", raiz.Position)
 				Personajes.ragdoll(jugador, 1.1, plano.Unit * 30 + Vector3.new(0, 16, 0))
 				RemotoAviso:FireClient(jugador, if c.tipo == "Cafe" then "☕ ¡Resbalón en el café!" else "💦 ¡Resbalón!", "peligro")
 				break

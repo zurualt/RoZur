@@ -8,6 +8,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
+local Sonidos = require(script.Parent.Sonidos)
 
 type Soporte = {
 	parte: BasePart,
@@ -131,6 +132,7 @@ local function prepararDispensador(parte: BasePart, tipo: string)
 			return
 		end
 		esperas[jugador] = ahora + 0.6
+		Sonidos.emitir("Coger", parte.Position)
 		local cf = parte.CFrame * CFrame.new(0, parte.Size.Y / 2 + def.tamano.Y / 2 + 0.3, 0)
 		Agarre.forzar(jugador, Objetos.crear(tipo, cf))
 	end)
@@ -143,6 +145,19 @@ function Objetos.limpiar()
 	table.clear(orden)
 	for _, soporte in soportes do
 		reponer(soporte)
+	end
+end
+
+local function vestir(d: BasePart)
+	local visual = d:GetAttribute("Visual")
+	if typeof(visual) ~= "string" then
+		return
+	end
+	if d:GetAttribute("Movil") then
+		Activos.vestirDinamico(d, visual)
+	else
+		local base = d:GetAttribute("Base")
+		Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)
 	end
 end
 
@@ -159,15 +174,12 @@ function Objetos.iniciar()
 					reponer(soporte)
 				end
 			end
-			local visual = d:GetAttribute("Visual")
-			if typeof(visual) == "string" then
-				if d:GetAttribute("Movil") then
-					Activos.vestirDinamico(d, visual)
-				else
-					local base = d:GetAttribute("Base")
-					Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)
-				end
-			end
+			vestir(d)
+		end
+	end
+	for _, d in Workspace:WaitForChild("Aeropuerto"):GetDescendants() do
+		if d:IsA("BasePart") then
+			vestir(d)
 		end
 	end
 	Activos.vestirAvion(avion)
