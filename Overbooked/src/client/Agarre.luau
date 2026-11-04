@@ -30,8 +30,9 @@ local ultimoUso = 0
 local apuntado: Instance? = nil
 local parametros = RaycastParams.new()
 parametros.FilterType = Enum.RaycastFilterType.Exclude
+parametros.RespectCanCollide = true
 
-local GRANDES = { Pasajero = true, Cocodrilo = true, Jaula = true, Caja = true, CajaFragil = true }
+local GRANDES = { Pasajero = true, Cocodrilo = true, Jaula = true, Caja = true, CajaFragil = true, Carrito = true }
 
 local function agarrable(instancia: Instance): Instance?
 	local actual: Instance? = instancia

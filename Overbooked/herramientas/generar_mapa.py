@@ -40,6 +40,8 @@ def part(nombre, tam, pos, color, material="SmoothPlastic", clase="Part", r=None
     }
     if transp:
         props["Transparency"] = transp
+    if not colision:
+        props["CanQuery"] = False
     if forma:
         props["Shape"] = forma
     if extra:
@@ -196,8 +198,8 @@ def cocina():
                   atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("☕", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA, r=rot(0, 90, 0),
                   atributos={"Tipo": "Agua", "Visual": "Nevera"}, hijos=[cartel("💧", "Front", fondo="FFF4E0")]))
-    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (-6.3, 101.5, -44.6), GRIS, atributos={"Tipo": "Extintor"}))
-    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (6.3, 101.5, -44.6), GRIS, atributos={"Tipo": "Llave"}))
+    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (-6.2, SUELO_Y + 0.15, -43.4), GRIS, atributos={"Tipo": "Extintor"}))
+    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (6.2, SUELO_Y + 0.15, -43.4), GRIS, atributos={"Tipo": "Llave"}))
     p.append(part("SoporteCarrito", (1.8, 0.1, 2.8), (-2.6, SUELO_Y + 0.05, -45.2), GRIS, transp=1, colision=False,
                   atributos={"Tipo": "Carrito"}))
     p.append(part("CartelCocina", (4, 1.2, 0.2), (0, 108.6, -51.6), NARANJA, colision=False,
@@ -237,9 +239,8 @@ def bodega():
         for y in (103.2, 106.2):
             p.append(part("Estante", (2.2, 0.35, 18), (sx * 5.85, y, 11), MADERA, "Wood"))
     p.append(part("ZonaCarga", (8, 5, 15), (0, 103, 12), "FFFFFF", transp=1, colision=False, sombra=False))
-    p.append(part("ZonaPasajerosCaidos", (2, 2, 2), (0, 101.5, -26), "FFFFFF", transp=1, colision=False, sombra=False))
-    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (6.3, 101.5, 2.5), GRIS, atributos={"Tipo": "Extintor"}))
-    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (-6.3, 101.5, 2.5), GRIS, atributos={"Tipo": "Llave"}))
+    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (6.2, SUELO_Y + 0.15, 1.0), GRIS, atributos={"Tipo": "Extintor"}))
+    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (-6.2, SUELO_Y + 0.15, 1.0), GRIS, atributos={"Tipo": "Llave"}))
     p.append(part("BotonRampaBodega", (0.4, 0.9, 0.9), (6.8, 103.5, 19.5), TURQUESA, forma="Cylinder"))
     angulo = -90.0
     largo = 9.6

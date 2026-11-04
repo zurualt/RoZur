@@ -116,6 +116,7 @@ end
 local function puerta(parte: BasePart, abierta: boolean)
 	parte:SetAttribute("Abierta", abierta)
 	parte.CanCollide = not abierta
+	parte.CanQuery = not abierta
 	parte.Transparency = if abierta then 1 else 0
 	local aviso = parte:FindFirstChildOfClass("ProximityPrompt")
 	if aviso then

@@ -44,26 +44,37 @@ local rng = Random.new()
 local UMBRALES = { Maleta = 55, Caja = 42, CajaFragil = 24, Jaula = 38 }
 local MALETAS = { "Maleta1", "Maleta2", "Maleta3" }
 local COLORES_MALETA = { Color3.fromRGB(242, 123, 43), Color3.fromRGB(31, 166, 160), Color3.fromRGB(217, 68, 58) }
-local COLUMNAS = { -2.7, 0, 2.7 }
+local COLUMNAS = { -3.2, 0, 3.2 }
+local ORDEN = { Caja = 1, CajaFragil = 2, Maleta = 3 }
+local huecos: { Vector3 } = {}
 
 local function servidor(parte: BasePart)
 	if parte.Anchored or not parte:IsDescendantOf(Workspace) then
 		return
 	end
 	pcall(function()
-		if parte:GetNetworkOwner() ~= nil then
+		if parte:GetNetworkOwnershipAuto() or parte:GetNetworkOwner() ~= nil then
 			parte:SetNetworkOwner(nil)
 		end
 	end)
 end
 
+local function prepararHuecos()
+	for piso = 0, 2 do
+		for fila = 0, 4 do
+			local z = zona.Position.Z - zona.Size.Z / 2 + 1.8 + fila * 3.3
+			for _, columna in COLUMNAS do
+				if not (columna < 0 and z > 10.5) then
+					table.insert(huecos, Vector3.new(zona.Position.X + columna, piso * 3.2, z))
+				end
+			end
+		end
+	end
+end
+
 local function hueco(indice: number, alto: number): CFrame
-	local fila = (indice - 1) // #COLUMNAS
-	local columna = COLUMNAS[(indice - 1) % #COLUMNAS + 1]
-	local piso = fila // 5
-	local z = zona.Position.Z - zona.Size.Z / 2 + 1.8 + (fila % 5) * 3.3
-	local y = Config.SUELO_Y + alto / 2 + 0.1 + piso * 3.2
-	return CFrame.new(zona.Position.X + columna, y, z)
+	local h = huecos[math.clamp(indice, 1, #huecos)]
+	return CFrame.new(h.X, Config.SUELO_Y + alto / 2 + 0.1 + h.Y, h.Z)
 end
 
 local function crearCocodrilo(cf: CFrame): Model
@@ -107,8 +118,9 @@ local function soltarCocodrilo(desde: BasePart)
 	if cocodrilo then
 		return
 	end
-	local salida = desde.CFrame * CFrame.new(0, 0, -(desde.Size.Z / 2 + 3.6))
-	cocodrilo = crearCocodrilo(CFrame.new(salida.Position.X, Config.SUELO_Y + 0.7, salida.Position.Z) * desde.CFrame.Rotation)
+	local x = math.clamp(desde.Position.X, -4.5, 4.5)
+	local z = math.clamp(desde.Position.Z - (desde.Size.Z / 2 + 3.6), -58, 16)
+	cocodrilo = crearCocodrilo(CFrame.new(x, Config.SUELO_Y + 0.7, z))
 	cuenta.cocodrilo = "Suelto"
 	RemotoAviso:FireAllClients("🐊 ¡SE HA ESCAPADO EL COCODRILO! Cógelo y suéltalo junto a su jaula", "peligro")
 	Pasajeros.asustar(0.6)
@@ -140,7 +152,11 @@ end
 function Carga.cargar(contrato: Contratos.Contrato)
 	Carga.limpiar()
 	local indice = 0
-	for _, c in contrato.carga do
+	local lista = table.clone(contrato.carga)
+	table.sort(lista, function(a, b)
+		return (ORDEN[a.tipo] or 0) < (ORDEN[b.tipo] or 0)
+	end)
+	for _, c in lista do
 		for _ = 1, c.cantidad do
 			local alto = Config.OBJETOS[c.tipo].tamano.Y
 			local cf
@@ -148,7 +164,7 @@ function Carga.cargar(contrato: Contratos.Contrato)
 				cf = CFrame.new(-5.5, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
 			else
 				indice += 1
-				cf = hueco(indice, alto) * CFrame.Angles(0, rng:NextNumber(-0.3, 0.3), 0)
+				cf = hueco(indice, alto) * CFrame.Angles(0, if c.tipo == "Maleta" then rng:NextNumber(-0.4, 0.4) else 0, 0)
 			end
 			local variante = if c.tipo == "Maleta" then rng:NextInteger(1, #MALETAS) else 0
 			local parte = Objetos.crear(c.tipo, cf, carpeta, if variante > 0 then MALETAS[variante] else nil)
@@ -326,6 +342,7 @@ local function vigilarCocodrilo(dt: number)
 end
 
 function Carga.iniciar()
+	prepararHuecos()
 	Agarre.alSoltar(function(_, objeto, raiz)
 		local b = bultos[raiz]
 		if b then

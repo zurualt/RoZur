@@ -9,6 +9,7 @@ local Activos = {}
 
 local plantillas: { [string]: Model } = {}
 local pendientes: { [string]: { (Model) -> () } } = {}
+local fallidos: { [string]: boolean } = {}
 
 local ROTACIONES = {
 	CFrame.identity,
@@ -84,12 +85,26 @@ local function preparar(modelo: Model)
 	end
 end
 
+local function fallar(nombre: string, motivo: string)
+	warn(`[Overbooked] {motivo}`)
+	fallidos[nombre] = true
+	pendientes[nombre] = nil
+end
+
 local function cargar(nombre: string, id: number)
-	local ok, resultado = pcall(function()
-		return InsertService:LoadAsset(id)
-	end)
-	if not ok or not resultado then
-		warn(`[Overbooked] No se pudo cargar el modelo {nombre} ({id})`)
+	local resultado: Model? = nil
+	for intento = 1, 3 do
+		local ok, r = pcall(function()
+			return InsertService:LoadAsset(id)
+		end)
+		if ok and r then
+			resultado = r
+			break
+		end
+		task.wait(intento * 2)
+	end
+	if not resultado then
+		fallar(nombre, `No se pudo cargar el modelo {nombre} ({id})`)
 		return
 	end
 	local modelo = Instance.new("Model")
@@ -100,7 +115,7 @@ local function cargar(nombre: string, id: number)
 	resultado:Destroy()
 	local primera = modelo:FindFirstChildWhichIsA("BasePart", true)
 	if not primera then
-		warn(`[Overbooked] El modelo {nombre} no tiene piezas`)
+		fallar(nombre, `El modelo {nombre} no tiene piezas`)
 		return
 	end
 	preparar(modelo)
@@ -128,12 +143,28 @@ function Activos.cuando(nombre: string, f: (Model) -> ())
 		task.spawn(f, plantilla)
 		return
 	end
-	if not Visuales.IDS[nombre] then
+	if not Visuales.IDS[nombre] or fallidos[nombre] then
 		return
 	end
 	local cola = pendientes[nombre] or {}
 	pendientes[nombre] = cola
 	table.insert(cola, f)
+end
+
+local function cajaEn(modelo: Model, base: CFrame): (Vector3, Vector3)
+	local minimo = Vector3.one * math.huge
+	local maximo = -Vector3.one * math.huge
+	for _, d in modelo:GetDescendants() do
+		if d:IsA("BasePart") then
+			local cf, s = d.CFrame, d.Size / 2
+			for _, signo in ESQUINAS do
+				local p = base:PointToObjectSpace(cf:PointToWorldSpace(s * signo))
+				minimo = minimo:Min(p)
+				maximo = maximo:Max(p)
+			end
+		end
+	end
+	return minimo, maximo
 end
 
 local function colocar(visual: Model, base: CFrame, nombre: string)
@@ -144,16 +175,16 @@ local function colocar(visual: Model, base: CFrame, nombre: string)
 	if not esperada then
 		return
 	end
-	local minimo, maximo = caja(visual)
+	local minimo, maximo = cajaEn(visual, base)
 	local medida = maximo - minimo
 	local tamano = esperada.maximo - esperada.minimo
 	local mayorV = math.max(medida.X, medida.Y, medida.Z)
 	if mayorV > 1e-3 then
 		visual:ScaleTo(visual:GetScale() * math.max(tamano.X, tamano.Y, tamano.Z) / mayorV)
-		minimo, maximo = caja(visual)
+		minimo, maximo = cajaEn(visual, base)
 	end
-	local objetivo = base:PointToWorldSpace((esperada.minimo + esperada.maximo) / 2)
-	visual:PivotTo(visual:GetPivot() + (objetivo - (minimo + maximo) / 2))
+	local desplazamiento = (esperada.minimo + esperada.maximo) / 2 - (minimo + maximo) / 2
+	visual:PivotTo(visual:GetPivot() + base:VectorToWorldSpace(desplazamiento))
 end
 
 local function ocultar(parte: BasePart)
@@ -181,7 +212,9 @@ function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
 			return
 		end
 		local visual = plantilla:Clone()
-		local y = baseY or (marcador.Position.Y - marcador.Size.Y / 2)
+		local cf, s = marcador.CFrame, marcador.Size / 2
+		local medioAlto = math.abs(cf.RightVector.Y) * s.X + math.abs(cf.UpVector.Y) * s.Y + math.abs(cf.LookVector.Y) * s.Z
+		local y = baseY or (marcador.Position.Y - medioAlto)
 		local frente = marcador.CFrame.LookVector * Vector3.new(1, 0, 1)
 		local giro = if frente.Magnitude > 0.01 then CFrame.lookAt(Vector3.zero, frente) else CFrame.identity
 		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * giro, nombre)

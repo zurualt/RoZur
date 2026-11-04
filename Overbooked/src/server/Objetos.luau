@@ -30,7 +30,7 @@ function Objetos.servidor(parte: BasePart)
 		return
 	end
 	pcall(function()
-		if parte:GetNetworkOwner() ~= nil then
+		if parte:GetNetworkOwnershipAuto() or parte:GetNetworkOwner() ~= nil then
 			parte:SetNetworkOwner(nil)
 		end
 	end)

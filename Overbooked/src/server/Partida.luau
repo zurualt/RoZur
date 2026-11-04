@@ -154,7 +154,7 @@ local function vuelo(contrato: Contratos.Contrato)
 	aviso("🛫 ¡A despegar! El piloto: siéntate en la cabina, acelera (Shift) y sube (W)", "info")
 	local inicio = os.clock()
 	while not resultado do
-		if Avion.fase() == "Despegue" and not Avion.estado.autopiloto and os.clock() - inicio > Config.PARTIDA.DESPEGUE_AUTO and Avion.estado.gases < 0.1 then
+		if Avion.fase() == "Despegue" and not Avion.estado.autopiloto and os.clock() - inicio > Config.PARTIDA.DESPEGUE_AUTO then
 			Avion.estado.autopiloto = true
 			aviso("Nadie pilota... el piloto automático despega por vosotros", "info")
 		end

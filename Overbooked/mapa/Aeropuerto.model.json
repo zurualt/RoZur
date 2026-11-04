@@ -142,7 +142,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -190,7 +191,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -238,7 +240,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -286,7 +289,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -334,7 +338,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -382,7 +387,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -430,7 +436,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -478,7 +485,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -526,7 +534,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -574,7 +583,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -622,7 +632,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -670,7 +681,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -718,7 +730,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -766,7 +779,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -814,7 +828,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -862,7 +877,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -910,7 +926,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -958,7 +975,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -1006,7 +1024,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -1054,7 +1073,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -1102,7 +1122,8 @@
     "TopSurface": "Smooth",
     "BottomSurface": "Smooth",
     "CanCollide": false,
-    "CastShadow": true
+    "CastShadow": true,
+    "CanQuery": false
    }
   },
   {
@@ -1346,7 +1367,8 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": false,
-      "CastShadow": true
+      "CastShadow": true,
+      "CanQuery": false
      }
     },
     {
@@ -1975,7 +1997,8 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": false,
-      "CastShadow": true
+      "CastShadow": true,
+      "CanQuery": false
      },
      "children": [
       {
@@ -2372,6 +2395,7 @@
       "CanCollide": false,
       "CastShadow": true,
       "Transparency": 1,
+      "CanQuery": false,
       "Enabled": true,
       "Neutral": true,
       "Duration": 0
@@ -2760,7 +2784,8 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": false,
-      "CastShadow": true
+      "CastShadow": true,
+      "CanQuery": false
      }
     }
    ]

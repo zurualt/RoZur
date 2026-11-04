@@ -335,10 +335,15 @@ function Pasajeros.iniciar()
 		if not p then
 			return
 		end
-		local asiento = libre(raiz.Position, P.DISTANCIA_ASIENTO)
-		if asiento and raiz.AssemblyLinearVelocity.Magnitude < 25 then
-			sentar(p, asiento)
-		end
+		task.delay(0.3, function()
+			if not objeto.Parent or p.asiento or Agarre.portador(objeto) then
+				return
+			end
+			local asiento = libre(raiz.Position, P.DISTANCIA_ASIENTO)
+			if asiento and raiz.AssemblyLinearVelocity.Magnitude < 20 then
+				sentar(p, asiento)
+			end
+		end)
 	end)
 
 	task.spawn(function()

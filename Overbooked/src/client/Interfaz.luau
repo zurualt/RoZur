@@ -32,7 +32,7 @@ local VERDE = Color3.fromRGB(85, 190, 95)
 local FUENTE = Enum.Font.FredokaOne
 
 local gui: ScreenGui
-local etiquetasGui: Folder
+local etiquetasGui: Instance
 local contratoCache: { [string]: any }? = nil
 local textoFase: TextLabel
 local textoRuta: TextLabel
@@ -107,9 +107,7 @@ local function construir()
 	gui.ResetOnSpawn = false
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.Parent = jugador:WaitForChild("PlayerGui")
-	etiquetasGui = Instance.new("Folder")
-	etiquetasGui.Name = "OverbookedEtiquetas"
-	etiquetasGui.Parent = jugador:WaitForChild("PlayerGui")
+	etiquetasGui = jugador:WaitForChild("PlayerGui")
 
 	local barra = marco(gui, UDim2.fromOffset(560, 74), UDim2.new(0.5, 0, 0, 14), Vector2.new(0.5, 0), CREMA, 0.08)
 	esquina(barra, 16)

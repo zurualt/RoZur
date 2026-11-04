@@ -89,7 +89,6 @@ local function soltarInterno(jugador: Player)
 		return
 	end
 	objeto:SetAttribute("Portador", 0)
-	grupo(objeto, "Default")
 	local raiz = Agarre.raiz(objeto)
 	if not raiz then
 		return
@@ -100,6 +99,7 @@ local function soltarInterno(jugador: Player)
 		if devoluciones[objeto] == marca then
 			devoluciones[objeto] = nil
 			if not portadores[objeto] and raiz.Parent then
+				grupo(objeto, "Default")
 				propiedad(raiz, nil)
 			end
 		end
@@ -207,6 +207,7 @@ local function visible(jugador: Player, raiz: BasePart, agarrable: Instance): bo
 	end
 	local parametros = RaycastParams.new()
 	parametros.FilterType = Enum.RaycastFilterType.Exclude
+	parametros.RespectCanCollide = true
 	parametros.FilterDescendantsInstances = { personaje, agarrable }
 	local delta = raiz.Position - cabeza.Position
 	return Workspace:Raycast(cabeza.Position, delta, parametros) == nil
@@ -220,7 +221,11 @@ function Agarre.iniciar()
 	end)
 	RemotoAgarrar.OnServerEvent:Connect(function(jugador, objeto)
 		local ahora = os.clock()
-		if typeof(objeto) ~= "Instance" or (esperas[jugador] or 0) > ahora then
+		if typeof(objeto) ~= "Instance" then
+			return
+		end
+		if (esperas[jugador] or 0) > ahora then
+			RemotoSostener:FireClient(jugador, nil)
 			return
 		end
 		esperas[jugador] = ahora + 0.25
