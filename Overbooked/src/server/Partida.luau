@@ -38,6 +38,8 @@ local ciudad = Contratos.ciudadInicial(rng)
 local ofertas: { Contratos.Contrato } = {}
 local elegido: Contratos.Contrato? = nil
 local resultado: { tipo: string, motivo: string }? = nil
+local listos = false
+local avisoListos: ProximityPrompt? = nil
 
 local function fase(nombre: string)
 	Estado:SetAttribute("Fase", nombre)
@@ -142,9 +144,20 @@ local function embarque(contrato: Contratos.Contrato)
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo, contrato.condicion)
 	Carga.cargar(contrato)
 	aviso(`🧳 ¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
+	listos = false
+	local p = avisoListos
+	if p then
+		p.Enabled = true
+	end
 	for t = Config.PARTIDA.EMBARQUE, 1, -1 do
 		Estado:SetAttribute("Cuenta", t)
 		task.wait(1)
+		if listos then
+			break
+		end
+	end
+	if p then
+		p.Enabled = false
 	end
 	Estado:SetAttribute("Cuenta", 0)
 end
@@ -263,7 +276,32 @@ local function bucle()
 	end
 end
 
+local function prepararListos()
+	local asiento = avion:FindFirstChild("AsientoPiloto", true)
+	if not asiento or not asiento:IsA("BasePart") then
+		return
+	end
+	local p = Instance.new("ProximityPrompt")
+	p.ActionText = "Despegar ya"
+	p.ObjectText = "Terminar el embarque"
+	p.KeyboardKeyCode = Enum.KeyCode.E
+	p.HoldDuration = 1.5
+	p.MaxActivationDistance = 8
+	p.RequiresLineOfSight = false
+	p.Enabled = false
+	p.Parent = asiento
+	avisoListos = p
+	p.Triggered:Connect(function(jugador)
+		if Estado:GetAttribute("Fase") ~= "Embarque" or listos then
+			return
+		end
+		listos = true
+		aviso(`✈ {jugador.DisplayName} da por terminado el embarque`, "info")
+	end)
+end
+
 function Partida.iniciar()
+	prepararListos()
 	Avion.alTerminar(function(tipo, motivo)
 		resultado = { tipo = tipo, motivo = motivo }
 	end)
