@@ -10,6 +10,7 @@ local Contratos = require(ReplicatedStorage.Shared.Contratos)
 local Agarre = require(script.Parent.Agarre)
 local Avion = require(script.Parent.Avion)
 local Cabina = require(script.Parent.Cabina)
+local Aduana = require(script.Parent.Aduana)
 local Carga = require(script.Parent.Carga)
 local Datos = require(script.Parent.Datos)
 local Interacciones = require(script.Parent.Interacciones)
@@ -136,7 +137,7 @@ local function embarque(contrato: Contratos.Contrato)
 	Cabina.reiniciar()
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo)
 	Carga.cargar(contrato)
-	aviso(`🧳 ¡Embarque! Llevad el carro de maletas con el tractor hasta la rampa y meted el equipaje en la bodega. Destino: {contrato.destino}`, "info")
+	aviso(`🧳 ¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
 	for t = Config.PARTIDA.EMBARQUE, 1, -1 do
 		Estado:SetAttribute("Cuenta", t)
 		task.wait(1)
@@ -172,6 +173,7 @@ end
 local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string)
 	local entregados, perdidos, satisfaccion, servidos = Pasajeros.resumen()
 	local intacto, entregado, perdidoCarga, cocodrilo = Carga.resumen()
+	local confiscados, contrabando = Carga.aduana()
 	local casco = Avion.estado.casco
 	local datos: { [string]: any } = {
 		tipo = tipo,
@@ -188,12 +190,14 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		casco = math.floor(casco),
 		aterrizaje = avion:GetAttribute("Aterrizaje") or "",
 		piratas = Piratas.bonus(),
+		confiscados = confiscados,
+		contrabando = contrabando,
 	}
 	local total = 0
 	if tipo == "Aterrizado" then
 		local billetes = entregados * contrato.pagoPasajero * (0.4 + 0.6 * satisfaccion)
 		local bonus = if datos.aterrizaje == "Perfecto" then 150 elseif datos.aterrizaje == "Bueno" then 60 else 0
-		total = billetes + intacto + entregado * 1.5 + bonus + Piratas.bonus() - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
+		total = billetes + intacto + entregado * 1.5 + bonus + Piratas.bonus() + confiscados * Aduana.BONUS - contrabando * Aduana.MULTA - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
 		datos.billetes = math.floor(billetes)
 		datos.bonus = bonus
 	end

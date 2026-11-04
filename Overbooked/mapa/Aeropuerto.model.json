@@ -1633,6 +1633,707 @@
    ]
   },
   {
+   "name": "Aduana",
+   "className": "Folder",
+   "children": [
+    {
+     "name": "Escaner",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       4,
+       4.2,
+       7
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         22.0,
+         92.5,
+         26.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Escaner",
+      "Base": 90.4
+     },
+     "children": [
+      {
+       "name": "ParedEscaner",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         7,
+         4.2,
+         0.7
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           22.0,
+           92.5,
+           24.35
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.8509803921568627,
+         0.8235294117647058,
+         0.7725490196078432
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "ParedEscaner",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         7,
+         4.2,
+         0.7
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           22.0,
+           92.5,
+           27.65
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.8509803921568627,
+         0.8235294117647058,
+         0.7725490196078432
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "TechoEscaner",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         7,
+         1.0,
+         4
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           22.0,
+           94.1,
+           26.0
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.8509803921568627,
+         0.8235294117647058,
+         0.7725490196078432
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      }
+     ]
+    },
+    {
+     "name": "Cinta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.2,
+       11
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         22.0,
+         91.3,
+         26.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "Rubber",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Velocidad": 7
+     }
+    },
+    {
+     "name": "BaseCinta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.8,
+       11
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         22.0,
+         90.8,
+         26.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.20392156862745098,
+       0.2196078431372549,
+       0.24705882352941178
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Tunel",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       7,
+       2.2,
+       2.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         22.0,
+         92.5,
+         26.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "Contenedor",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       3,
+       2,
+       3
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         15.0,
+         91.4,
+         21.5
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Contenedor",
+      "Base": 90.4
+     },
+     "children": [
+      {
+       "name": "FondoContenedor",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         3,
+         0.2,
+         3
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           15.0,
+           90.5,
+           21.5
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.9490196078431372,
+         0.4823529411764706,
+         0.16862745098039217
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "ParedContenedor",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         0.1,
+         2,
+         3
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           16.45,
+           91.4,
+           21.5
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.9490196078431372,
+         0.4823529411764706,
+         0.16862745098039217
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "ParedContenedor",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         0.1,
+         2,
+         3
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           13.55,
+           91.4,
+           21.5
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.9490196078431372,
+         0.4823529411764706,
+         0.16862745098039217
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "ParedContenedor",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         3,
+         2,
+         0.1
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           15.0,
+           91.4,
+           22.95
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.9490196078431372,
+         0.4823529411764706,
+         0.16862745098039217
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "ParedContenedor",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         3,
+         2,
+         0.1
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           15.0,
+           91.4,
+           20.05
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.9490196078431372,
+         0.4823529411764706,
+         0.16862745098039217
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      }
+     ]
+    },
+    {
+     "name": "ZonaContenedor",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.8,
+       2.4,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         15.0,
+         91.7,
+         21.5
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    }
+   ]
+  },
+  {
    "name": "Terminal",
    "className": "Folder",
    "children": [

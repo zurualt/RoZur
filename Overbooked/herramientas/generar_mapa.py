@@ -407,6 +407,28 @@ def vehiculos():
     return carpeta("Vehiculos", v)
 
 
+def aduana():
+    a = []
+    base = 90.4
+    ex, ez = 22.0, 26.0
+    hijos = []
+    for dz in (-1.65, 1.65):
+        hijos.append(part("ParedEscaner", (7, 4.2, 0.7), (ex, base + 2.1, ez + dz), "D9D2C5"))
+    hijos.append(part("TechoEscaner", (7, 1.0, 4), (ex, base + 3.7, ez), "D9D2C5"))
+    a.append(marca("Escaner", (4, 4.2, 7), (ex, base + 2.1, ez), "Escaner", r=rot(0, 90, 0), base=base, hijos=hijos))
+    a.append(part("Cinta", (2.6, 0.2, 11), (ex, base + 0.9, ez), "1B1B21", "Rubber",
+                  r=rot(0, 90, 0), atributos={"Velocidad": 7}))
+    a.append(part("BaseCinta", (2.6, 0.8, 11), (ex, base + 0.4, ez), GRIS, r=rot(0, 90, 0)))
+    a.append(part("Tunel", (7, 2.2, 2.6), (ex, base + 2.1, ez), "FFFFFF", transp=1, colision=False, sombra=False))
+    cx, cz = 15.0, 21.5
+    paredes = [part("FondoContenedor", (3, 0.2, 3), (cx, base + 0.1, cz), NARANJA)]
+    for dx, dz, tx, tz in ((1.45, 0, 0.1, 3), (-1.45, 0, 0.1, 3), (0, 1.45, 3, 0.1), (0, -1.45, 3, 0.1)):
+        paredes.append(part("ParedContenedor", (tx, 2, tz), (cx + dx, base + 1, cz + dz), NARANJA))
+    a.append(marca("Contenedor", (3, 2, 3), (cx, base + 1, cz), "Contenedor", base=base, hijos=paredes))
+    a.append(part("ZonaContenedor", (2.8, 2.4, 2.8), (cx, base + 1.3, cz), "FFFFFF", transp=1, colision=False, sombra=False))
+    return carpeta("Aduana", a)
+
+
 def terminal():
     t = []
     cx, cz, base = 74.0, -20.0, 90.0
@@ -466,6 +488,7 @@ def aeropuerto():
     p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart",
                   r=rot(0, 180, 0)))
     p.append(vehiculos())
+    p.append(aduana())
     p.append(terminal())
     d = []
     d.append(deco("Torre", "TorreControl", (10, 40, 10), 44, 90, -95, 90, "FFF4E0"))

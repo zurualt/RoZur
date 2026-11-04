@@ -169,7 +169,7 @@ local function construir()
 	textoResultados.TextXAlignment = Enum.TextXAlignment.Left
 	textoResultados.TextYAlignment = Enum.TextYAlignment.Top
 
-	ayuda = marco(gui, UDim2.fromOffset(380, 388), UDim2.new(1, -14, 1, -14), Vector2.new(1, 1), OSCURO, 0.15)
+	ayuda = marco(gui, UDim2.fromOffset(420, 432), UDim2.new(1, -14, 1, -14), Vector2.new(1, 1), OSCURO, 0.15)
 	esquina(ayuda, 14)
 	ayuda.Visible = false
 	local textoAyuda = texto(ayuda, table.concat({
@@ -185,6 +185,7 @@ local function construir()
 		"El cocodrilo persigue la comida 🍔🐊",
 		"Sentado no te caes con las turbulencias",
 		"Piolet (bodega): trepa por fuera del avión 🧗",
+		"Pasa las maletas por el escáner: el contrabando 🚨 va al contenedor",
 		"",
 		"<b>PILOTO</b>: siéntate en el asiento izquierdo",
 		"Shift acelera · W sube · A/D gira",
@@ -578,6 +579,12 @@ local function resultados(datos: any)
 	}
 	if datos.billetes then
 		table.insert(lineas, `🎫 Billetes: +{datos.billetes}`)
+	end
+	if typeof(datos.confiscados) == "number" and datos.confiscados > 0 then
+		table.insert(lineas, `🛃 Contrabando requisado: {datos.confiscados} (+{datos.confiscados * 60})`)
+	end
+	if typeof(datos.contrabando) == "number" and datos.contrabando > 0 and datos.tipo ~= "Estrellado" then
+		table.insert(lineas, `🚨 Multa de aduanas: {datos.contrabando} maletas con contrabando (-{datos.contrabando * 150})`)
 	end
 	if datos.piratas and datos.piratas > 0 then
 		table.insert(lineas, `🏴‍☠️ Piratas derribados: +{datos.piratas}`)

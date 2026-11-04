@@ -28,6 +28,7 @@ type Bulto = {
 	umbral: number,
 	previa: Vector3,
 	gracia: number,
+	contrabando: boolean,
 }
 
 local Carga = {}
@@ -39,7 +40,7 @@ local carpeta = Instance.new("Folder")
 carpeta.Name = "Carga"
 carpeta.Parent = avion
 local bultos: { [BasePart]: Bulto } = {}
-local cuenta = { entregado = 0, perdido = 0, rotas = 0, cocodrilo = "" }
+local cuenta = { entregado = 0, perdido = 0, rotas = 0, cocodrilo = "", confiscados = 0 }
 local cocodrilo: Model? = nil
 local jaula: BasePart? = nil
 local golpes: { [Player]: number } = {}
@@ -144,7 +145,7 @@ local function soltarCocodrilo(desde: BasePart)
 	Pasajeros.asustar(0.6)
 end
 
-local function registrar(parte: BasePart, tipo: string, valor: number, entrega: boolean)
+local function registrar(parte: BasePart, tipo: string, valor: number, entrega: boolean, contrabando: boolean)
 	parte:SetAttribute("Valor", valor)
 	parte:SetAttribute("Entrega", entrega)
 	parte:SetAttribute("Vida", 100)
@@ -157,6 +158,7 @@ local function registrar(parte: BasePart, tipo: string, valor: number, entrega: 
 		umbral = UMBRALES[tipo] or 45,
 		previa = Vector3.zero,
 		gracia = os.clock() + 2,
+		contrabando = contrabando,
 	}
 	if entrega then
 		local marca = Instance.new("Highlight")
@@ -200,7 +202,7 @@ function Carga.cargar(contrato: Contratos.Contrato)
 				cuenta.cocodrilo = "Enjaulado"
 				parte.CustomPhysicalProperties = PhysicalProperties.new(2, 0.6, 0.1)
 			end
-			registrar(parte, c.tipo, c.valor, c.entrega)
+			registrar(parte, c.tipo, c.valor, c.entrega, c.tipo == "Maleta" and rng:NextNumber() < 0.12 + contrato.riesgo * 0.05)
 		end
 	end
 end
@@ -221,6 +223,58 @@ function Carga.limpiar()
 	cuenta.perdido = 0
 	cuenta.rotas = 0
 	cuenta.cocodrilo = ""
+	cuenta.confiscados = 0
+end
+
+function Carga.maletas(): { BasePart }
+	local lista: { BasePart } = {}
+	for parte in bultos do
+		if parte.Parent and parte:GetAttribute("Tipo") == "Maleta" then
+			table.insert(lista, parte)
+		end
+	end
+	return lista
+end
+
+function Carga.escanear(parte: BasePart): boolean?
+	local b = bultos[parte]
+	if not b or parte:GetAttribute("Escaneada") then
+		return nil
+	end
+	parte:SetAttribute("Escaneada", true)
+	if b.contrabando then
+		parte:SetAttribute("Contrabando", true)
+		local marca = Instance.new("Highlight")
+		marca.Name = "Aduana"
+		marca.FillColor = Color3.fromRGB(217, 68, 58)
+		marca.FillTransparency = 0.6
+		marca.OutlineColor = Color3.fromRGB(255, 80, 70)
+		marca.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+		marca.Parent = parte
+	end
+	return b.contrabando
+end
+
+function Carga.confiscar(parte: BasePart): boolean
+	local b = bultos[parte]
+	if not b or not b.contrabando or not parte:GetAttribute("Escaneada") then
+		return false
+	end
+	bultos[parte] = nil
+	cuenta.confiscados += 1
+	Agarre.soltarObjeto(parte)
+	parte:Destroy()
+	return true
+end
+
+function Carga.aduana(): (number, number)
+	local aBordo = 0
+	for parte, b in bultos do
+		if b.contrabando and parte.Parent then
+			aBordo += 1
+		end
+	end
+	return cuenta.confiscados, aBordo
 end
 
 function Carga.sueltos(): { BasePart }
