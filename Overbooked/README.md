@@ -80,6 +80,10 @@ Todos los números del juego están en `src/shared/Config.luau`.
 - **Carga:** las cajas se rompen en astillas y las frágiles en cristales.
 - **Techo:** un panel suelto daña el casco; hay que salir al ala, trepar con el piolet y clavarlo a martillazos (F).
 - **Aduana:** las maletas con contrabando solo se ven al pasarlas por el escáner.
+- **Pasajero alborotador:** se levanta y va dando tumbos; hay que cogerlo, sentarlo y calmarlo (R).
+- **Condiciones de vuelo:** nocturno, niebla, VIP, pasaje hambriento o carga frágil de lujo; salen en el tablero y cambian el pago.
+- **Premios:** al aterrizar se reparten premios (mejor camarero, bombero, mecánico, puntería, artillero, piloto, domador, relaciones públicas y el más torpe).
+- **Embarque:** desde el asiento del piloto se puede terminar antes (mantén E).
 
 ## Carpetas
 

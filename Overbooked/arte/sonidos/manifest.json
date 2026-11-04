@@ -422,5 +422,13 @@
   "bucle": true,
   "volumen": 0.4,
   "descripcion": "Bucle estéreo del interior de cabina: zumbido de motores y ventilación."
+ },
+ {
+  "nombre": "MusicaAeropuerto",
+  "archivo": "MusicaAeropuerto.ogg",
+  "duracion": 38.4,
+  "bucle": true,
+  "volumen": 0.35,
+  "descripcion": "Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases."
  }
 ]
