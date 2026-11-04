@@ -334,8 +334,8 @@ def main():
     escena.cycles.device = "CPU"
     escena.cycles.samples = int(os.environ.get("MUESTRAS", "48"))
     escena.cycles.use_denoising = True
-    escena.render.resolution_x = 1280
-    escena.render.resolution_y = 720
+    escena.render.resolution_x = int(os.environ.get("ANCHO", "1280"))
+    escena.render.resolution_y = int(os.environ.get("ALTO", "720"))
     try:
         escena.view_settings.view_transform = "Standard"
     except TypeError:
@@ -347,6 +347,12 @@ def main():
         ("bodega", (0.5, 104.8, 0.8), (-0.5, 101.5, 18), 15),
         ("ala_torreta", (-17, 104.5, -31), (-26, 100.5, -15), 16),
         ("exterior", (-70, 128, -105), (0, 100, -18), 30),
+        ("cocina", (0, 104.6, -42.5), (0, 102.5, -52), 16),
+        ("asientos_lado", (0.4, 104.2, -30), (-6, 101.5, -30.5), 18),
+        ("bano", (-1.5, 104.5, -2.5), (-5.5, 101.5, -6.5), 16),
+        ("puerta_ala", (2.5, 104.4, -23.5), (-8, 102.5, -23.5), 17),
+        ("terminal", (40, 96, -12), (60, 95, -40), 16),
+        ("rampa_exterior", (6, 97, 52), (0, 97, 20), 20),
     ]
     solo = os.environ.get("VISTAS")
     for nombre, desde, hacia, lente in vistas:
