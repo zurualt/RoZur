@@ -37,6 +37,7 @@ BASE = [
 EMIT = [("screen", "B5F5EE"), ("lampr", "FF5A4E"), ("lampg", "6BEA8A"), ("glow", "FFF3C4")]
 GRID = 8
 PAL = BASE + [("_%d" % i, "808080") for i in range(len(BASE), 56)] + EMIT
+PAL += [("_%d" % i, "808080") for i in range(len(PAL), GRID * GRID)]
 IDX = {n: i for i, (n, _) in enumerate(PAL)}
 
 
@@ -601,7 +602,7 @@ def p_escaner():
         for i in range(8):
             x0, x1 = xs[i], xs[i + 1] - 0.03
             p.add(rr_loft(x1 - x0, 0.025, 0.0, 0, [(0.0, zb[i]), (0.0, TZ1)], M(((x0 + x1) / 2, ym, 0)), cap1=False), "grey")
-    p.add(decal(rect(-0.9, 0.9, -HY + 0.1, HY - 0.1), fr((0, 0, TZ1 - 0.004), "-z")), "glow")
+    p.add(decal(rect(-0.9, 0.9, -HY + 0.1, HY - 0.1), fr((0, 0, TZ1 - 0.003), "-z")), "glow")
     for sx in (-1, 1):
         x0, x1 = sorted((sx * TX, sx * 1.44))
         p.add(bb(x0, x1, -3.5, 3.5, 0.78, 1.0), "steel")
@@ -626,8 +627,8 @@ def p_escaner():
         for sx in (-1, 1):
             p.add(bar((sx * 1.37, sy * 1.83, 0.26), (sx * 1.37, sy * 3.2, 0.26), 0.07, 0.07, caps=False), "dark")
     # generador de rayos en el lado -X
-    p.add(bb(-2.0, -HX + 0.02, -1.0, 1.0, 0.0, 2.9, 0.08, 1), lambda c, n: "teal" if c.z < 0.4 else "cream")
-    mg = fr((-2.0, 0, 0), "-x")
+    p.add(bb(-1.99, -HX + 0.02, -1.0, 1.0, 0.0, 2.9, 0.08, 1), lambda c, n: "teal" if c.z < 0.4 else "cream")
+    mg = fr((-1.99, 0, 0), "-x")
     for k in range(4):
         p.add(decal(pill(0.0, 1.55 + 0.22 * k, 1.1, 0.045), mg, 0.004), "dark")
     p.add(decal([(-0.22, 2.35), (0.22, 2.35), (0.0, 2.72)], mg, 0.004), "yellow")
@@ -637,9 +638,7 @@ def p_escaner():
     for sx, side in ((1, "+x"), (-1, "-x")):
         ms = fr((sx * (HX + 0.004), 0, 0), side)
         p.add(decal(rect(-HY + 0.06, HY - 0.06, 2.5, 2.68), ms, 0.0), "orange")
-    logo(p, fr((HX + 0.004, 0, 0), "+x"), 0.42, step=0.005)
-    pass
-    p.parts[-5:] = [(bm_, r_, a_) for bm_, r_, a_ in p.parts[-5:]]
+    logo(p, fr((HX + 0.004, 0.0, 1.75), "+x"), 0.42, step=0.005)
     mt = fr((0, 0, HZ + 0.004), "+z")
     p.add(decal(rrect(0, 0, 2.2, 2.6, 0.12, 1), mt, 0.0), "lmetal")
     for k in range(5):
@@ -730,21 +729,21 @@ def p_tienda():
     logo(p, fr((0, FY + 0.05, 1.75), "-y"), 0.62, step=0.006)
     # caja registradora
     p.add(bb(2.75, 3.45, -0.6, -0.2, 3.5, 3.68, 0.03, 1), "dark")
-    a = Vector((0, -0.45, 0.6)).normalized()
     p.add(bar((3.1, -0.35, 3.66), (3.1, -0.35, 3.86), 0.06, 0.06), "dark")
-    mr = frame((3.1, -0.4, 3.9), (1, 0, 0), (0, -a.z, a.y))
+    mr = frame((3.1, -0.4, 3.9), (1, 0, 0), (0, 0.8, 0.6))
     p.add(rbox((0.42, 0.28, 0.05), m=mr), "dark")
-    p.add(decal(rrect(0, 0, 0.36, 0.22, 0.02, 1), mr @ Matrix.Rotation(math.pi, 4, "X"), 0.027), "screen")
-    # paredes
+    p.add(decal(rrect(0, 0, 0.36, 0.22, 0.02, 1), mr, 0.027), "screen")
+    # paredes laterales (frente naranja, zocalo turquesa por fuera y por dentro)
     for sx in (-1, 1):
-        x0, x1 = sorted((sx * 3.8, sx * 4.0))
-        p.add(bb(x0, x1, FY, 2.0, 0.0, 4.84, 0.04, 1), lambda c, n: "cream" if abs(n.x) > 0.5 or n.z > 0.5 else ("orange" if n.y < -0.5 else "cream"))
-        p.add(decal(rect(FY + 0.06, 1.94, 0.0, 0.5), fr((sx * 4.004, 0, 0), "+x" if sx > 0 else "-x") if sx > 0 else
-                    fr((-4.004, 0, 0), "-x"), 0.0) if False else bb(x0 - 0.004 * sx if sx < 0 else x0, x1 + 0.004 if sx > 0 else x1, FY + 0.04, 1.96, 0.0, 0.5),
-              "teal")
+        x0, x1 = sorted((sx * 3.8, sx * 3.996))
+        p.add(bb(x0, x1, FY, 2.0, 0.0, 4.84, 0.04, 1), lambda c, n: "orange" if n.y < -0.5 else "cream")
+        for xs_, side in ((sx * 4.0, "+x" if sx > 0 else "-x"), (sx * 3.796, "-x" if sx > 0 else "+x")):
+            mw = fr((xs_, 0, 0), side)
+            u0, u1 = sorted((FY + 0.05, 1.95)) if (side == "+x") else sorted((-1.95, -(FY + 0.05)))
+            p.add(decal(rect(u0, u1, 0.0, 0.55), mw, 0.0), "teal")
     p.add(bb(-3.8, 3.8, 1.8, 2.0, 0.0, 4.84), lambda c, n: "lteal" if n.y < -0.5 else "cream")
     p.add(bb(-4.0, 4.0, FY - 0.05, 2.0, 4.82, 4.98, 0.03, 1), lambda c, n: "cream")
-    p.add(decal(rect(-3.7, 3.7, FY + 0.05, FY + 0.17), fr((0, 0, 4.816), "-z"), 0.0), "glow")
+    p.add(decal(rect(-3.7, 3.7, -(FY + 0.17), -(FY + 0.05)), fr((0, 0, 4.816), "-z"), 0.0), "glow")
     # estanterias
     for sx in (-1, 0, 1):
         x = sx * 3.66
@@ -762,14 +761,11 @@ def p_tienda():
     for z, row in boxes:
         for x, w, h, col in row:
             p.add(drop_faces(bb(x - w / 2, x + w / 2, 1.3, 1.72, z, z + h), lambda c, n: n.z < -0.5 or n.y > 0.5), col)
-    for i, x in enumerate((-3.0, -2.15, -1.3, 0.85, 1.7, 2.55, -0.45)):
-        if i == 6:
-            continue
-        col = ("orange", "teal", "red", "teal", "orange", "lilac")[i]
+    A = [math.radians(a) for a in (200, 235, 270, 305, 340)]
+    for x, col in zip((-3.0, -2.15, -1.3, 0.85, 1.7, 2.55), ("orange", "teal", "red", "teal", "orange", "lilac")):
         z = 4.06
-        p.add(elathe([(0.19, z), (0.185, z + 0.06), (0.15, z + 0.13), (0.08, z + 0.18), (0.0, z + 0.195)], 8, k=0.92, cy=1.52, cap0=False, a0=math.pi / 8), col, 50)
-        vis = [(0.17 * math.cos(t), 0.17 * 0.92 * math.sin(t)) for t in [math.radians(a) for a in (200, 230, 270, 310, 340)]]
-        vis += [(0.21 * math.cos(math.radians(a)), -0.2 - 0.17 * math.sin(math.radians(a - 270)) * 0.0 - 0.16 * math.cos(math.radians(a - 270))) for a in (330, 300, 270, 240, 210)]
+        p.add(elathe([(0.19, z), (0.185, z + 0.06), (0.15, z + 0.13), (0.08, z + 0.18), (0.0, z + 0.195)], 8, k=0.92, cy=1.52, cap0=False, a0=math.pi / 8, m=M((x, 0, 0))), col, 50)
+        vis = [(0.185 * math.cos(a), 0.17 * math.sin(a)) for a in A] + [(0.21 * math.cos(a), 0.325 * math.sin(a)) for a in reversed(A)]
         vis = [(x + u, 1.52 + v) for u, v in vis]
         p.add(prism(vis, 0.022, M((0, 0, z + 0.011))), col, 30)
         p.add(cyl(0.025, 0.02, (x, 1.52, z + 0.19), seg=6), "cream")
@@ -880,8 +876,7 @@ def p_gorra_piloto():
     mb = frame((0, yc, zc + 0.033), (1, 0, 0), t)
 
     def onto(co):
-        y = front_y(prof, co.x, co.z - 0.033 * max(0.0, 1.0)) if abs(co.x) < 0.7 else None
-        return (co.x, (y if y is not None else co.y) - 0.012, co.z)
+        return (co.x, front_y(prof, co.x, co.z - 0.033) - 0.012, co.z)
     wing = [(0.05, 0.03), (0.17, 0.065), (0.27, 0.07), (0.235, 0.04), (0.205, 0.03), (0.215, 0.005), (0.17, 0.0), (0.175, -0.025), (0.05, -0.03)]
     for sx in (-1, 1):
         pts = [(sx * x, y) for x, y in wing]
@@ -941,7 +936,7 @@ def p_gorro_chef():
     def onto(co):
         y = front_y(prof, co.x, co.z)
         return (co.x, y - (yl - co.y) if y is not None else co.y, co.z)
-    p.add(wrap(decal(rect(-0.722, 0.722, zb + 0.30, zb + 0.34), fr((0, yl - 0.006, 0), "-y"), 0.0), onto), "teal")
+    p.add(elathe([(0.728, zb + 0.29, 0.745), (0.729, zb + 0.33, 0.745)], 24, cap0=False, cap1=False, a0=math.radians(-90)), "teal", 40)
     sub = Prop("_", None, 0)
     logo(sub, ml, 0.13, step=0.004, seg=14)
     for bm, r, a in sub.parts:
@@ -1046,12 +1041,7 @@ def p_auriculares2():
     for sx in (-1, 1):
         u = Vector((sx * math.cos(tau), 0, math.sin(tau)))
         org = Vector((sx * 0.752, yc, zc))
-        m = frame(org, (0, sx, 0), Vector((0, 0, 1)) - u * math.sin(tau))
-        m = frame(org, Vector((0, 1, 0)) * sx, u.cross(Vector((0, 1, 0)) * sx) * -1)
-        # comprobar que el eje local Z es u
-        ez = Vector((m[0][2], m[1][2], m[2][2]))
-        if ez.dot(u) < 0:
-            m = frame(org, Vector((0, -1, 0)) * sx, u.cross(Vector((0, -1, 0)) * sx) * -1)
+        m = frame(org, (0, 1, 0), u.cross(Vector((0, 1, 0))))
         p.add(lathe([(0.0, 0.215), (0.245, 0.215), (0.245, 0.0), (0.355, 0.0), (0.38, 0.05), (0.38, 0.115)], 12, m, cap0=False, cap1=False, a0=0.0), "rubber", 50)
         p.add(lathe([(0.38, 0.115), (0.40, 0.135), (0.40, 0.29)], 12, m, cap0=False, cap1=False, a0=0.0), "orange", 50)
         p.add(lathe([(0.40, 0.29), (0.31, 0.335), (0.0, 0.35)], 12, m, cap0=False, cap1=False, a0=0.0), lambda c, n: "cream", 30)
@@ -1088,7 +1078,7 @@ def p_gorro_pato():
     hr = 0.33
     p.add(ellipsoid((hr, hr * 0.95, hr), Matrix.Translation(hc), 12, 6), "duck", 60)
     p.add(ellipsoid((0.18, 0.15, 0.065), Matrix.Translation((0, -0.64, zb + 0.78)) @ Matrix.Rotation(math.radians(-8), 4, "X"), 8, 5), "beak", 60)
-    p.add(ellipsoid((0.2, 0.24, 0.11), Matrix.Translation((0, 0.58, zb + 0.30)) @ Matrix.Rotation(math.radians(-38), 4, "X"), 6, 4), "duck", 60)
+    p.add(ellipsoid((0.2, 0.24, 0.11), Matrix.Translation((0, 0.58, zb + 0.30)) @ Matrix.Rotation(math.radians(38), 4, "X"), 6, 4), "duck", 60)
     for sx in (-1, 1):
         p.add(ellipsoid((0.07, 0.3, 0.16), Matrix.Translation((sx * 0.665, 0.06, zb + 0.2)) @ Matrix.Rotation(math.radians(14), 4, "X"), 6, 4), "duck", 60)
         d = Vector((sx * math.sin(math.radians(36)) * math.cos(math.radians(16)), -math.cos(math.radians(36)) * math.cos(math.radians(16)), math.sin(math.radians(16))))

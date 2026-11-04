@@ -4,6 +4,9 @@ import subprocess
 import sys
 import time
 
+CLAVE = os.environ.get("ROBLOX_API_KEY", "")
+CABECERA = ["-H", f"x-api-key: {CLAVE}"] if CLAVE else []
+
 GRUPO = "783757619"
 API = "https://apis.roblox.com/assets/v1"
 
@@ -15,7 +18,7 @@ def subir(ruta, nombre):
         "description": f"Modelo {nombre} de Overbooked!",
         "creationContext": {"creator": {"groupId": GRUPO}},
     })
-    r = subprocess.run(["curl", "-sS", "-m", "180", "-X", "POST", "-F", f"request={peticion}",
+    r = subprocess.run(["curl", "-sS", "-m", "180"] + CABECERA + ["-X", "POST", "-F", f"request={peticion}",
                         "-F", f"fileContent=@{ruta};type=model/fbx", f"{API}/assets"],
                        capture_output=True, text=True)
     datos = json.loads(r.stdout)
@@ -24,7 +27,7 @@ def subir(ruta, nombre):
         return None, datos
     for _ in range(40):
         time.sleep(3)
-        r = subprocess.run(["curl", "-sS", "-m", "60", f"{API}/operations/{operacion}"], capture_output=True, text=True)
+        r = subprocess.run(["curl", "-sS", "-m", "60"] + CABECERA + [f"{API}/operations/{operacion}"], capture_output=True, text=True)
         estado = json.loads(r.stdout)
         if estado.get("done"):
             respuesta = estado.get("response", {})

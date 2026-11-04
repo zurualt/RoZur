@@ -4,13 +4,16 @@ import subprocess
 import sys
 import time
 
+CLAVE = os.environ.get("ROBLOX_API_KEY", "")
+CABECERA = ["-H", f"x-api-key: {CLAVE}"] if CLAVE else []
+
 UNIVERSO = "10774639088"
 LUGAR = "70554923634533"
 API = "https://apis.roblox.com/cloud/v2"
 
 
 def curl(args):
-    r = subprocess.run(["curl", "-sS", "-m", "60"] + args, capture_output=True, text=True)
+    r = subprocess.run(["curl", "-sS", "-m", "60"] + CABECERA + args, capture_output=True, text=True)
     try:
         return json.loads(r.stdout)
     except json.JSONDecodeError:

@@ -1,0 +1,202 @@
+[
+  {
+    "nombre": "Piolet",
+    "archivo": "Piolet.fbx",
+    "tamano": [
+      0.25,
+      1.9,
+      0.5
+    ],
+    "triangulos": 292
+  },
+  {
+    "nombre": "Escaner",
+    "archivo": "Escaner.fbx",
+    "tamano": [
+      4.0,
+      4.2,
+      7.0
+    ],
+    "triangulos": 1345
+  },
+  {
+    "nombre": "Contenedor",
+    "archivo": "Contenedor.fbx",
+    "tamano": [
+      3.0,
+      2.0,
+      3.0
+    ],
+    "triangulos": 368
+  },
+  {
+    "nombre": "Tienda",
+    "archivo": "Tienda.fbx",
+    "tamano": [
+      8.0,
+      5.0,
+      4.0
+    ],
+    "triangulos": 1620
+  },
+  {
+    "nombre": "GorraPiloto",
+    "archivo": "GorraPiloto.fbx",
+    "tamano": [
+      1.6,
+      0.79,
+      1.79
+    ],
+    "triangulos": 502,
+    "anclaje": [
+      0.0,
+      0.19,
+      -0.126
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.585,
+      -0.126
+    ]
+  },
+  {
+    "nombre": "GorroHelice",
+    "archivo": "GorroHelice.fbx",
+    "tamano": [
+      1.45,
+      0.79,
+      1.23
+    ],
+    "triangulos": 408,
+    "anclaje": [
+      0.0,
+      0.24,
+      -0.05
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.635,
+      -0.05
+    ]
+  },
+  {
+    "nombre": "GorroChef",
+    "archivo": "GorroChef.fbx",
+    "tamano": [
+      1.65,
+      1.4,
+      1.43
+    ],
+    "triangulos": 568,
+    "anclaje": [
+      0.0,
+      0.22,
+      0.041
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.92,
+      0.041
+    ]
+  },
+  {
+    "nombre": "SombreroVaquero",
+    "archivo": "SombreroVaquero.fbx",
+    "tamano": [
+      2.4,
+      0.89,
+      2.2
+    ],
+    "triangulos": 564,
+    "anclaje": [
+      0.0,
+      0.17,
+      0.041
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.615,
+      0.041
+    ]
+  },
+  {
+    "nombre": "GorroCono",
+    "archivo": "GorroCono.fbx",
+    "tamano": [
+      1.45,
+      1.4,
+      1.45
+    ],
+    "triangulos": 278,
+    "anclaje": [
+      0.0,
+      0.31,
+      0.041
+    ],
+    "anclaje_centro": [
+      0.0,
+      1.01,
+      0.041
+    ]
+  },
+  {
+    "nombre": "Corona",
+    "archivo": "Corona.fbx",
+    "tamano": [
+      1.4,
+      0.65,
+      1.14
+    ],
+    "triangulos": 486,
+    "anclaje": [
+      0.0,
+      0.29,
+      0.02
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.615,
+      0.02
+    ]
+  },
+  {
+    "nombre": "Auriculares2",
+    "archivo": "Auriculares2.fbx",
+    "tamano": [
+      2.29,
+      1.37,
+      0.8
+    ],
+    "triangulos": 628,
+    "anclaje": [
+      0.0,
+      -0.543,
+      0.091
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.142,
+      0.091
+    ]
+  },
+  {
+    "nombre": "GorroPato",
+    "archivo": "GorroPato.fbx",
+    "tamano": [
+      1.45,
+      1.18,
+      1.55
+    ],
+    "triangulos": 530,
+    "anclaje": [
+      0.0,
+      0.24,
+      0.033
+    ],
+    "anclaje_centro": [
+      0.0,
+      0.83,
+      0.033
+    ]
+  }
+]

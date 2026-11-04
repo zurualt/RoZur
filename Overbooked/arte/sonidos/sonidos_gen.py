@@ -1191,13 +1191,13 @@ def d_aro(v, rng):
 
 def d_shaker(v, rng):
     n = ns(0.09)
-    return filt(rng.standard_normal(n)*ad(n, 0.007, 0.028), mul(hp(4500, 2), lp(10000, 2)))*v
+    return filt(rng.standard_normal(n)*ad(n, 0.007, 0.028), mul(hp(3500, 2), lp(8000, 2)))*v
 
 
 def d_hat(v, rng, abierto=False):
     n = ns(0.5 if abierto else 0.09)
     t = tt(n)
-    nz = filt(rng.standard_normal(n), mul(hp(7000, 2), lp(13000, 2)))
+    nz = filt(rng.standard_normal(n), mul(hp(6000, 2), lp(10500, 2)))
     met = sum(np.sin(TAU*fr*t) for fr in (3140, 4410, 5310, 6280, 7150, 8370))/6
     met = filt(met, hp(6000, 2))
     return (nz+0.6*met)*ad(n, 0.0005, 0.18 if abierto else 0.025)*v
@@ -1641,7 +1641,15 @@ INST = {'vib': i_vibes, 'cel': i_celesta, 'nyl': lambda f, d, v: i_pluck(f, d, v
 MIXG = {}
 
 
-def quinta(r): return r+7 if r+7 <= 47 else r-5
+def quinta(r, vc=None):
+    iv = 7
+    if vc is not None:
+        pcs = {m % 12 for m in vc}
+        for c in (7, 6, 8, 3, 4):
+            if (r+c) % 12 in pcs:
+                iv = c
+                break
+    return r+iv if r+iv <= 47 else r+iv-12
 
 
 def acorde_en(prog, bar, beat):
@@ -1682,7 +1690,7 @@ AERO_MEL = [
 @reg('MusicaAeropuerto', 'musica', 0.35, 'Música original del aeropuerto: lounge/bossa relajada y peculiar, Fa mayor, 100 BPM, 16 compases.')
 def m_aeropuerto():
     MIXG.clear()
-    MIXG.update({'nyl': 0.55, 'ctb': 0.9, 'vib': 0.42, 'epi': 0.16, 'cel': 0.14, 'dsh': 0.16, 'dar': 0.3, 'dbo': 0.55, 'dcg': 0.25, 'dcl': 0.2})
+    MIXG.update({'nyl': 0.23, 'ctb': 0.75, 'vib': 0.5, 'epi': 0.22, 'cel': 0.16, 'dsh': 0.55, 'dar': 0.6, 'dbo': 0.6, 'dcg': 0.55, 'dcl': 0.45})
     ev = []
     r = R(701)
     for bar in range(16):
@@ -1690,10 +1698,10 @@ def m_aeropuerto():
         for (st, root, vc) in AERO[bar]:
             ln = (2 if len(AERO[bar]) > 1 else 4)
             if ln == 4:
-                ev += [(b0+st, 1.4, 'ctb', root, 0.9, 0.0, 0.08), (b0+st+1.5, 0.45, 'ctb', quinta(root), 0.7, 0.0, 0.08),
-                       (b0+st+2, 1.4, 'ctb', quinta(root), 0.8, 0.0, 0.08), (b0+st+3.5, 0.45, 'ctb', root, 0.65, 0.0, 0.08)]
+                ev += [(b0+st, 1.4, 'ctb', root, 0.9, 0.0, 0.08), (b0+st+1.5, 0.45, 'ctb', quinta(root, vc), 0.7, 0.0, 0.08),
+                       (b0+st+2, 1.4, 'ctb', quinta(root, vc), 0.8, 0.0, 0.08), (b0+st+3.5, 0.45, 'ctb', root, 0.65, 0.0, 0.08)]
             else:
-                ev += [(b0+st, 1.4, 'ctb', root, 0.9, 0.0, 0.08), (b0+st+1.5, 0.45, 'ctb', quinta(root), 0.7, 0.0, 0.08)]
+                ev += [(b0+st, 1.4, 'ctb', root, 0.9, 0.0, 0.08), (b0+st+1.5, 0.45, 'ctb', quinta(root, vc), 0.7, 0.0, 0.08)]
             for j, m in enumerate(vc):
                 ev.append((b0+st, ln-0.1, 'epi', m, 0.35, -0.3+0.2*j, 0.35))
         pos = [0, 1.0, 2.5, 3.5] if bar % 2 == 0 else [0.5, 2.0, 3.0]
@@ -1759,18 +1767,18 @@ def bajo_caminante(prog, bar, nxt_root):
     segs = prog
     out = []
     if len(segs) == 1:
-        root = segs[0][1]
-        out = [(0, root), (1, quinta(root)), (2, root+12 if root+12 <= 50 else root), (3, nxt_root+(1 if bar % 2 else -1))]
+        root, vc = segs[0][1], segs[0][2]
+        out = [(0, root), (1, quinta(root, vc)), (2, root+12 if root+12 <= 50 else root), (3, nxt_root+(1 if bar % 2 else -1))]
     else:
-        for st, root, _ in segs:
-            out += [(st, root), (st+1, quinta(root))]
+        for st, root, vc in segs:
+            out += [(st, root), (st+1, quinta(root, vc))]
     return out
 
 
 @reg('MusicaVuelo', 'musica', 0.35, 'Música original del vuelo: animada, cómica y algo tensa, Re menor, 125 BPM, 20 compases.')
 def m_vuelo():
     MIXG.clear()
-    MIXG.update({'pzb': 1.0, 'mar': 0.33, 'cla': 0.36, 'str': 0.1, 'dbo': 0.6, 'dca': 0.22, 'dhc': 0.1, 'dbl': 0.22, 'dpa': 0.18, 'dsh': 0.1, 'dcr': 0.06, 'fag': 0.3})
+    MIXG.update({'pzb': 0.5, 'mar': 0.3, 'cla': 0.45, 'str': 0.2, 'dbo': 0.75, 'dca': 0.6, 'dhc': 0.45, 'dbl': 0.4, 'dbh': 0.4, 'dpa': 0.9, 'dcr': 0.25, 'fag': 0.4})
     prog = VUELO+VUELO+VUELO_TAG
     mel = MEL_A+MEL_A2+MEL_TAG
     ev = []
@@ -1813,8 +1821,8 @@ def m_vuelo():
 @reg('MusicaCaos', 'musica', 0.38, 'Música original de emergencia: variante rápida e intensa del tema de vuelo, Re menor, 150 BPM, 24 compases.')
 def m_caos():
     MIXG.clear()
-    MIXG.update({'sbj': 0.32, 'mar': 0.22, 'cla': 0.34, 'brl': 0.27, 'brs': 0.16, 'stt': 0.1, 'dbo': 0.62, 'dca': 0.3, 'dhc': 0.09,
-                 'dho': 0.06, 'dcr': 0.08, 'dt1': 0.33, 'dt2': 0.33, 'dt3': 0.36, 'dpa': 0.2})
+    MIXG.update({'sbj': 0.26, 'mar': 0.18, 'cla': 0.34, 'brl': 0.5, 'brs': 0.3, 'stt': 0.14, 'dbo': 0.5, 'dca': 0.45, 'dhc': 0.3,
+                 'dho': 0.2, 'dcr': 0.25, 'dt1': 0.5, 'dt2': 0.5, 'dt3': 0.5, 'dpa': 0.5})
     prog = VUELO+CAOS_B+VUELO
     mel = MEL_A+MEL_B+MEL_A2
     ev = []
