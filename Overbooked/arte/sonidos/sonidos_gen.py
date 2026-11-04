@@ -76,7 +76,7 @@ def add(*pares): return lambda f: sum(a*g(f) for a, g in pares)
 
 def fasemin(mag):
     m = 2*(len(mag)-1)
-    c = np.fft.irfft(np.log(np.maximum(mag, 1e-8)), m)
+    c = np.fft.irfft(np.log(np.maximum(mag, 1e-6)), m)
     w = np.zeros(m)
     w[0] = 1
     w[1:m//2] = 2
@@ -92,10 +92,16 @@ def filt(x, g, modo='min'):
         f = np.fft.rfftfreq(n, 1/SR)
         return np.fft.irfft(np.fft.rfft(x)*g(f), n)
     m = p2(n+8192)
-    f = np.fft.rfftfreq(m, 1/SR)
-    H = g(f)
     if modo == 'min':
-        H = fasemin(H)
+        mc = 4*m
+        h = np.fft.irfft(fasemin(g(np.fft.rfftfreq(mc, 1/SR))), mc)[:m]
+        Lh = m-n
+        h[Lh:] = 0
+        a = int(0.8*Lh)
+        h[a:Lh] *= np.cos(0.5*np.pi*np.arange(Lh-a)/(Lh-a))**2
+        H = np.fft.rfft(h)
+    else:
+        H = g(np.fft.rfftfreq(m, 1/SR))
     return np.fft.irfft(np.fft.rfft(x, m)*H, m)[:n]
 
 
@@ -1858,21 +1864,20 @@ def m_caos():
     return render_musica(150, 24, ev, 'estudio', 0.25, 704)
 
 
-def proc_sfx(x, pico=-1.0):
+def proc_sfx(x, pico=-1.0, cola=-50.0):
     x = np.asarray(x, float)
     if x.ndim == 2:
         x = x.mean(1)
     x = filt(np.concatenate([x, np.zeros(ns(0.05))]), hp(25, 2), 'min')
     a = np.abs(x)
-    env = np.convolve(a, np.ones(ns(0.005))/ns(0.005), 'same')
-    thr = a.max()*dbg(-62)
-    idx = np.nonzero(env > thr)[0]
-    s = max(0, idx[0]-ns(0.001))
-    e = min(len(x), idx[-1]+ns(0.005))
-    x = x[s:e].copy()
-    fi = ns(0.0015)
+    s = max(0, np.nonzero(a > a.max()*dbg(-60))[0][0]-ns(0.001))
+    w = ns(0.01)
+    env = np.sqrt(np.convolve(x*x, np.ones(w)/w, 'same'))
+    e = min(len(x), np.nonzero(env > env.max()*dbg(cola))[0][-1]+w)
+    x = np.concatenate([np.zeros(ns(0.003)), x[s:e]])
+    fi = ns(0.003)+ns(0.001)
     x[:fi] *= np.sin(0.5*np.pi*np.arange(fi)/fi)**2
-    fo = min(ns(0.04), len(x)//6)
+    fo = min(ns(0.08), len(x)//5)
     x[-fo:] *= np.cos(0.5*np.pi*np.arange(fo)/fo)**2
     x -= np.linspace(x[0], x[-1], len(x))
     return x*dbg(pico)/np.abs(x).max()
