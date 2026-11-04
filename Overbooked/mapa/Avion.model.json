@@ -15742,6 +15742,248 @@
      }
     },
     {
+     "name": "Torreta",
+     "className": "Seat",
+     "properties": {
+      "Size": [
+       2.2,
+       1.2,
+       2.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -24,
+         99.6,
+         -21.5
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.20392156862745098,
+       0.2196078431372549,
+       0.24705882352941178
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "children": [
+      {
+       "name": "BaseTorreta",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         3,
+         0.6,
+         3
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           -24,
+           99.3,
+           -21.5
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.10588235294117647,
+         0.10588235294117647,
+         0.12941176470588237
+        ],
+        "Material": "Metal",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "Escudo",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         3.2,
+         2.2,
+         0.4
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           -24,
+           101.4,
+           -23.0
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.20392156862745098,
+         0.2196078431372549,
+         0.24705882352941178
+        ],
+        "Material": "Metal",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": false,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "Canon",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         0.35,
+         0.35,
+         3.2
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           -24.5,
+           102.0,
+           -24.4
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.10588235294117647,
+         0.10588235294117647,
+         0.12941176470588237
+        ],
+        "Material": "Metal",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": false,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "Canon",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         0.35,
+         0.35,
+         3.2
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           -23.5,
+           102.0,
+           -24.4
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.10588235294117647,
+         0.10588235294117647,
+         0.12941176470588237
+        ],
+        "Material": "Metal",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": false,
+        "CastShadow": true
+       }
+      }
+     ]
+    },
+    {
      "name": "Morro",
      "className": "Part",
      "properties": {

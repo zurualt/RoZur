@@ -218,7 +218,7 @@ function Activos.vestirAvion(avion: Model)
 		local exterior = avion:FindFirstChild("Exterior")
 		if exterior then
 			for _, d in exterior:GetDescendants() do
-				if d:IsA("BasePart") and not (d.Parent and d.Parent.Name == "Tren") then
+				if d:IsA("BasePart") and d.Name ~= "Torreta" and not d:FindFirstAncestor("Torreta") and not (d.Parent and d.Parent.Name == "Tren") then
 					d.Transparency = 1
 				end
 			end

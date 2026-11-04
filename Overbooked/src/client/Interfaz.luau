@@ -513,6 +513,9 @@ local function resultados(datos: any)
 	if datos.billetes then
 		table.insert(lineas, `🎫 Billetes: +{datos.billetes}`)
 	end
+	if datos.piratas and datos.piratas > 0 then
+		table.insert(lineas, `🏴‍☠️ Piratas derribados: +{datos.piratas}`)
+	end
 	if datos.bonus and datos.bonus > 0 then
 		table.insert(lineas, `🛬 Bonus aterrizaje: +{datos.bonus}`)
 	end

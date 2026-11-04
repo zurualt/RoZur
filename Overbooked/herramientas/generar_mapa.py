@@ -264,6 +264,11 @@ def exterior():
                       r=rot(0, 90, 0), colision=False))
         p.append(part("Estabilizador" + lado, (11, 0.6, 5), (sx * 7.5, 108.5, 28), "FFF4E0"))
     p.append(part("Deriva", (0.8, 10, 7), (0, 116, 27), TURQUESA))
+    p.append(part("Torreta", (2.2, 1.2, 2.2), (-24, 99.6, -21.5), GRIS, "Metal", clase="Seat",
+                  hijos=[part("BaseTorreta", (3, 0.6, 3), (-24, 99.3, -21.5), "1B1B21", "Metal"),
+                         part("Escudo", (3.2, 2.2, 0.4), (-24, 101.4, -23.0), GRIS, "Metal", colision=False),
+                         part("Canon", (0.35, 0.35, 3.2), (-24.5, 102.0, -24.4), "1B1B21", "Metal", colision=False),
+                         part("Canon", (0.35, 0.35, 3.2), (-23.5, 102.0, -24.4), "1B1B21", "Metal", colision=False)]))
     p.append(part("Morro", (11, 3.5, 2), (0, 101.75, -65.6), "FFF4E0"))
     tren = []
     for x, z in ((0, -50), (-4.5, -2), (4.5, -2)):

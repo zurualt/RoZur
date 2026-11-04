@@ -15,6 +15,7 @@ local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
+local Piratas = require(script.Parent.Piratas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -170,12 +171,13 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		cocodrilo = cocodrilo,
 		casco = math.floor(casco),
 		aterrizaje = avion:GetAttribute("Aterrizaje") or "",
+		piratas = Piratas.bonus(),
 	}
 	local total = 0
 	if tipo == "Aterrizado" then
 		local billetes = entregados * contrato.pagoPasajero * (0.4 + 0.6 * satisfaccion)
 		local bonus = if datos.aterrizaje == "Perfecto" then 150 elseif datos.aterrizaje == "Bueno" then 60 else 0
-		total = billetes + intacto + entregado * 1.5 + bonus - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
+		total = billetes + intacto + entregado * 1.5 + bonus + Piratas.bonus() - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
 		datos.billetes = math.floor(billetes)
 		datos.bonus = bonus
 	end
@@ -192,6 +194,7 @@ end
 
 local function limpiar()
 	Peligros.detener()
+	Piratas.reiniciar()
 	Agarre.soltarTodo()
 	Pasajeros.limpiar()
 	Carga.limpiar()

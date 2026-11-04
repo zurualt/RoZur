@@ -986,8 +986,8 @@ def build_croc():
         for sx in (-1, 1):
             w, zb, zt = croc_section(ly)
             ctrl = [Vector((sx * (w - 0.27), ly + 0.04, 0.5)), Vector((sx * (w - 0.1), ly, 0.3)), Vector((sx * 0.54, ly - 0.05, 0.1))]
-            prims.append((tube(ctrl, lambda u: 0.17 - 0.03 * u, k=7, steps=2, cap_rings=1), GREEN, 50.0))
-            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.54, ly - 0.12, 0.07)), 8, 5)
+            prims.append((tube(ctrl, lambda u: 0.17 - 0.03 * u, k=9, steps=3, cap_rings=1), GREEN, 60.0))
+            foot = ellipsoid((0.14, 0.22, 0.09), Matrix.Translation((sx * 0.54, ly - 0.12, 0.07)), 10, 6)
             for v in foot.verts:
                 v.co.z = max(v.co.z, 0.0)
             prims.append((foot, GREEN, 60.0))
@@ -1002,6 +1002,8 @@ def build_croc():
     out = []
     for bm, col, ang in prims:
         bmesh.ops.transform(bm, matrix=T, verts=bm.verts)
+        for v in bm.verts:
+            v.co.z = max(v.co.z, 0.0)
         out.append((fix_closed(bm), col, ang))
     return out
 
@@ -1060,7 +1062,7 @@ def main():
         ob.hide_render = True
     croc.hide_render = False
     croc.location = (0, 0, -1.6)
-    shoot(scene, "cocodrilo", dict(loc=(-5.0, -5.6, 0.9), target=(0.25, -0.2, -1.05), lens=40))
+    shoot(scene, "cocodrilo", dict(loc=(-4.5, -5.0, 0.6), target=(0.25, -0.25, -1.0), lens=40))
 
 
 main()

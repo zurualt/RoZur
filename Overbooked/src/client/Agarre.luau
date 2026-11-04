@@ -137,7 +137,8 @@ local function intentarAgarrar()
 		return
 	end
 	local personaje = jugador.Character
-	if not personaje or personaje:GetAttribute("Ragdoll") then
+	local humanoide = personaje and personaje:FindFirstChildOfClass("Humanoid")
+	if not personaje or not humanoide or humanoide.SeatPart or personaje:GetAttribute("Ragdoll") then
 		return
 	end
 	local resultado = rayo()

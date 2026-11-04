@@ -14,6 +14,7 @@ local Carga = require(script.Parent.Carga)
 local Objetos = require(script.Parent.Objetos)
 local Pasajeros = require(script.Parent.Pasajeros)
 local Personajes = require(script.Parent.Personajes)
+local Piratas = require(script.Parent.Piratas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -246,6 +247,7 @@ local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
 	{ f = caidaLibre, peso = 2, riesgo = 1 },
 	{ f = tormenta, peso = 1, riesgo = 2 },
 	{ f = falloMotor, peso = 1, riesgo = 2 },
+	{ f = Piratas.lanzar, peso = 2, riesgo = 2 },
 	{
 		f = function()
 			Avion.desconectarAutopiloto()
@@ -322,6 +324,7 @@ function Peligros.detener()
 		cerrar(b)
 	end
 	Workspace.Gravity = Config.GRAVEDAD
+	Piratas.detener()
 	turbulenciaEvento = 0
 	finTormenta = 0
 	avion:SetAttribute("Tormenta", false)
