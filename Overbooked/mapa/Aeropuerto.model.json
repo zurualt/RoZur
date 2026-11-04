@@ -4145,6 +4145,58 @@
      }
     },
     {
+     "name": "Tienda",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       8,
+       5,
+       4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         66.0,
+         93.0,
+         3.5
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.12156862745098039,
+       0.6509803921568628,
+       0.6274509803921569
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     },
+     "attributes": {
+      "Visual": "Tienda",
+      "Base": 90.5
+     }
+    },
+    {
      "name": "Planta",
      "className": "Part",
      "properties": {

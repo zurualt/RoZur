@@ -142,4 +142,7 @@ Visuales.CAJAS = {
 	Volante = { minimo = Vector3.new(-0.7, 0, -0.6), maximo = Vector3.new(0.7, 1.4, 0.6) },
 } :: { [string]: Caja }
 
+Visuales.ANCLAS = {
+} :: { [string]: Vector3 }
+
 return Visuales

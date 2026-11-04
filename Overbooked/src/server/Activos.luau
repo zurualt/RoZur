@@ -252,6 +252,32 @@ function Activos.vestirDinamico(parte: BasePart, nombre: string, escala: number?
 	end)
 end
 
+function Activos.adjuntar(parte: BasePart, nombre: string, desplazamiento: CFrame, escala: number?, etiqueta: string?)
+	Activos.cuando(nombre, function(plantilla)
+		local padre = parte.Parent
+		if not padre then
+			return
+		end
+		local visual = plantilla:Clone()
+		visual.Name = etiqueta or nombre
+		colocar(visual, parte.CFrame * desplazamiento, nombre, escala)
+		for _, d in visual:GetDescendants() do
+			if d:IsA("BasePart") then
+				d.Anchored = false
+				d.Massless = true
+				d.CanCollide = false
+				d.CanQuery = false
+				d.CanTouch = false
+				local w = Instance.new("WeldConstraint")
+				w.Part0 = parte
+				w.Part1 = d
+				w.Parent = d
+			end
+		end
+		visual.Parent = padre
+	end)
+end
+
 function Activos.vestirAvion(avion: Model)
 	Activos.cuando("AvionExterior", function(plantilla)
 		local visual = plantilla:Clone()

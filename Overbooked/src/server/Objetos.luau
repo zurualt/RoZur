@@ -8,6 +8,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
+local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
 
 type Soporte = {
@@ -63,7 +64,7 @@ function Objetos.crear(tipo: string, cframe: CFrame, padre: Instance?, visual: s
 	parte:SetAttribute("Tipo", tipo)
 	parte:SetAttribute("Portador", 0)
 	if tipo == "Bandeja" then
-		parte:SetAttribute("Raciones", 3)
+		parte:SetAttribute("Raciones", 3 + Mejoras.nivel("Cocina"))
 	end
 	CollectionService:AddTag(parte, "Agarrable")
 	CollectionService:AddTag(parte, "Objeto")

@@ -14,7 +14,8 @@ def v(x):
 def main():
     ids = json.load(open(IDS)) if os.path.exists(IDS) else {}
     cajas = {}
-    for carpeta in ("props", "avion", "pasajeros", "kit_interior", "kit_aeropuerto"):
+    anclas = {}
+    for carpeta in ("props", "avion", "pasajeros", "kit_interior", "kit_aeropuerto", "kit_extra"):
         ruta = os.path.join(ARTE, carpeta, "manifest.json")
         if not os.path.exists(ruta):
             continue
@@ -24,6 +25,8 @@ def main():
             elif "tamano" in e:
                 x, y, z = e["tamano"]
                 cajas[e["nombre"]] = ([-x / 2, 0, -z / 2], [x / 2, y, z / 2])
+            if "anclaje" in e:
+                anclas[e["nombre"]] = e["anclaje"]
     lineas = ["--!strict", "export type Caja = { minimo: Vector3, maximo: Vector3 }", "", "local Visuales = {}", "",
               "Visuales.IDS = {"]
     for nombre in sorted(ids):
@@ -36,6 +39,11 @@ def main():
         mn, mx = cajas[nombre]
         lineas.append(f"\t{nombre} = {{ minimo = {v(mn)}, maximo = {v(mx)} }},")
     lineas.append("} :: { [string]: Caja }")
+    lineas.append("")
+    lineas.append("Visuales.ANCLAS = {")
+    for nombre in sorted(anclas):
+        lineas.append(f"\t{nombre} = {v(anclas[nombre])},")
+    lineas.append("} :: { [string]: Vector3 }")
     lineas.append("")
     lineas.append("return Visuales")
     with open(SALIDA, "w") as f:

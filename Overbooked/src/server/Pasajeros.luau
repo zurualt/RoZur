@@ -6,6 +6,7 @@ local Workspace = game:GetService("Workspace")
 local Config = require(ReplicatedStorage.Shared.Config)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
+local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
@@ -490,7 +491,9 @@ function Pasajeros.iniciar()
 					if pedido == "" then
 						if rng:NextNumber() < P.PEDIDO_PROB * (0.8 + riesgo * 0.2) then
 							modelo:SetAttribute("Pedido", Config.COMIDA[rng:NextInteger(1, #Config.COMIDA)])
-							modelo:SetAttribute("Paciencia", P.PACIENCIA)
+							local maximo = P.PACIENCIA + 6 * Mejoras.nivel("Cocina")
+							modelo:SetAttribute("PacienciaMax", maximo)
+							modelo:SetAttribute("Paciencia", maximo)
 						end
 					else
 						local paciencia = modelo:GetAttribute("Paciencia")

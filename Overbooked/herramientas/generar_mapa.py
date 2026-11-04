@@ -466,6 +466,7 @@ def terminal():
     for x in (52, 62):
         for z in (cz - 14, cz + 14):
             t.append(deco("Banco", "BancoEspera", (10, 2.2, 2), x + dx, base + 0.5, z, -90, NARANJA))
+    t.append(deco("Tienda", "Tienda", (8, 5, 4), 66 + dx - 16, base + 0.5, cz + 23.5, 0, TURQUESA))
     for z in (cz - 21, cz - 15, cz + 15, cz + 21):
         t.append(deco("Planta", "Arbusto", (3, 2, 3), 81.5 + dx, base + 0.5, z, 0, "6BBF59", colision=False))
     for x, z in ((45, cz - 13), (45, cz + 13), (70, cz - 13), (70, cz + 13)):

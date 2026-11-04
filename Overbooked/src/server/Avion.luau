@@ -7,6 +7,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
+local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
@@ -191,7 +192,7 @@ local function efectosMotor(lado: string)
 end
 
 function Avion.danar(cantidad: number)
-	estado.casco = math.clamp(estado.casco - cantidad, 0, 100)
+	estado.casco = math.clamp(estado.casco - cantidad * (1 - 0.12 * Mejoras.nivel("Casco")), 0, 100)
 end
 
 function Avion.danarMotor(lado: string, cantidad: number, fuego: boolean)
@@ -414,7 +415,7 @@ local function simular(dt: number)
 	if estado.combustible <= 0 then
 		factor = 0
 	end
-	estado.combustible = math.max(0, estado.combustible - estado.gases * V.CONSUMO * dt)
+	estado.combustible = math.max(0, estado.combustible - estado.gases * V.CONSUMO * (1 - 0.12 * Mejoras.nivel("Combustible")) * dt)
 
 	estado.perdida = not estado.enTierra and estado.velocidad < V.VELOCIDAD_PERDIDA
 	local objetivoCabeceo = cab * V.CABECEO_MAX

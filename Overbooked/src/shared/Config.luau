@@ -258,4 +258,25 @@ Config.PASAJEROS = {
 	ESCALA_VISUAL = 0.85,
 }
 
+export type Gorro = { nombre: string, titulo: string, precio: number }
+export type Mejora = { nombre: string, titulo: string, descripcion: string, precios: { number } }
+
+Config.TIENDA = {
+	GORROS = {
+		{ nombre = "GorroCono", titulo = "Cono de tráfico", precio = 300 },
+		{ nombre = "GorraPiloto", titulo = "Gorra de piloto", precio = 450 },
+		{ nombre = "GorroChef", titulo = "Gorro de chef", precio = 550 },
+		{ nombre = "GorroHelice", titulo = "Gorro con hélice", precio = 650 },
+		{ nombre = "Auriculares2", titulo = "Auriculares retro", precio = 750 },
+		{ nombre = "SombreroVaquero", titulo = "Sombrero vaquero", precio = 900 },
+		{ nombre = "GorroPato", titulo = "Gorro de pato", precio = 1300 },
+		{ nombre = "Corona", titulo = "Corona", precio = 2500 },
+	} :: { Gorro },
+	MEJORAS = {
+		{ nombre = "Casco", titulo = "Casco reforzado", descripcion = "−12 % de daño al casco por nivel", precios = { 600, 1400, 3000 } },
+		{ nombre = "Combustible", titulo = "Motores eficientes", descripcion = "−12 % de consumo por nivel", precios = { 500, 1200, 2600 } },
+		{ nombre = "Cocina", titulo = "Cocina premium", descripcion = "+1 hamburguesa por bandeja y +6 s de paciencia por nivel", precios = { 400, 1000, 2200 } },
+	} :: { Mejora },
+}
+
 return Config

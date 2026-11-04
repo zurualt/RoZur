@@ -1,16 +1,22 @@
 --!strict
 local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage.Shared.Config)
 
 type Perfil = {
 	Dinero: number,
 	Vuelos: number,
 	Mejor: number,
+	Gorros: { [string]: boolean },
+	Gorro: string,
+	Mejoras: { [string]: number },
 }
 
 local Datos = {}
 
-local VERSION = 1
+local VERSION = 2
 local CADUCIDAD_SESION = 300
 
 local almacen: DataStore? = nil
@@ -22,6 +28,51 @@ local sesion = if game.JobId ~= "" then game.JobId else "estudio"
 local function numero(t: { [string]: any }, clave: string): number
 	local v = t[clave]
 	return if typeof(v) == "number" and v == v then v else 0
+end
+
+local function gorroValido(nombre: string): boolean
+	for _, g in Config.TIENDA.GORROS do
+		if g.nombre == nombre then
+			return true
+		end
+	end
+	return false
+end
+
+local function mejoraMaxima(nombre: string): number
+	for _, m in Config.TIENDA.MEJORAS do
+		if m.nombre == nombre then
+			return #m.precios
+		end
+	end
+	return 0
+end
+
+local function leerGorros(v: any): { [string]: boolean }
+	local r: { [string]: boolean } = {}
+	if typeof(v) == "table" then
+		for nombre, tiene in v do
+			if typeof(nombre) == "string" and tiene == true and gorroValido(nombre) then
+				r[nombre] = true
+			end
+		end
+	end
+	return r
+end
+
+local function leerMejoras(v: any): { [string]: number }
+	local r: { [string]: number } = {}
+	if typeof(v) == "table" then
+		for nombre, n in v do
+			if typeof(nombre) == "string" and typeof(n) == "number" and n == n then
+				local maximo = mejoraMaxima(nombre)
+				if maximo > 0 then
+					r[nombre] = math.clamp(math.floor(n), 0, maximo)
+				end
+			end
+		end
+	end
+	return r
 end
 
 local function valor(carpeta: Instance, nombre: string, v: number)
@@ -82,7 +133,7 @@ local function liberarSinPerfil(tienda: DataStore, clave: string)
 end
 
 local function cargar(jugador: Player)
-	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0 }
+	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0, Gorros = {}, Gorro = "", Mejoras = {} }
 	local tienda = almacen
 	if tienda then
 		local clave = "j_" .. jugador.UserId
@@ -115,6 +166,10 @@ local function cargar(jugador: Player)
 					perfil.Dinero = numero(t, "Dinero")
 					perfil.Vuelos = numero(t, "Vuelos")
 					perfil.Mejor = numero(t, "Mejor")
+					perfil.Gorros = leerGorros(t.Gorros)
+					perfil.Mejoras = leerMejoras(t.Mejoras)
+					local g = t.Gorro
+					perfil.Gorro = if typeof(g) == "string" and perfil.Gorros[g] then g else ""
 				end
 				break
 			end
@@ -137,6 +192,8 @@ local function guardar(jugador: Player, liberar: boolean)
 		return
 	end
 	local copia = table.clone(perfil)
+	copia.Gorros = table.clone(perfil.Gorros)
+	copia.Mejoras = table.clone(perfil.Mejoras)
 	for intento = 1, 4 do
 		local ok = pcall(function()
 			tienda:UpdateAsync("j_" .. jugador.UserId, function(anterior: any)
@@ -148,6 +205,9 @@ local function guardar(jugador: Player, liberar: boolean)
 					Dinero = copia.Dinero,
 					Vuelos = copia.Vuelos,
 					Mejor = copia.Mejor,
+					Gorros = copia.Gorros,
+					Gorro = copia.Gorro,
+					Mejoras = copia.Mejoras,
 					Sesion = if liberar then nil else { Job = sesion, Hora = os.time() },
 				}
 			end)
@@ -175,6 +235,56 @@ end
 function Datos.dinero(jugador: Player): number
 	local perfil = perfiles[jugador]
 	return if perfil then perfil.Dinero else 0
+end
+
+function Datos.listo(jugador: Player): boolean
+	return perfiles[jugador] ~= nil
+end
+
+function Datos.gastar(jugador: Player, cantidad: number): boolean
+	local perfil = perfiles[jugador]
+	if not perfil or cantidad < 0 or perfil.Dinero < cantidad then
+		return false
+	end
+	perfil.Dinero -= cantidad
+	marcador(jugador, perfil)
+	return true
+end
+
+function Datos.gorros(jugador: Player): ({ [string]: boolean }, string)
+	local perfil = perfiles[jugador]
+	if not perfil then
+		return {}, ""
+	end
+	return table.clone(perfil.Gorros), perfil.Gorro
+end
+
+function Datos.darGorro(jugador: Player, nombre: string)
+	local perfil = perfiles[jugador]
+	if perfil and gorroValido(nombre) then
+		perfil.Gorros[nombre] = true
+	end
+end
+
+function Datos.equipar(jugador: Player, nombre: string): boolean
+	local perfil = perfiles[jugador]
+	if not perfil or (nombre ~= "" and not perfil.Gorros[nombre]) then
+		return false
+	end
+	perfil.Gorro = nombre
+	return true
+end
+
+function Datos.mejoras(jugador: Player): { [string]: number }
+	local perfil = perfiles[jugador]
+	return if perfil then table.clone(perfil.Mejoras) else {}
+end
+
+function Datos.subirMejora(jugador: Player, nombre: string)
+	local perfil = perfiles[jugador]
+	if perfil then
+		perfil.Mejoras[nombre] = math.min(mejoraMaxima(nombre), (perfil.Mejoras[nombre] or 0) + 1)
+	end
 end
 
 function Datos.iniciar()

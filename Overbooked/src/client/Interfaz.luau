@@ -9,6 +9,7 @@ local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Visuales = require(ReplicatedStorage.Shared.Visuales)
 local Agarre = require(script.Parent.Agarre)
 local BocaVoz = require(script.Parent.BocaVoz)
 local Piloto = require(script.Parent.Piloto)
@@ -17,6 +18,7 @@ local Sonido = require(script.Parent.Sonido)
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
 local RemotoResultados = Remotos:WaitForChild("Resultados") :: RemoteEvent
+local RemotoTienda = Remotos:WaitForChild("Tienda") :: RemoteEvent
 local Estado = ReplicatedStorage:WaitForChild("Estado") :: Folder
 
 local Interfaz = {}
@@ -53,6 +55,8 @@ local tableroGui: SurfaceGui
 local ayuda: Frame
 local resaltado: Highlight
 local ultimoApuntado: Instance? = nil
+local panelTienda: Frame? = nil
+local estadoTienda: { [string]: any }? = nil
 
 local function esquina(padre: Instance, radio: number)
 	local c = Instance.new("UICorner")
@@ -386,7 +390,8 @@ local function burbuja(modelo: Instance)
 		local p = modelo:GetAttribute("Paciencia")
 		if typeof(pedido) == "string" and pedido ~= "" then
 			icono.Text = Config.ICONOS[pedido] or "?"
-			local f = math.clamp((if typeof(p) == "number" then p else 0) / Config.PASAJEROS.PACIENCIA, 0, 1)
+			local maximo = modelo:GetAttribute("PacienciaMax")
+			local f = math.clamp((if typeof(p) == "number" then p else 0) / (if typeof(maximo) == "number" and maximo > 0 then maximo else Config.PASAJEROS.PACIENCIA), 0, 1)
 			paciencia.Size = UDim2.fromScale(f, 1)
 			paciencia.BackgroundColor3 = if f > 0.5 then VERDE elseif f > 0.25 then Color3.fromRGB(245, 205, 61) else ROJO
 			fondoPaciencia.Visible = true
@@ -601,6 +606,121 @@ local function resultados(datos: any)
 	end)
 end
 
+local function boton(padre: Instance, contenido: string, tamano: UDim2, posicion: UDim2, color: Color3, accion: () -> ()): TextButton
+	local b = Instance.new("TextButton")
+	b.Text = contenido
+	b.Size = tamano
+	b.Position = posicion
+	b.BackgroundColor3 = color
+	b.TextColor3 = CREMA
+	b.Font = FUENTE
+	b.TextScaled = true
+	b.BorderSizePixel = 0
+	b.AutoButtonColor = true
+	b.Parent = padre
+	esquina(b, 8)
+	b.Activated:Connect(function()
+		Sonido.reproducir("UiClick", nil, 0.7, 1)
+		accion()
+	end)
+	return b
+end
+
+local function dibujarTienda()
+	local panel = panelTienda
+	local e = estadoTienda
+	if not panel or not e then
+		return
+	end
+	local contenido = panel:FindFirstChild("Contenido")
+	if contenido then
+		contenido:Destroy()
+	end
+	local c = marco(panel, UDim2.new(1, -24, 1, -84), UDim2.fromOffset(12, 72), Vector2.zero, OSCURO, 1)
+	c.Name = "Contenido"
+	local dinero = if typeof(e.dinero) == "number" then e.dinero else 0
+	local gorros = if typeof(e.gorros) == "table" then e.gorros else {}
+	local mejoras = if typeof(e.mejoras) == "table" then e.mejoras else {}
+	local puesto = if typeof(e.gorro) == "string" then e.gorro else ""
+	local cabecera = panel:FindFirstChild("Dinero")
+	if cabecera and cabecera:IsA("TextLabel") then
+		cabecera.Text = `🪙 {dinero}`
+	end
+	local izquierda = marco(c, UDim2.new(0.5, -6, 1, 0), UDim2.new(), Vector2.zero, OSCURO, 1)
+	local derecha = marco(c, UDim2.new(0.5, -6, 1, 0), UDim2.new(0.5, 6, 0, 0), Vector2.zero, OSCURO, 1)
+	texto(izquierda, "<b>GORROS</b>", UDim2.new(1, 0, 0, 26), UDim2.new(), TURQUESA, 20)
+	texto(derecha, "<b>MEJORAS DEL AVIÓN</b>", UDim2.new(1, 0, 0, 26), UDim2.new(), NARANJA, 20)
+	local disponibles: { Config.Gorro } = {}
+	for _, g in Config.TIENDA.GORROS do
+		if Visuales.IDS[g.nombre] then
+			table.insert(disponibles, g)
+		end
+	end
+	if #disponibles == 0 then
+		texto(izquierda, "Próximamente", UDim2.new(1, 0, 0, 30), UDim2.fromOffset(0, 36), Color3.fromRGB(190, 190, 196), 18)
+	end
+	for i, g in disponibles do
+		local fila = marco(izquierda, UDim2.new(1, 0, 0, 40), UDim2.fromOffset(0, 32 + (i - 1) * 46), Vector2.zero, Color3.fromRGB(45, 45, 54), 0)
+		esquina(fila, 8)
+		local t = texto(fila, g.titulo, UDim2.new(0.6, -10, 1, -8), UDim2.fromOffset(10, 4), CREMA, 18)
+		t.TextXAlignment = Enum.TextXAlignment.Left
+		local tiene = gorros[g.nombre] == true
+		local activo = puesto == g.nombre
+		local color = if activo then ROJO elseif tiene then TURQUESA elseif dinero >= g.precio then VERDE else Color3.fromRGB(90, 90, 98)
+		boton(fila, if activo then "Quitar" elseif tiene then "Ponértelo" else `🪙 {g.precio}`, UDim2.new(0.4, -8, 1, -8), UDim2.new(0.6, 0, 0, 4), color, function()
+			RemotoTienda:FireServer(if activo then "quitar" else "gorro", g.nombre)
+		end)
+	end
+	for i, m in Config.TIENDA.MEJORAS do
+		local nivel = if typeof(mejoras[m.nombre]) == "number" then mejoras[m.nombre] else 0
+		local precio = m.precios[nivel + 1]
+		local fila = marco(derecha, UDim2.new(1, 0, 0, 74), UDim2.fromOffset(0, 32 + (i - 1) * 82), Vector2.zero, Color3.fromRGB(45, 45, 54), 0)
+		esquina(fila, 8)
+		local t = texto(fila, `<b>{m.titulo}</b>  ({nivel}/{#m.precios})`, UDim2.new(0.62, -10, 0, 26), UDim2.fromOffset(10, 4), CREMA, 18)
+		t.TextXAlignment = Enum.TextXAlignment.Left
+		local d = texto(fila, m.descripcion, UDim2.new(0.62, -10, 0, 38), UDim2.fromOffset(10, 30), Color3.fromRGB(200, 200, 205), 14)
+		d.TextXAlignment = Enum.TextXAlignment.Left
+		d.TextYAlignment = Enum.TextYAlignment.Top
+		if precio then
+			boton(fila, `Mejorar 🪙 {precio}`, UDim2.new(0.38, -10, 0, 40), UDim2.new(0.62, 0, 0.5, -20), if dinero >= precio then VERDE else Color3.fromRGB(90, 90, 98), function()
+				RemotoTienda:FireServer("mejora", m.nombre)
+			end)
+		else
+			texto(fila, "✅ Máximo", UDim2.new(0.38, -10, 0, 40), UDim2.new(0.62, 0, 0.5, -20), VERDE, 18)
+		end
+	end
+	local nota = texto(derecha, "Las mejoras se aplican al avión si las tiene alguien de la tripulación.", UDim2.new(1, 0, 0, 40), UDim2.fromOffset(0, 32 + #Config.TIENDA.MEJORAS * 82), Color3.fromRGB(190, 190, 196), 14)
+	nota.TextXAlignment = Enum.TextXAlignment.Left
+end
+
+local function abrirTienda(abrir: any, datos: any)
+	if typeof(datos) == "table" then
+		estadoTienda = datos
+	end
+	if abrir == true and not panelTienda then
+		local panel = marco(gui, UDim2.fromOffset(760, 470), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5), OSCURO, 0.05)
+		panel.Name = "Tienda"
+		esquina(panel, 16)
+		borde(panel, TURQUESA, 3)
+		texto(panel, "<b>🛍 TIENDA DE LA TRIPULACIÓN</b>", UDim2.new(1, -200, 0, 40), UDim2.fromOffset(18, 14), CREMA, 26).TextXAlignment = Enum.TextXAlignment.Left
+		local dinero = texto(panel, "", UDim2.fromOffset(140, 40), UDim2.new(1, -200, 0, 14), Color3.fromRGB(245, 205, 61), 24)
+		dinero.Name = "Dinero"
+		local cerrar = boton(panel, "✕", UDim2.fromOffset(40, 40), UDim2.new(1, -54, 0, 14), ROJO, function()
+			local p = panelTienda
+			if p then
+				p.Visible = false
+			end
+		end)
+		cerrar.Modal = true
+		panelTienda = panel
+	end
+	local p = panelTienda
+	if abrir == true and p then
+		p.Visible = true
+	end
+	dibujarTienda()
+end
+
 function Interfaz.iniciar()
 	construir()
 	resaltado = Instance.new("Highlight")
@@ -617,6 +737,7 @@ function Interfaz.iniciar()
 		end
 	end)
 	RemotoResultados.OnClientEvent:Connect(resultados)
+	RemotoTienda.OnClientEvent:Connect(abrirTienda)
 	for _, modelo in CollectionService:GetTagged("Pasajero") do
 		task.spawn(burbuja, modelo)
 	end

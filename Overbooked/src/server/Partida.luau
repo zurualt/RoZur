@@ -19,6 +19,7 @@ local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
+local Tienda = require(script.Parent.Tienda)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
@@ -133,6 +134,7 @@ end
 local function embarque(contrato: Contratos.Contrato)
 	fase("Embarque")
 	Estado:SetAttribute("Contrato", HttpService:JSONEncode(contrato))
+	Tienda.aplicar()
 	Avion.embarque(contrato.distancia)
 	Cabina.reiniciar()
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo)

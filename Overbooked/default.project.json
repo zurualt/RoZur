@@ -17,6 +17,7 @@
         "Aviso": { "$className": "RemoteEvent" },
         "Sacudida": { "$className": "UnreliableRemoteEvent" },
         "Sonido": { "$className": "UnreliableRemoteEvent" },
+        "Tienda": { "$className": "RemoteEvent" },
         "Resultados": { "$className": "RemoteEvent" },
         "Disparar": { "$className": "RemoteEvent" }
       },
