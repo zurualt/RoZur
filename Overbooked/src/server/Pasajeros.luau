@@ -183,7 +183,18 @@ local function crear(indice: number): Pasajero
 		Estadisticas.sumar(jugador, "servir")
 		atender(modelo)
 	end)
-	calmar.Triggered:Connect(function()
+	calmar.Triggered:Connect(function(jugador)
+		if modelo:GetAttribute("Alborotador") == true then
+			if not p.asiento then
+				RemotoAviso:FireClient(jugador, "🤪 Primero siéntalo en un asiento", "info")
+				return
+			end
+			modelo:SetAttribute("Alborotador", false)
+			modelo:SetAttribute("Feliz", os.clock())
+			Estadisticas.sumar(jugador, "calmar", 3)
+			RemotoAviso:FireAllClients(`😇 {jugador.DisplayName} ha calmado al pasajero alborotador`, "bien")
+		end
+		Estadisticas.sumar(jugador, "calmar")
 		modelo:SetAttribute("Miedo", 0)
 		local s = modelo:GetAttribute("Satisfaccion")
 		modelo:SetAttribute("Satisfaccion", math.min(1, (if typeof(s) == "number" then s else 0.5) + 0.05))
@@ -407,6 +418,23 @@ function Pasajeros.reaccionar(modelo: Model, nombre: string)
 	end
 end
 
+function Pasajeros.alborotar()
+	local candidatos: { Pasajero } = {}
+	for modelo, p in lista do
+		if p.asiento and not Agarre.portador(modelo) and modelo:GetAttribute("Alborotador") ~= true then
+			table.insert(candidatos, p)
+		end
+	end
+	if #candidatos == 0 then
+		return
+	end
+	local p = candidatos[rng:NextInteger(1, #candidatos)]
+	p.modelo:SetAttribute("Alborotador", true)
+	p.modelo:SetAttribute("Pedido", "")
+	levantar(p)
+	RemotoAviso:FireAllClients("🤪 ¡Un pasajero se ha puesto a dar guerra! Cógelo, siéntalo y cálmalo (R)", "peligro")
+end
+
 function Pasajeros.resentar()
 	for _, p in lista do
 		if not p.asiento and not Agarre.portador(p.modelo) then
@@ -512,6 +540,19 @@ function Pasajeros.iniciar()
 				else
 					sumar(modelo, "Satisfaccion", -0.015)
 					m = math.min(1, m + 0.04)
+				end
+				if modelo:GetAttribute("Alborotador") == true then
+					m = 1
+					if p.asiento and rng:NextNumber() < 0.2 then
+						levantar(p)
+					elseif not p.asiento and not Agarre.portador(modelo) and Agarre.delServidor(p.cuerpo) then
+						local dir = Vector3.new(rng:NextNumber(-1, 1), 0, rng:NextNumber(-1, 1))
+						p.cuerpo.AssemblyLinearVelocity += (if dir.Magnitude > 0.01 then dir.Unit else Vector3.xAxis) * rng:NextNumber(8, 14) + Vector3.new(0, rng:NextNumber(4, 9), 0)
+						Pasajeros.asustar(0.08, p.cuerpo.Position, 9)
+						if rng:NextNumber() < 0.35 then
+							reaccion(modelo, "Golpe")
+						end
+					end
 				end
 				modelo:SetAttribute("Miedo", math.max(0, m - P.MIEDO_DECAE * (if avion:GetAttribute("Mascarillas") == true then 2.5 else 1)))
 				if m > 0.6 then

@@ -13,6 +13,7 @@ local PREMIOS = {
 	{ clave = "piratas", icono = "🏴‍☠️", titulo = "Artillero" },
 	{ clave = "pilotar", icono = "✈", titulo = "Piloto del día" },
 	{ clave = "cocodrilo", icono = "🐊", titulo = "Domador" },
+	{ clave = "calmar", icono = "😇", titulo = "Relaciones públicas" },
 	{ clave = "caidas", icono = "🤕", titulo = "Más torpe" },
 }
 

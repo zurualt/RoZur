@@ -397,6 +397,10 @@ local function burbuja(modelo: Instance)
 			paciencia.BackgroundColor3 = if f > 0.5 then VERDE elseif f > 0.25 then Color3.fromRGB(245, 205, 61) else ROJO
 			fondoPaciencia.Visible = true
 			b.Enabled = true
+		elseif modelo:GetAttribute("Alborotador") == true then
+			icono.Text = "🤪"
+			fondoPaciencia.Visible = false
+			b.Enabled = true
 		elseif os.clock() < emocionHasta then
 			icono.Text = emocion
 			fondoPaciencia.Visible = false
@@ -413,6 +417,7 @@ local function burbuja(modelo: Instance)
 		modelo:GetAttributeChangedSignal("Pedido"):Connect(refrescar),
 		modelo:GetAttributeChangedSignal("Paciencia"):Connect(refrescar),
 		modelo:GetAttributeChangedSignal("Miedo"):Connect(refrescar),
+		modelo:GetAttributeChangedSignal("Alborotador"):Connect(refrescar),
 		modelo:GetAttributeChangedSignal("Feliz"):Connect(function()
 			emocion, emocionHasta = Config.ICONOS.Feliz, os.clock() + 2
 			refrescar()

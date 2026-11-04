@@ -383,6 +383,7 @@ local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
 	{ f = falloMotor, peso = 1, riesgo = 2 },
 	{ f = Piratas.lanzar, peso = 2, riesgo = 2 },
 	{ f = panelSuelto, peso = 2, riesgo = 1 },
+	{ f = Pasajeros.alborotar, peso = 2, riesgo = 1 },
 	{
 		f = function()
 			Avion.desconectarAutopiloto()

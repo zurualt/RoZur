@@ -478,18 +478,20 @@ def s_megafonia():
 @reg('Golpe', 'sfx', 0.6, 'Golpe sordo y suave de cuerpo u objeto.')
 def s_golpe():
     b = buf(0.5)
-    put(b, tono(0.45, 170, 55, 0.025, 0.08), 0)
-    put(b, rafaga(0.25, 0.001, 0.028, lp(650, 2), 11), 0, 0.7)
+    put(b, tono(0.45, 230, 88, 0.022, 0.07), 0, 0.8)
+    put(b, rafaga(0.25, 0.001, 0.03, mul(lp(900, 2), hp(90, 1)), 11), 0, 1.0)
+    put(b, rafaga(0.2, 0.001, 0.04, bp(260, 1.2), 13), 0, 0.6)
     put(b, rafaga(0.05, 0.0003, 0.003, bp(1700, 0.7), 12), 0, 0.15)
-    return b
+    return reverb(b, 'cuarto', 0.06)
 
 
 @reg('GolpeFuerte', 'sfx', 0.75, 'Impacto pesado con cuerpo grave y algo de escombro.')
 def s_golpe_fuerte():
     b = buf(1.8)
-    put(b, tono(1.3, 140, 36, 0.05, 0.3, a=0.002), 0, 1.0)
-    put(b, rafaga(0.6, 0.0008, 0.07, lp(1900, 2), 21), 0, 0.9)
-    put(b, rafaga(0.4, 0.001, 0.05, bp(330, 1.0), 22), 0, 0.8)
+    put(b, tono(1.3, 160, 52, 0.045, 0.22, a=0.002, arm=((2, 0.3),)), 0, 0.75)
+    put(b, rafaga(0.6, 0.0008, 0.08, mul(lp(2500, 2), hp(120, 1)), 21), 0, 1.3)
+    put(b, rafaga(0.4, 0.001, 0.07, bp(240, 1.0), 22), 0, 1.0)
+    put(b, rafaga(0.1, 0.0005, 0.018, bp(1300, 0.9), 24), 0, 0.6)
     r = R(23)
     for i in range(8):
         t0 = 0.06+r.uniform(0, 0.45)*(0.3+i/8)
@@ -524,7 +526,7 @@ def s_cristal():
     put(b, rafaga(0.15, 0.0005, 0.03, bp(1500, 0.9), 43), 0, 0.35)
     for i in range(46):
         t0 = 0.004+0.75*r.uniform()**2.2
-        f = r.uniform(2200, 6500)
+        f = r.uniform(1900, 5200)
         a = r.uniform(0.25, 1)*np.exp(-t0/0.35)
         d = r.uniform(0.02, 0.11)
         put(b, modal(d*6, [f, f*2.32, f*1.41], [1, 0.3, 0.4], [d, d*0.5, d*0.7]), t0, 0.32*a)
@@ -532,8 +534,8 @@ def s_cristal():
         t0 = 0.1+0.5*r.uniform()
         f = r.uniform(1300, 2000)
         put(b, modal(0.3, [f, f*2.7], [1, 0.4], [0.06, 0.03]), t0, 0.2)
-    b += 0.06*filt(ruido(len(b), 44)*ad(len(b), 0.003, 0.18), mul(hp(4000, 2), lp(9000, 2)))
-    b = filt(b, lp(10000, 2))
+    b += 0.05*filt(ruido(len(b), 44)*ad(len(b), 0.003, 0.18), mul(hp(3500, 2), lp(8000, 2)))
+    b = filt(b, mul(lp(8000, 2), pk(900, 1.0, 3)))
     return reverb(b, 'cuarto', 0.14)
 
 
@@ -559,20 +561,20 @@ def s_madera():
 def s_salpicadura():
     b = buf(1.2)
     r = R(61)
-    n = ns(0.06)
+    n = ns(0.08)
     t = tt(n)
-    put(b, np.sin(fase(260*(1+18*t), n))*ad(n, 0.002, 0.022), 0, 0.6)
+    put(b, np.sin(fase(190*(1+14*t), n))*ad(n, 0.002, 0.03), 0, 0.9)
     n = ns(0.9)
-    sp = stft(ruido(n, 62), lambda t, f: Mlp(f, 1400+6000*np.exp(-np.maximum(t, 0)/0.06), 2)*Mhp(f, 250, 2))
-    put(b, sp*ad(n, 0.004, 0.12), 0.005, 0.55)
-    put(b, stft(ruido(ns(0.5), 63), lambda t, f: Mbp(f, 900+1500*np.exp(-np.maximum(t, 0)/0.08), 0.8))*ad(ns(0.5), 0.01, 0.08), 0.1, 0.3)
-    for i in range(24):
-        t0 = 0.05+0.65*r.uniform()**1.4
-        f = r.uniform(900, 3200)
-        m = ns(0.05)
+    sp = stft(ruido(n, 62), lambda t, f: Mlp(f, 900+4500*np.exp(-np.maximum(t, 0)/0.05), 2)*Mhp(f, 180, 2)*(1+Mbp(f, 500, 1.0)))
+    put(b, sp*ad(n, 0.004, 0.13), 0.005, 0.8)
+    put(b, stft(ruido(ns(0.5), 63), lambda t, f: Mbp(f, 600+1200*np.exp(-np.maximum(t, 0)/0.08), 0.8))*ad(ns(0.5), 0.015, 0.09), 0.1, 0.45)
+    for i in range(18):
+        t0 = 0.05+0.6*r.uniform()**1.4
+        f = r.uniform(450, 1600)
+        m = ns(0.06)
         tm = tt(m)
-        put(b, np.sin(fase(f*(1+r.uniform(4, 9)*tm), m))*ad(m, 0.001, r.uniform(0.006, 0.02)), t0, 0.25*r.uniform(0.3, 1)*np.exp(-t0/0.35))
-    b = filt(b, lp(9000, 2))
+        put(b, np.sin(fase(f*(1+r.uniform(3, 7)*tm), m))*ad(m, 0.001, r.uniform(0.008, 0.02)), t0, 0.16*r.uniform(0.3, 1)*np.exp(-t0/0.35))
+    b = filt(b, lp(7000, 2))
     return reverb(b, 'cuarto', 0.1)
 
 
@@ -600,7 +602,7 @@ def s_extintor():
     t = tt(n)
     env = lin([(0, 0), (0.012, 1.25), (0.04, 1.0), (0.36, 0.95), (0.44, 0)], n)
     env *= 1+0.08*np.sin(TAU*31*t)*R(81).uniform()
-    hiss = filt(ruido(n, 82), mul(hp(700, 2), lp(8500, 2), pk(3000, 0.8, 3), tilt(-1.5)))
+    hiss = filt(ruido(n, 82), mul(hp(600, 2), lp(7000, 2), pk(2500, 0.8, 3), tilt(-2.0)))
     low = filt(ruido(n, 83), mul(lp(500, 2), hp(80, 2)))*ad(n, 0.004, 0.06)
     x = hiss*env+0.8*low
     return x
@@ -613,7 +615,7 @@ def s_llave():
     tiempos = [0.0, 0.058, 0.113, 0.165, 0.214, 0.262]
     for i, t0 in enumerate(tiempos):
         j = r.uniform(0.97, 1.03)
-        x = modal(0.06, [2600*j, 4150*j, 5900*j, 950*j], [1, 0.6, 0.3, 0.5], [0.012, 0.008, 0.005, 0.009])
+        x = modal(0.06, [1950*j, 3050*j, 4400*j, 900*j, 520*j], [0.8, 0.45, 0.2, 0.7, 0.4], [0.011, 0.007, 0.004, 0.01, 0.012])
         put(x, rafaga(0.01, 0.0002, 0.0012, bp(3500, 0.9), 92+i), 0, 0.4)
         put(b, x, t0+r.uniform(-0.004, 0.004), 0.8+0.2*(i % 2))
     put(b, modal(0.15, [1800, 3100], [1, 0.5], [0.03, 0.015]), 0.3, 0.4)
@@ -645,11 +647,11 @@ def s_reparado():
 @reg('Explosion', 'sfx', 0.8, 'Explosión caricaturesca (boom redondo) para brecha en el casco o motor.')
 def s_explosion():
     b = buf(3.4)
-    put(b, tono(2.5, 85, 30, 0.09, 0.55, a=0.004), 0, 1.0)
+    put(b, tono(2.5, 110, 46, 0.08, 0.45, a=0.004, arm=((2, 0.35), (3, 0.1))), 0, 0.7)
     n = ns(2.6)
-    body = stft(ruido(n, 111), lambda t, f: Mlp(f, 260+4200*np.exp(-np.maximum(t, 0)/0.13), 2)*Mhp(f, 30, 2))
-    put(b, body*(ad(n, 0.003, 0.35)+0.25*ad(n, 0.15, 0.7)), 0, 1.2)
-    put(b, rafaga(0.08, 0.0005, 0.012, mul(bp(900, 0.6)), 112), 0, 0.5)
+    body = stft(ruido(n, 111), lambda t, f: Mlp(f, 380+4200*np.exp(-np.maximum(t, 0)/0.15), 2)*Mhp(f, 60, 2)*(1+1.5*Mbp(f, 180, 1.0)))
+    put(b, body*(ad(n, 0.003, 0.38)+0.3*ad(n, 0.15, 0.75)), 0, 3.0)
+    put(b, rafaga(0.08, 0.0005, 0.015, mul(bp(900, 0.6)), 112), 0, 0.9)
     r = R(113)
     for i in range(30):
         t0 = 0.15+1.4*r.uniform()**1.5
@@ -669,7 +671,8 @@ def s_succion():
     put(b, x*env, 0)
     m = ns(0.9)
     put(b, np.sin(fase(fc(tt(m))*0.95, m))*lin([(0, 0), (0.6, 0.06), (0.9, 0.12), (0.92, 0)], m), 0, 1.0)
-    put(b, tono(0.4, 110, 48, 0.04, 0.09), 0.93, 0.7)
+    put(b, tono(0.4, 140, 70, 0.04, 0.08), 0.93, 0.5)
+    b = filt(b, lp(8000, 2))
     return reverb(b, 'cuarto', 0.12)
 
 
@@ -759,15 +762,15 @@ def s_comer():
     b = buf(1.0)
     r = R(201)
     for j, t0 in enumerate([0.0, 0.26, 0.5]):
-        for i in range(12):
-            put(b, rafaga(0.012, 0.0002, r.uniform(0.001, 0.003), bp(r.uniform(900, 3200), 1.5), 202+j*30+i), t0+0.09*r.uniform()**1.3, 0.35*r.uniform(0.3, 1))
-        n = ns(0.14)
+        for i in range(16):
+            put(b, rafaga(0.015, 0.0002, r.uniform(0.0015, 0.004), mul(bp(r.uniform(800, 2800), 1.3), lp(5000, 2)), 202+j*30+i), t0+0.1*r.uniform()**1.3, 0.6*r.uniform(0.3, 1))
+        n = ns(0.16)
         t = tt(n)
-        f0 = 125+20*np.exp(-t/0.05)+j*8
-        F = np.tile(VOC['m'], (n, 1)).astype(float)
-        x = voz(f0, F, (120, 200, 300, 400), ad(n, 0.01, 0.04), 1.0, 3500, 230+j)
-        put(b, x/(np.abs(x).max()+1e-9), t0+0.02, 0.45)
-        put(b, tono(0.12, 150, 90, 0.02, 0.03), t0, 0.4)
+        f0 = 150+25*np.exp(-t/0.05)+j*10
+        F = np.tile(VOC['m'], (n, 1)).astype(float)*1.2
+        x = voz(f0, F, (120, 200, 300, 400), ad(n, 0.01, 0.045), 0.9, 4000, 230+j)
+        put(b, x/(np.abs(x).max()+1e-9), t0+0.02, 0.22)
+        put(b, rafaga(0.08, 0.002, 0.02, bp(450, 1.0), 260+j), t0, 0.3)
     return reverb(b, 'cuarto', 0.08)
 
 
@@ -782,8 +785,8 @@ def s_queja():
 
 @reg('PasajeroFeliz', 'sfx', 0.65, 'Pasajero contento: "¡mm-hm!" ascendente en jerigonza.')
 def s_feliz():
-    sil = [('m', 'm', 0.2, 215, 255, 0.75), ('m', 'a', 0.26, 285, 360, 1.0)]
-    y = habla(sil, 1.18, 221, bw=(80, 110, 160, 250), asp=0.02)
+    sil = [('m', 'm', 0.17, 240, 285, 0.8), ('h', 'm', 0.25, 300, 400, 1.0)]
+    y = habla(sil, 1.25, 221, bw=(80, 110, 160, 250), asp=0.02, tilt_=0.8)
     return reverb(y, 'cuarto', 0.06)
 
 
@@ -873,8 +876,9 @@ def s_puerta_cerrar():
     b = buf(1.2)
     n = ns(0.22)
     put(b, filt(ruido(n, 291), lp(700, 2))*lin([(0, 0), (0.18, 1), (0.22, 0)], n), 0, 0.25)
-    put(b, tono(0.6, 85, 44, 0.035, 0.15, a=0.0015), 0.2, 1.0)
-    put(b, rafaga(0.2, 0.0008, 0.04, lp(1200, 2), 292), 0.2, 0.7)
+    put(b, tono(0.6, 120, 62, 0.03, 0.12, a=0.0015, arm=((2, 0.3),)), 0.2, 0.7)
+    put(b, rafaga(0.2, 0.0008, 0.05, mul(lp(1500, 2), hp(100, 1)), 292), 0.2, 1.2)
+    put(b, modal(0.3, [185, 410, 655, 980], [1, 0.8, 0.5, 0.3], [0.06, 0.04, 0.03, 0.02]), 0.2, 0.55)
     put(b, modal(0.2, [1100, 2600, 4150], [1, 0.6, 0.3], [0.035, 0.02, 0.01]), 0.205, 0.35)
     for i, t0 in enumerate([0.27, 0.31, 0.345]):
         put(b, modal(0.08, [1600+i*150, 3300], [1, 0.4], [0.012, 0.006]), t0, 0.15*(1-0.25*i))
@@ -953,8 +957,8 @@ def s_rampa():
 @reg('Disparo', 'sfx', 0.6, 'Disparo de torreta caricaturesco (thump + pew), corto.')
 def s_disparo():
     b = buf(0.5)
-    put(b, tono(0.35, 280, 58, 0.018, 0.07), 0, 1.0)
-    put(b, tono(0.15, 1500, 320, 0.028, 0.05, arm=((2, 0.25), (3, 0.08))), 0.002, 0.45)
+    put(b, tono(0.35, 300, 85, 0.016, 0.06, arm=((2, 0.25),)), 0, 0.85)
+    put(b, tono(0.15, 1500, 320, 0.028, 0.05, arm=((2, 0.25), (3, 0.08))), 0.002, 0.7)
     put(b, rafaga(0.04, 0.0003, 0.012, mul(bp(1800, 0.7), lp(5000, 2)), 341), 0, 0.6)
     put(b, rafaga(0.35, 0.005, 0.09, lp(650, 2), 342), 0.01, 0.35)
     b = sat(b, 2.0)
@@ -1321,10 +1325,11 @@ def s_aterrizaje():
         sq = np.sin(fase(f, n))+0.3*np.sin(fase(2*f, n))
         sq += 0.6*filt(ruido(n, 415+int(t0*10)), bp(1500, 2.5))
         sq *= ad(n, 0.006, d*0.3)
-        put(b, filt(sq, lp(3800, 2)), t0, 0.28*a)
+        put(b, filt(sq, lp(3800, 2)), t0, 0.45*a)
     n = ns(2.3)
-    roll = filt(ruido(n, 420), mul(lp(260, 2), hp(30, 2)))*lin([(0, 0), (0.05, 1), (1.6, 0.6), (2.3, 0)], n)
-    put(b, roll, 0.03, 0.9)
+    roll = filt(ruido(n, 420), mul(lp(420, 2), hp(70, 2), pk(180, 1.0, 4)))*lin([(0, 0), (0.05, 1), (1.6, 0.6), (2.3, 0)], n)
+    roll *= 1+0.25*np.sin(TAU*11*tt(n))
+    put(b, roll, 0.03, 0.8)
     for t0 in [0.85, 1.35, 1.8]:
         put(b, tono(0.2, 90, 55, 0.02, 0.05), t0, 0.25)
     return reverb(b, 'cuarto', 0.08)

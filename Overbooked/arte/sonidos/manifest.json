@@ -1,8 +1,40 @@
 [
  {
+  "nombre": "Ding",
+  "archivo": "Ding.ogg",
+  "duracion": 2.672,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Campanita de cinturones, dos tonos suaves (agudo y grave)."
+ },
+ {
+  "nombre": "AvisoMegafonia",
+  "archivo": "AvisoMegafonia.ogg",
+  "duracion": 2.943,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Gong de megafonía antes de un anuncio: tres notas ascendentes con color de altavoz."
+ },
+ {
+  "nombre": "Golpe",
+  "archivo": "Golpe.ogg",
+  "duracion": 0.421,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Golpe sordo y suave de cuerpo u objeto."
+ },
+ {
+  "nombre": "GolpeFuerte",
+  "archivo": "GolpeFuerte.ogg",
+  "duracion": 1.286,
+  "bucle": false,
+  "volumen": 0.75,
+  "descripcion": "Impacto pesado con cuerpo grave y algo de escombro."
+ },
+ {
   "nombre": "GolpeMetal",
   "archivo": "GolpeMetal.ogg",
-  "duracion": 1.516,
+  "duracion": 1.418,
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Choque metálico (clanc) con rebote corto."
@@ -10,7 +42,7 @@
  {
   "nombre": "Cristal",
   "archivo": "Cristal.ogg",
-  "duracion": 1.027,
+  "duracion": 1.022,
   "bucle": false,
   "volumen": 0.55,
   "descripcion": "Cristal pequeño rompiéndose: crack y tintineo de esquirlas."
@@ -18,7 +50,7 @@
  {
   "nombre": "Madera",
   "archivo": "Madera.ogg",
-  "duracion": 1.574,
+  "duracion": 0.914,
   "bucle": false,
   "volumen": 0.65,
   "descripcion": "Caja de madera rompiéndose: crujido, astillas y tablas cayendo."
@@ -26,7 +58,7 @@
  {
   "nombre": "Salpicadura",
   "archivo": "Salpicadura.ogg",
-  "duracion": 1.501,
+  "duracion": 0.695,
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Salpicadura de líquido con gotitas."
@@ -34,7 +66,7 @@
  {
   "nombre": "Resbalon",
   "archivo": "Resbalon.ogg",
-  "duracion": 1.101,
+  "duracion": 0.628,
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Resbalón de dibujo animado: chirrido de suela + silbato que sube (fiuuup)."
@@ -42,7 +74,7 @@
  {
   "nombre": "Extintor",
   "archivo": "Extintor.ogg",
-  "duracion": 0.457,
+  "duracion": 0.456,
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Ráfaga corta de extintor (~0,4 s), apta para repetir."
@@ -50,7 +82,7 @@
  {
   "nombre": "Llave",
   "archivo": "Llave.ogg",
-  "duracion": 0.455,
+  "duracion": 0.464,
   "bucle": false,
   "volumen": 0.55,
   "descripcion": "Llave inglesa/carraca: serie de clics metálicos."
@@ -58,7 +90,7 @@
  {
   "nombre": "Reparado",
   "archivo": "Reparado.ogg",
-  "duracion": 1.945,
+  "duracion": 1.925,
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Jingle brillante de reparación completada."
@@ -66,7 +98,7 @@
  {
   "nombre": "Explosion",
   "archivo": "Explosion.ogg",
-  "duracion": 4.406,
+  "duracion": 2.617,
   "bucle": false,
   "volumen": 0.8,
   "descripcion": "Explosión caricaturesca (boom redondo) para brecha en el casco o motor."
@@ -74,7 +106,7 @@
  {
   "nombre": "Succion",
   "archivo": "Succion.ogg",
-  "duracion": 1.331,
+  "duracion": 1.342,
   "bucle": false,
   "volumen": 0.65,
   "descripcion": "Aire entrando a presión por un agujero: whoosh que crece y corta."
@@ -82,7 +114,7 @@
  {
   "nombre": "Trueno",
   "archivo": "Trueno.ogg",
-  "duracion": 8.825,
+  "duracion": 5.755,
   "bucle": false,
   "volumen": 0.75,
   "descripcion": "Trueno: chasquido inicial y retumbo largo."
@@ -90,7 +122,7 @@
  {
   "nombre": "Pajaros",
   "archivo": "Pajaros.ogg",
-  "duracion": 1.939,
+  "duracion": 1.852,
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Bandada de pájaros caricaturescos: graznidos y aleteos."
@@ -98,7 +130,7 @@
  {
   "nombre": "Cocodrilo",
   "archivo": "Cocodrilo.ogg",
-  "duracion": 2.557,
+  "duracion": 1.864,
   "bucle": false,
   "volumen": 0.7,
   "descripcion": "Gruñido grave de cocodrilo seguido de un siseo."
@@ -106,7 +138,7 @@
  {
   "nombre": "Mordisco",
   "archivo": "Mordisco.ogg",
-  "duracion": 0.876,
+  "duracion": 0.267,
   "bucle": false,
   "volumen": 0.65,
   "descripcion": "Mordisco: chasquido de mandíbulas (chomp)."
@@ -114,9 +146,281 @@
  {
   "nombre": "Comer",
   "archivo": "Comer.ogg",
-  "duracion": 1.557,
+  "duracion": 0.756,
   "bucle": false,
   "volumen": 0.55,
   "descripcion": "Masticar caricaturesco: tres bocados (ñam ñam ñam)."
+ },
+ {
+  "nombre": "PasajeroQueja",
+  "archivo": "PasajeroQueja.ogg",
+  "duracion": 1.055,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Pasajero quejándose en jerigonza (sin palabras reales), voz de dibujo."
+ },
+ {
+  "nombre": "PasajeroFeliz",
+  "archivo": "PasajeroFeliz.ogg",
+  "duracion": 0.538,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Pasajero contento: \"¡mm-hm!\" ascendente en jerigonza."
+ },
+ {
+  "nombre": "PasajeroGrito",
+  "archivo": "PasajeroGrito.ogg",
+  "duracion": 1.304,
+  "bucle": false,
+  "volumen": 0.75,
+  "descripcion": "Grito caricaturesco \"¡aaah!\" (síntesis de formantes)."
+ },
+ {
+  "nombre": "Servir",
+  "archivo": "Servir.ogg",
+  "duracion": 0.425,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Servir: plato apoyado con un \"pop\" agradable."
+ },
+ {
+  "nombre": "Coger",
+  "archivo": "Coger.ogg",
+  "duracion": 0.223,
+  "bucle": false,
+  "volumen": 0.5,
+  "descripcion": "Coger objeto: whoosh corto ascendente y clic."
+ },
+ {
+  "nombre": "Lanzar",
+  "archivo": "Lanzar.ogg",
+  "duracion": 0.506,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Lanzar objeto: whoosh que se aleja."
+ },
+ {
+  "nombre": "PuertaAbrir",
+  "archivo": "PuertaAbrir.ogg",
+  "duracion": 1.58,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Puerta pesada con bisagra abriéndose: cerrojo, crujido y tope."
+ },
+ {
+  "nombre": "PuertaCerrar",
+  "archivo": "PuertaCerrar.ogg",
+  "duracion": 0.814,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Puerta pesada cerrándose de golpe con pestillo."
+ },
+ {
+  "nombre": "Altillo",
+  "archivo": "Altillo.ogg",
+  "duracion": 0.732,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Compartimento superior: pop del pestillo y crujido de la tapa."
+ },
+ {
+  "nombre": "Mascarillas",
+  "archivo": "Mascarillas.ogg",
+  "duracion": 1.284,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Caída de las mascarillas de oxígeno: paneles que saltan y repiqueteo de plástico."
+ },
+ {
+  "nombre": "Boton",
+  "archivo": "Boton.ogg",
+  "duracion": 0.096,
+  "bucle": false,
+  "volumen": 0.5,
+  "descripcion": "Botón de cabina de mando: clic de pulsar y soltar."
+ },
+ {
+  "nombre": "Rampa",
+  "archivo": "Rampa.ogg",
+  "duracion": 2.427,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Rampa hidráulica bajando (~2 s): motor, siseo y topes."
+ },
+ {
+  "nombre": "Disparo",
+  "archivo": "Disparo.ogg",
+  "duracion": 0.367,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Disparo de torreta caricaturesco (thump + pew), corto."
+ },
+ {
+  "nombre": "ImpactoPirata",
+  "archivo": "ImpactoPirata.ogg",
+  "duracion": 0.573,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Impacto sobre el avión pirata: \"ponk\" con chapa y polvareda."
+ },
+ {
+  "nombre": "PirataCae",
+  "archivo": "PirataCae.ogg",
+  "duracion": 4.598,
+  "bucle": false,
+  "volumen": 0.65,
+  "descripcion": "Avión pirata cayendo: silbido descendente y golpe lejano."
+ },
+ {
+  "nombre": "Caja",
+  "archivo": "Caja.ogg",
+  "duracion": 1.429,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Caja registradora y monedas para las ganancias (ka-ching)."
+ },
+ {
+  "nombre": "Victoria",
+  "archivo": "Victoria.ogg",
+  "duracion": 2.954,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Fanfarria corta original de éxito (~2,5 s), Fa mayor."
+ },
+ {
+  "nombre": "Derrota",
+  "archivo": "Derrota.ogg",
+  "duracion": 3.111,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Jingle corto original de fracaso (~2,5 s), cómico y descendente."
+ },
+ {
+  "nombre": "Despegue",
+  "archivo": "Despegue.ogg",
+  "duracion": 5.202,
+  "bucle": false,
+  "volumen": 0.75,
+  "descripcion": "Motor acelerando para el despegue (~5 s): silbido de turbina y rugido."
+ },
+ {
+  "nombre": "Aterrizaje",
+  "archivo": "Aterrizaje.ogg",
+  "duracion": 2.333,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Aterrizaje (~2 s): chirrido de neumáticos, golpe del tren y rodadura."
+ },
+ {
+  "nombre": "Pasos1",
+  "archivo": "Pasos1.ogg",
+  "duracion": 0.203,
+  "bucle": false,
+  "volumen": 0.4,
+  "descripcion": "Paso sobre moqueta, variante 1."
+ },
+ {
+  "nombre": "Pasos2",
+  "archivo": "Pasos2.ogg",
+  "duracion": 0.203,
+  "bucle": false,
+  "volumen": 0.4,
+  "descripcion": "Paso sobre moqueta, variante 2."
+ },
+ {
+  "nombre": "Pasos3",
+  "archivo": "Pasos3.ogg",
+  "duracion": 0.189,
+  "bucle": false,
+  "volumen": 0.4,
+  "descripcion": "Paso sobre moqueta, variante 3."
+ },
+ {
+  "nombre": "UiClick",
+  "archivo": "UiClick.ogg",
+  "duracion": 0.087,
+  "bucle": false,
+  "volumen": 0.45,
+  "descripcion": "Clic suave de interfaz."
+ },
+ {
+  "nombre": "UiAviso",
+  "archivo": "UiAviso.ogg",
+  "duracion": 0.558,
+  "bucle": false,
+  "volumen": 0.5,
+  "descripcion": "Notificación (toast): blip de dos notas ascendentes."
+ },
+ {
+  "nombre": "UiPeligro",
+  "archivo": "UiPeligro.ogg",
+  "duracion": 0.636,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Aviso de peligro (toast): dos golpes graves disonantes."
+ },
+ {
+  "nombre": "MotorAvion",
+  "archivo": "MotorAvion.ogg",
+  "duracion": 8.011,
+  "bucle": true,
+  "volumen": 0.5,
+  "descripcion": "Bucle de motores bimotor (turbohélice/turbofán), dron grave; admite cambiar PlaybackSpeed."
+ },
+ {
+  "nombre": "VientoCabina",
+  "archivo": "VientoCabina.ogg",
+  "duracion": 10.008,
+  "bucle": true,
+  "volumen": 0.6,
+  "descripcion": "Bucle de viento que entra a chorro (puerta abierta o brecha en el casco)."
+ },
+ {
+  "nombre": "VientoExterior",
+  "archivo": "VientoExterior.ogg",
+  "duracion": 12.005,
+  "bucle": true,
+  "volumen": 0.6,
+  "descripcion": "Bucle estéreo de viento fuerte en el exterior (sobre el ala)."
+ },
+ {
+  "nombre": "Alarma",
+  "archivo": "Alarma.ogg",
+  "duracion": 1.0,
+  "bucle": true,
+  "volumen": 0.45,
+  "descripcion": "Bucle de aviso maestro de cabina: doble pitido \"bi-bo\", grave y no estridente."
+ },
+ {
+  "nombre": "FuegoLoop",
+  "archivo": "FuegoLoop.ogg",
+  "duracion": 8.011,
+  "bucle": true,
+  "volumen": 0.55,
+  "descripcion": "Bucle de fuego crepitante."
+ },
+ {
+  "nombre": "Lluvia",
+  "archivo": "Lluvia.ogg",
+  "duracion": 12.005,
+  "bucle": true,
+  "volumen": 0.5,
+  "descripcion": "Bucle estéreo de lluvia de tormenta golpeando el fuselaje."
+ },
+ {
+  "nombre": "AmbienteTerminal",
+  "archivo": "AmbienteTerminal.ogg",
+  "duracion": 19.992,
+  "bucle": true,
+  "volumen": 0.4,
+  "descripcion": "Bucle estéreo de tono de sala de terminal con murmullo lejano."
+ },
+ {
+  "nombre": "AmbienteCabina",
+  "archivo": "AmbienteCabina.ogg",
+  "duracion": 15.0,
+  "bucle": true,
+  "volumen": 0.4,
+  "descripcion": "Bucle estéreo del interior de cabina: zumbido de motores y ventilación."
  }
 ]
