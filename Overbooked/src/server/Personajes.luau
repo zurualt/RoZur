@@ -225,9 +225,35 @@ local function cargarPlantilla()
 	end
 	humanoide.BreakJointsOnDeath = false
 	humanoide.RequiresNeck = false
+	local fondo = math.huge
+	for _, d in modelo:GetDescendants() do
+		if d:IsA("BasePart") and d ~= raiz then
+			local cf, medio = d.CFrame, d.Size / 2
+			local alto = math.abs(cf.RightVector.Y) * medio.X + math.abs(cf.UpVector.Y) * medio.Y + math.abs(cf.LookVector.Y) * medio.Z
+			fondo = math.min(fondo, d.Position.Y - alto)
+		end
+	end
+	local cadera = (raiz.Position.Y - raiz.Size.Y / 2) - fondo
+	if cadera > 0 and cadera < 10 then
+		humanoide.HipHeight = cadera
+	end
 	modelo.Name = "StarterCharacter"
-	modelo.Parent = StarterPlayer
+	modelo.Parent = nil
 	resultado:Destroy()
+	while not modelo:FindFirstChild("Animate") do
+		for _, jugador in Players:GetPlayers() do
+			local personaje = jugador.Character
+			local animar = personaje and personaje:FindFirstChild("Animate")
+			if animar and animar:IsA("BaseScript") then
+				animar:Clone().Parent = modelo
+				break
+			end
+		end
+		if not modelo:FindFirstChild("Animate") then
+			task.wait(1)
+		end
+	end
+	modelo.Parent = StarterPlayer
 	for _, jugador in Players:GetPlayers() do
 		task.spawn(function()
 			jugador:LoadCharacter()
