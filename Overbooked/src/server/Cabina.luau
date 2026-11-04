@@ -198,7 +198,7 @@ local function desplegarMascarillas()
 	end
 	avion:SetAttribute("Mascarillas", true)
 	Cabina.parpadeo(1.2)
-	RemotoAviso:FireAllClients("😷 ¡Mascarillas de oxígeno desplegadas!", "peligro")
+	RemotoAviso:FireAllClients("¡Mascarillas de oxígeno desplegadas!", "peligro")
 end
 
 function Cabina.reiniciar()
@@ -249,7 +249,7 @@ local function guardar(jugador: Player, objeto: Instance, raiz: BasePart)
 			a.contenido += 1
 			Sonidos.emitir("Servir", raiz.Position)
 			raiz:Destroy()
-			RemotoAviso:FireClient(jugador, "🧳 Bolso guardado en el altillo", "bien")
+			RemotoAviso:FireClient(jugador, "Bolso guardado en el altillo", "bien")
 			return
 		end
 	end

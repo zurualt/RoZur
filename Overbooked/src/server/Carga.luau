@@ -142,7 +142,7 @@ local function soltarCocodrilo(desde: BasePart)
 	cuenta.cocodrilo = "Suelto"
 	saciadoHasta = 0
 	aturdidoHasta = 0
-	RemotoAviso:FireAllClients("🐊 ¡SE HA ESCAPADO EL COCODRILO! Atráelo con comida y suéltalo junto a su jaula", "peligro")
+	RemotoAviso:FireAllClients("¡SE HA ESCAPADO EL COCODRILO! Atráelo con comida y suéltalo junto a su jaula", "peligro")
 	Pasajeros.asustar(0.6)
 end
 
@@ -342,7 +342,7 @@ local function romper(parte: BasePart, b: Bulto, tipo: string)
 	Agarre.soltarObjeto(parte)
 	parte:Destroy()
 	Pasajeros.asustar(0.2, centro, 12)
-	RemotoAviso:FireAllClients(if tipo == "CajaFragil" then `💥 ¡Se ha roto una caja frágil! -{b.valor}` else `💥 ¡Se ha roto una caja! -{b.valor}`, "peligro")
+	RemotoAviso:FireAllClients(if tipo == "CajaFragil" then `¡Se ha roto una caja frágil! -{b.valor}` else `¡Se ha roto una caja! -{b.valor}`, "peligro")
 end
 
 local function aplicarDano(parte: BasePart, b: Bulto, dano: number)
@@ -429,7 +429,7 @@ function Carga.dejarEnTierra(): number
 		end
 	end
 	if perdidas > 0 then
-		RemotoAviso:FireAllClients(`🧳 Se han quedado {perdidas} bultos en tierra`, "peligro")
+		RemotoAviso:FireAllClients(`Se han quedado {perdidas} bultos en tierra`, "peligro")
 	end
 	return perdidas
 end
@@ -453,10 +453,10 @@ local function caida(parte: BasePart, b: Bulto?)
 		bultos[parte] = nil
 		if b.entrega and Avion.zonaEntrega() then
 			cuenta.entregado += b.valor
-			RemotoAviso:FireAllClients(`📦 ¡Entrega aérea completada! +{b.valor}`, "bien")
+			RemotoAviso:FireAllClients(`¡Entrega aérea completada! +{b.valor}`, "bien")
 		else
 			cuenta.perdido += b.valor
-			RemotoAviso:FireAllClients(if b.entrega then "📦 Esa entrega no estaba sobre la zona... perdida" else "Se ha caído carga del avión", "peligro")
+			RemotoAviso:FireAllClients(if b.entrega then "Esa entrega no estaba sobre la zona... perdida" else "Se ha caído carga del avión", "peligro")
 		end
 		if parte == jaula then
 			jaula = nil
@@ -483,7 +483,7 @@ local function enjaular(c: Model)
 	if j then
 		Sonidos.emitir("GolpeMetal", j.Position)
 	end
-	RemotoAviso:FireAllClients("🐊 ¡Cocodrilo enjaulado otra vez!", "bien")
+	RemotoAviso:FireAllClients("¡Cocodrilo enjaulado otra vez!", "bien")
 end
 
 local function vigilarCocodrilo(dt: number)
@@ -499,7 +499,7 @@ local function vigilarCocodrilo(dt: number)
 	if cuerpo.Position.Y < Config.CAIDA_Y then
 		cuenta.cocodrilo = "Perdido"
 		cuenta.perdido += 400
-		RemotoAviso:FireAllClients("🐊 El cocodrilo ha salido volando... adiós a la carga", "peligro")
+		RemotoAviso:FireAllClients("El cocodrilo ha salido volando... adiós a la carga", "peligro")
 		Agarre.soltarObjeto(c)
 		c:Destroy()
 		cocodrilo = nil
@@ -554,7 +554,7 @@ local function vigilarCocodrilo(dt: number)
 					local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 					Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
 					Sonidos.emitir("Mordisco", boca)
-					RemotoAviso:FireClient(jugador, "🐊 ¡Te ha mordido el cocodrilo!", "peligro")
+					RemotoAviso:FireClient(jugador, "¡Te ha mordido el cocodrilo!", "peligro")
 				end
 			end
 		end
@@ -564,7 +564,7 @@ local function vigilarCocodrilo(dt: number)
 			presa:Destroy()
 			Sonidos.emitir("Comer", boca)
 			saciadoHasta = ahora + 14
-			RemotoAviso:FireAllClients("🐊 ¡El cocodrilo se ha comido la hamburguesa! Ahora está tranquilo: llévalo a la jaula", "bien")
+			RemotoAviso:FireAllClients("¡El cocodrilo se ha comido la hamburguesa! Ahora está tranquilo: llévalo a la jaula", "bien")
 			return
 		end
 		if ahora > ultimoMordisco then
@@ -609,7 +609,7 @@ function Carga.iniciar()
 			Personajes.ragdoll(jugador, 1.6, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 40 + Vector3.new(0, 22, 0))
 			Sonidos.emitir("Mordisco", cuerpo.Position)
 		end
-		RemotoAviso:FireClient(jugador, "🐊 ¡Está furioso! Dale de comer o atúrdelo antes de cogerlo", "peligro")
+		RemotoAviso:FireClient(jugador, "¡Está furioso! Dale de comer o atúrdelo antes de cogerlo", "peligro")
 		return false
 	end)
 	Agarre.alSoltar(function(soltador, objeto, raiz)

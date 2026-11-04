@@ -49,13 +49,13 @@ function Aduana.iniciar()
 					local resultado = Carga.escanear(maleta)
 					if resultado == true then
 						Sonidos.emitir("UiPeligro", p)
-						RemotoAviso:FireAllClients("🚨 ¡Contrabando en una maleta! Déjala en el contenedor de aduanas", "peligro")
+						RemotoAviso:FireAllClients("¡Contrabando en una maleta! Déjala en el contenedor de aduanas", "peligro")
 					elseif resultado == false then
 						Sonidos.emitir("Ding", p, 0.2)
 					end
 				elseif dentro(contenedor, p) and Carga.confiscar(maleta) then
 					Sonidos.emitir("Reparado", p)
-					RemotoAviso:FireAllClients(`🛃 ¡Contrabando requisado! +{Aduana.BONUS}`, "bien")
+					RemotoAviso:FireAllClients(`¡Contrabando requisado! +{Aduana.BONUS}`, "bien")
 				end
 			end
 		end

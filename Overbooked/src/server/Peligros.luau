@@ -101,7 +101,7 @@ local function destapar(b: Brecha, disparado: boolean)
 		Sonidos.emitir("Succion", b.parte.Position)
 		b.sinTapon = os.clock() + 2
 		tapon.AssemblyLinearVelocity = b.parte.CFrame.LookVector * 30 + Vector3.new(0, 10, 0)
-		aviso("💨 ¡El tapón ha salido disparado!", "peligro")
+		aviso("¡El tapón ha salido disparado!", "peligro")
 	end
 end
 
@@ -117,7 +117,7 @@ local function taponar(b: Brecha, objeto: BasePart)
 	b.tapon = objeto
 	b.parte:SetAttribute("Fuerza", 0)
 	b.viento.Rate = 6
-	aviso("🧳 ¡Agujero tapado! Repáralo con la llave antes de que salga disparado", "bien")
+	aviso("¡Agujero tapado! Repáralo con la llave antes de que salga disparado", "bien")
 end
 
 function Peligros.sacudida(magnitud: number)
@@ -252,7 +252,7 @@ function Peligros.brecha()
 	marca.Parent = carpeta
 	brechas[marca] = { parte = marca, ventana = ventana, reparacion = 0, originales = originales, viento = viento, tapon = nil, sinTapon = 0 }
 	Avion.danar(5)
-	aviso("💥 ¡AGUJERO EN EL FUSELAJE! Repáralo con la llave", "peligro")
+	aviso("¡AGUJERO EN EL FUSELAJE! Repáralo con la llave", "peligro")
 	Pasajeros.asustar(0.5)
 end
 
@@ -267,7 +267,7 @@ local function cerrar(b: Brecha, silencioso: boolean?)
 	b.parte:Destroy()
 	if not silencioso then
 		Sonidos.emitir("Reparado", b.parte.Position)
-		aviso("🔧 ¡Agujero reparado!", "bien")
+		aviso("¡Agujero reparado!", "bien")
 	end
 end
 
@@ -300,20 +300,20 @@ local function panelSuelto()
 	paneles[parte] = { parte = parte, reparacion = 0 }
 	Avion.danar(3)
 	Sonidos.emitir("GolpeMetal", parte.Position)
-	aviso("🔩 ¡Panel suelto en el techo! Sal al ala, trepa con el piolet y clávalo a martillazos (F)", "peligro")
+	aviso("¡Panel suelto en el techo! Sal al ala, trepa con el piolet y clávalo a martillazos (F)", "peligro")
 end
 
 local function cerrarPanel(p: Panel, silencioso: boolean?)
 	paneles[p.parte] = nil
 	if not silencioso then
 		Sonidos.emitir("Reparado", p.parte.Position)
-		aviso("🔩 ¡Panel del techo arreglado!", "bien")
+		aviso("¡Panel del techo arreglado!", "bien")
 	end
 	p.parte:Destroy()
 end
 
 local function pajaros()
-	aviso("🐦 ¡Bandada de pájaros delante!", "peligro")
+	aviso("¡Bandada de pájaros delante!", "peligro")
 	avion:SetAttribute("Bandada", os.clock())
 	local miGeneracion = generacion
 	task.delay(3, function()
@@ -326,13 +326,13 @@ local function pajaros()
 		Avion.plumas(lado)
 		Avion.desconectarAutopiloto()
 		avion:SetAttribute("Pajaros", os.clock())
-		aviso(`🔥 ¡Motor {if lado == "Izq" then "izquierdo" else "derecho"} en llamas!`, "peligro")
+		aviso(`¡Motor {if lado == "Izq" then "izquierdo" else "derecho"} en llamas!`, "peligro")
 		Peligros.sacudida(0.85)
 	end)
 end
 
 local function caidaLibre()
-	aviso("🎢 ¡Caída libre! Agarraos a algo", "peligro")
+	aviso("¡Caída libre! Agarraos a algo", "peligro")
 	Sonidos.emitir("PasajeroGrito", Config.CENTRO_AVION)
 	Workspace.Gravity = 26
 	Pasajeros.flotar(Avion.estado.cinturones)
@@ -351,7 +351,7 @@ local function caidaLibre()
 end
 
 local function tormenta()
-	aviso("⛈ ¡Entramos en una tormenta!", "peligro")
+	aviso("¡Entramos en una tormenta!", "peligro")
 	finTormenta = os.clock() + 32
 	avion:SetAttribute("Tormenta", true)
 end
@@ -359,18 +359,18 @@ end
 local function falloMotor()
 	local lado = if rng:NextNumber() < 0.5 then "Izq" else "Der"
 	Avion.danarMotor(lado, 100, false)
-	aviso(`⚠ ¡Motor {if lado == "Izq" then "izquierdo" else "derecho"} apagado! Reinícialo en la cabina`, "peligro")
+	aviso(`¡Motor {if lado == "Izq" then "izquierdo" else "derecho"} apagado! Reinícialo en la cabina`, "peligro")
 end
 
 local function turbulencias()
-	aviso("🌪 ¡Zona de turbulencias! Cinturones, por favor", "peligro")
+	aviso("¡Zona de turbulencias! Cinturones, por favor", "peligro")
 	turbulenciaEvento = os.clock() + 18
 end
 
 local function fuegoAleatorio()
 	local punto = PUNTOS_FUEGO[rng:NextInteger(1, #PUNTOS_FUEGO)]
 	Peligros.fuego(punto)
-	aviso("🔥 ¡Fuego a bordo! Coge un extintor", "peligro")
+	aviso("¡Fuego a bordo! Coge un extintor", "peligro")
 end
 
 local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
@@ -559,7 +559,7 @@ local function usarAgua(jugador: Player, mirada: Vector3?)
 			return VFX.salpicadura(padre, Color3.fromRGB(143, 211, 244))
 		end, 30)
 		Agarre.consumir(jugador)
-		RemotoAviso:FireClient(jugador, "💧 ¡Fuego apagado con agua!", "bien")
+		RemotoAviso:FireClient(jugador, "¡Fuego apagado con agua!", "bien")
 	end
 end
 
@@ -717,7 +717,7 @@ function Peligros.iniciar()
 					Sonidos.emitir("GolpeFuerte", raiz.Position)
 					local dir = (raiz.Position - parte.Position) * Vector3.new(1, 0, 1)
 					Personajes.ragdoll(jugador, 1.2, (if dir.Magnitude > 0 then dir.Unit else Vector3.xAxis) * 30 + Vector3.new(0, 30, 0))
-					RemotoAviso:FireClient(jugador, "🔥 ¡Te has quemado!", "peligro")
+					RemotoAviso:FireClient(jugador, "¡Te has quemado!", "peligro")
 				end
 			end
 		end

@@ -173,7 +173,7 @@ local function crear(indice: number): Pasajero
 		end
 		local objeto = Agarre.sostenido(jugador)
 		if not objeto or not coincide(pedido, Agarre.tipo(jugador)) then
-			RemotoAviso:FireClient(jugador, `Quiere {Config.ICONOS[pedido] or pedido}`, "info")
+			RemotoAviso:FireClient(jugador, `Quiere {Config.PEDIDOS[pedido] or pedido}`, "info")
 			return
 		end
 		if not quitarRacion(objeto) then
@@ -186,13 +186,13 @@ local function crear(indice: number): Pasajero
 	calmar.Triggered:Connect(function(jugador)
 		if modelo:GetAttribute("Alborotador") == true then
 			if not p.asiento then
-				RemotoAviso:FireClient(jugador, "🤪 Primero siéntalo en un asiento", "info")
+				RemotoAviso:FireClient(jugador, "Primero siéntalo en un asiento", "info")
 				return
 			end
 			modelo:SetAttribute("Alborotador", false)
 			modelo:SetAttribute("Feliz", os.clock())
 			Estadisticas.sumar(jugador, "calmar", 3)
-			RemotoAviso:FireAllClients(`😇 {jugador.DisplayName} ha calmado al pasajero alborotador`, "bien")
+			RemotoAviso:FireAllClients(`{jugador.DisplayName} ha calmado al pasajero alborotador`, "bien")
 		end
 		Estadisticas.sumar(jugador, "calmar")
 		modelo:SetAttribute("Miedo", 0)
@@ -202,7 +202,7 @@ local function crear(indice: number): Pasajero
 	modelo:GetAttributeChangedSignal("Pedido"):Connect(function()
 		servir.Enabled = modelo:GetAttribute("Pedido") ~= ""
 		local pedido = modelo:GetAttribute("Pedido")
-		servir.ObjectText = if typeof(pedido) == "string" and pedido ~= "" then `Quiere {Config.ICONOS[pedido] or pedido}` else "Pasajero"
+		servir.ObjectText = if typeof(pedido) == "string" and pedido ~= "" then `Quiere {Config.PEDIDOS[pedido] or pedido}` else "Pasajero"
 	end)
 	modelo:GetAttributeChangedSignal("Miedo"):Connect(function()
 		local m = modelo:GetAttribute("Miedo")
@@ -432,7 +432,7 @@ function Pasajeros.alborotar()
 	p.modelo:SetAttribute("Alborotador", true)
 	p.modelo:SetAttribute("Pedido", "")
 	levantar(p)
-	RemotoAviso:FireAllClients("🤪 ¡Un pasajero se ha puesto a dar guerra! Cógelo, siéntalo y cálmalo (R)", "peligro")
+	RemotoAviso:FireAllClients("¡Un pasajero se ha puesto a dar guerra! Cógelo, siéntalo y cálmalo (R)", "peligro")
 end
 
 function Pasajeros.resentar()
@@ -513,7 +513,7 @@ function Pasajeros.iniciar()
 					end
 					Agarre.soltarObjeto(modelo)
 					modelo:Destroy()
-					RemotoAviso:FireAllClients("😱 ¡Un pasajero ha salido volando del avión!", "peligro")
+					RemotoAviso:FireAllClients("¡Un pasajero ha salido volando del avión!", "peligro")
 					continue
 				end
 				local miedo = modelo:GetAttribute("Miedo")

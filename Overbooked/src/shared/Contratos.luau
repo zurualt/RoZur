@@ -48,11 +48,11 @@ local Contratos = {}
 
 Contratos.CONDICIONES = {
 	Normal = { icono = "", texto = "", peso = 5 },
-	Nocturno = { icono = "🌙", texto = "Vuelo nocturno (+15 %)", peso = 2 },
-	Niebla = { icono = "🌫", texto = "Niebla en destino (+20 %)", peso = 2 },
-	VIP = { icono = "💎", texto = "Pasajeros VIP: pagan más y se impacientan antes", peso = 2 },
-	Hambre = { icono = "🍔", texto = "Pasaje hambriento: piden el doble", peso = 2 },
-	Fragil = { icono = "🍷", texto = "Carga frágil de lujo", peso = 1 },
+	Nocturno = { icono = "Luna", texto = "Vuelo nocturno (+15 %)", peso = 2 },
+	Niebla = { icono = "Niebla", texto = "Niebla en destino (+20 %)", peso = 2 },
+	VIP = { icono = "Diamante", texto = "Pasajeros VIP: pagan más y se impacientan antes", peso = 2 },
+	Hambre = { icono = "Hamburguesa", texto = "Pasaje hambriento: piden el doble", peso = 2 },
+	Fragil = { icono = "Fragil", texto = "Carga frágil de lujo", peso = 1 },
 } :: { [string]: { icono: string, texto: string, peso: number } }
 
 local ORDEN_CONDICIONES = { "Normal", "Nocturno", "Niebla", "VIP", "Hambre", "Fragil" }

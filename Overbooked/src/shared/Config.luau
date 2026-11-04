@@ -226,18 +226,20 @@ Config.OBJETOS = {
 Config.COMIDA = { "Hamburguesa", "Cafe", "Agua" }
 
 Config.ICONOS = {
-	Hamburguesa = "🍔",
-	Cafe = "☕",
-	Agua = "💧",
-	Miedo = "😱",
-	Enfado = "😡",
-	Feliz = "😊",
-	Golpe = "💢",
-	Quemado = "🥵",
-	Mojado = "💦",
-	Mordisco = "😭",
-	Bolso = "🧳",
+	Hamburguesa = "Hamburguesa",
+	Cafe = "Cafe",
+	Agua = "Agua",
+	Miedo = "Miedo",
+	Enfado = "Enfado",
+	Feliz = "Feliz",
+	Golpe = "Golpe",
+	Quemado = "Fuego",
+	Mojado = "Agua",
+	Mordisco = "Cocodrilo",
+	Bolso = "Maleta",
 }
+
+Config.PEDIDOS = { Hamburguesa = "una hamburguesa", Cafe = "un café", Agua = "agua" }
 
 Config.PASAJEROS = {
 	VISUALES = { "PasajeroAbuela", "PasajeroTurista", "PasajeroEjecutivo", "PasajeroNino", "PasajeroDeportista", "PasajeroRockero" },

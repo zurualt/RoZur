@@ -174,7 +174,7 @@ local function conectar()
 		if enganche then
 			soltar()
 		elseif not enganchar() then
-			RemotoAviso:FireClient(jugador, "🚜 Acerca la parte de atrás del tractor a la lanza del carro", "info")
+			RemotoAviso:FireClient(jugador, "Acerca la parte de atrás del tractor a la lanza del carro", "info")
 		end
 	end))
 	local a = asiento()

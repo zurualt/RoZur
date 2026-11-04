@@ -6,15 +6,15 @@ export type Premio = { icono: string, titulo: string, nombre: string, valor: num
 local Estadisticas = {}
 
 local PREMIOS = {
-	{ clave = "servir", icono = "🍔", titulo = "Mejor camarero" },
-	{ clave = "fuego", icono = "🧯", titulo = "Bombero del vuelo" },
-	{ clave = "reparar", icono = "🔧", titulo = "Mecánico" },
-	{ clave = "punteria", icono = "🎯", titulo = "Puntería" },
-	{ clave = "piratas", icono = "🏴‍☠️", titulo = "Artillero" },
-	{ clave = "pilotar", icono = "✈", titulo = "Piloto del día" },
-	{ clave = "cocodrilo", icono = "🐊", titulo = "Domador" },
-	{ clave = "calmar", icono = "😇", titulo = "Relaciones públicas" },
-	{ clave = "caidas", icono = "🤕", titulo = "Más torpe" },
+	{ clave = "servir", icono = "Bandeja", titulo = "Mejor camarero" },
+	{ clave = "fuego", icono = "Extintor", titulo = "Bombero del vuelo" },
+	{ clave = "reparar", icono = "Llave", titulo = "Mecánico" },
+	{ clave = "punteria", icono = "Diana", titulo = "Puntería" },
+	{ clave = "piratas", icono = "Pirata", titulo = "Artillero" },
+	{ clave = "pilotar", icono = "Volante", titulo = "Piloto del día" },
+	{ clave = "cocodrilo", icono = "Cocodrilo", titulo = "Domador" },
+	{ clave = "calmar", icono = "Corazon", titulo = "Relaciones públicas" },
+	{ clave = "caidas", icono = "Platano", titulo = "Más torpe" },
 }
 
 local datos: { [Player]: { [string]: number } } = {}

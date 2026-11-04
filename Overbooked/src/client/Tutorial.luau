@@ -5,23 +5,21 @@ local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+local Gui = require(ReplicatedStorage.Shared.Gui)
 local Agarre = require(script.Parent.Agarre)
 local Sonido = require(script.Parent.Sonido)
 
-type Paso = { texto: string, hecho: boolean, etiqueta: TextLabel? }
+type Paso = { texto: string, hecho: boolean, etiqueta: TextLabel?, marca: ImageLabel? }
 
 local Tutorial = {}
 
 local jugador = Players.LocalPlayer
 local avion = Workspace:WaitForChild("Avion") :: Model
 local Estado = ReplicatedStorage:WaitForChild("Estado")
-local CREMA = Color3.fromRGB(255, 244, 224)
-local VERDE = Color3.fromRGB(120, 220, 130)
-local FUENTE = Enum.Font.FredokaOne
 local comidaHasta = 0
 
 local pasos: { Paso } = {
-	{ texto = "Elige un vuelo: entrad en su círculo de la terminal", hecho = false },
+	{ texto = "Elige un vuelo: entrad en su puerta de la terminal", hecho = false },
 	{ texto = "Lleva maletas al avión (tractor y escáner)", hecho = false },
 	{ texto = "Coge comida en la cocina del avión", hecho = false },
 	{ texto = "Sirve a un pasajero (E o lánzasela)", hecho = false },
@@ -36,43 +34,32 @@ local function vuelos(): number
 	return if v and v:IsA("IntValue") then v.Value else -1
 end
 
-local function construir(): Frame
+local function construir(): ImageLabel
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "Tutorial"
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
 	gui.Parent = jugador:WaitForChild("PlayerGui")
-	local panel = Instance.new("Frame")
-	panel.Size = UDim2.fromOffset(330, 34 + #pasos * 26)
-	panel.Position = UDim2.new(0, 14, 0.5, -60)
-	panel.BackgroundColor3 = Color3.fromRGB(27, 27, 33)
-	panel.BackgroundTransparency = 0.25
-	panel.BorderSizePixel = 0
-	panel.Parent = gui
-	local esquina = Instance.new("UICorner")
-	esquina.CornerRadius = UDim.new(0, 12)
-	esquina.Parent = panel
-	local titulo = Instance.new("TextLabel")
-	titulo.Text = "✈ PRIMEROS VUELOS"
-	titulo.Size = UDim2.new(1, -20, 0, 26)
-	titulo.Position = UDim2.fromOffset(10, 4)
-	titulo.BackgroundTransparency = 1
-	titulo.Font = FUENTE
-	titulo.TextSize = 18
-	titulo.TextColor3 = Color3.fromRGB(242, 123, 43)
+	local panel = Gui.panel(gui, "Papel", UDim2.fromOffset(360, 74 + #pasos * 30), UDim2.new(0, 14, 0.5, -70), Vector2.new(0, 0.5))
+	panel.Rotation = -1.5
+	local escala = Instance.new("UIScale")
+	escala.Parent = panel
+	local function ajustar()
+		local v = Workspace.CurrentCamera.ViewportSize
+		escala.Scale = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.55, 1.2)
+	end
+	ajustar()
+	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustar)
+	local titulo = Gui.texto(panel, "PRIMEROS VUELOS", UDim2.new(1, -50, 0, 30), UDim2.fromOffset(26, 18), Gui.NARANJA, true)
 	titulo.TextXAlignment = Enum.TextXAlignment.Left
-	titulo.Parent = panel
 	for i, p in pasos do
-		local t = Instance.new("TextLabel")
-		t.Size = UDim2.new(1, -20, 0, 24)
-		t.Position = UDim2.fromOffset(10, 6 + i * 26)
-		t.BackgroundTransparency = 1
-		t.Font = FUENTE
-		t.TextSize = 15
-		t.TextColor3 = CREMA
+		local y = 22 + i * 30
+		Gui.icono(panel, "Casilla", UDim2.fromOffset(24, 24), UDim2.fromOffset(24, y))
+		p.marca = Gui.icono(panel, "Tick", UDim2.fromOffset(28, 28), UDim2.fromOffset(25, y - 6))
+		local t = Gui.texto(panel, "", UDim2.new(1, -86, 0, 26), UDim2.fromOffset(56, y - 1), Gui.TINTA, false, 20)
 		t.TextXAlignment = Enum.TextXAlignment.Left
 		t.TextTruncate = Enum.TextTruncate.AtEnd
-		t.Parent = panel
+		t.TextWrapped = false
 		p.etiqueta = t
 	end
 	return panel
@@ -91,9 +78,12 @@ local function refrescar()
 	for _, p in pasos do
 		local t = p.etiqueta
 		if t then
-			t.Text = (if p.hecho then "✅ " else "⬜ ") .. p.texto
-			t.TextColor3 = if p.hecho then VERDE else CREMA
-			t.TextTransparency = if p.hecho then 0.35 else 0
+			t.Text = if p.hecho then `<s>{p.texto}</s>` else p.texto
+			t.TextColor3 = if p.hecho then Gui.LAPIZ else Gui.TINTA
+		end
+		local m = p.marca
+		if m then
+			m.Visible = p.hecho
 		end
 	end
 end

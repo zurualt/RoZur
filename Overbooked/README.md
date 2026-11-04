@@ -54,7 +54,7 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Personajes | `src/server/Personajes.luau` + `src/client/Cuerpo.luau` | Tripulante como StarterCharacter, color por jugador, ragdoll, caídas del avión, viento en las alas |
 | Cámara | `src/client/Camara.luau` | Primera persona con brazos visibles, balanceo al andar, inclinación con el avión y sacudidas |
 | Mundo | `src/client/Mundo.luau` | El avión no se mueve: nubes, campos y pista se mueven a su alrededor en cada cliente |
-| Interfaz | `src/client/Interfaz.luau` | Ruta y progreso, panel del piloto, estado del avión, avisos, burbujas de pedidos, nombres con 🔊, tablero de contratos y resultados |
+| Interfaz | `src/client/Interfaz.luau` + `src/shared/Gui.luau` | Interfaz dibujada a mano (Blender): tarjeta de embarque con la ruta y la cuenta atrás, etiqueta de equipaje con el estado del avión, avisos en notas con cinta, pizarra del piloto, burbujas de pedidos, nombres con altavoz, ayuda, tienda y factura de resultados con sello. Sin emojis: todo son iconos dibujados |
 | Boca con voz | `src/client/BocaVoz.luau` | La boca del tripulante se abre según el volumen del chat de voz |
 | Datos | `src/server/Datos.luau` | Dinero y vuelos en DataStore, con bloqueo de sesión para no pisar datos al cambiar de servidor |
 | Piratas | `src/server/Piratas.luau` + `src/client/Piratas.luau` | Aviones pirata que dañan el casco; se derriban desde la torreta del ala izquierda |
@@ -94,8 +94,9 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | `arte/` | Modelos de Blender (tripulante, avión, pasajeros, objetos) con sus generadores, FBX, renders y manifiestos |
 | `arte/kit_interior/` | Kit del interior del avión: paneles con ventanas, techo con altillos y sus puertas, cocina, baño, mamparas, cabina del piloto, pared de bodega, puertas, torreta en dos piezas, bolso, mascarilla y trozos de cajas |
 | `arte/kit_aeropuerto/` | Kit del aeropuerto: terminal, puertas de embarque del lobby (`PuertaSala1-3`), mostradores, bancos, quioscos, marco del tablero, torre de control, hangar, carro, tractor, escalerilla, árboles, arbustos, vallas, conos, luces de pista y manga de viento |
+| `arte/interfaz/` | Interfaz dibujada en Blender (`interfaz_gen.py`): 13 paneles 9-slice (papel, pizarra, billete, etiqueta, notas, botón, barras, burbuja, mira, sello) y una hoja de 51 iconos de 128 px. `herramientas/subir_imagenes.py` sube solo lo que cambia y genera `src/shared/ImagenesGui.luau` |
 | `arte/ids_roblox.json` | IDs de los modelos subidos a Roblox |
-| `herramientas/` | Scripts: mapa, subida de modelos y generación de `src/shared/Visuales.luau` |
+| `herramientas/` | Scripts: mapa, subida de modelos e imágenes y generación de `src/shared/Visuales.luau` |
 
 ## IDs en Roblox
 

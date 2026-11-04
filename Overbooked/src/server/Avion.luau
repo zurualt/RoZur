@@ -540,7 +540,7 @@ local function prepararControles()
 	boton("BotonCinturones", "Cambiar", "Señal de cinturones", 0, function(_, aviso)
 		estado.cinturones = not estado.cinturones
 		aviso.ActionText = if estado.cinturones then "Apagar" else "Encender"
-		RemotoAviso:FireAllClients(if estado.cinturones then "🔔 Abróchense los cinturones" else "Señal de cinturones apagada", "info")
+		RemotoAviso:FireAllClients(if estado.cinturones then "Abróchense los cinturones" else "Señal de cinturones apagada", "info")
 	end)
 	boton("BotonExtintorMotor", "Disparar", "Extintor de motores", 0, function()
 		if not enfriado("ExtintorMotor", 40) then
@@ -635,7 +635,7 @@ function Avion.iniciar()
 		local nuevo = if ocupante then Players:GetPlayerFromCharacter(ocupante.Parent) else nil
 		piloto = nuevo
 		if nuevo then
-			RemotoAviso:FireAllClients(`✈ {nuevo.DisplayName} toma los mandos`, "info")
+			RemotoAviso:FireAllClients(`{nuevo.DisplayName} toma los mandos`, "info")
 		end
 	end)
 

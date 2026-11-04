@@ -139,7 +139,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 			Estadisticas.sumar(lanzador, "servir")
 			Estadisticas.sumar(lanzador, "punteria")
 			if lanzador then
-				RemotoAviso:FireClient(lanzador, "🎯 ¡Pedido servido al vuelo!", "bien")
+				RemotoAviso:FireClient(lanzador, "¡Pedido servido al vuelo!", "bien")
 			end
 			return o.Parent == nil, true
 		end
@@ -159,7 +159,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 		if fuerza > 18 and Carga.aturdir(3.5) then
 			Sonidos.emitir("GolpeMetal", o.Position)
 			if lanzador then
-				RemotoAviso:FireClient(lanzador, "🐊💫 ¡Cocodrilo aturdido!", "bien")
+				RemotoAviso:FireClient(lanzador, "¡Cocodrilo aturdido!", "bien")
 			end
 			return false, true
 		end
@@ -169,7 +169,7 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	if jugador and not (jugador == lanzador and l and ahora - l.hora < 0.8) and fuerza > 40 then
 		Personajes.ragdoll(jugador, 1.1, dir * math.min(fuerza, 80) * 0.5 + Vector3.new(0, 18, 0))
 		Sonidos.emitir("GolpeFuerte", o.Position)
-		RemotoAviso:FireClient(jugador, if lanzador and lanzador ~= jugador then `💢 ¡{lanzador.DisplayName} te ha dado!` else "💢 ¡Cuidado con lo que vuela!", "peligro")
+		RemotoAviso:FireClient(jugador, if lanzador and lanzador ~= jugador then `¡{lanzador.DisplayName} te ha dado!` else "¡Cuidado con lo que vuela!", "peligro")
 		return false, true
 	end
 	return false, false
@@ -278,7 +278,7 @@ local function resbalar(ahora: number)
 				resbalones[jugador] = ahora + 2.5
 				Sonidos.emitir("Resbalon", raiz.Position)
 				Personajes.ragdoll(jugador, 1.1, plano.Unit * 30 + Vector3.new(0, 16, 0))
-				RemotoAviso:FireClient(jugador, if c.tipo == "Cafe" then "☕ ¡Resbalón en el café!" else "💦 ¡Resbalón!", "peligro")
+				RemotoAviso:FireClient(jugador, if c.tipo == "Cafe" then "¡Resbalón en el café!" else "¡Resbalón!", "peligro")
 				break
 			end
 		end
@@ -305,14 +305,14 @@ local function sacudida(magnitud: number)
 			else
 				objeto:SetAttribute("Raciones", n - 1)
 			end
-			RemotoAviso:FireClient(jugador, "🍔 ¡Se te ha caído una hamburguesa!", "peligro")
+			RemotoAviso:FireClient(jugador, "¡Se te ha caído una hamburguesa!", "peligro")
 		elseif tipo == "Cafe" and rng:NextNumber() < magnitud * 0.3 then
 			local pos = objeto.Position
 			Agarre.consumir(jugador)
 			salpicar(pos, "Cafe")
 			charco(pos, "Cafe")
 			Personajes.ragdoll(jugador, 0.8, Vector3.new(0, 16, 0))
-			RemotoAviso:FireClient(jugador, "☕ ¡Te has tirado el café encima!", "peligro")
+			RemotoAviso:FireClient(jugador, "¡Te has tirado el café encima!", "peligro")
 		end
 	end
 end

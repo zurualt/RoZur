@@ -490,7 +490,7 @@ function Partida.iniciar()
 		task.delay(6, function()
 			if jugador.Parent then
 				local enLobbyAhora = Estado:GetAttribute("Fase") == "Aeropuerto"
-				RemotoAviso:FireClient(jugador, if enLobbyAhora then "¡Bienvenido a Overbooked! Mira las salidas y entrad en el círculo de vuestro vuelo · H: controles" else "¡Bienvenido a bordo! Ayuda a la tripulación · H: controles", "info")
+				RemotoAviso:FireClient(jugador, if enLobbyAhora then "¡Bienvenido a Overbooked! Mira las salidas y entrad con vuestro grupo en la puerta de vuestro vuelo · H: controles" else "¡Bienvenido a bordo! Ayuda a la tripulación · H: controles", "info")
 			end
 		end)
 	end)

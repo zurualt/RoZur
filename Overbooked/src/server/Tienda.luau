@@ -111,7 +111,7 @@ local function pedir(jugador: Player, accion: any, nombre: any)
 			Datos.equipar(jugador, g.nombre)
 			ponerGorro(jugador)
 			Sonidos.emitirA(jugador, "Caja")
-			RemotoAviso:FireClient(jugador, `🛍 ¡Has comprado: {g.titulo}!`, "bien")
+			RemotoAviso:FireClient(jugador, `¡Has comprado: {g.titulo}!`, "bien")
 		else
 			RemotoAviso:FireClient(jugador, "No tienes dinero suficiente", "info")
 		end
@@ -128,7 +128,7 @@ local function pedir(jugador: Player, accion: any, nombre: any)
 		if Datos.gastar(jugador, precio) then
 			Datos.subirMejora(jugador, m.nombre)
 			Sonidos.emitirA(jugador, "Caja")
-			RemotoAviso:FireClient(jugador, `🔧 {m.titulo}: nivel {nivel + 1}`, "bien")
+			RemotoAviso:FireClient(jugador, `{m.titulo}: nivel {nivel + 1}`, "bien")
 		else
 			RemotoAviso:FireClient(jugador, "No tienes dinero suficiente", "info")
 		end

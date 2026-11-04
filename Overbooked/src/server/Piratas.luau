@@ -90,7 +90,7 @@ function Piratas.lanzar()
 		table.insert(piratas, p)
 	end
 	fin = os.clock() + 70
-	RemotoAviso:FireAllClients("🏴‍☠️ ¡AVIONES PIRATA! Corre a la torreta del ala izquierda", "peligro")
+	RemotoAviso:FireAllClients("¡AVIONES PIRATA! Corre a la torreta del ala izquierda", "peligro")
 	Pasajeros.asustar(0.4)
 end
 
@@ -145,7 +145,7 @@ function Piratas.iniciar()
 					derribados += 1
 					Estadisticas.sumar(jugador, "piratas")
 					table.remove(piratas, i)
-					RemotoAviso:FireAllClients(`💥 ¡{jugador.DisplayName} ha derribado un pirata! +{RECOMPENSA}`, "bien")
+					RemotoAviso:FireAllClients(`¡{jugador.DisplayName} ha derribado un pirata! +{RECOMPENSA}`, "bien")
 					local f = p.carpeta
 					task.delay(2, function()
 						f:Destroy()
@@ -171,7 +171,7 @@ function Piratas.iniciar()
 			return
 		end
 		if ahora > fin then
-			RemotoAviso:FireAllClients("🏴‍☠️ Los piratas se retiran", "info")
+			RemotoAviso:FireAllClients("Los piratas se retiran", "info")
 			Piratas.detener()
 			return
 		end
