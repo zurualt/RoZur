@@ -160,7 +160,7 @@ plantillas = {}
 def plantilla(nombre):
     if nombre in plantillas:
         return plantillas[nombre]
-    for carpeta in ("props", "pasajeros", "avion", "kit_interior", "kit_aeropuerto"):
+    for carpeta in ("props", "pasajeros", "avion", "kit_interior", "kit_aeropuerto", "kit_extra"):
         ruta = os.path.join(ARTE, carpeta, nombre + ".fbx")
         if os.path.exists(ruta):
             ob = importar(ruta)
@@ -357,6 +357,8 @@ def main():
         ("terminal_fuera", (24, 99, 14), (56, 95, -22), 18),
         ("aeropuerto", (-40, 135, 95), (40, 92, -10), 22),
         ("plataforma", (44, 101, 62), (20, 91.5, 26), 18),
+        ("aduana", (30, 97, 38), (18, 91.5, 23), 16),
+        ("tienda", (66, 96.5, -9), (66, 93.5, 3.5), 16),
         ("techo_avion", (14, 122, -4), (0, 112, -24), 20),
         ("rampa_exterior", (6, 97, 52), (0, 97, 20), 20),
     ]
