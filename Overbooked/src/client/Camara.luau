@@ -24,6 +24,7 @@ local CODOS = { "RightLowerArm", "LeftLowerArm" }
 local GIRO_HOMBRO = CFrame.Angles(math.rad(78), 0, 0)
 local GIRO_CODO = CFrame.Angles(math.rad(18), 0, 0)
 local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(55), 0, 0)
+local alcanceHasta = 0
 local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(45), 0, 0)
 
 function Camara.sacudir(cantidad: number)
@@ -91,17 +92,25 @@ local function poseSosteniendo(personaje: Model)
 	end
 	local hombro = if lleva then GIRO_HOMBRO else GIRO_HOMBRO_REPOSO
 	local codo = if lleva then GIRO_CODO else GIRO_CODO_REPOSO
-	if personaje == jugador.Character and not terceraPersona then
-		hombro = CFrame.Angles(math.clamp(math.asin(math.clamp(Workspace.CurrentCamera.CFrame.LookVector.Y, -1, 1)), -0.8, 1.2), 0, 0) * hombro
+	local propio = personaje == jugador.Character and not terceraPersona
+	local inclinacionVista = if propio then math.clamp(math.asin(math.clamp(Workspace.CurrentCamera.CFrame.LookVector.Y, -1, 1)), -0.8, 1.2) else 0
+	if propio then
+		hombro = CFrame.Angles(inclinacionVista, 0, 0) * hombro
 	end
+	local alcance = if propio and not lleva then math.clamp((alcanceHasta - os.clock()) / 0.45, 0, 1) else 0
+	local hombroAlcance = CFrame.Angles(inclinacionVista + math.rad(90) * math.sin(alcance * math.pi), 0, 0)
 	for _, m in datos.hombros do
 		local rot = m.C0.Rotation
-		m.Transform = rot:Inverse() * hombro * rot
+		m.Transform = rot:Inverse() * (if alcance > 0 and m.Name == "RightShoulder" then hombroAlcance else hombro) * rot
 	end
 	for _, m in datos.codos do
 		local rot = m.C0.Rotation
-		m.Transform = rot:Inverse() * codo * rot
+		m.Transform = rot:Inverse() * (if alcance > 0 and m.Name == "RightElbow" then CFrame.Angles(math.rad(45) * (1 - math.sin(alcance * math.pi)), 0, 0) else codo) * rot
 	end
+end
+
+function Camara.alcanzar()
+	alcanceHasta = os.clock() + 0.45
 end
 
 function Camara.iniciar()

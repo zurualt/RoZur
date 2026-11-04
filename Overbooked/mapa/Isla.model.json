@@ -14,7 +14,7 @@
      "CFrame": {
       "position": [
        -140.0,
-       89.4,
+       89.0,
        -40.0
       ],
       "orientation": [
@@ -155,8 +155,8 @@
    "properties": {
     "Size": [
      2,
-     470,
-     470
+     450,
+     450
     ],
     "CFrame": {
      "CFrame": {
@@ -6555,7 +6555,7 @@
        "CFrame": {
         "position": [
          150,
-         89.6,
+         89.2,
          -46
         ],
         "orientation": [

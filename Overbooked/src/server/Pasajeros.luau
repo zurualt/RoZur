@@ -7,6 +7,7 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
 local Mejoras = require(script.Parent.Mejoras)
+local Rafagas = require(script.Parent.Rafagas)
 local Sonidos = require(script.Parent.Sonidos)
 local Estadisticas = require(script.Parent.Estadisticas)
 
@@ -101,6 +102,10 @@ local function atender(modelo: Model)
 	modelo:SetAttribute("Pedido", "")
 	modelo:SetAttribute("Feliz", os.clock())
 	cuenta.servidos += 1
+	local cuerpo = modelo:FindFirstChild("Cuerpo")
+	if cuerpo and cuerpo:IsA("BasePart") then
+		Rafagas.lanzar("Monedas", cuerpo.Position + Vector3.new(0, 2.5, 0), 0.5)
+	end
 end
 
 local function reaccion(modelo: Model, nombre: string)

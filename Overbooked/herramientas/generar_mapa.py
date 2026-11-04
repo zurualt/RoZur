@@ -235,11 +235,11 @@ def cocina():
             part("Armario", (2.6, 3.6, 7.4), (sx * 5.4, 107.8, -48), CREMA),
         ]))
     p.append(part("DispensadorHamburguesa", (1.6, 0.9, 1.6), (-5.4, 103.95, -50), "E9A64B", r=rot(0, -90, 0),
-                  atributos={"Tipo": "Bandeja", "Visual": "Calentador"}, hijos=[cartel("🍔", "Front", fondo="FFF4E0")]))
+                  atributos={"Tipo": "Bandeja", "Visual": "Calentador"}, hijos=[cartel("COMIDA", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorCafe", (1.4, 1.6, 1.0), (5.6, 104.3, -50), "6B3A22", r=rot(0, 90, 0),
-                  atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("☕", "Front", fondo="FFF4E0")]))
+                  atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("CAFÉ", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA, r=rot(0, 90, 0),
-                  atributos={"Tipo": "Agua", "Visual": "Nevera"}, hijos=[cartel("💧", "Front", fondo="FFF4E0")]))
+                  atributos={"Tipo": "Agua", "Visual": "Nevera"}, hijos=[cartel("AGUA", "Front", fondo="FFF4E0")]))
     p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (-6.0, SUELO_Y + 0.15, -43.4), GRIS, atributos={"Tipo": "Extintor"}))
     p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (6.0, SUELO_Y + 0.15, -43.4), GRIS, atributos={"Tipo": "Llave"}))
     p.append(part("SoporteCarrito", (1.8, 0.1, 2.8), (-2.6, SUELO_Y + 0.05, -45.2), GRIS, transp=1, colision=False,
@@ -526,10 +526,10 @@ def punto(tipo, x, y, z):
 def isla():
     cx, base, cz = -140.0, 90.2, -40.0
     p = []
-    p.append(part("Agua", (2400, 0.4, 2400), (cx, 89.4, cz), "2FB3C4", "Glass", transp=0.3, colision=False, sombra=False))
+    p.append(part("Agua", (2400, 0.4, 2400), (cx, 89.0, cz), "2FB3C4", "Glass", transp=0.3, colision=False, sombra=False))
     p.append(part("FondoMar", (2400, 1, 2400), (cx, 86.1, cz), "D9B877", "Sand"))
     p.append(part("ArenaPaso", (1.8, 500, 500), (cx, 87.7, cz), "D9B877", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
-    p.append(part("Arena", (2, 470, 470), (cx, 89.2, cz), "F2D9A0", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
+    p.append(part("Arena", (2, 450, 450), (cx, 89.2, cz), "F2D9A0", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
     p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart", r=rot(0, 180, 0)))
     p.append(part("CubiertaMuelle", (30, 0.6, 8), (108, 89.9, -70), "6E4A2B", "WoodPlanks", transp=1))
     d = [deco("Terreno", "IslaTerreno", (520, 8.1, 520), cx, base - 8.1, cz, 0, "F2D9A0", colision=False, transp=1)]
@@ -566,7 +566,7 @@ def isla():
     for x, z in ((80, -120), (-30, -250), (-330, 60), (-280, -200), (40, 150), (-120, 180)):
         d.append(punto("cangrejo", x, base + 0.6, z))
     d.append(punto("bengala", 64, base + 1, -24))
-    d.append(part("PuntoRescate", (1, 1, 1), (150, 89.6, -46), "FFFFFF", transp=1, colision=False, sombra=False,
+    d.append(part("PuntoRescate", (1, 1, 1), (150, 89.2, -46), "FFFFFF", transp=1, colision=False, sombra=False,
                   atributos={"Zona": "Rescate"}))
     p.append(carpeta("Decorado", d))
     return {"className": "Model", "children": p}

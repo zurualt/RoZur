@@ -15,7 +15,7 @@ def main():
     ids = json.load(open(IDS)) if os.path.exists(IDS) else {}
     cajas = {}
     anclas = {}
-    for carpeta in ("props", "avion", "pasajeros", "kit_interior", "kit_aeropuerto", "kit_extra"):
+    for carpeta in ("props", "avion", "pasajeros", "kit_interior", "kit_aeropuerto", "kit_extra", "kit_isla"):
         ruta = os.path.join(ARTE, carpeta, "manifest.json")
         if not os.path.exists(ruta):
             continue

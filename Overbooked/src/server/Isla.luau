@@ -165,12 +165,16 @@ local function consumir(o: BasePart)
 	o:Destroy()
 end
 
-local function encajar(tipo: string, ranura: number)
+local RANURAS = { RadioAntena = -1.93, RadioBateria = -0.03, RadioCaja = 1.87 }
+
+local function encajar(tipo: string)
 	local estacion = zonas.Radio
 	if not estacion then
 		return
 	end
-	local pieza = Objetos.crear(tipo, estacion.CFrame * CFrame.new(-1.8 + 1.8 * (ranura - 1), 0.9, 0), carpeta)
+	local alto = Config.OBJETOS[tipo].tamano.Y
+	local cima = 2.11 - estacion.Size.Y / 2
+	local pieza = Objetos.crear(tipo, estacion.CFrame * CFrame.new(RANURAS[tipo] or 0, cima + alto / 2, -0.19), carpeta)
 	pieza.Anchored = true
 	pieza.CanCollide = false
 	CollectionService:RemoveTag(pieza, "Agarrable")
@@ -325,7 +329,7 @@ function Isla.jugar(): boolean
 			if table.find(C.PIEZAS, tipo) and cerca(o, zonas.Radio, C.ENTREGA) then
 				consumir(o)
 				radio += 1
-				encajar(tipo, radio)
+				encajar(tipo)
 				aviso(if radio < #C.PIEZAS then `Pieza de radio colocada ({radio}/{#C.PIEZAS})` else "¡Radio reparada! Ya podemos pedir ayuda", "bien")
 			elseif tipo == "Tronco" and lena < C.TRONCOS and cerca(o, zonas.Hoguera, C.ENTREGA) then
 				consumir(o)

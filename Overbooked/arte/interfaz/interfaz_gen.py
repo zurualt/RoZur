@@ -1008,6 +1008,18 @@ def i_palmera():
         pieza(elipse(x, y, 5, 5, 12), "7A4A2A", 2.6, semilla=590 + x, desfase=(0, 0))
 
 
+@icono("Mano")
+def i_mano():
+    piel = "F2C9A0"
+    for x, alto, s in ((36, 96, 601), (52, 108, 602), (68, 110, 603), (84, 100, 604)):
+        pieza(rrect(x - 7, 52, x + 7, alto, 7), piel, 4.0, semilla=s)
+    pieza(suave([(30, 64), (16, 78), (12, 70), (22, 54), (32, 46)], True, 4), piel, 4.0, semilla=605)
+    pieza(rrect(28, 14, 94, 66, 18), piel, 5.0, semilla=606, rayas={"sep": 6, "ancho": 1.5, "color": "D9A57A", "zona": lambda q: q[0] > 74})
+    for x in (40, 56, 72):
+        trazo([(x, 60), (x + 4, 52)], 2.4, "C98F62", semilla=607 + x)
+    pieza(rrect(26, 6, 96, 20, 6), TURQUESA, 3.6, semilla=611)
+
+
 def atlas():
     escena(1024, 1024)
     manifiesto = {}

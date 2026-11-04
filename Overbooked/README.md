@@ -22,6 +22,7 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 4. **Vuelo:** mantén el rumbo (el panel dice hacia dónde girar) y la altitud. El piloto automático ayuda, pero se desconecta con los sustos.
 5. **Aproximación:** a 140 km del destino el aterrizaje es manual. Hay que llegar a 0 m con menos de 340 km/h, bajando despacio y con las alas rectas.
 6. **Resultados:** se cobra por pasajeros entregados (según su satisfacción), carga intacta, entregas aéreas y la calidad del aterrizaje. Se resta por pasajeros perdidos, carga perdida y daños. El dinero se reparte y se guarda.
+7. **Si os estrelláis: la isla.** El avión acaba en la playa de una isla desierta, con los motores ardiendo. Hay 5 minutos para pedir rescate: llevar las 3 piezas de radio (antena, batería y radio) a la estación de radio, 3 troncos a la hoguera de señales y encenderla con la bengala. Entonces llega un hidroavión al muelle y se cobra la mitad de los billetes más 300 de rescate. Por la isla hay cangrejos que pellizcan, cocos que caen de las palmeras (sirven de comida y bebida para los pasajeros) y los iconos dibujados marcan cada pieza y cada destino. Si se acaba el tiempo, nadie viene a por vosotros.
 
 ## Controles
 
@@ -70,6 +71,9 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | Tienda | `src/server/Tienda.luau` + `src/server/Mejoras.luau` | Gorros cosméticos y mejoras del avión con el dinero guardado (DataStore versión 2) |
 | Sonido | `src/server/Sonidos.luau` + `src/client/Sonido.luau` | Efectos con posición, bucles (motores, viento, alarma, lluvia, fuego) y música por fase |
 | Tutorial | `src/client/Tutorial.luau` | Lista de pasos para los dos primeros vuelos |
+| Isla | `src/server/Isla.luau` + `mapa/Isla.model.json` | Fase de náufragos tras estrellarse: piezas de radio, leña, hoguera, bengala, hidroavión, cangrejos y cocos. La isla vive en ServerStorage y se pone alrededor del avión al estrellarse. En Studio, el atributo `PruebaIsla = true` en Workspace salta directo a la isla |
+| Indicaciones | `src/client/Indicaciones.luau` | Todos los ProximityPrompt usan estilo propio: etiqueta de papel dibujada con la tecla, la acción, el objeto y una barra si hay que mantener; en móvil se toca la etiqueta. Al usar algo, la mano derecha se estira hacia delante (`Camara.alcanzar`) |
+| Efectos | `src/server/Rafagas.luau` + `src/client/Rafagas.luau` + `src/shared/VFX.luau` | Ráfagas dibujadas que el servidor lanza con `Rafagas.lanzar(tipo, posición, escala, color)` por `Remotos.Efecto`: Explosion, ExplosionPequena, Humo, Chispas, Polvo, Arena, Estrellas, Confeti, Salpicadura, Escombros, Astillas, Cristales, Monedas, Hojas, Bengala, Vapor, Plumas y Onda |
 
 ### Cómo se relaciona todo
 
@@ -94,7 +98,9 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | `arte/` | Modelos de Blender (tripulante, avión, pasajeros, objetos) con sus generadores, FBX, renders y manifiestos |
 | `arte/kit_interior/` | Kit del interior del avión: paneles con ventanas, techo con altillos y sus puertas, cocina, baño, mamparas, cabina del piloto, pared de bodega, puertas, torreta en dos piezas, bolso, mascarilla y trozos de cajas |
 | `arte/kit_aeropuerto/` | Kit del aeropuerto: terminal, puertas de embarque del lobby (`PuertaSala1-3`), mostradores, bancos, quioscos, marco del tablero, torre de control, hangar, carro, tractor, escalerilla, árboles, arbustos, vallas, conos, luces de pista y manga de viento |
-| `arte/interfaz/` | Interfaz dibujada en Blender (`interfaz_gen.py`): 13 paneles 9-slice (papel, pizarra, billete, etiqueta, notas, botón, barras, burbuja, mira, sello) y una hoja de 51 iconos de 128 px. `herramientas/subir_imagenes.py` sube solo lo que cambia y genera `src/shared/ImagenesGui.luau` |
+| `arte/interfaz/` | Interfaz dibujada en Blender (`interfaz_gen.py`): 13 paneles 9-slice (papel, pizarra, billete, etiqueta, notas, botón, barras, burbuja, mira, sello) y una hoja de 59 iconos de 128 px. `herramientas/subir_imagenes.py` sube solo lo que cambia y genera `src/shared/ImagenesGui.luau` |
+| `arte/vfx/` | 23 sprites de efectos dibujados en Blender (`vfx_gen.py`, usa las primitivas de `arte/interfaz/interfaz_gen.py`): humo, llama, chispa, estrella, polvo, gota, corona de salpicadura, confeti, moneda, hoja, pluma, escombro, astilla, cristal, destello, explosión, onda, vapor y línea. Se suben con `python herramientas/subir_imagenes.py arte/vfx arte/vfx/ids.json src/shared/ImagenesVfx.luau` |
+| `arte/kit_isla/` | Kit de la isla en Blender (`kit_isla_gen.py`): terreno, palmeras, rocas, arbustos, hoguera, tronco, coco, cangrejo, piezas de radio, estación de radio, bengala, hidroavión, restos del ala y del motor, cajón, SOS y muelle |
 | `arte/ids_roblox.json` | IDs de los modelos subidos a Roblox |
 | `herramientas/` | Scripts: mapa, subida de modelos e imágenes y generación de `src/shared/Visuales.luau` |
 

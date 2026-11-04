@@ -24,6 +24,7 @@ local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
+local Rafagas = require(script.Parent.Rafagas)
 local Tienda = require(script.Parent.Tienda)
 local Vehiculos = require(script.Parent.Vehiculos)
 
@@ -248,6 +249,8 @@ local function enLobby(): Contratos.Contrato
 			end
 			sala.fin = nil
 			pintarSala(sala, oferta, #grupo, "EMBARCANDO")
+			Rafagas.lanzar("Onda", sala.centro.Position, 1.6, COLORES_SALA[n])
+			Rafagas.lanzar("Confeti", sala.centro.Position + Vector3.new(0, 3, 0), 1.4)
 			if RunService:IsStudio() then
 				return oferta
 			end
@@ -397,6 +400,14 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		Datos.sumar(jugador, parte, tipo == "Aterrizado")
 	end
 	RemotoResultados:FireAllClients(datos)
+	if total > 0 then
+		for _, jugador in jugadores do
+			local raiz = Personajes.raiz(jugador)
+			if raiz then
+				Rafagas.lanzar("Monedas", raiz.Position + Vector3.new(0, 3, 0), 1.2)
+			end
+		end
+	end
 end
 
 local function limpiar()

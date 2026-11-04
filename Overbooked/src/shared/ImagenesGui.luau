@@ -81,7 +81,7 @@ return {
 		},
 	},
 	Iconos = {
-		id = 74590125642917,
+		id = 92092192885916,
 		celda = 128,
 		posiciones = {
 			Hamburguesa = { 0, 0 },
@@ -142,6 +142,7 @@ return {
 			Cangrejo = { 896, 768 },
 			Hidroavion = { 0, 896 },
 			Palmera = { 128, 896 },
+			Mano = { 256, 896 },
 		},
 	},
 }
