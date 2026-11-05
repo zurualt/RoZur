@@ -29,6 +29,7 @@ type Nube = {
 	giro: CFrame,
 	medio: Vector3,
 	alfa: number,
+	extra: boolean,
 }
 
 type Adorno = {
@@ -37,6 +38,7 @@ type Adorno = {
 	giro: CFrame,
 	alto: number,
 	radio: number,
+	extra: boolean,
 }
 
 type Loseta = {
@@ -69,6 +71,8 @@ local ADORNOS: { [string]: { number } } = {
 local VARIANTES = { "SueloCampos1", "SueloCampos2" }
 
 local avion = Workspace:WaitForChild("Avion") :: Model
+local Estado = ReplicatedStorage:WaitForChild("Estado")
+local jugador = Players.LocalPlayer
 local PIVOTE = Vector3.new(0, 100, -18)
 local ESCALA_ALTURA = 0.07
 local ESCALA_VELOCIDAD = 0.35
@@ -108,6 +112,9 @@ local atmosfera = Lighting:FindFirstChildOfClass("Atmosphere")
 local ambienteBase: Ambiente? = if atmosfera then { color = atmosfera.Color, decay = atmosfera.Decay, haze = atmosfera.Haze, glare = atmosfera.Glare } else nil
 local densidadAjena = if atmosfera then atmosfera.Density else 0
 local densidadEscrita: number? = nil
+local ultimoAmbiente = -1
+local ritmo = 1
+local frenado = 1
 
 local function registrar(p: BasePart): number
 	p.Parent = carpeta
@@ -172,7 +179,7 @@ local function llegar(plantilla: Instance)
 	local nombre = plantilla.Name
 	listos[nombre] = true
 	local rot = plantilla.CFrame.Rotation
-	for _, capa in CAPAS do
+	for k, capa in CAPAS do
 		if table.find(capa.modelos, nombre) then
 			for _ = 1, math.round(capa.cantidad / #capa.modelos) do
 				local e = rng:NextNumber(capa.escala[1], capa.escala[2])
@@ -186,6 +193,7 @@ local function llegar(plantilla: Instance)
 					giro = CFrame.Angles(0, rng:NextNumber(0, 2 * math.pi), 0) * rot,
 					medio = p.Size / 2,
 					alfa = -1,
+					extra = k == #CAPAS or #nubes % 3 ~= 0,
 				})
 			end
 		end
@@ -200,6 +208,7 @@ local function llegar(plantilla: Instance)
 				giro = CFrame.Angles(0, rng:NextNumber(0, 2 * math.pi), 0) * rot,
 				alto = p.Size.Y / 2,
 				radio = math.max(p.Size.X, p.Size.Z) / 2,
+				extra = #adornos % 3 ~= 0,
 			})
 		end
 	end
@@ -261,7 +270,8 @@ local function restaurar()
 	velo.BackgroundTransparency = 1
 	nubesAltas.Enabled = altasAntes
 	Workspace.GlobalWind = vientoAntes
-	if atmosfera and ambienteBase then
+	ultimoAmbiente = -1
+	if atmosfera and ambienteBase and Estado:GetAttribute("Fase") ~= "Isla" then
 		atmosfera.Color = ambienteBase.color
 		atmosfera.Decay = ambienteBase.decay
 		atmosfera.Haze = ambienteBase.haze
@@ -287,8 +297,10 @@ local function ambiente(dt: number, altitud: number, velocidad: number, objetivo
 		Camara.sacudir(0.07 * niebla)
 	end
 	velo.BackgroundTransparency = 1 - 0.28 * niebla
-	if atmosfera and ambienteBase then
-		local a = math.clamp(altitud / 9000, 0, 1)
+	local a = math.clamp(altitud / 9000, 0, 1)
+	local clave = math.floor(a * 200) * 1000 + math.floor(niebla * 200)
+	if atmosfera and ambienteBase and (clave ~= ultimoAmbiente or (densidadEscrita ~= nil and math.abs(atmosfera.Density - (densidadEscrita :: number)) > 1e-3)) then
+		ultimoAmbiente = clave
 		atmosfera.Color = ambienteBase.color:Lerp(AZUL_ALTO, 0.45 * a):Lerp(BLANCO_NUBE, niebla)
 		atmosfera.Decay = ambienteBase.decay:Lerp(DECAY_ALTO, 0.5 * a):Lerp(BLANCO_NUBE, niebla)
 		atmosfera.Haze = ambienteBase.haze * (1 - 0.5 * a) * (1 - niebla) + 3.5 * niebla
@@ -315,16 +327,23 @@ local function actualizar(dt: number)
 		end
 		return
 	end
+	local bajos = jugador:GetAttribute("GraficosBajos") == true
 	if not carpeta.Parent then
 		carpeta.Parent = Workspace
 		rumbo = 0
-		nubesAltas.Enabled = true
+		nubesAltas.Enabled = not bajos
+	end
+	dt *= if avion:GetAttribute("Pausa") == true then 0 else ritmo
+	if fase == "Estrellado" and numero("Altitud") <= 1 then
+		frenado *= math.exp(-dt * 2.5)
+	else
+		frenado = 1
 	end
 	if fase == "Despegue" and faseAnterior ~= "Despegue" then
 		recorrido = 0
 	end
 	faseAnterior = if typeof(fase) == "string" then fase else ""
-	local velocidad = numero("Velocidad") / 3.6 * ESCALA_VELOCIDAD
+	local velocidad = numero("Velocidad") / 3.6 * ESCALA_VELOCIDAD * frenado
 	local altitud = numero("Altitud")
 	local alabeo = numero("Alabeo")
 	local cab = numero("Cabeceo")
@@ -373,7 +392,7 @@ local function actualizar(dt: number)
 	for _, a in adornos do
 		a.rel = envolver(yaw * (a.rel + avance), RADIO_SUELO, 0)
 		local enPista = math.abs(a.rel.X) < a.radio + 30 and math.abs(a.rel.Z - zPista) < a.radio + 280
-		marcos[a.i] = if enPista then OCULTO else actitud * CFrame.new(a.rel.X, alturaSuelo + a.alto, a.rel.Z) * giroMundo * a.giro
+		marcos[a.i] = if enPista or (bajos and a.extra) then OCULTO else actitud * CFrame.new(a.rel.X, alturaSuelo + a.alto, a.rel.Z) * giroMundo * a.giro
 	end
 	local deriva = VIENTO * dt
 	local objetivo = 0
@@ -386,7 +405,7 @@ local function actualizar(dt: number)
 		local m = n.medio
 		local y = (n.base - altitud) * ESCALA_ALTURA + m.Y
 		local giroTotal = giroMundo * n.giro
-		marcos[n.i] = actitud * CFrame.new(rel.X, y, rel.Z) * giroTotal
+		marcos[n.i] = if bajos and n.extra then OCULTO else actitud * CFrame.new(rel.X, y, rel.Z) * giroTotal
 		local borde = math.max(math.abs(rel.X), math.abs(rel.Z))
 		local alfa = math.round(math.clamp((borde - RADIO_NUBES + 700) / 600, 0, 1) * 8) / 8
 		if alfa ~= n.alfa then
@@ -394,7 +413,7 @@ local function actualizar(dt: number)
 			n.parte.Transparency = alfa
 		end
 		local alcance = m.X + m.Z
-		if math.abs(y) < m.Y and math.abs(rel.X) < alcance and math.abs(rel.Z) < alcance then
+		if not (bajos and n.extra) and math.abs(y) < m.Y and math.abs(rel.X) < alcance and math.abs(rel.Z) < alcance then
 			local l = giroTotal:VectorToObjectSpace(Vector3.new(-rel.X, -y, -rel.Z))
 			local dentroNube = if n.capa.manto
 				then (1 - (l.X / (m.X * 0.8)) ^ 2 - (l.Z / (m.Z * 0.8)) ^ 2) * (1 - (l.Y / m.Y) ^ 2)
@@ -404,6 +423,10 @@ local function actualizar(dt: number)
 	end
 	Workspace:BulkMoveTo(partes, marcos, Enum.BulkMoveMode.FireCFrameChanged)
 	ambiente(dt, altitud, velocidad, objetivo)
+end
+
+function Mundo.fijarRitmo(r: number)
+	ritmo = r
 end
 
 function Mundo.iniciar()

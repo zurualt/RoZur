@@ -4,9 +4,11 @@ local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Gui = require(ReplicatedStorage.Shared.Gui)
 local Bofetada = require(script.Parent.Bofetada)
 local Manos = require(script.Parent.Manos)
 local Piloto = require(script.Parent.Piloto)
@@ -31,6 +33,8 @@ local confirmarAntes = 0
 local usando = false
 local ultimoUso = 0
 local apuntado: Instance? = nil
+local tactiles: { [string]: boolean } = {}
+local estadoTactil = -1
 local parametros = RaycastParams.new()
 parametros.FilterType = Enum.RaycastFilterType.Exclude
 parametros.RespectCanCollide = true
@@ -81,7 +85,6 @@ local function limpiar()
 	posicion, orientacion, adjunto = nil, nil, nil
 	sostenido, raiz = nil, nil
 	usando = false
-	ContextActionService:SetTitle("Lanzar", "Bofetada")
 end
 
 local function empezar(objeto: Instance)
@@ -116,7 +119,6 @@ local function empezar(objeto: Instance)
 	adjunto, posicion, orientacion = a, p, o
 	confirmarAntes = os.clock() + 1
 	Manos.agarrar()
-	ContextActionService:SetTitle("Lanzar", "Lanzar")
 end
 
 local function soltar(lanzar: boolean)
@@ -178,35 +180,80 @@ function Agarre.tipo(objeto: Instance): string
 	return tipoDe(objeto)
 end
 
+local function accionAgarrar(_: string, estado: Enum.UserInputState): Enum.ContextActionResult
+	if estado == Enum.UserInputState.Begin then
+		if sostenido then
+			soltar(false)
+		else
+			intentarAgarrar()
+		end
+	end
+	return Enum.ContextActionResult.Pass
+end
+
+local function accionLanzar(_: string, estado: Enum.UserInputState): Enum.ContextActionResult
+	if estado == Enum.UserInputState.Begin then
+		if sostenido then
+			soltar(true)
+		elseif not Piloto.activo() then
+			Bofetada.dar()
+		end
+	end
+	return Enum.ContextActionResult.Pass
+end
+
+local function accionUsar(_: string, estado: Enum.UserInputState): Enum.ContextActionResult
+	usando = estado == Enum.UserInputState.Begin or estado == Enum.UserInputState.Change
+	return Enum.ContextActionResult.Pass
+end
+
+local function botonTactil(nombre: string, quiere: boolean, titulo: string, columna: number, fila: number, f: (string, Enum.UserInputState) -> Enum.ContextActionResult)
+	if quiere ~= (tactiles[nombre] == true) then
+		tactiles[nombre] = quiere
+		if not quiere then
+			ContextActionService:UnbindAction(nombre)
+			return
+		end
+		ContextActionService:BindAction(nombre, f, true)
+		ContextActionService:SetPosition(nombre, Gui.posTactil(columna, fila))
+	end
+	if quiere then
+		ContextActionService:SetTitle(nombre, titulo)
+	end
+end
+
+local function sincronizarTactil()
+	if not UserInputService.TouchEnabled then
+		return
+	end
+	local personaje = jugador.Character
+	local humanoide = personaje and personaje:FindFirstChildOfClass("Humanoid")
+	local asiento = humanoide and humanoide.SeatPart
+	local sentado = asiento ~= nil
+	local torreta = asiento ~= nil and asiento.Name == "Torreta"
+	local clave = (if sentado then 1 else 0) + (if sostenido then 2 else 0) + (if torreta then 4 else 0)
+	if clave == estadoTactil then
+		return
+	end
+	estadoTactil = clave
+	local manos = not torreta and (sostenido ~= nil or not sentado)
+	botonTactil("AgarrarTactil", manos, if sostenido then "Soltar" else "Coger", 1, 0, accionAgarrar)
+	botonTactil("LanzarTactil", manos, if sostenido then "Lanzar" else "Bofetada", 0, 1, accionLanzar)
+	botonTactil("UsarTactil", sostenido ~= nil, "Usar", 1, 1, accionUsar)
+	if sostenido == nil then
+		usando = false
+	end
+end
+
+function Agarre.usando(): boolean
+	return usando
+end
+
 function Agarre.iniciar()
-	ContextActionService:BindAction("Agarrar", function(_, estado)
-		if estado == Enum.UserInputState.Begin then
-			if sostenido then
-				soltar(false)
-			else
-				intentarAgarrar()
-			end
-		end
-		return Enum.ContextActionResult.Pass
-	end, true, Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR2)
-	ContextActionService:SetTitle("Agarrar", "Coger")
-	ContextActionService:BindAction("Lanzar", function(_, estado)
-		if estado == Enum.UserInputState.Begin then
-			if sostenido then
-				soltar(true)
-			elseif not Piloto.activo() then
-				Bofetada.dar()
-			end
-		end
-		return Enum.ContextActionResult.Pass
-	end, true, Enum.UserInputType.MouseButton2, Enum.KeyCode.ButtonL2)
-	ContextActionService:SetTitle("Lanzar", if sostenido then "Lanzar" else "Bofetada")
+	ContextActionService:BindAction("Agarrar", accionAgarrar, false, Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR2)
+	ContextActionService:BindAction("Lanzar", accionLanzar, false, Enum.UserInputType.MouseButton2, Enum.KeyCode.ButtonL2)
 	Bofetada.iniciar()
-	ContextActionService:BindAction("Usar", function(_, estado)
-		usando = estado == Enum.UserInputState.Begin or estado == Enum.UserInputState.Change
-		return Enum.ContextActionResult.Pass
-	end, true, Enum.KeyCode.F, Enum.KeyCode.ButtonX)
-	ContextActionService:SetTitle("Usar", "Usar")
+	ContextActionService:BindAction("Usar", accionUsar, false, Enum.KeyCode.F, Enum.KeyCode.ButtonX)
 
 	RemotoSostener.OnClientEvent:Connect(function(objeto)
 		if typeof(objeto) == "Instance" then
@@ -222,6 +269,7 @@ function Agarre.iniciar()
 	end)
 
 	RunService.PreSimulation:Connect(function(dt)
+		sincronizarTactil()
 		local camara = Workspace.CurrentCamera
 		local resultado = if not sostenido then rayo() else nil
 		apuntado = if resultado then agarrable(resultado.Instance) else nil

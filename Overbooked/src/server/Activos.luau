@@ -26,7 +26,24 @@ local ESQUINAS = {
 	Vector3.new(-1, -1, -1),
 }
 
+local SIN_SOMBRA: { [string]: boolean } = {
+	Helecho = true,
+	HojasGrandes = true,
+	Flores = true,
+	Hierba = true,
+	HierbaPlaya = true,
+	ArbustoTropical = true,
+	Conchas = true,
+	Espuma = true,
+	MaderaDeriva = true,
+	Gaviota = true,
+	RocaPequena = true,
+	Charca = true,
+	Pilote = true,
+}
+
 local function preparar(modelo: Model)
+	local sombra = not SIN_SOMBRA[modelo.Name] and string.sub(modelo.Name, 1, 4) ~= "Vivo"
 	for _, d in modelo:GetDescendants() do
 		if d:IsA("BasePart") then
 			d.Anchored = false
@@ -34,6 +51,9 @@ local function preparar(modelo: Model)
 			d.CanQuery = false
 			d.CanTouch = false
 			d.Massless = true
+			if not sombra then
+				d.CastShadow = false
+			end
 		elseif d:IsA("BaseScript") then
 			d:Destroy()
 		end

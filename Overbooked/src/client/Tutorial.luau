@@ -39,14 +39,14 @@ local function construir(): ImageLabel
 	gui.Name = "Tutorial"
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
+	gui.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 	gui.Parent = jugador:WaitForChild("PlayerGui")
 	local panel = Gui.panel(gui, "Papel", UDim2.fromOffset(360, 74 + #pasos * 30), UDim2.new(0, 14, 0.5, -70), Vector2.new(0, 0.5))
 	panel.Rotation = -1.5
 	local escala = Instance.new("UIScale")
 	escala.Parent = panel
 	local function ajustar()
-		local v = Workspace.CurrentCamera.ViewportSize
-		escala.Scale = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.55, 1.2)
+		escala.Scale = Gui.escala()
 	end
 	ajustar()
 	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustar)
@@ -131,7 +131,8 @@ function Tutorial.iniciar()
 		while panel.Parent do
 			task.wait(0.5)
 			local fase = Estado:GetAttribute("Fase")
-			panel.Visible = fase ~= "Preparacion"
+			local prep = Estado:GetAttribute("PrepPaso")
+			panel.Visible = fase ~= "Preparacion" and (typeof(prep) ~= "string" or prep == "")
 			if fase == "Preparacion" or fase == "Embarque" or fase == "Vuelo" then
 				marcar(1)
 			end
@@ -140,6 +141,9 @@ function Tutorial.iniciar()
 			end
 			local o = Agarre.sostenido()
 			local tipo = if o then Agarre.tipo(o) else ""
+			if Agarre.usando() and (tipo == "Extintor" or tipo == "Llave") then
+				marcar(5)
+			end
 			if tipo == "Maleta" then
 				marcar(2)
 			elseif tipo == "Bandeja" or tipo == "Cafe" or tipo == "Agua" or tipo == "Hamburguesa" then

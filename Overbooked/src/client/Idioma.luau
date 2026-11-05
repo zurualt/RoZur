@@ -1,6 +1,7 @@
 --!strict
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Textos = require(ReplicatedStorage.Shared.Textos)
@@ -19,6 +20,19 @@ Idioma.IDIOMAS = {
 
 local ATRIBUTO = "TextoOriginal"
 local MAX_CACHE = 3000
+local TACTIL: { [string]: string } = {
+	["<b>Clic</b> coger / soltar · <b>Clic der.</b> lanzar"] = "<b>Coger</b> coger y soltar · <b>Lanzar</b> lanzar",
+	["<b>F</b> usar extintor, llave o agua"] = "<b>Usar</b> (mantén) extintor, llave o agua",
+	["<b>E</b> servir, coger comida y pulsar botones"] = "Toca las etiquetas para servir, coger comida y pulsar botones",
+	["<b>G</b> sentarte · <b>T</b> abrir o cerrar altillos"] = "Toca la etiqueta para sentarte o abrir altillos",
+	["<b>R</b> (mantener) calmar a un pasajero"] = "Mantén la etiqueta para calmar a un pasajero",
+	["<b>Clic der.</b> con las manos vacías: ¡bofetada!"] = "<b>Bofetada</b> con las manos vacías",
+	["Piloto: asiento izquierdo · Shift acelera · W sube"] = "Piloto: asiento izquierdo, Gas+ acelera y el joystick sube",
+	["H para cerrar"] = "Toca para cerrar",
+	["W/S subir y bajar · A/D girar · Shift/Ctrl gases · Espacio salir"] = "Joystick: subir, bajar y girar · Gas+ y Gas- · salta para salir",
+	["Sirve a un pasajero (E o lánzasela)"] = "Sirve a un pasajero (etiqueta o lánzasela)",
+}
+local tactil = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
 local evento = Instance.new("BindableEvent")
 Idioma.cambiado = evento.Event
@@ -95,22 +109,39 @@ traducir = function(s: string): string
 	return s
 end
 
+local function quitarTeclas(s: string): string
+	return (string.gsub(s, " %(([%w/]+)%)", function(k: string): string
+		if string.match(k, "^%u$") or k == "Shift" or k == "Ctrl" or k == "Shift/Ctrl" then
+			return ""
+		end
+		return ` ({k})`
+	end))
+end
+
+function Idioma.tactil(): boolean
+	return tactil
+end
+
 function Idioma.t(s: string): string
-	if actual == "es" or s == "" then
+	if s == "" or (actual == "es" and not tactil) then
 		return s
 	end
 	local hecho = cache[s]
 	if hecho then
 		return hecho
 	end
-	hecho = traducir(s)
+	local base = if tactil then TACTIL[s] or s else s
+	local convertido = if actual == "es" then base else traducir(base)
+	if tactil then
+		convertido = quitarTeclas(convertido)
+	end
 	if enCache >= MAX_CACHE then
 		table.clear(cache)
 		enCache = 0
 	end
-	cache[s] = hecho
+	cache[s] = convertido
 	enCache += 1
-	return hecho
+	return convertido
 end
 
 function Idioma.actual(): string
@@ -126,7 +157,8 @@ local function aplicar(t: ConTexto)
 	local nuevo = Idioma.t(texto)
 	escritos[t] = nuevo
 	if nuevo ~= texto then
-		t.Text = nuevo
+		local destino: any = t
+		destino.Text = nuevo
 	end
 end
 
@@ -164,7 +196,8 @@ function Idioma.cambiar(codigo: string)
 			t:SetAttribute(ATRIBUTO, original)
 			local nuevo = Idioma.t(original)
 			escritos[t] = nuevo
-			t.Text = nuevo
+			local destino: any = t
+			destino.Text = nuevo
 		end
 	end
 	evento:Fire(codigo)

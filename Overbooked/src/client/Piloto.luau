@@ -3,7 +3,10 @@ local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
+
+local Gui = require(ReplicatedStorage.Shared.Gui)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoPiloto = Remotos:WaitForChild("Piloto") :: UnreliableRemoteEvent
@@ -17,14 +20,15 @@ local teclas = { arriba = 0, abajo = 0, izquierda = 0, derecha = 0, mas = 0, men
 local stick = Vector2.zero
 local gases = 0
 local envio = 0
+local controles: any = nil
 
 local ACCIONES = {
-	{ nombre = "PilotoArriba", campo = "arriba", teclas = { Enum.KeyCode.W, Enum.KeyCode.Up }, titulo = "Subir" },
-	{ nombre = "PilotoAbajo", campo = "abajo", teclas = { Enum.KeyCode.S, Enum.KeyCode.Down }, titulo = "Bajar" },
-	{ nombre = "PilotoIzquierda", campo = "izquierda", teclas = { Enum.KeyCode.A, Enum.KeyCode.Left }, titulo = "Izq" },
-	{ nombre = "PilotoDerecha", campo = "derecha", teclas = { Enum.KeyCode.D, Enum.KeyCode.Right }, titulo = "Der" },
-	{ nombre = "PilotoMas", campo = "mas", teclas = { Enum.KeyCode.LeftShift, Enum.KeyCode.ButtonR2 }, titulo = "Gas+" },
-	{ nombre = "PilotoMenos", campo = "menos", teclas = { Enum.KeyCode.LeftControl, Enum.KeyCode.Q, Enum.KeyCode.ButtonL2 }, titulo = "Gas-" },
+	{ nombre = "PilotoArriba", campo = "arriba", teclas = { Enum.KeyCode.W, Enum.KeyCode.Up }, titulo = "Subir", fila = -1 },
+	{ nombre = "PilotoAbajo", campo = "abajo", teclas = { Enum.KeyCode.S, Enum.KeyCode.Down }, titulo = "Bajar", fila = -1 },
+	{ nombre = "PilotoIzquierda", campo = "izquierda", teclas = { Enum.KeyCode.A, Enum.KeyCode.Left }, titulo = "Izq", fila = -1 },
+	{ nombre = "PilotoDerecha", campo = "derecha", teclas = { Enum.KeyCode.D, Enum.KeyCode.Right }, titulo = "Der", fila = -1 },
+	{ nombre = "PilotoMas", campo = "mas", teclas = { Enum.KeyCode.LeftShift, Enum.KeyCode.ButtonR2 }, titulo = "Gas+", fila = 1 },
+	{ nombre = "PilotoMenos", campo = "menos", teclas = { Enum.KeyCode.LeftControl, Enum.KeyCode.Q, Enum.KeyCode.ButtonL2 }, titulo = "Gas-", fila = 0 },
 }
 
 function Piloto.activo(): boolean
@@ -37,8 +41,11 @@ local function vincular()
 			local valor = if estado == Enum.UserInputState.Begin or estado == Enum.UserInputState.Change then 1 else 0
 			teclas[a.campo] = valor
 			return Enum.ContextActionResult.Sink
-		end, true, table.unpack(a.teclas))
-		ContextActionService:SetTitle(a.nombre, a.titulo)
+		end, a.fila >= 0, table.unpack(a.teclas))
+		if a.fila >= 0 then
+			ContextActionService:SetTitle(a.nombre, a.titulo)
+			ContextActionService:SetPosition(a.nombre, Gui.posTactil(1, a.fila))
+		end
 	end
 	ContextActionService:BindAction("PilotoStick", function(_, _, entrada)
 		stick = Vector2.new(entrada.Position.X, entrada.Position.Y)
@@ -88,6 +95,15 @@ local function alPersonaje(personaje: Model)
 end
 
 function Piloto.iniciar()
+	task.spawn(function()
+		local modulo = jugador:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule", 20)
+		if modulo and modulo:IsA("ModuleScript") then
+			local ok, m = pcall(require, modulo)
+			if ok and m then
+				controles = (m :: any):GetControls()
+			end
+		end
+	end)
 	if jugador.Character then
 		task.spawn(alPersonaje, jugador.Character)
 	end
@@ -100,8 +116,9 @@ function Piloto.iniciar()
 		envio += dt
 		if envio >= 0.1 then
 			envio = 0
-			local cab = math.clamp(teclas.arriba - teclas.abajo + stick.Y, -1, 1)
-			local ala = math.clamp(teclas.derecha - teclas.izquierda + stick.X, -1, 1)
+			local mv: Vector3 = if controles and UserInputService.TouchEnabled then controles:GetMoveVector() else Vector3.zero
+			local cab = math.clamp(teclas.arriba - teclas.abajo + stick.Y - mv.Z, -1, 1)
+			local ala = math.clamp(teclas.derecha - teclas.izquierda + stick.X + mv.X, -1, 1)
 			RemotoPiloto:FireServer(cab, ala, gases)
 		end
 	end)

@@ -69,18 +69,18 @@ local function construirIndicador()
 	local g = Instance.new("ScreenGui")
 	g.Name = "ModoClip"
 	g.IgnoreGuiInset = true
+	g.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 	g.ResetOnSpawn = false
 	g.DisplayOrder = 40
 	local raiz = Instance.new("Frame")
 	raiz.BackgroundTransparency = 1
 	raiz.Parent = g
 	local escala = Instance.new("UIScale")
-	local v = Workspace.CurrentCamera.ViewportSize
-	local s = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.55, 1.2)
+	local s = Gui.escala()
 	escala.Scale = s
 	raiz.Size = UDim2.fromScale(1 / s, 1 / s)
 	escala.Parent = raiz
-	etiqueta = Gui.panel(raiz, "Etiqueta", UDim2.fromOffset(440, 124), UDim2.fromOffset(18, 18), nil, true) :: any
+	etiqueta = Gui.panel(raiz, "Etiqueta", UDim2.fromOffset(440, 124), UDim2.fromOffset(18, 70), nil, true) :: any
 	etiqueta.AutoButtonColor = false
 	etiqueta.Rotation = -2
 	titulo = Gui.texto(etiqueta, "MODO CLIP", UDim2.new(1, -96, 0, 40), UDim2.fromOffset(72, 14), Gui.NARANJA, true)
@@ -110,6 +110,11 @@ local function mostrar(texto: string?)
 	local mio = turno
 	task.delay(2, function()
 		if mio ~= turno or not gui then
+			return
+		end
+		if activo and Gui.tactil() then
+			pista.Text = "Toca aquí para salir"
+			etiqueta.ImageTransparency = 0.35
 			return
 		end
 		local info = TweenInfo.new(0.6)
@@ -301,7 +306,7 @@ function ModoClip.entrar()
 	local r = raizDe()
 	local playerGui = jugador:WaitForChild("PlayerGui")
 	local intro = playerGui:FindFirstChild("Intro")
-	if activo or not r or (intro and intro:IsA("ScreenGui") and intro.Enabled) then
+	if activo or not r or jugador:GetAttribute("EnCine") == true or (intro and intro:IsA("ScreenGui") and intro.Enabled) then
 		return
 	end
 	if Agarre.sostenido() then

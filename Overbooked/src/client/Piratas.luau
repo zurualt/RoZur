@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Criaturas = require(ReplicatedStorage.Shared.Criaturas)
+local Gui = require(ReplicatedStorage.Shared.Gui)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Camara = require(script.Parent.Camara)
 local Rafagas = require(script.Parent.Rafagas)
@@ -367,6 +368,7 @@ local function cambiar(nuevo: boolean)
 			return Enum.ContextActionResult.Sink
 		end, true, Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR2)
 		ContextActionService:SetTitle("Disparar", "Fuego")
+		ContextActionService:SetPosition("Disparar", Gui.posTactil(1, 0))
 	else
 		ContextActionService:UnbindAction("Disparar")
 		disparando = false

@@ -1,10 +1,12 @@
 --!strict
 local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
+local Gui = require(ReplicatedStorage.Shared.Gui)
 local Agarre = require(script.Parent.Agarre)
 local Sonido = require(script.Parent.Sonido)
 
@@ -182,6 +184,7 @@ function Escalada.iniciar()
 					return Enum.ContextActionResult.Sink
 				end, true)
 				ContextActionService:SetTitle("PioletTactil", "Piolet")
+				ContextActionService:SetPosition("PioletTactil", Gui.posTactil(2, 0))
 			else
 				ContextActionService:UnbindAction("PioletTactil")
 			end

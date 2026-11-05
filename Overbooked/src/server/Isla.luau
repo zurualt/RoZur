@@ -3,7 +3,6 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
-local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Audio = require(ReplicatedStorage.Shared.Audio)
@@ -534,12 +533,13 @@ local function hidroavion()
 	p.CanQuery = false
 	p.Transparency = 1
 	local final = CFrame.new(destino.Position + Vector3.new(0, 6, 0)) * CFrame.Angles(0, math.rad(90), 0)
-	p.CFrame = final + Vector3.new(1400, 260, 0)
+	local duracion = math.max(4, C.RESCATE - 4)
+	p.CFrame = final
+	p:SetAttribute("Inicio", Workspace:GetServerTimeNow())
+	p:SetAttribute("Duracion", duracion)
 	p.Parent = carpeta
 	Activos.vestirDinamico(p, "Hidroavion")
 	local motor = sonidoBucle("Hidroavion", p, 700)
-	local duracion = math.max(4, C.RESCATE - 4)
-	TweenService:Create(p, TweenInfo.new(duracion, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { CFrame = final }):Play()
 	task.delay(duracion, function()
 		if motor then
 			motor:Stop()
@@ -575,22 +575,25 @@ end
 
 function Isla.jugar(): boolean
 	local centro = Vector3.new(0, 104, -17)
-	Rafagas.lanzar("Hongo", centro + Vector3.new(0, 0, -44), 2.5)
-	for _, m in motores() do
-		Rafagas.lanzar("Explosion", m, 2.5)
-	end
-	Rafagas.lanzar("Escombros", centro, 2)
-	for z = -60, 30, 18 do
-		Rafagas.lanzar("Arena", Vector3.new(0, 91, z), 2)
-	end
-	Sonidos.emitir("Explosion", centro)
-	RemotoSacudida:FireAllClients(1)
 	ambienteTropical()
 	generarTerreno()
 	Avion.prepararTierra()
 	Avion.danarMotor("Izq", 50, true)
 	Avion.danarMotor("Der", 35, rng:NextNumber() < 0.5)
 	isla.Parent = Workspace
+	task.delay(1.1, function()
+		Rafagas.lanzar("Hongo", centro + Vector3.new(0, 0, -44), 2.5)
+		for _, m in motores() do
+			Rafagas.lanzar("Explosion", m, 2.5)
+		end
+		Rafagas.lanzar("Escombros", centro, 2)
+		for z = -60, 30, 18 do
+			Rafagas.lanzar("Arena", Vector3.new(0, 91, z), 2)
+		end
+		Sonidos.emitir("Explosion", centro)
+		RemotoSacudida:FireAllClients(1)
+		Personajes.ragdollTodos(3, 70)
+	end)
 	sonidoBucle("AmbienteIsla", isla)
 	ambienteVivo()
 	local piezas = mezclar(spots.radio)
@@ -619,7 +622,7 @@ function Isla.jugar(): boolean
 		crear("Bengala", bengalas[1])
 	end
 	marcarDestinos(true)
-	task.delay(2.5, aviso, "¡Náufragos! Llevad las 3 piezas a la radio y 3 troncos a la hoguera, y encendedla con la bengala", "peligro")
+	task.delay(6.5, aviso, "¡Náufragos! Llevad las 3 piezas a la radio y 3 troncos a la hoguera, y encendedla con la bengala", "peligro")
 	local radio, lena, fuego = 0, 0, false
 	local rescate: number? = nil
 	local fin = os.clock() + C.DURACION

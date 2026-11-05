@@ -132,6 +132,27 @@ function Gui.precargar()
 	end)
 end
 
+function Gui.escala(minimo: number?, maximo: number?): number
+	local v = workspace.CurrentCamera.ViewportSize
+	return math.clamp(math.min(v.X / 1366, v.Y / 768), minimo or 0.55, maximo or 1.2)
+end
+
+function Gui.tactil(): boolean
+	local UserInputService = game:GetService("UserInputService")
+	return UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+end
+
+function Gui.pequena(): boolean
+	local v = workspace.CurrentCamera.ViewportSize
+	return math.min(v.X, v.Y) <= 500
+end
+
+function Gui.posTactil(columna: number, fila: number): UDim2
+	local v = workspace.CurrentCamera.ViewportSize
+	local k = if math.min(v.X, v.Y) <= 500 then 1 else 1.7
+	return UDim2.new(1, -(95 + 75 * columna) * k, 1, -(90 + 80 * fila) * k)
+end
+
 function Gui.lista(padre: Instance, separacion: number)
 	local l = Instance.new("UIListLayout")
 	l.Padding = UDim.new(0, separacion)

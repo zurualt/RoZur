@@ -95,6 +95,8 @@ local enfriamientos: { [string]: number } = {}
 local ultimoAtributo: { [string]: any } = {}
 local terminado = false
 local forzado = false
+local pausado = false
+local pausaHasta = 0
 
 local function atributo(nombre: string, valor: any)
 	if ultimoAtributo[nombre] ~= valor then
@@ -311,6 +313,9 @@ end
 function Avion.despegar()
 	terminado = false
 	forzado = false
+	pausado = false
+	pausaHasta = 0
+	avion:SetAttribute("Pausa", nil)
 	avion:SetAttribute("Aterrizaje", "")
 	estado.fase = "Despegue"
 	estado.enTierra = true
@@ -396,6 +401,19 @@ end
 local function simular(dt: number)
 	local fase = estado.fase
 	if fase ~= "Despegue" and fase ~= "Vuelo" and fase ~= "Aproximacion" and fase ~= "Frenando" then
+		return
+	end
+	if pausaHasta > 0 then
+		if os.clock() < pausaHasta then
+			return
+		end
+		pausaHasta = 0
+		avion:SetAttribute("Pausa", nil)
+	end
+	if not pausado and not estado.enTierra and (fase == "Vuelo" or fase == "Aproximacion") and estado.vertical < -20 and estado.altitud > 0 and estado.altitud / -estado.vertical < 2.4 then
+		pausado = true
+		pausaHasta = os.clock() + 1.5
+		avion:SetAttribute("Pausa", true)
 		return
 	end
 	if fase == "Frenando" then

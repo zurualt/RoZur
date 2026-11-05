@@ -9,6 +9,8 @@ local Audio = require(ReplicatedStorage.Shared.Audio)
 local Piezas = require(ReplicatedStorage.Shared.PiezasRoturas)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Camara = require(script.Parent.Camara)
+local Cine = require(script.Parent.Cine)
+local Mundo = require(script.Parent.Mundo)
 local Rafagas = require(script.Parent.Rafagas)
 local Sonido = require(script.Parent.Sonido)
 
@@ -419,14 +421,27 @@ local function partido()
 	end
 	Rafagas.lanzar("Escombros", grieta, 1.8)
 	Camara.sacudir(1)
-	Camara.impulsoFov(12)
 	local cc: ColorCorrectionEffect? = nil
 	task.delay(0.35, function()
 		if mia ~= generacion then
 			return
 		end
 		ritmo = 0.15
+		Mundo.fijarRitmo(ritmo)
 		cc = drama()
+		local duracion = DURACION_PARTIDO - 0.35
+		task.spawn(Cine.toma, {
+			duracion = duracion,
+			saltable = true,
+			aCabeza = true,
+			camara = function(t: number): (CFrame, number)
+				local e = t / duracion
+				local suave = e * e * (3 - 2 * e)
+				local ojo = Vector3.new(68 - 8 * suave, 112 - 3 * suave, CORTE + 10 + 10 * suave)
+				local mira = Vector3.new(0, 99 - 6 * suave * suave, CORTE + 4 + 16 * suave)
+				return CFrame.lookAt(ojo, mira), 56 - 8 * suave
+			end,
+		})
 		Sonido.reproducir("RascarDisco", nil, 1, 1)
 		Sonido.reproducir("Dramatico", nil, 1, 1)
 		escombrosPartido()
@@ -444,6 +459,7 @@ local function partido()
 		valor.Changed:Connect(function(v)
 			if mia == generacion then
 				ritmo = v
+				Mundo.fijarRitmo(v)
 			end
 		end)
 		TweenService:Create(valor, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Value = 1 }):Play()
@@ -479,6 +495,7 @@ local function partido()
 	if mia == generacion then
 		limpiarPartido()
 		ritmo = 1
+		Mundo.fijarRitmo(1)
 	end
 	local efecto = cc
 	if efecto then
@@ -489,6 +506,7 @@ end
 local function restaurar()
 	generacion += 1
 	ritmo = 1
+	Mundo.fijarRitmo(1)
 	efectos:ClearAllChildren()
 	limpiarPartido()
 	local cc = Lighting:FindFirstChild("RoturaDrama")

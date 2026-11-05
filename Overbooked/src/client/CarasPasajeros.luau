@@ -113,12 +113,16 @@ type Vivo = {
 	huellaHasta: number,
 	huellaLado: number,
 	ladoGolpe: number,
+	lod: number,
 }
 type Foco = { tipo: string, pos: Vector3, radio: number, prioridad: number }
 
 local CarasPasajeros = {}
 
 local ALCANCE = 120
+local ALCANCE_BAJO = 50
+local LEJOS = 30
+local LEJOS_BAJO = 16
 local ESCALA = Config.PASAJEROS.ESCALA_VISUAL
 local GRAVEDAD = 38
 local TINTA = Color3.fromRGB(27, 27, 33)
@@ -603,6 +607,7 @@ local function crear(modelo: Model, cuerpo: BasePart): Vivo?
 		huellaHasta = 0,
 		huellaLado = 1,
 		ladoGolpe = 1,
+		lod = 0,
 	}
 	local p = modelo:GetAttribute("Pedido")
 	v.pedido = if typeof(p) == "string" then p else ""
@@ -1654,6 +1659,10 @@ local function actualizar(dt: number)
 		return
 	end
 	local foco = camara.CFrame.Position
+	local mira = camara.CFrame.LookVector
+	local bajos = Players.LocalPlayer:GetAttribute("GraficosBajos") == true
+	local alcance = if bajos then ALCANCE_BAJO else ALCANCE
+	local lejos = if bajos then LEJOS_BAJO else LEJOS
 	local ahora = os.clock()
 	local turbulencia = num(avion, "Turbulencia")
 	disco = avion:GetAttribute("Disco") ~= nil
@@ -1682,7 +1691,9 @@ local function actualizar(dt: number)
 			quitar(modelo)
 			continue
 		end
-		local enRango = (cuerpo.Position - foco).Magnitude < ALCANCE
+		local rel = cuerpo.Position - foco
+		local d = rel.Magnitude
+		local enRango = d < alcance
 		local v: Vivo? = vivos[modelo]
 		if not enRango then
 			if v then
@@ -1696,8 +1707,12 @@ local function actualizar(dt: number)
 				fallidos[modelo] = ahora + 1
 			end
 		end
-		if v then
-			animar(v, dt, ahora, turbulencia)
+		if v and (d < 10 or rel:Dot(mira) > -0.3 * d) then
+			v.lod += dt
+			if d < lejos or v.lod >= 1 / 15 then
+				animar(v, math.min(v.lod, 1 / 15), ahora, turbulencia)
+				v.lod = 0
+			end
 		end
 	end
 	if #partes > 0 then

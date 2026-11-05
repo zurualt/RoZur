@@ -43,6 +43,7 @@ local correccion = Instance.new("ColorCorrectionEffect")
 local cayendo: { [BasePart]: boolean } = setmetatable({}, { __mode = "k" }) :: any
 local estelas: { [BasePart]: Estela } = {}
 local acumulado = 0
+local selloHasta = 0
 
 local AMARILLO = Color3.fromRGB(255, 214, 70)
 local AGUA = Color3.fromRGB(143, 211, 244)
@@ -104,6 +105,7 @@ local function drama()
 end
 
 local function sellar(texto: string, subtitulo: string, color: Color3)
+	selloHasta = os.clock() + 3.6
 	local marco = Instance.new("Frame")
 	marco.BackgroundTransparency = 1
 	marco.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -168,7 +170,7 @@ local function congelar()
 	local marca = os.clock()
 	Sonido.reproducir("RascarDisco", nil, 1, 1)
 	animar(correccion, 0.06, { Saturation = -0.9, Contrast = 0.2, Brightness = 0.04, TintColor = Color3.fromRGB(255, 232, 196) })
-	acercar(0.8, 2.3)
+	acercar(0.8, 1.5)
 	Camara.sacudir(0.2)
 	local pie = Gui.panel(capa, "Papel", UDim2.fromScale(0.56, 0.2), UDim2.fromScale(0.5, 0.9), Vector2.new(0.5, 1))
 	local limite = Instance.new("UISizeConstraint")
@@ -184,7 +186,7 @@ local function congelar()
 	animar(escala, 0.3, { Scale = 1 }, Enum.EasingStyle.Back)
 	pieFoto = pie
 	fotoFija = marca
-	task.delay(2.3, soltarFoto, marca)
+	task.delay(4.2, soltarFoto, marca)
 end
 
 local function mareo(cabeza: BasePart, duracion: number, seguir: (() -> boolean)?)
@@ -466,6 +468,74 @@ local function ambiente()
 	end
 end
 
+function Efectos.selloActivo(): boolean
+	return os.clock() < selloHasta
+end
+
+local function graficos()
+	local brillo = Lighting:FindFirstChildOfClass("BloomEffect")
+	local terreno = Workspace.Terrain
+	local function bajos(): boolean
+		return jugador:GetAttribute("GraficosBajos") == true
+	end
+	local function aplicar()
+		local b = bajos()
+		Lighting.GlobalShadows = not b
+		if brillo then
+			brillo.Enabled = not b
+		end
+		if b then
+			terreno.WaterReflectance = 0
+			terreno.WaterWaveSize = 0
+		end
+		for _, d in Workspace:GetDescendants() do
+			if d:IsA("ParticleEmitter") then
+				local original = d:GetAttribute("RitmoOriginal")
+				if b and d.Rate > 0 and original == nil then
+					d:SetAttribute("RitmoOriginal", d.Rate)
+					d.Rate *= 0.4
+				elseif not b and typeof(original) == "number" then
+					d.Rate = original
+					d:SetAttribute("RitmoOriginal", nil)
+				end
+			end
+		end
+	end
+	jugador:GetAttributeChangedSignal("GraficosBajos"):Connect(aplicar)
+	for _, propiedad in { "WaterReflectance", "WaterWaveSize" } do
+		terreno:GetPropertyChangedSignal(propiedad):Connect(function()
+			if bajos() and (terreno :: any)[propiedad] > 0 then
+				(terreno :: any)[propiedad] = 0
+			end
+		end)
+	end
+	local maleza = { Helecho = true, HojasGrandes = true, Flores = true, Hierba = true, HierbaPlaya = true, ArbustoTropical = true, Conchas = true, Espuma = true }
+	local plantas = 0
+	Workspace.DescendantAdded:Connect(function(d)
+		if bajos() and d:IsA("Model") and maleza[d.Name] then
+			plantas += 1
+			if plantas % 3 ~= 0 then
+				task.defer(function()
+					for _, p in d:GetDescendants() do
+						if p:IsA("BasePart") then
+							p.LocalTransparencyModifier = 1
+						end
+					end
+				end)
+			end
+		end
+		if bajos() and d:IsA("ParticleEmitter") then
+			task.defer(function()
+				if d.Rate > 0 and not d:GetAttribute("RitmoOriginal") then
+					d:SetAttribute("RitmoOriginal", d.Rate)
+					d.Rate *= 0.4
+				end
+			end)
+		end
+	end)
+	aplicar()
+end
+
 function Efectos.iniciar()
 	pantalla()
 	avion:GetAttributeChangedSignal("Tormenta"):Connect(function()
@@ -473,6 +543,12 @@ function Efectos.iniciar()
 		ambiente()
 	end)
 	Estado:GetAttributeChangedSignal("Fase"):Connect(ambiente)
+	Estado:GetAttributeChangedSignal("Fase"):Connect(function()
+		if Estado:GetAttribute("Fase") == "Isla" then
+			task.delay(1.7, sellar, elegir(FRASES_CHOQUE), "Diagnóstico: falta de habilidad", Gui.ROJO)
+		end
+	end)
+	graficos()
 	Estado:GetAttributeChangedSignal("Condicion"):Connect(ambiente)
 	avion:GetAttributeChangedSignal("CaidaLibre"):Connect(function()
 		if avion:GetAttribute("CaidaLibre") then
@@ -510,12 +586,14 @@ function Efectos.iniciar()
 	avion:GetAttributeChangedSignal("Fase"):Connect(function()
 		local fase = avion:GetAttribute("Fase")
 		if fase == "Estrellado" then
+			soltarFoto()
+			if numero("Altitud") > 30 then
+				return
+			end
 			Camara.sacudir(1)
 			destellar(Color3.fromRGB(255, 120, 60), 0.8, 1.6)
-			soltarFoto()
 			acercar(0.55, 0.45)
 			Sonido.reproducir("BoomCartoon", nil, 1, 1)
-			task.delay(1.1, sellar, elegir(FRASES_CHOQUE), "Diagnóstico: falta de habilidad", Gui.ROJO)
 		end
 	end)
 	for _, m in CollectionService:GetTagged("Pasajero") do

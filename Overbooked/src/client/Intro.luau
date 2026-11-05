@@ -16,7 +16,7 @@ local Audio = require(ReplicatedStorage.Shared.Audio)
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local ImagenesIntro = require(ReplicatedStorage.Shared.ImagenesIntro)
 local Visuales = require(ReplicatedStorage.Shared.Visuales)
-local Camara = require(script.Parent.Camara)
+local Cine = require(script.Parent.Cine)
 local Rafagas = require(script.Parent.Rafagas)
 local Sonido = require(script.Parent.Sonido)
 
@@ -35,6 +35,8 @@ local LEMA = "La peor aerolínea del mundo"
 local BLOQUEADAS: { Enum.KeyCode | Enum.UserInputType } = { Enum.KeyCode.E, Enum.KeyCode.F, Enum.KeyCode.G, Enum.KeyCode.T, Enum.KeyCode.R, Enum.KeyCode.H, Enum.KeyCode.M, Enum.KeyCode.Q, Enum.KeyCode.Space, Enum.KeyCode.ButtonR2, Enum.KeyCode.ButtonL2, Enum.KeyCode.ButtonX, Enum.KeyCode.ButtonY, Enum.KeyCode.ButtonB, Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2 }
 local NUCLEO = { Enum.CoreGuiType.PlayerList, Enum.CoreGuiType.Health, Enum.CoreGuiType.Backpack, Enum.CoreGuiType.Chat, Enum.CoreGuiType.EmotesMenu }
 local CAIDA = 1.9
+local SALIDA = 1.2
+local CASA_CARRO = Vector3.new(36, 91.04, 34)
 local ACOSTADA = CFrame.Angles(-math.pi / 2, 0, 0)
 
 local gui: ScreenGui
@@ -220,62 +222,6 @@ local function animarLogo(l: Logo, ahora: number)
 	l.lema.MaxVisibleGraphemes = math.floor(math.clamp((t - 1.15) / 0.7, 0, 1) * largo)
 end
 
-local function telon(): (Frame, Frame)
-	local function mitad(arriba: boolean): Frame
-		local f = Instance.new("Frame")
-		f.Name = "Telon"
-		f.BackgroundColor3 = Gui.PAPEL
-		f.BorderSizePixel = 0
-		f.Size = UDim2.fromScale(1, 0.5)
-		f.Position = UDim2.fromScale(0, if arriba then 0 else 0.5)
-		f.ZIndex = 10
-		local textura = Instance.new("ImageLabel")
-		textura.BackgroundTransparency = 1
-		textura.Image = `rbxassetid://{ImagenesIntro.Papel}`
-		textura.ScaleType = Enum.ScaleType.Tile
-		textura.TileSize = UDim2.fromOffset(512, 512)
-		textura.Size = UDim2.fromScale(1, 1)
-		textura.Parent = f
-		local borde = imagen(f, "Rasgado", UDim2.new(1, 40, 0, 110), UDim2.fromScale(0.5, if arriba then 1 else 0))
-		borde.Rotation = if arriba then 0 else 180
-		f.Parent = raiz
-		return f
-	end
-	return mitad(true), mitad(false)
-end
-
-local function abrirTelon(arriba: Frame, abajo: Frame)
-	sonar("RasgarPapel", "Lanzar", 1.1, 1)
-	local info = TweenInfo.new(0.65, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-	TweenService:Create(arriba, info, { Position = UDim2.fromScale(0, -0.62), Rotation = -1.5 }):Play()
-	TweenService:Create(abajo, info, { Position = UDim2.fromScale(0, 1.12), Rotation = 1.5 }):Play()
-	task.delay(0.8, function()
-		arriba:Destroy()
-		abajo:Destroy()
-	end)
-end
-
-local function barra(arriba: boolean): Frame
-	local f = Instance.new("Frame")
-	f.BackgroundColor3 = Gui.TINTA
-	f.BorderSizePixel = 0
-	f.Size = UDim2.fromScale(1, 0.08)
-	f.AnchorPoint = Vector2.new(0, if arriba then 1 else 0)
-	f.Position = UDim2.fromScale(0, if arriba then 0 else 1)
-	f.ZIndex = 2
-	local borde = imagen(f, "Rasgado", UDim2.new(1, 40, 0, 70), UDim2.fromScale(0.5, if arriba then 1 else 0))
-	borde.Rotation = if arriba then 0 else 180
-	borde.ImageColor3 = Gui.TINTA
-	f.Parent = raiz
-	return f
-end
-
-local function moverBarras(barras: { Frame }, dentro: boolean)
-	local info = TweenInfo.new(0.45, Enum.EasingStyle.Quad, if dentro then Enum.EasingDirection.Out else Enum.EasingDirection.In)
-	TweenService:Create(barras[1], info, { Position = UDim2.fromScale(0, if dentro then 0.08 else 0) }):Play()
-	TweenService:Create(barras[2], info, { Position = UDim2.fromScale(0, if dentro then 0.92 else 1) }):Play()
-end
-
 local function boton(contenido: string, tamano: UDim2, posicion: UDim2, color: Color3, letra: Color3, accion: () -> ()): ImageButton
 	local b = Gui.panel(raiz, "Boton", tamano, posicion, Vector2.new(0.5, 0.5), true) :: any
 	b.ImageColor3 = color
@@ -314,8 +260,7 @@ local function crearGui()
 	local escala = Instance.new("UIScale")
 	escala.Parent = raiz
 	local function ajustar()
-		local v = Workspace.CurrentCamera.ViewportSize
-		local s = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.45, 1.4)
+		local s = Gui.escala(0.45, 1.4)
 		escala.Scale = s
 		raiz.Size = UDim2.fromScale(1 / s, 1 / s)
 	end
@@ -453,40 +398,9 @@ local function pila(k: Vector3): Pila
 	return { carpeta = carpeta, cayendo = cayendo, base = base }
 end
 
-local function controles(): any
-	local m = jugador:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule", 5)
-	if m and m:IsA("ModuleScript") then
-		local ok, r = pcall(require, m)
-		if ok and r then
-			return (r :: any):GetControls()
-		end
-	end
-	return nil
-end
-
-local function personajeListo(): (Model?, BasePart?)
-	local personaje = jugador.Character
-	local r = personaje and personaje:FindFirstChild("HumanoidRootPart")
-	return personaje, if r and r:IsA("BasePart") then r else nil
-end
-
-local function destino(): CFrame?
-	local _, r = personajeListo()
-	if not r then
-		return nil
-	end
-	local ojo = r.CFrame:PointToWorldSpace(Vector3.new(0, 1.5, 0))
-	local frente = (r.CFrame.LookVector * Vector3.new(1, 0, 1)).Unit
-	if Camara.esTerceraPersona() then
-		local dir = (frente - Vector3.new(0, 0.3, 0)).Unit
-		return CFrame.lookAt(ojo - dir * 10.5, ojo)
-	end
-	return CFrame.lookAt(ojo, ojo + frente)
-end
-
 local function tarjeta()
 	crearGui()
-	local arriba, abajo = telon()
+	local arriba, abajo = Cine.telon(raiz)
 	local catcher = Instance.new("TextButton")
 	catcher.BackgroundTransparency = 1
 	catcher.Text = ""
@@ -519,7 +433,7 @@ local function tarjeta()
 	catcher:Destroy()
 	l.fuera = true
 	TweenService:Create(l.marco, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.In), { Position = l.base - UDim2.fromScale(0, 1) }):Play()
-	abrirTelon(arriba, abajo)
+	Cine.abrirTelon(arriba, abajo)
 	task.wait(0.9)
 	limpiar()
 end
@@ -529,8 +443,8 @@ local function completa()
 		TeleportService:SetTeleportSetting(VISTA, true)
 	end)
 	crearGui()
-	local barras = { barra(true), barra(false) }
-	local arriba, abajo = telon()
+	local barras = { Cine.barra(raiz, true), Cine.barra(raiz, false) }
+	local arriba, abajo = Cine.telon(raiz)
 	local cargando = Gui.icono(raiz, "Avion", UDim2.fromOffset(96, 96), UDim2.fromScale(0.5, 0.47), Vector2.new(0.5, 0.5))
 	cargando.ZIndex = 11
 	local textoCarga = Gui.texto(raiz, "Embarcando...", UDim2.fromOffset(320, 40), UDim2.new(0.5, 0, 0.47, 60), Gui.TINTA, false, 30)
@@ -558,7 +472,7 @@ local function completa()
 	ContextActionService:BindActionAtPriority(BLOQUEO, function()
 		return Enum.ContextActionResult.Sink
 	end, false, Enum.ContextActionPriority.High.Value + 50, table.unpack(BLOQUEADAS))
-	local mando = controles()
+	local mando = Cine.controles()
 	if mando then
 		mando:Disable()
 	end
@@ -566,7 +480,8 @@ local function completa()
 	local avion = Workspace:FindFirstChild("Avion")
 	local aeropuerto = Workspace:FindFirstChild("Aeropuerto")
 	local c = lugar(avion, "Centro", Vector3.new(0, 105, -18))
-	local k = lugar(aeropuerto, "CarroEquipaje", Vector3.new(36, 91.04, 34))
+	local carro = lugar(aeropuerto, "CarroEquipaje", CASA_CARRO)
+	local k = if (carro - CASA_CARRO).Magnitude < 3 then carro else CASA_CARRO
 	local lista = tomas(c, k)
 	local inicioGag = lista[1].duracion + lista[2].duracion
 	local finVuelo = inicioGag + lista[3].duracion
@@ -623,7 +538,7 @@ local function completa()
 		end
 		estado = "saliendo"
 		local cam = Workspace.CurrentCamera
-		salida = { desde = cam.CFrame, hasta = destino(), fov = cam.FieldOfView, t = os.clock() }
+		salida = { desde = cam.CFrame, hasta = Cine.destino(), fov = cam.FieldOfView, t = os.clock() }
 		sonar("Bocina", "Lanzar", 0.7, 1)
 		sonar("Lanzar", "Lanzar", 1.2, 0.7)
 		GuiService.SelectedObject = nil
@@ -637,20 +552,10 @@ local function completa()
 				TweenService:Create(escalaDe(b), TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), { Scale = 0 }):Play()
 			end
 		end
-		moverBarras(barras, false)
-		task.delay(0.3, function()
-			local arriba, abajo = telon()
-			arriba.Position = UDim2.fromScale(0, -0.62)
-			abajo.Position = UDim2.fromScale(0, 1.12)
-			local info = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-			TweenService:Create(arriba, info, { Position = UDim2.fromScale(0, 0) }):Play()
-			TweenService:Create(abajo, info, { Position = UDim2.fromScale(0, 0.5) }):Play()
-			task.wait(0.4)
+		Cine.moverBarras(barras, false)
+		task.delay(SALIDA + 0.05, function()
 			sonar("Bonk", "Golpe", 0.5, 1.4)
 			entregar()
-			task.wait(0.25)
-			abrirTelon(arriba, abajo)
-			task.wait(0.8)
 			limpiar()
 		end)
 	end
@@ -734,7 +639,7 @@ local function completa()
 		local fov: number
 		local s = salida
 		if estado == "saliendo" and s then
-			local e = suave(math.clamp((ahora - s.t) / 1.6, 0, 1))
+			local e = suave(math.clamp((ahora - s.t) / SALIDA, 0, 1))
 			local hasta = s.hasta or s.desde
 			local medio = s.desde.Position:Lerp(hasta.Position, 0.5) + Vector3.new(0, (s.desde.Position - hasta.Position).Magnitude * 0.18, 0)
 			local u = 1 - e
@@ -818,8 +723,8 @@ local function completa()
 	end
 	inicio = os.clock()
 	estado = "vuelo"
-	abrirTelon(arriba, abajo)
-	moverBarras(barras, true)
+	Cine.abrirTelon(arriba, abajo)
+	Cine.moverBarras(barras, true)
 	task.delay(0.6, function()
 		if estado == "vuelo" then
 			aparecer(saltarBoton, 0)

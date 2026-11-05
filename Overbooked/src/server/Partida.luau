@@ -481,7 +481,7 @@ local function naufragio(contrato: Contratos.Contrato, motivo: string)
 	Workspace.Gravity = Config.GRAVEDAD
 	fase("Isla")
 	aviso(motivo, "peligro")
-	Personajes.ragdollTodos(3, 70)
+	task.wait(0.5)
 	local rescatados = Isla.jugar()
 	fase("Resultados")
 	if rescatados then

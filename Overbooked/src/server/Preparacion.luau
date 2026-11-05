@@ -81,6 +81,7 @@ local avisoBombear: ProximityPrompt? = nil
 local avisoCubo: ProximityPrompt? = nil
 local relleno: Frame? = nil
 local cifra: TextLabel? = nil
+local fallos: { string } = {}
 
 local function poner(nombre: string, valor: any)
 	if Estado:GetAttribute(nombre) ~= valor then
@@ -495,7 +496,8 @@ local function recoger()
 	end
 	aparcamiento.Enabled = false
 	nave.Parent = ServerStorage
-	for _, nombre in { "PrepPaso", "PrepMaletas", "PrepTotal", "PrepAnimal", "PrepCombustible", "PrepFuera" } do
+	table.clear(fallos)
+	for _, nombre in { "PrepPaso", "PrepMaletas", "PrepTotal", "PrepAnimal", "PrepCombustible", "PrepFuera", "PrepFallos" } do
 		Estado:SetAttribute(nombre, nil)
 	end
 end
@@ -585,6 +587,10 @@ function Preparacion.jugar(contrato: Contratos.Contrato): boolean
 			break
 		elseif ahora >= fin then
 			aviso("¡El avión no espera! Se abre la puerta: lo que falte, llevadlo a mano", "peligro")
+			if not hechoMaletas then
+				table.insert(fallos, "maletas")
+			end
+			poner("PrepFallos", table.concat(fallos, ","))
 			break
 		end
 		task.wait(0.2)
@@ -619,6 +625,8 @@ function Preparacion.jugar(contrato: Contratos.Contrato): boolean
 			Rafagas.lanzar("Confeti", pie + Vector3.new(0, 3, 0), 1.2)
 		else
 			aviso("¡Hora de embarcar! Llevad las maletas a la bodega como podáis", "peligro")
+			table.insert(fallos, "conducir")
+			poner("PrepFallos", table.concat(fallos, ","))
 		end
 	end
 	for spawn, antes in guardados do

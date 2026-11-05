@@ -157,7 +157,7 @@ function Peligros.fuego(posicion: Vector3)
 	for _ in fuegos do
 		count += 1
 	end
-	if count >= 7 then
+	if count >= 5 then
 		return
 	end
 	local parte = Instance.new("Part")

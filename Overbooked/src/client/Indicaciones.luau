@@ -48,18 +48,29 @@ local function mostrar(prompt: ProximityPrompt, tipo: Enum.ProximityPromptInputT
 		return
 	end
 	local tactil = tipo == Enum.ProximityPromptInputType.Touch
+	local apiladas = 0
+	for otro in abiertas do
+		if otro.Parent == adorno then
+			apiladas += 1
+		end
+	end
+	local k = Gui.escala(0.75, 1)
 	local b = Instance.new("BillboardGui")
 	b.Name = "Indicacion"
 	b.AlwaysOnTop = true
 	b.Active = tactil
-	b.Size = UDim2.fromOffset(270, 70)
+	b.Size = UDim2.fromOffset(270 * k, 70 * k)
+	b.SizeOffset = Vector2.new(0, 1.15 * apiladas)
 	b.StudsOffsetWorldSpace = Vector3.new(0, 1.6, 0)
 	b.LightInfluence = 0
 	b.MaxDistance = prompt.MaxActivationDistance + 6
 	b.ResetOnSpawn = false
 	b.Adornee = adorno :: Instance
-	local fondo = Gui.panel(b, "Boton", UDim2.new(1, 0, 1, 0), UDim2.new(), nil, tactil)
+	local fondo = Gui.panel(b, "Boton", UDim2.fromOffset(270, 70), UDim2.new(), nil, tactil)
 	fondo.ImageColor3 = Gui.PAPEL
+	local escala = Instance.new("UIScale")
+	escala.Scale = k
+	escala.Parent = fondo
 	local caja = Gui.panel(fondo, "Boton", UDim2.fromOffset(50, 46), UDim2.fromOffset(8, 9))
 	caja.ImageColor3 = Gui.AMARILLO
 	local letra = tecla(prompt, tipo)
@@ -98,6 +109,9 @@ local function mostrar(prompt: ProximityPrompt, tipo: Enum.ProximityPromptInputT
 end
 
 function Indicaciones.iniciar()
+	if Gui.tactil() then
+		ProximityPromptService.MaxPromptsVisible = 2
+	end
 	for _, d in Workspace:GetDescendants() do
 		personalizar(d)
 	end

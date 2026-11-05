@@ -1,4 +1,5 @@
 --!strict
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
@@ -11,7 +12,8 @@ type Ave = { pos: Vector3, vel: Vector3, fase: number, ritmo: number, susto: boo
 
 local Pajaros = {}
 
-local CUANTOS = 40
+local CUANTOS = 24
+local CUANTOS_BAJOS = 12
 local NARIZ = Vector3.new(0, 104, -66)
 local PARABRISAS = CFrame.new(0.6, 105.3, -66) * CFrame.Angles(math.rad(6), 0, 0)
 local ALA_IZQ = Criaturas.ALA
@@ -50,7 +52,8 @@ function Pajaros.bandada()
 	local partes: { BasePart } = {}
 	local marcos: { CFrame } = {}
 	local dueno: { number } = {}
-	for i = 1, CUANTOS do
+	local cuantos = if Players.LocalPlayer:GetAttribute("GraficosBajos") == true then CUANTOS_BAJOS else CUANTOS
+	for i = 1, cuantos do
 		table.insert(aves, {
 			pos = Vector3.new(rng:NextNumber(-60, 60), 100 + rng:NextNumber(-10, 22), rng:NextNumber(-520, -160)),
 			vel = Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(-2, 2), rng:NextNumber(150, 230)),
@@ -84,7 +87,7 @@ function Pajaros.bandada()
 			end
 		end
 	end
-	local cfs: { CFrame } = table.create(CUANTOS * 3, CFrame.identity)
+	local cfs: { CFrame } = table.create(cuantos * 3, CFrame.identity)
 	local destino = table.clone(marcos)
 	local inicio = os.clock()
 	local conexion: RBXScriptConnection

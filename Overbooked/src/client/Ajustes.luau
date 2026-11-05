@@ -3,23 +3,25 @@ local ContextActionService = game:GetService("ContextActionService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local Camara = require(script.Parent.Camara)
+local Interfaz = require(script.Parent.Interfaz)
 local Sonido = require(script.Parent.Sonido)
 
 local RemotoAjustes = ReplicatedStorage:WaitForChild("Remotos"):WaitForChild("Ajustes") :: RemoteEvent
 
-type Valores = { Fov: number, Musica: number, Efectos: number, Ambiente: number, Tercera: boolean, Idioma: string }
+type Valores = { Fov: number, Musica: number, Efectos: number, Ambiente: number, Tercera: boolean, Idioma: string, Graficos: string }
 type Deslizador = { relleno: ImageLabel, pomo: ImageLabel, valor: TextLabel, fijar: (number) -> () }
 
 local Ajustes = {}
 
 local jugador = Players.LocalPlayer
-local valores: Valores = { Fov = 80, Musica = 1, Efectos = 1, Ambiente = 0.8, Tercera = false, Idioma = "en" }
+local valores: Valores = { Fov = 80, Musica = 1, Efectos = 1, Ambiente = 0.8, Tercera = false, Idioma = "en", Graficos = "Auto" }
 local cargados = false
 local envioPendiente = 0
 local gui: ScreenGui
@@ -30,10 +32,37 @@ local aparicion: UIScale
 local deslizadores: { [string]: Deslizador } = {}
 local textoCamara: TextLabel
 local textoIdioma: TextLabel
+local textoGraficos: TextLabel
 local abierto = false
 local idioma: any = nil
+local lentoDetectado = false
+local GRANDE = Gui.tactil()
 
 local IDIOMAS_BASE = { { codigo = "en", nombre = "English" }, { codigo = "es", nombre = "Español" } }
+local GRAFICOS = { "Auto", "Alto", "Bajo" }
+local NOMBRES_GRAFICOS: { [string]: string } = { Auto = "Automático", Alto = "Altos", Bajo = "Bajos (móvil)" }
+
+local function graficosBajos(): boolean
+	if valores.Graficos == "Alto" then
+		return false
+	elseif valores.Graficos == "Bajo" then
+		return true
+	end
+	local ok, nivel = pcall(function()
+		return UserSettings():GetService("UserGameSettings").SavedQualityLevel
+	end)
+	if ok and nivel ~= Enum.SavedQualitySetting.Automatic then
+		return nivel.Value <= 3
+	end
+	return lentoDetectado
+end
+
+local function publicarGraficos()
+	local bajos = graficosBajos()
+	if jugador:GetAttribute("GraficosBajos") ~= bajos then
+		jugador:SetAttribute("GraficosBajos", bajos)
+	end
+end
 
 local function modulo(): any
 	if idioma == nil then
@@ -75,9 +104,11 @@ local function aplicar()
 	if m and typeof(m.cambiar) == "function" then
 		pcall(m.cambiar, valores.Idioma)
 	end
+	publicarGraficos()
 	if textoCamara then
 		textoCamara.Text = if valores.Tercera then "Tercera persona" else "Primera persona"
 		textoIdioma.Text = nombreIdioma(valores.Idioma)
+		textoGraficos.Text = NOMBRES_GRAFICOS[valores.Graficos] or valores.Graficos
 		deslizadores.Fov.fijar((valores.Fov - 60) / 40)
 		deslizadores.Musica.fijar(valores.Musica)
 		deslizadores.Efectos.fijar(valores.Efectos)
@@ -127,6 +158,9 @@ local function leerGuardados()
 	if typeof(t.Idioma) == "string" then
 		valores.Idioma = t.Idioma
 	end
+	if typeof(t.Graficos) == "string" and NOMBRES_GRAFICOS[t.Graficos] then
+		valores.Graficos = t.Graficos
+	end
 	aplicar()
 end
 
@@ -146,7 +180,7 @@ end
 local function fila(orden: number, titulo: string): Frame
 	local f = Instance.new("Frame")
 	f.BackgroundTransparency = 1
-	f.Size = UDim2.new(1, 0, 0, 58)
+	f.Size = UDim2.new(1, 0, 0, if GRANDE then 70 else 58)
 	f.LayoutOrder = orden
 	local t = Gui.texto(f, titulo, UDim2.new(0.36, 0, 0, 34), UDim2.fromOffset(0, 12), Gui.TINTA, false, 27)
 	t.TextXAlignment = Enum.TextXAlignment.Left
@@ -156,11 +190,13 @@ end
 
 local function deslizador(clave: string, orden: number, titulo: string, texto: (number) -> string, alCambiar: (number) -> ())
 	local f = fila(orden, titulo)
-	local fondo, relleno = Gui.barra(f, UDim2.new(0.42, 0, 0, 18), UDim2.new(0.36, 0, 0, 20), Gui.TURQUESA)
+	local lado = if GRANDE then 58 else 40
+	local y = if GRANDE then 6 else 9
+	local fondo, relleno = Gui.barra(f, UDim2.new(0.64, -(2 * lado + 80), 0, 18), UDim2.new(0.36, 0, 0, y + lado / 2 - 9), Gui.TURQUESA)
 	local pomo = Gui.panel(fondo, "Boton", UDim2.fromOffset(30, 34), UDim2.fromScale(0, 0.5), Vector2.new(0.5, 0.5))
 	pomo.ImageColor3 = Gui.AMARILLO
 	pomo.ZIndex = 3
-	local valor = Gui.texto(f, "", UDim2.new(0.1, 0, 0, 30), UDim2.new(0.79, 6, 0, 14), Gui.LAPIZ, false, 24)
+	local valor = Gui.texto(f, "", UDim2.fromOffset(64, 30), UDim2.new(1, -(2 * lado + 74), 0, y + lado / 2 - 15), Gui.LAPIZ, false, 24)
 	local fraccion = 0
 	local function fijar(x: number)
 		fraccion = math.clamp(x, 0, 1)
@@ -181,7 +217,7 @@ local function deslizador(clave: string, orden: number, titulo: string, texto: (
 	local zona = Instance.new("TextButton")
 	zona.BackgroundTransparency = 1
 	zona.Text = ""
-	zona.Size = UDim2.new(1, 24, 0, 44)
+	zona.Size = UDim2.new(1, 24, 0, if GRANDE then 64 else 44)
 	zona.Position = UDim2.new(0, -12, 0.5, 0)
 	zona.AnchorPoint = Vector2.new(0, 0.5)
 	zona.ZIndex = 4
@@ -202,20 +238,22 @@ local function deslizador(clave: string, orden: number, titulo: string, texto: (
 			arrastrando = false
 		end
 	end)
-	boton(f, "-", UDim2.fromOffset(40, 40), UDim2.new(0.89, 4, 0, 9), Gui.TIZA, function()
+	boton(f, "-", UDim2.fromOffset(lado, lado), UDim2.new(1, -(2 * lado + 6), 0, y), Gui.TIZA, function()
 		cambiar(fraccion - 0.1)
 	end)
-	boton(f, "+", UDim2.fromOffset(40, 40), UDim2.new(0.89, 48, 0, 9), Gui.TIZA, function()
+	boton(f, "+", UDim2.fromOffset(lado, lado), UDim2.new(1, -lado, 0, y), Gui.TIZA, function()
 		cambiar(fraccion + 0.1)
 	end)
 	deslizadores[clave] = { relleno = relleno, pomo = pomo, valor = valor, fijar = fijar }
 end
 
 local function ajustarEscala()
-	local v = Workspace.CurrentCamera.ViewportSize
-	local s = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.5, 1.2)
+	local s = Gui.escala()
 	escala.Scale = s
 	raiz.Size = UDim2.fromScale(1 / s, 1 / s)
+	if panel then
+		panel.Size = UDim2.fromOffset(640, math.min(if GRANDE then 860 else 740, Workspace.CurrentCamera.ViewportSize.Y / s - 30))
+	end
 end
 
 function Ajustes.abrir()
@@ -257,6 +295,7 @@ local function construir()
 	gui = Instance.new("ScreenGui")
 	gui.Name = "Ajustes"
 	gui.IgnoreGuiInset = true
+	gui.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 	gui.ResetOnSpawn = false
 	gui.DisplayOrder = 30
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -269,8 +308,10 @@ local function construir()
 	ajustarEscala()
 	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustarEscala)
 
-	local abrir = boton(raiz, "AJUSTES (O)", UDim2.fromOffset(170, 50), UDim2.new(0, 14, 1, -14), Gui.PAPEL, Ajustes.alternar)
-	abrir.AnchorPoint = Vector2.new(0, 1)
+	local abrir = if GRANDE
+		then boton(raiz, "AJUSTES (O)", UDim2.fromOffset(210, 80), UDim2.new(1, -14, 0, 196), Gui.PAPEL, Ajustes.alternar)
+		else boton(raiz, "AJUSTES (O)", UDim2.fromOffset(170, 50), UDim2.new(0, 14, 1, -14), Gui.PAPEL, Ajustes.alternar)
+	abrir.AnchorPoint = if GRANDE then Vector2.new(1, 0) else Vector2.new(0, 1)
 	local playerGui = jugador:WaitForChild("PlayerGui")
 	task.spawn(function()
 		while gui.Parent do
@@ -293,14 +334,22 @@ local function construir()
 	modal.Parent = panel
 	local titulo = Gui.texto(panel, "AJUSTES", UDim2.new(1, -120, 0, 52), UDim2.fromOffset(40, 26), Gui.NARANJA, true)
 	titulo.TextXAlignment = Enum.TextXAlignment.Left
-	boton(panel, "X", UDim2.fromOffset(52, 52), UDim2.new(1, -78, 0, 22), Gui.ROJO, Ajustes.cerrar)
-	local filas = Instance.new("Frame")
+	local cruz = if GRANDE then 76 else 52
+	boton(panel, "X", UDim2.fromOffset(cruz, cruz), UDim2.new(1, -26 - cruz, 0, 22), Gui.ROJO, Ajustes.cerrar)
+	local filas = Instance.new("ScrollingFrame")
 	filas.Name = "Filas"
 	filas.BackgroundTransparency = 1
-	filas.Size = UDim2.new(1, -80, 1, -110)
-	filas.Position = UDim2.fromOffset(40, 92)
+	filas.BorderSizePixel = 0
+	filas.Size = UDim2.new(1, -60, 1, -120)
+	filas.Position = UDim2.fromOffset(40, 100)
+	filas.CanvasSize = UDim2.new()
+	filas.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	filas.ScrollingDirection = Enum.ScrollingDirection.Y
+	filas.ScrollBarThickness = 8
+	filas.ScrollBarImageColor3 = Gui.LAPIZ
 	filas.Parent = panel
 	Gui.lista(filas, 10)
+	ajustarEscala()
 
 	deslizador("Fov", 1, "Campo de visión", function(x)
 		return tostring(math.floor(60 + x * 40 + 0.5))
@@ -356,6 +405,17 @@ local function construir()
 			end)
 		end
 	end)
+	local _, tg = boton(fila(8, "Gráficos"), "", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.VERDE, function()
+		local i = table.find(GRAFICOS, valores.Graficos) or 1
+		valores.Graficos = GRAFICOS[i % #GRAFICOS + 1]
+		aplicar()
+		guardar()
+	end)
+	textoGraficos = tg
+	boton(fila(9, "Controles"), "Ver (H)", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.TIZA, function()
+		Ajustes.cerrar()
+		Interfaz.alternarAyuda()
+	end)
 end
 
 function Ajustes.iniciar()
@@ -374,6 +434,26 @@ function Ajustes.iniciar()
 			Ajustes.cerrar()
 		end
 	end)
+	pcall(function()
+		UserSettings():GetService("UserGameSettings"):GetPropertyChangedSignal("SavedQualityLevel"):Connect(publicarGraficos)
+	end)
+	if UserInputService.TouchEnabled then
+		local suma, cuadros, inicio = 0, 0, os.clock()
+		local conexion: RBXScriptConnection
+		conexion = RunService.Heartbeat:Connect(function(dt)
+			suma += dt
+			cuadros += 1
+			if suma < 5 then
+				return
+			end
+			if os.clock() - inicio > 20 and suma / cuadros > 1 / 40 then
+				lentoDetectado = true
+				publicarGraficos()
+				conexion:Disconnect()
+			end
+			suma, cuadros = 0, 0
+		end)
+	end
 end
 
 return Ajustes

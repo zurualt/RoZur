@@ -341,7 +341,7 @@ def casco():
     huecos_der = [(-7.55, -3.45)]
     n = 16
     ancho = 2 * radio * math.tan(math.pi / n) + 0.05
-    for k in range(-1, 10):
+    for k in range(-1, 5):
         for lado in (1, -1):
             if lado == -1 and k in (4,):
                 continue
@@ -772,7 +772,7 @@ ISLA_Y0 = 64
 MAR = 89.0
 FONDO = 71.0
 SUELO_AVION = 90.2
-OCEANO = 4096
+OCEANO = 2048
 ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 MATERIALES_ISLA = ["Sand", "Salt", "Grass", "LeafyGrass", "Ground", "Rock", "Slate"]
 AVION_RECT = (-40.0, 40.0, -68.0, 36.0)
@@ -1446,7 +1446,7 @@ def isla():
             return False
         borde = s < W + 9
         return (borde or junto_arbol(x, z, 9.5) or fbm(x, z, 30, 91) > 0.3) and D.libre(x, z, 2.6)
-    for x, z in D.poisson(30000, 6.0, maleza):
+    for x, z in D.poisson(30000, 11.0, maleza):
         v = elegir(pequenas)
         a, b = escalas[v]
         e = rnd.uniform(a, b) * min(1.0, max(0.55, 1.0 - 1.6 * (t.pendiente(x, z) - 0.15)))
@@ -1467,7 +1467,7 @@ def isla():
     rnd.shuffle(borde)
     puestos = []
     for x, z, dx, dz in borde:
-        if any((x - a) ** 2 + (z - b) ** 2 < 25 for a, b in puestos) or not D.libre(x, z, 1.0) or t.mojado(x, z):
+        if any((x - a) ** 2 + (z - b) ** 2 < 81 for a, b in puestos) or not D.libre(x, z, 1.0) or t.mojado(x, z):
             continue
         puestos.append((x, z))
         r = rnd.random()
@@ -1480,12 +1480,12 @@ def isla():
     def pradera(x, z):
         s, W, c = zona(x, z)
         return s > W + 6 and t.material(x, z) in ("Grass", "LeafyGrass") and not t.mojado(x, z) and t.pendiente(x, z) < 0.34 and D.libre(x, z, 4.0)
-    for x, z in D.poisson(12000, 9.0, pradera):
+    for x, z in D.poisson(12000, 17.0, pradera):
         r = rnd.random()
         v = "Hierba" if r < 0.45 else ("Flores" if r < 0.7 else ("Helecho" if r < 0.9 else "ArbustoTropical"))
         e = {"Hierba": rnd.uniform(1.3, 1.9), "Flores": rnd.uniform(1.4, 2.0), "Helecho": rnd.uniform(1.1, 1.5), "ArbustoTropical": rnd.uniform(0.9, 1.2)}[v]
         D.poner(v, x, z, rnd.uniform(0, 360), e, radio=1.0 * e)
-    for x, z in D.poisson(9000, 7, lambda x, z: (lambda s, W, c: W - 16 < s < W - 2 and c < 0.5 and not t.mojado(x, z))(*zona(x, z)) and D.libre(x, z, 0.8)):
+    for x, z in D.poisson(9000, 12.0, lambda x, z: (lambda s, W, c: W - 16 < s < W - 2 and c < 0.5 and not t.mojado(x, z))(*zona(x, z)) and D.libre(x, z, 0.8)):
         if rnd.random() < 0.5:
             D.poner("HierbaPlaya" if rnd.random() < 0.7 else "Hierba", x, z, rnd.uniform(0, 360), rnd.uniform(0.8, 1.25), radio=0.7)
     for x, z in D.poisson(4000, 16, lambda x, z: (lambda s, W, c: -3 < s < 14 and c < 0.5 and t.altura(x, z) > MAR - 0.6)(*zona(x, z)) and D.libre(x, z, 1.0)):
@@ -1560,7 +1560,7 @@ def preparacion():
     x0, x1, z0, z1, alto = NAVE_X0, NAVE_X1, NAVE_Z0, NAVE_Z1, NAVE_ALTO
     pa, pb, ph = NAVE_PUERTA
     techo = s + alto
-    pared = "E9DCC4"
+    pared = "D6CAB3"
     p = []
     casco = [
         part("ParedOeste", (0.6, alto, z1 - z0), (x0, s + alto / 2, NAVE_Z), pared),
@@ -1595,7 +1595,7 @@ def preparacion():
     for x, z in ((26.0, 62.0), (42.0, 62.0), (26.0, 82.0), (42.0, 82.0)):
         p.append(deco("Lampara", "LamparaNave", (1.8, 5.0, 1.8), x, techo - 5.0, z, 0, GRIS, colision=False, hijos=[
             part("Bombilla", (0.4, 0.4, 0.4), (x, techo - 4.6, z), "FFE2A8", "Neon", colision=False, sombra=False,
-                 hijos=[luz(34, 0.75, "FFE2A8")])]))
+                 hijos=[luz(26, 0.32, "FFEBD2")])]))
     p.append(deco("CartelMaletas", "CartelMaletas", (7.0, 2.6, 0.3), x0 + 0.45, s + 9.8, 68.5, -90, NARANJA, colision=False))
     p.append(deco("CartelAnimales", "CartelAnimales", (5.0, 2.6, 0.3), 44.6, s + 7.6, z1 - 0.45, 0, TURQUESA, colision=False))
     p.append(deco("CartelCombustible", "CartelCombustible", (3.2, 2.6, 0.3), x1 - 0.45, s + 6.6, 57.0, 90, "D9443A",

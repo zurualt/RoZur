@@ -1,4 +1,5 @@
 --!strict
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
@@ -46,6 +47,7 @@ export type Pop = {
 local Rafagas = {}
 
 local MAX_ACTIVAS = 16
+local MAX_BAJAS = 6
 local MAX_POPS = 10
 local DISTANCIA = 250
 local DISTANCIA_PALABRA = 130
@@ -375,6 +377,10 @@ function Rafagas.palabra(posicion: Vector3, texto: string, color: Color3, fondo:
 	task.delay(1.2, ancla.Destroy, ancla)
 end
 
+local function bajos(): boolean
+	return Players.LocalPlayer:GetAttribute("GraficosBajos") == true
+end
+
 local function emitir(adjunto: Attachment, c: Chorro, escala: number, color: Color3?)
 	local e = Instance.new("ParticleEmitter")
 	e.Texture = VFX.textura(c.textura)
@@ -398,7 +404,7 @@ local function emitir(adjunto: Attachment, c: Chorro, escala: number, color: Col
 	e.Orientation = c.orientacion or Enum.ParticleOrientation.FacingCamera
 	e.EmissionDirection = Enum.NormalId.Top
 	e.Parent = adjunto
-	e:Emit(math.max(1, math.floor(c.cuenta * math.clamp(escala, 0.5, 2))))
+	e:Emit(math.max(1, math.floor(c.cuenta * math.clamp(escala, 0.5, 2) * (if bajos() then 0.4 else 1))))
 end
 
 local function trozos(posicion: Vector3, t: Trozos, escala: number)
@@ -428,7 +434,8 @@ end
 function Rafagas.lanzar(tipo: string, posicion: Vector3, escala: number?, color: Color3?)
 	local r = TIPOS[tipo]
 	local camara = Workspace.CurrentCamera
-	if not r or activas >= MAX_ACTIVAS or not camara or (camara.CFrame.Position - posicion).Magnitude > DISTANCIA then
+	local pocos = bajos()
+	if not r or activas >= (if pocos then MAX_BAJAS else MAX_ACTIVAS) or not camara or (camara.CFrame.Position - posicion).Magnitude > DISTANCIA then
 		return
 	end
 	local e = math.clamp(escala or 1, 0.2, 4)
@@ -448,7 +455,7 @@ function Rafagas.lanzar(tipo: string, posicion: Vector3, escala: number?, color:
 		emitir(adjunto, c, e, color)
 		vida = math.max(vida, c.vida[2])
 	end
-	if r.luz then
+	if r.luz and not pocos then
 		local luz = Instance.new("PointLight")
 		luz.Color = r.luz
 		luz.Brightness = 6
@@ -457,7 +464,7 @@ function Rafagas.lanzar(tipo: string, posicion: Vector3, escala: number?, color:
 		luz.Parent = soporte
 		TweenService:Create(luz, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { Brightness = 0 }):Play()
 	end
-	if r.trozos then
+	if r.trozos and not pocos then
 		trozos(posicion, r.trozos, e)
 	end
 	local w = r.palabra

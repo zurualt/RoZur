@@ -50,6 +50,7 @@ local function construir()
 	gui.Name = "Preparacion"
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
+	gui.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 	gui.Parent = jugador:WaitForChild("PlayerGui")
 	panel = Gui.panel(gui, "Papel", UDim2.fromOffset(390, 70 + #ORDEN * 36), UDim2.fromOffset(14, 124))
 	panel.Rotation = -1.2
@@ -93,8 +94,7 @@ local function construir()
 	escalas[1].Parent = panel
 	escalas[2].Parent = tarjeta
 	local function ajustar()
-		local v = Workspace.CurrentCamera.ViewportSize
-		local s = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.55, 1.2)
+		local s = Gui.escala()
 		for _, e in escalas do
 			e.Scale = s
 		end
@@ -103,12 +103,15 @@ local function construir()
 	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustar)
 end
 
-local function renglon(clave: string, visible: boolean, hecho: boolean, contenido: string)
+local function renglon(clave: string, visible: boolean, hecho: boolean, contenido: string, fallido: boolean?)
 	local f = filas[clave]
 	f.fila.Visible = visible
-	f.marca.Visible = hecho
-	f.texto.Text = if hecho then `<s>{contenido}</s>` else contenido
-	f.texto.TextColor3 = if hecho then Gui.LAPIZ else Gui.TINTA
+	f.marca.Visible = hecho or fallido == true
+	Gui.ponerIcono(f.marca, if fallido then "Cerrar" else "Tick")
+	f.marca.ImageColor3 = if fallido then Gui.ROJO else Color3.new(1, 1, 1)
+	f.texto.Text = if fallido then `<s>{contenido}</s> · <b>sin hacer</b>` elseif hecho then `<s>{contenido}</s>` else contenido
+	f.texto.TextColor3 = if fallido then Gui.ROJO elseif hecho then Gui.LAPIZ else Gui.TINTA
+	hecho = hecho and not fallido
 	if hecho and not f.hecho and visible then
 		Sonido.reproducir("UiClick", nil, 0.8, 1.2)
 	end
@@ -141,10 +144,12 @@ local function actualizarPaneles()
 	local animalHecho = animal == "Bodega" or animal == "Perdido"
 	local lleno = combustible >= 100
 	local tareas = paso == "Tareas"
-	renglon("maletas", true, maletasHechas or not tareas, `Carga las maletas en el carro {n}/{t}`)
+	local fallos = texto("PrepFallos")
+	local fallaMaletas = string.find(fallos, "maletas", 1, true) ~= nil
+	renglon("maletas", true, maletasHechas or not tareas, `Carga las maletas en el carro {n}/{t}`, fallaMaletas)
 	renglon("animal", animal ~= "", animalHecho, if animal == "Perdido" then "El cocodrilo se ha perdido" elseif animalHecho then "Cocodrilo enjaulado y en la bodega" else "Mete al cocodrilo en su jaula")
 	renglon("combustible", true, lleno, `Llena el depósito del avión {combustible}%`)
-	renglon("conducir", true, paso == "Descargar", "Lleva el carro hasta el avión")
+	renglon("conducir", true, paso == "Descargar", "Lleva el carro hasta el avión", string.find(fallos, "conducir", 1, true) ~= nil)
 	renglon("descargar", not tareas, false, if paso == "Descargar" then `Mete las maletas en la bodega ({fuera})` else "Mete las maletas en la bodega")
 	if tareas and not maletasHechas then
 		tarjetaCon("Maleta", `{n}/{t}`, "maletas en el carro · cargadlas todas para abrir la puerta", if t > 0 then n / t else 0)
@@ -266,7 +271,7 @@ function Preparacion.iniciar()
 	local function cambio()
 		actualizarPaneles()
 	end
-	for _, nombre in { "PrepPaso", "PrepMaletas", "PrepTotal", "PrepAnimal", "PrepCombustible", "PrepFuera" } do
+	for _, nombre in { "PrepPaso", "PrepMaletas", "PrepTotal", "PrepAnimal", "PrepCombustible", "PrepFuera", "PrepFallos" } do
 		Estado:GetAttributeChangedSignal(nombre):Connect(cambio)
 	end
 	actualizarPaneles()

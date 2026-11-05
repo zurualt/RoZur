@@ -129,10 +129,17 @@ function Cabina.iniciar()
 	local giroAsiento = if canones and canones:IsA("BasePart") and torreta and torreta:IsA("BasePart") then movil(torreta, torreta.CFrame:Inverse() * CFrame.new(canones.Position)) else nil
 	local cab, ala, gas, mira = 0, 0, 0, 0
 	local V = Config.VUELO
+	local paneles: { Instance } = CollectionService:GetTagged("PanelSuelto")
+	CollectionService:GetInstanceAddedSignal("PanelSuelto"):Connect(function()
+		paneles = CollectionService:GetTagged("PanelSuelto")
+	end)
+	CollectionService:GetInstanceRemovedSignal("PanelSuelto"):Connect(function()
+		paneles = CollectionService:GetTagged("PanelSuelto")
+	end)
 	RunService.RenderStepped:Connect(function(dt: number)
 		local t = os.clock()
 		luzCabina(t)
-		for _, panel in CollectionService:GetTagged("PanelSuelto") do
+		for _, panel in paneles do
 			local b = panel:GetAttribute("Bisagra")
 			if panel:IsA("BasePart") and typeof(b) == "CFrame" then
 				panel.CFrame = b * CFrame.Angles(math.rad(19 + 19 * math.sin(t * 26)), 0, 0) * CFrame.new(0, 0, 1.1)

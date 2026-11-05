@@ -111,6 +111,9 @@ local function leerAjustes(v: any): { [string]: any }
 	if typeof(v.Idioma) == "string" and string.match(v.Idioma, "^%a%a$") then
 		r.Idioma = v.Idioma
 	end
+	if v.Graficos == "Auto" or v.Graficos == "Alto" or v.Graficos == "Bajo" then
+		r.Graficos = v.Graficos
+	end
 	return r
 end
 

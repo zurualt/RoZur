@@ -152,8 +152,7 @@ local function construir()
 	local escala = Instance.new("UIScale")
 	escala.Parent = pista
 	local function ajustar()
-		local v = Workspace.CurrentCamera.ViewportSize
-		escala.Scale = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.6, 1.1)
+		escala.Scale = Gui.escala(0.6, 1.1)
 	end
 	ajustar()
 	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustar)
@@ -192,8 +191,15 @@ local function construir()
 	resaltado.Parent = Workspace.CurrentCamera
 end
 
+local proximaBusqueda = 0
+
 local function actualizar()
-	local nuevo = buscar()
+	local ahora = os.clock()
+	local nuevo = apuntado
+	if ahora >= proximaBusqueda then
+		proximaBusqueda = ahora + 1 / 15
+		nuevo = buscar()
+	end
 	if nuevo ~= apuntado then
 		apuntado = nuevo
 		if nuevo then

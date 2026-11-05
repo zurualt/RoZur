@@ -56,7 +56,7 @@ function VFX.fuego(padre: Instance, escala: number): { ParticleEmitter }
 	humo.Size = NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0.6 * escala),
 		NumberSequenceKeypoint.new(0.2, 2.6 * escala),
-		NumberSequenceKeypoint.new(1, 4.2 * escala),
+		NumberSequenceKeypoint.new(1, 3.2 * escala),
 	})
 	humo.Squash = NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0.5),
@@ -68,7 +68,7 @@ function VFX.fuego(padre: Instance, escala: number): { ParticleEmitter }
 		NumberSequenceKeypoint.new(1, 1),
 	})
 	humo.Lifetime = NumberRange.new(1.4, 2.2)
-	humo.Rate = 9
+	humo.Rate = 5
 	humo.Speed = NumberRange.new(4, 7)
 	humo.Acceleration = Vector3.new(0, 3, 0)
 	humo.RotSpeed = NumberRange.new(-40, 40)

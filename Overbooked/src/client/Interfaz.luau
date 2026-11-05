@@ -14,6 +14,9 @@ local Contratos = require(ReplicatedStorage.Shared.Contratos)
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local Agarre = require(script.Parent.Agarre)
 local BocaVoz = require(script.Parent.BocaVoz)
+local Camara = require(script.Parent.Camara)
+local Cine = require(script.Parent.Cine)
+local Efectos = require(script.Parent.Efectos)
 local Piloto = require(script.Parent.Piloto)
 local Sonido = require(script.Parent.Sonido)
 
@@ -31,6 +34,7 @@ local CREMA = Color3.fromRGB(255, 244, 224)
 local NARANJA = Color3.fromRGB(242, 123, 43)
 local TURQUESA = Color3.fromRGB(31, 166, 160)
 local FUENTE_TABLERO = Enum.Font.FredokaOne
+local TACTIL = Gui.tactil()
 
 type Medidor = { relleno: ImageLabel, texto: TextLabel, icono: ImageLabel }
 
@@ -58,7 +62,7 @@ local panelResultados: ImageLabel
 local selloResultados: ImageLabel
 local textoSello: TextLabel
 local tituloResultados: TextLabel
-local filasResultados: Frame
+local filasResultados: ScrollingFrame
 local tableroGui: SurfaceGui
 local ayuda: ImageLabel
 local resaltado: Highlight
@@ -66,6 +70,8 @@ local ultimoApuntado: Instance? = nil
 local panelIsla: ImageLabel
 local textosIsla: { [string]: TextLabel } = {}
 local iconoTiempoIsla: ImageLabel
+local escalaSello: UIScale
+local resultadosId = 0
 
 local function numero(nombre: string): number
 	local v = avion:GetAttribute(nombre)
@@ -82,8 +88,7 @@ local function colorNivel(f: number): Color3
 end
 
 local function ajustarEscala()
-	local v = Workspace.CurrentCamera.ViewportSize
-	local s = math.clamp(math.min(v.X / 1366, v.Y / 768), 0.55, 1.2)
+	local s = Gui.escala()
 	escala.Scale = s
 	raiz.Size = UDim2.fromScale(1 / s, 1 / s)
 end
@@ -117,6 +122,7 @@ local function construir()
 	gui = Instance.new("ScreenGui")
 	gui.Name = "Overbooked"
 	gui.IgnoreGuiInset = true
+	gui.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 	gui.ResetOnSpawn = false
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.Parent = jugador:WaitForChild("PlayerGui")
@@ -167,36 +173,63 @@ local function construir()
 	listaAvisos.Parent = raiz
 	Gui.lista(listaAvisos, 2).HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-	panelPiloto = Gui.panel(raiz, "Pizarra", UDim2.fromOffset(370, 250), UDim2.new(0, 12, 1, -12), Vector2.new(0, 1))
+	panelPiloto = if TACTIL
+		then Gui.panel(raiz, "Pizarra", UDim2.fromOffset(370, 250), UDim2.new(0.5, 0, 1, -12), Vector2.new(0.5, 1))
+		else Gui.panel(raiz, "Pizarra", UDim2.fromOffset(370, 250), UDim2.new(0, 12, 1, -12), Vector2.new(0, 1))
 	panelPiloto.Visible = false
 	Gui.icono(panelPiloto, "Volante", UDim2.fromOffset(34, 34), UDim2.fromOffset(20, 14))
 	izquierda(Gui.texto(panelPiloto, "CABINA", UDim2.fromOffset(200, 32), UDim2.fromOffset(62, 16), Gui.TIZA, true))
-	datosPiloto = izquierda(Gui.texto(panelPiloto, "", UDim2.new(1, -44, 0, 104), UDim2.fromOffset(22, 52), Gui.TIZA, false, 21))
+	datosPiloto = izquierda(Gui.texto(panelPiloto, "", UDim2.new(1, -44, 0, 104), UDim2.fromOffset(22, 52), Gui.TIZA, false, 22))
 	datosPiloto.TextYAlignment = Enum.TextYAlignment.Top
 	local _, gas = Gui.barra(panelPiloto, UDim2.new(1, -44, 0, 16), UDim2.fromOffset(22, 160), Gui.NARANJA)
 	barraGas = gas
-	avisoPiloto = izquierda(Gui.texto(panelPiloto, "", UDim2.new(1, -44, 0, 40), UDim2.fromOffset(22, 180), Gui.AMARILLO, false, 19))
+	avisoPiloto = izquierda(Gui.texto(panelPiloto, "", UDim2.new(1, -44, 0, 40), UDim2.fromOffset(22, 180), Gui.AMARILLO, false, 22))
 	avisoPiloto.TextYAlignment = Enum.TextYAlignment.Top
-	local controles = izquierda(Gui.texto(panelPiloto, "W/S subir y bajar · A/D girar · Shift/Ctrl gases · Espacio salir", UDim2.new(1, -44, 0, 20), UDim2.new(0, 22, 1, -30), Gui.TIZA, false, 16))
+	local controles = izquierda(Gui.texto(panelPiloto, "W/S subir y bajar · A/D girar · Shift/Ctrl gases · Espacio salir", UDim2.new(1, -44, 0, 22), UDim2.new(0, 22, 1, -32), Gui.TIZA))
 	controles.TextTransparency = 0.35
 
 	panelResultados = Gui.panel(raiz, "Papel", UDim2.fromOffset(580, 520), UDim2.fromScale(0.5, 0.52), Vector2.new(0.5, 0.5))
 	panelResultados.Rotation = -1.2
 	panelResultados.Visible = false
+	local lado = if TACTIL then 80 else 60
+	local cerrarResultados = Gui.panel(panelResultados, "Boton", UDim2.fromOffset(lado, lado), UDim2.fromOffset(-14, -14), nil, true) :: any
+	cerrarResultados.ImageColor3 = Gui.ROJO
+	cerrarResultados.ZIndex = 5
+	Gui.icono(cerrarResultados, "Cerrar", UDim2.fromScale(0.6, 0.6), UDim2.fromScale(0.5, 0.48), Vector2.new(0.5, 0.5)).ZIndex = 6
+	cerrarResultados.Activated:Connect(function()
+		Sonido.reproducir("UiClick", nil, 0.5, 1.1)
+		resultadosId += 1
+		panelResultados.Visible = false
+	end)
 	tituloResultados = izquierda(Gui.texto(panelResultados, "", UDim2.new(1, -210, 0, 46), UDim2.fromOffset(34, 26), Gui.TINTA, true))
 	selloResultados = Gui.panel(panelResultados, "Sello", UDim2.fromOffset(150, 150), UDim2.new(1, -96, 0, 4), Vector2.new(0.5, 0))
 	selloResultados.Rotation = 14
 	selloResultados.ImageTransparency = 0.08
+	escalaSello = Instance.new("UIScale")
+	escalaSello.Parent = selloResultados
 	textoSello = Gui.texto(selloResultados, "", UDim2.fromScale(0.7, 0.24), UDim2.fromScale(0.5, 0.5), Gui.VERDE, true)
 	textoSello.AnchorPoint = Vector2.new(0.5, 0.5)
-	filasResultados = Instance.new("Frame")
+	filasResultados = Instance.new("ScrollingFrame")
+	filasResultados.BorderSizePixel = 0
+	filasResultados.CanvasSize = UDim2.new()
+	filasResultados.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	filasResultados.ScrollingDirection = Enum.ScrollingDirection.Y
+	filasResultados.ScrollBarThickness = 6
+	filasResultados.ScrollBarImageColor3 = Gui.LAPIZ
 	filasResultados.BackgroundTransparency = 1
 	filasResultados.Size = UDim2.new(1, -68, 1, -110)
 	filasResultados.Position = UDim2.fromOffset(34, 84)
 	filasResultados.Parent = panelResultados
 	Gui.lista(filasResultados, 3)
 
-	ayuda = Gui.panel(raiz, "Papel", UDim2.fromOffset(470, 536), UDim2.new(1, -12, 1, -12), Vector2.new(1, 1))
+	ayuda = if TACTIL
+		then Gui.panel(raiz, "Papel", UDim2.fromOffset(470, 536), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5), true)
+		else Gui.panel(raiz, "Papel", UDim2.fromOffset(470, 536), UDim2.new(1, -12, 1, -12), Vector2.new(1, 1))
+	if TACTIL then
+		(ayuda :: any).Activated:Connect(function()
+			ayuda.Visible = false
+		end)
+	end
 	ayuda.Rotation = 1.2
 	ayuda.Visible = false
 	izquierda(Gui.texto(ayuda, "CONTROLES", UDim2.fromOffset(220, 36), UDim2.fromOffset(30, 22), Gui.TINTA, true))
@@ -211,7 +244,7 @@ local function construir()
 		Gui.fila(lineasAyuda, l[1], l[2] :: string, 26, Gui.TINTA, i)
 	end
 
-	panelIsla = Gui.panel(raiz, "Papel", UDim2.fromOffset(310, 206), UDim2.new(1, -14, 0, 192), Vector2.new(1, 0))
+	panelIsla = Gui.panel(raiz, "Papel", UDim2.fromOffset(310, 206), UDim2.new(1, -14, 0, if TACTIL then 290 else 192), Vector2.new(1, 0))
 	panelIsla.Rotation = -1.5
 	panelIsla.Visible = false
 	izquierda(Gui.texto(panelIsla, "NÁUFRAGOS", UDim2.new(1, -50, 0, 30), UDim2.fromOffset(26, 18), Gui.NARANJA, true))
@@ -234,8 +267,9 @@ local function construir()
 	indicacion.TextXAlignment = Enum.TextXAlignment.Right
 	Gui.trazado(indicacion)
 	local function indicar()
-		indicacion.Visible = not ayuda.Visible and not panelPiloto.Visible
+		indicacion.Visible = not TACTIL and not ayuda.Visible and not panelPiloto.Visible
 	end
+	indicar()
 	ayuda:GetPropertyChangedSignal("Visible"):Connect(indicar)
 	panelPiloto:GetPropertyChangedSignal("Visible"):Connect(indicar)
 end
@@ -256,7 +290,7 @@ local function aviso(contenido: string, tipo: string)
 			table.insert(notas, h)
 		end
 	end
-	if #notas > 4 then
+	if #notas > (if Gui.pequena() then 2 else 4) then
 		table.sort(notas, function(a, b)
 			return a.LayoutOrder < b.LayoutOrder
 		end)
@@ -448,6 +482,8 @@ local function actualizarPiloto()
 	local mensaje = ""
 	if avion:GetAttribute("Perdida") then
 		mensaje = "¡PÉRDIDA! Acelera (Shift) y baja el morro (S)"
+	elseif fase == "Despegue" and TACTIL then
+		mensaje = `Mantén Gas+. A {Config.VUELO.VELOCIDAD_DESPEGUE} km/h sube con el joystick para despegar`
 	elseif fase == "Despegue" then
 		mensaje = `Acelera con Shift. A {Config.VUELO.VELOCIDAD_DESPEGUE} km/h pulsa W para despegar`
 	elseif fase == "Aproximacion" then
@@ -470,6 +506,10 @@ local function actualizarPista()
 	if objeto then
 		local tipo = Agarre.tipo(objeto)
 		local raciones = objeto:GetAttribute("Raciones")
+		if TACTIL then
+			pista.Text = if tipo == "Extintor" or tipo == "Llave" then "Mantén «Usar» para usarlo" elseif tipo == "Agua" then "Toca la etiqueta para servir · «Usar» la echa al fuego" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "«Piolet» para clavarte · salta para soltarte · «Usar» junto al panel: martillear" elseif typeof(raciones) == "number" then `{raciones} raciones · toca la etiqueta para servir` else ""
+			return
+		end
 		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F usar · Clic soltar · Clic der. lanzar" elseif tipo == "Agua" then "E servir · F echar al fuego · Clic der. lanzar" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "F clavarte al casco · Espacio soltarte · F junto al panel: martillear" elseif typeof(raciones) == "number" then `{raciones} raciones · E servir · Clic soltar` else "Clic soltar · Clic der. lanzar"
 		return
 	end
@@ -477,7 +517,8 @@ local function actualizarPista()
 	if apuntado then
 		local tipo = Agarre.tipo(apuntado)
 		local def = Config.OBJETOS[tipo]
-		pista.Text = `Clic coger {if def then def.nombre elseif tipo == "Pasajero" then "pasajero" else string.lower(tipo)}`
+		local nombre = if def then def.nombre elseif tipo == "Pasajero" then "pasajero" else string.lower(tipo)
+		pista.Text = if TACTIL then `«Coger»: {nombre}` else `Clic coger {nombre}`
 	else
 		pista.Text = ""
 	end
@@ -715,14 +756,8 @@ local function tablero()
 	tableroGui.Parent = jugador:WaitForChild("PlayerGui")
 end
 
-local function resultados(datos: any)
-	if typeof(datos) ~= "table" then
-		return
-	end
+local function mostrarResultados(datos: any, mio: number, quedan: number)
 	Sonido.reproducir(if datos.tipo == "Estrellado" then "Derrota" else "Victoria", nil, 1, 1)
-	if typeof(datos.total) == "number" and datos.total > 0 then
-		task.delay(1.2, Sonido.reproducir, "Caja", nil, 1, 1)
-	end
 	local estrellado = datos.tipo == "Estrellado"
 	local rescatado = datos.tipo == "Rescatado"
 	local perfecto = datos.aterrizaje == "Perfecto"
@@ -781,17 +816,88 @@ local function resultados(datos: any)
 		end
 	end
 	linea("Moneda", `<b>TOTAL {datos.total}</b> · para cada uno {datos.porJugador}`, 34)
+	local filas: { Frame } = {}
 	local alto = 0
 	for _, h in filasResultados:GetChildren() do
 		if h:IsA("Frame") then
 			alto += h.Size.Y.Offset + 3
+			h.Visible = false
+			table.insert(filas, h)
 		end
 	end
-	panelResultados.Size = UDim2.fromOffset(580, math.clamp(alto + 130, 360, 700))
-	panelResultados.Visible = true
-	task.delay(Config.PARTIDA.RESULTADOS - 0.5, function()
-		panelResultados.Visible = false
+	table.sort(filas, function(a, b)
+		return a.LayoutOrder < b.LayoutOrder
 	end)
+	local maximo = Workspace.CurrentCamera.ViewportSize.Y / math.max(escala.Scale, 0.1) - 70
+	panelResultados.Size = UDim2.fromOffset(580, math.clamp(alto + 130, math.min(360, maximo), math.min(700, maximo)))
+	selloResultados.Visible = false
+	panelResultados.Position = UDim2.fromScale(0.5, 1.6)
+	panelResultados.Visible = true
+	TweenService:Create(panelResultados, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Position = UDim2.fromScale(0.5, 0.52) }):Play()
+	task.delay(quedan, function()
+		if mio == resultadosId then
+			panelResultados.Visible = false
+		end
+	end)
+	task.wait(0.45)
+	for _, f in filas do
+		if mio ~= resultadosId then
+			return
+		end
+		f.Visible = true
+		Sonido.reproducir("UiClick", nil, 0.25, 1.3)
+		task.wait(0.07)
+	end
+	local total = if typeof(datos.total) == "number" then datos.total else 0
+	local cada = if typeof(datos.porJugador) == "number" then datos.porJugador else 0
+	local ultima = filas[#filas]
+	local texto = ultima and ultima:FindFirstChildOfClass("TextLabel")
+	if texto then
+		local pasos = if total > 0 then 16 else 1
+		for i = 1, pasos do
+			if mio ~= resultadosId then
+				return
+			end
+			local f = i / pasos
+			texto.Text = `<b>TOTAL {math.floor(total * f)}</b> · para cada uno {math.floor(cada * f)}`
+			task.wait(0.05)
+		end
+	end
+	if total > 0 then
+		Sonido.reproducir("Caja", nil, 1, 1)
+	end
+	if mio ~= resultadosId then
+		return
+	end
+	selloResultados.Visible = true
+	escalaSello.Scale = 3
+	TweenService:Create(escalaSello, TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Scale = 0.94 }):Play()
+	task.wait(0.16)
+	Sonido.reproducir("Sello", nil, 1, 1)
+	Camara.sacudir(0.3)
+	TweenService:Create(escalaSello, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+end
+
+local function resultados(datos: any)
+	if typeof(datos) ~= "table" then
+		return
+	end
+	resultadosId += 1
+	local mio = resultadosId
+	local llegada = os.clock()
+	task.spawn(function()
+		local limite = llegada + 7
+		while (Cine.activo() or Efectos.selloActivo()) and os.clock() < limite do
+			task.wait(0.1)
+		end
+		if mio == resultadosId then
+			mostrarResultados(datos, mio, math.max(4, Config.PARTIDA.RESULTADOS - 0.5 - (os.clock() - llegada)))
+		end
+	end)
+end
+
+function Interfaz.alternarAyuda()
+	ayuda.Visible = not ayuda.Visible
 end
 
 function Interfaz.iniciar()
@@ -820,7 +926,7 @@ function Interfaz.iniciar()
 		task.spawn(estadoCocodrilo, modelo)
 	end
 	CollectionService:GetInstanceAddedSignal("Cocodrilo"):Connect(estadoCocodrilo)
-	for etiquetaIsla, destino in { ObjetivoIsla = false, DestinoIsla = true } do
+	for etiquetaIsla, destino in ({ ObjetivoIsla = false, DestinoIsla = true } :: { [string]: boolean }) do
 		for _, objeto in CollectionService:GetTagged(etiquetaIsla) do
 			marcarIsla(objeto, destino)
 		end
@@ -852,7 +958,7 @@ function Interfaz.iniciar()
 	task.spawn(tablero)
 	UserInputService.InputBegan:Connect(function(entrada, procesado)
 		if not procesado and entrada.KeyCode == Enum.KeyCode.H then
-			ayuda.Visible = not ayuda.Visible
+			Interfaz.alternarAyuda()
 		end
 	end)
 	local acumulado = 0
