@@ -50,6 +50,10 @@ local function sonar(nombre: string, alternativa: string, volumen: number?, tono
 	Sonido.reproducir(if Audio.IDS[nombre] then nombre else alternativa, nil, volumen, tono or 1)
 end
 
+local function cargandoAun(): boolean
+	return estado == "cargando"
+end
+
 local function suave(a: number): number
 	return a * a * a * (a * (a * 6 - 15) + 10)
 end
@@ -480,6 +484,46 @@ local function destino(): CFrame?
 	return CFrame.lookAt(ojo, ojo + frente)
 end
 
+local function tarjeta()
+	crearGui()
+	local arriba, abajo = telon()
+	local catcher = Instance.new("TextButton")
+	catcher.BackgroundTransparency = 1
+	catcher.Text = ""
+	catcher.Size = UDim2.fromScale(1, 1)
+	catcher.ZIndex = 12
+	catcher.Parent = raiz
+	local l = construirLogo(UDim2.fromScale(0.5, 0.45))
+	l.marco.ZIndex = 11
+	logo = l
+	local listo = false
+	local function seguir()
+		listo = listo or os.clock() - l.inicio > 0.4
+	end
+	catcher.Activated:Connect(seguir)
+	table.insert(conexiones, UserInputService.InputBegan:Connect(function(entrada)
+		if entrada.UserInputType == Enum.UserInputType.Keyboard or string.find(entrada.UserInputType.Name, "Gamepad") ~= nil then
+			seguir()
+		end
+	end))
+	table.insert(conexiones, RunService.RenderStepped:Connect(function(dt: number)
+		temblor = math.max(0, temblor - dt * 1.6)
+		animarLogo(l, os.clock())
+	end))
+	precargar(3)
+	golpear(l)
+	local fin = os.clock() + 2.6
+	while not listo and os.clock() < fin do
+		task.wait()
+	end
+	catcher:Destroy()
+	l.fuera = true
+	TweenService:Create(l.marco, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.In), { Position = l.base - UDim2.fromScale(0, 1) }):Play()
+	abrirTelon(arriba, abajo)
+	task.wait(0.9)
+	limpiar()
+end
+
 local function completa()
 	pcall(function()
 		TeleportService:SetTeleportSetting(VISTA, true)
@@ -662,6 +706,24 @@ local function completa()
 		end
 	end))
 
+	local function abortar()
+		if estado == "saliendo" or estado == "fin" then
+			return
+		end
+		entregar()
+		limpiar()
+		task.spawn(tarjeta)
+	end
+	table.insert(conexiones, Estado:GetAttributeChangedSignal("Fase"):Connect(function()
+		if Estado:GetAttribute("Fase") ~= "Aeropuerto" then
+			abortar()
+		end
+	end))
+	if Estado:GetAttribute("Fase") ~= "Aeropuerto" then
+		abortar()
+		return
+	end
+
 	RunService:BindToRenderStep(PASO, Enum.RenderPriority.Camera.Value + 2, function(dt: number)
 		local cam = Workspace.CurrentCamera
 		if cam.CameraType ~= Enum.CameraType.Scriptable then
@@ -744,10 +806,16 @@ local function completa()
 	end))
 
 	precargar(5)
+	if not cargandoAun() then
+		return
+	end
 	sonar("Ding", "UiAviso", 2.5, 1)
 	TweenService:Create(cargando, TweenInfo.new(0.2), { ImageTransparency = 1 }):Play()
 	TweenService:Create(textoCarga, TweenInfo.new(0.2), { TextTransparency = 1 }):Play()
 	task.wait(0.25)
+	if not cargandoAun() then
+		return
+	end
 	inicio = os.clock()
 	estado = "vuelo"
 	abrirTelon(arriba, abajo)
@@ -759,59 +827,23 @@ local function completa()
 	end)
 end
 
-local function tarjeta()
-	crearGui()
-	local arriba, abajo = telon()
-	local catcher = Instance.new("TextButton")
-	catcher.BackgroundTransparency = 1
-	catcher.Text = ""
-	catcher.Size = UDim2.fromScale(1, 1)
-	catcher.ZIndex = 12
-	catcher.Parent = raiz
-	local l = construirLogo(UDim2.fromScale(0.5, 0.45))
-	l.marco.ZIndex = 11
-	logo = l
-	local listo = false
-	local function seguir()
-		listo = listo or os.clock() - l.inicio > 0.4
-	end
-	catcher.Activated:Connect(seguir)
-	table.insert(conexiones, UserInputService.InputBegan:Connect(function(entrada)
-		if entrada.UserInputType == Enum.UserInputType.Keyboard or string.find(entrada.UserInputType.Name, "Gamepad") ~= nil then
-			seguir()
-		end
-	end))
-	table.insert(conexiones, RunService.RenderStepped:Connect(function(dt: number)
-		temblor = math.max(0, temblor - dt * 1.6)
-		animarLogo(l, os.clock())
-	end))
-	precargar(3)
-	golpear(l)
-	local fin = os.clock() + 2.6
-	while not listo and os.clock() < fin do
-		task.wait()
-	end
-	catcher:Destroy()
-	l.fuera = true
-	TweenService:Create(l.marco, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.In), { Position = l.base - UDim2.fromScale(0, 1) }):Play()
-	abrirTelon(arriba, abajo)
-	task.wait(0.9)
-	limpiar()
-end
-
 function Intro.iniciar()
 	task.spawn(function()
 		if not game:IsLoaded() then
 			game.Loaded:Wait()
 		end
-		local fase = Estado:GetAttribute("Fase")
+		local limite = os.clock() + 3
+		while Estado:GetAttribute("Fase") == nil and os.clock() < limite do
+			task.wait(0.1)
+		end
 		local ok, vista = pcall(function()
 			return TeleportService:GetTeleportSetting(VISTA)
 		end)
-		if (fase ~= nil and fase ~= "Aeropuerto") or (ok and vista == true) then
-			tarjeta()
-		else
+		local lobby = Estado:GetAttribute("Fase") == "Aeropuerto" and Workspace:FindFirstChild("Aeropuerto") ~= nil and Workspace:GetAttribute("PruebaIsla") ~= true
+		if lobby and not (ok and vista == true) then
 			completa()
+		else
+			tarjeta()
 		end
 	end)
 end

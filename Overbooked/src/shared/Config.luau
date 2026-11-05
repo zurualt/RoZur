@@ -10,8 +10,8 @@ export type DefObjeto = {
 
 local Config = {}
 
-Config.ASSET_TRIPULANTE = 124975432706541
-Config.ALTURA_TRIPULANTE = 4.67
+Config.ASSET_TRIPULANTE = 79935936187714
+Config.ALTURA_TRIPULANTE = 5.08
 Config.ROTACION_FBX = CFrame.Angles(math.pi / 2, 0, 0)
 
 
@@ -53,7 +53,7 @@ Config.CENTRO_AVION = Vector3.new(0, 105, -18)
 
 Config.VUELO = {
 	TICK = 0.1,
-	COMPRESION = 20,
+	COMPRESION = 14,
 	FACTOR_VERTICAL = 1.5,
 	VELOCIDAD_MAX = 900,
 	VELOCIDAD_DESPEGUE = 260,
@@ -93,9 +93,26 @@ Config.PARTIDA = {
 	RESULTADOS = 14,
 	DESPEGUE_AUTO = 45,
 	MAX_OBJETOS = 45,
-	PRIMER_PELIGRO = 25,
-	INTERVALO_PELIGRO_MIN = 22,
-	INTERVALO_PELIGRO_MAX = 40,
+	INTERVALO_PELIGRO_MIN = 32,
+	INTERVALO_PELIGRO_MAX = 55,
+}
+
+Config.RITMO = {
+	CALMA = 50,
+	TURBULENCIA_CALMA = 0.35,
+	INICIO = 0.5,
+	FINAL = 1.6,
+	MAXIMA = 2.6,
+	GRAVES = 0.3,
+	POR_RIESGO = 0.2,
+	POR_JUGADOR = 0.12,
+	POR_JORNADA = 0.15,
+	MAX_JORNADA = 8,
+	PASAJEROS_POR_JORNADA = 2,
+	PAGO_POR_JORNADA = 0.1,
+	CAOS_PRIMERO = 25,
+	CAOS_MIN = 50,
+	CAOS_MAX = 80,
 }
 
 Config.AGARRE = {
@@ -269,6 +286,14 @@ Config.OBJETOS = {
 		visual = "Bengala",
 		nombre = "bengala",
 	},
+	Biberon = {
+		tamano = Vector3.new(0.4, 1, 0.4),
+		color = Color3.fromRGB(247, 247, 242),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 0.4,
+		visual = "Biberon",
+		nombre = "biberón",
+	},
 } :: { [string]: DefObjeto }
 
 Config.ISLA = {
@@ -278,12 +303,23 @@ Config.ISLA = {
 	ENTREGA = 6,
 	TRONCOS = 3,
 	PIEZAS = { "RadioAntena", "RadioBateria", "RadioCaja" },
-	CANGREJOS = 6,
+	CANGREJOS = 10,
 	COCOS = 12,
 	VELOCIDAD_CANGREJO = 5,
 	PELLIZCO = 2.6,
 	PAGO = 0.5,
 	BONUS_RESCATE = 300,
+}
+
+Config.PREPARACION = {
+	TIEMPO = 150,
+	CONDUCIR = 75,
+	INTERVALO_MALETA = 3.2,
+	MALETAS_POR_JUGADOR = 1,
+	COMBUSTIBLE_INICIAL = 25,
+	BOMBEO = 7,
+	LLEGADA = 20,
+	REVENTON = 0.3,
 }
 
 Config.COMIDA = { "Hamburguesa", "Cafe", "Agua" }
@@ -300,9 +336,11 @@ Config.ICONOS = {
 	Mojado = "Agua",
 	Mordisco = "Cocodrilo",
 	Bolso = "Maleta",
+	Biberon = "Agua",
+	Mareo = "Mareo",
 }
 
-Config.PEDIDOS = { Hamburguesa = "una hamburguesa", Cafe = "un café", Agua = "agua" }
+Config.PEDIDOS = { Hamburguesa = "una hamburguesa", Cafe = "un café", Agua = "agua", Biberon = "el biberón" }
 
 Config.PASAJEROS = {
 	VISUALES = { "PasajeroAbuela", "PasajeroTurista", "PasajeroEjecutivo", "PasajeroNino", "PasajeroDeportista", "PasajeroRockero" },
@@ -320,7 +358,7 @@ Config.PASAJEROS = {
 		Color3.fromRGB(217, 68, 58),
 		Color3.fromRGB(52, 56, 63),
 	},
-	PEDIDO_PROB = 0.025,
+	PEDIDO_PROB = 0.019,
 	PACIENCIA = 70,
 	PEDIDOS_BASE = 1,
 	PEDIDOS_POR_JUGADOR = 2,
@@ -329,22 +367,49 @@ Config.PASAJEROS = {
 	MIEDO_DECAE = 0.03,
 	DISTANCIA_ASIENTO = 4.5,
 	ESCALA_VISUAL = 0.85,
+	CARACTERES = {
+		{ nombre = "Normal", peso = 52, pedido = 1, paciencia = 1, miedo = 1, sueno = 1 },
+		{ nombre = "Grunon", peso = 8, pedido = 1, paciencia = 0.65, miedo = 1, sueno = 0.5 },
+		{ nombre = "Miedoso", peso = 7, pedido = 0.9, paciencia = 1, miedo = 2, sueno = 0.6 },
+		{ nombre = "Dormilon", peso = 7, pedido = 0.3, paciencia = 1.2, miedo = 0.8, sueno = 12 },
+		{ nombre = "Gloton", peso = 7, pedido = 2.2, paciencia = 0.9, miedo = 1, sueno = 0.8 },
+		{ nombre = "Charlatan", peso = 7, pedido = 1, paciencia = 1, miedo = 1, sueno = 0 },
+		{ nombre = "Fiestero", peso = 6, pedido = 1.1, paciencia = 1.1, miedo = 0.5, sueno = 0.3 },
+		{ nombre = "Despistado", peso = 6, pedido = 0.8, paciencia = 1.2, miedo = 1, sueno = 1 },
+	},
 }
 
-export type Gorro = { nombre: string, titulo: string, precio: number }
+export type Accesorio = { nombre: string, titulo: string, ranura: string, precio: number, vuelos: number }
 export type Mejora = { nombre: string, titulo: string, descripcion: string, precios: { number } }
 
 Config.TIENDA = {
-	GORROS = {
-		{ nombre = "GorroCono", titulo = "Cono de tráfico", precio = 300 },
-		{ nombre = "GorraPiloto", titulo = "Gorra de piloto", precio = 450 },
-		{ nombre = "GorroChef", titulo = "Gorro de chef", precio = 550 },
-		{ nombre = "GorroHelice", titulo = "Gorro con hélice", precio = 650 },
-		{ nombre = "Auriculares2", titulo = "Auriculares retro", precio = 750 },
-		{ nombre = "SombreroVaquero", titulo = "Sombrero vaquero", precio = 900 },
-		{ nombre = "GorroPato", titulo = "Gorro de pato", precio = 1300 },
-		{ nombre = "Corona", titulo = "Corona", precio = 2500 },
-	} :: { Gorro },
+	RANURAS = { "Cabeza", "Cara", "Espalda" },
+	ACCESORIOS = {
+		{ nombre = "GorroCono", titulo = "Cono de tráfico", ranura = "Cabeza", precio = 300, vuelos = 0 },
+		{ nombre = "GorraPiloto", titulo = "Gorra de piloto", ranura = "Cabeza", precio = 450, vuelos = 0 },
+		{ nombre = "GorroChef", titulo = "Gorro de chef", ranura = "Cabeza", precio = 550, vuelos = 0 },
+		{ nombre = "GorroHelice", titulo = "Gorro con hélice", ranura = "Cabeza", precio = 650, vuelos = 0 },
+		{ nombre = "Chistera", titulo = "Chistera diminuta", ranura = "Cabeza", precio = 700, vuelos = 0 },
+		{ nombre = "Auriculares2", titulo = "Auriculares retro", ranura = "Cabeza", precio = 750, vuelos = 0 },
+		{ nombre = "GorroPlatano", titulo = "Plátano pelado", ranura = "Cabeza", precio = 800, vuelos = 0 },
+		{ nombre = "SombreroVaquero", titulo = "Sombrero vaquero", ranura = "Cabeza", precio = 900, vuelos = 0 },
+		{ nombre = "GorroPez", titulo = "Gorro de pez", ranura = "Cabeza", precio = 1100, vuelos = 0 },
+		{ nombre = "GorroPato", titulo = "Gorro de pato", ranura = "Cabeza", precio = 1300, vuelos = 0 },
+		{ nombre = "NidoPajaro", titulo = "Nido con okupa", ranura = "Cabeza", precio = 1500, vuelos = 0 },
+		{ nombre = "CascoBombero", titulo = "Casco de bombero", ranura = "Cabeza", precio = 1800, vuelos = 0 },
+		{ nombre = "CascoVikingo", titulo = "Casco vikingo", ranura = "Cabeza", precio = 2400, vuelos = 10 },
+		{ nombre = "Corona", titulo = "Corona", ranura = "Cabeza", precio = 2500, vuelos = 15 },
+		{ nombre = "GorroCocodrilo", titulo = "Cocodrilo comecabezas", ranura = "Cabeza", precio = 4500, vuelos = 30 },
+		{ nombre = "Antifaz", titulo = "Antifaz de ladrón", ranura = "Cara", precio = 400, vuelos = 0 },
+		{ nombre = "GafasEstrella", titulo = "Gafas de estrella", ranura = "Cara", precio = 800, vuelos = 0 },
+		{ nombre = "Monoculo", titulo = "Monóculo elegante", ranura = "Cara", precio = 1400, vuelos = 0 },
+		{ nombre = "GafasBuceo", titulo = "Gafas de buceo", ranura = "Cara", precio = 2000, vuelos = 5 },
+		{ nombre = "LlaveGigante", titulo = "Llave gigante", ranura = "Espalda", precio = 700, vuelos = 0 },
+		{ nombre = "MochilaParacaidas", titulo = "Mochila paracaídas", ranura = "Espalda", precio = 1200, vuelos = 0 },
+		{ nombre = "FlotadorPato", titulo = "Flotador de patito", ranura = "Espalda", precio = 1600, vuelos = 0 },
+		{ nombre = "AlasAvion", titulo = "Alas de avión", ranura = "Espalda", precio = 3200, vuelos = 15 },
+		{ nombre = "Jetpack", titulo = "Mochila cohete", ranura = "Espalda", precio = 6000, vuelos = 40 },
+	} :: { Accesorio },
 	MEJORAS = {
 		{ nombre = "Casco", titulo = "Casco reforzado", descripcion = "−12 % de daño al casco por nivel", precios = { 600, 1400, 3000 } },
 		{ nombre = "Combustible", titulo = "Motores eficientes", descripcion = "−12 % de consumo por nivel", precios = { 500, 1200, 2600 } },

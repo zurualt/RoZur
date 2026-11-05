@@ -24,6 +24,7 @@ local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
 local RemotoSacudida = Remotos:WaitForChild("Sacudida") :: UnreliableRemoteEvent
 local RemotoUsar = Remotos:WaitForChild("Usar") :: RemoteEvent
+local Estado = ReplicatedStorage:WaitForChild("Estado") :: Folder
 
 type Fuego = { parte: BasePart, vida: number }
 type Panel = { parte: BasePart, reparacion: number }
@@ -43,6 +44,8 @@ local finTormenta = 0
 local ultimoUso: { [Player]: number } = {}
 local quemados: { [Player]: number } = {}
 local generacion = 0
+local riesgoActual = 1
+local finCalma = math.huge
 local alSacudir: { (number) -> () } = {}
 local TAPONES = { Maleta = true, Caja = true, CajaFragil = true, Carrito = true, Bolso = true }
 
@@ -408,16 +411,16 @@ local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
 	},
 }
 
-local function elegirEvento(riesgo: number): () -> ()
+local function elegirEvento(graves: boolean): () -> ()
 	local total = 0
 	for _, e in EVENTOS do
-		if e.riesgo <= riesgo + 1 then
+		if e.riesgo == 1 or graves then
 			total += e.peso
 		end
 	end
 	local tirada = rng:NextNumber() * total
 	for _, e in EVENTOS do
-		if e.riesgo <= riesgo + 1 then
+		if e.riesgo == 1 or graves then
 			tirada -= e.peso
 			if tirada <= 0 then
 				return e.f
@@ -427,26 +430,54 @@ local function elegirEvento(riesgo: number): () -> ()
 	return turbulencias
 end
 
+function Peligros.jornada(): number
+	local j = Estado:GetAttribute("Jornada")
+	return math.clamp(if typeof(j) == "number" then j else 1, 1, Config.RITMO.MAX_JORNADA)
+end
+
+function Peligros.progreso(): number
+	local estado = Avion.estado
+	return math.clamp(estado.distancia / math.max(estado.total, 1), 0, 1)
+end
+
+function Peligros.calma(): boolean
+	return os.clock() < finCalma
+end
+
+function Peligros.intensidad(): number
+	local R = Config.RITMO
+	local curva = R.INICIO + (R.FINAL - R.INICIO) * Peligros.progreso()
+	local nivel = (1 + R.POR_RIESGO * (riesgoActual - 1)) * (1 + R.POR_JORNADA * (Peligros.jornada() - 1))
+	return math.min(curva * nivel * (1 + R.POR_JUGADOR * (math.max(#Players:GetPlayers(), 1) - 1)), R.MAXIMA)
+end
+
 function Peligros.activar(contrato: Contratos.Contrato)
 	Peligros.detener()
 	generacion += 1
 	activo = true
+	riesgoActual = contrato.riesgo
+	finCalma = math.huge
 	local miGeneracion = generacion
+	local R = Config.RITMO
 	task.spawn(function()
-		task.wait(Config.PARTIDA.PRIMER_PELIGRO)
+		while activo and generacion == miGeneracion and Avion.estado.enTierra do
+			task.wait(0.5)
+		end
+		finCalma = os.clock() + R.CALMA
+		task.wait(R.CALMA)
 		while activo and generacion == miGeneracion do
 			local fase = Avion.fase()
 			if fase == "Vuelo" or fase == "Aproximacion" then
-				elegirEvento(contrato.riesgo)()
+				elegirEvento(Peligros.progreso() >= R.GRAVES or contrato.riesgo + Peligros.jornada() - 1 >= 3)()
 			end
-			local espera = rng:NextNumber(Config.PARTIDA.INTERVALO_PELIGRO_MIN, Config.PARTIDA.INTERVALO_PELIGRO_MAX) / (0.75 + contrato.riesgo * 0.25)
-			task.wait(espera)
+			task.wait(rng:NextNumber(Config.PARTIDA.INTERVALO_PELIGRO_MIN, Config.PARTIDA.INTERVALO_PELIGRO_MAX) / Peligros.intensidad())
 		end
 	end)
 	task.spawn(function()
 		while activo and generacion == miGeneracion do
 			local estado = Avion.estado
-			local base = if estado.enTierra then 0 else Config.TURBULENCIA.BASE + (contrato.riesgo - 1) * 0.05
+			local ritmo = if Peligros.calma() then R.TURBULENCIA_CALMA else math.clamp(Peligros.intensidad(), 0.5, 1.6)
+			local base = if estado.enTierra then 0 else (Config.TURBULENCIA.BASE + (contrato.riesgo - 1) * 0.05) * ritmo
 			local extra = (if os.clock() < turbulenciaEvento then 0.6 else 0) + (if os.clock() < finTormenta then 0.45 else 0)
 			if estado.perdida then
 				extra += 0.4
@@ -673,6 +704,22 @@ function Peligros.iniciar()
 			end
 		end
 	end)
+	if RunService:IsStudio() then
+		Workspace:GetAttributeChangedSignal("PruebaPajaros"):Connect(function()
+			if not Workspace:GetAttribute("PruebaPajaros") then
+				return
+			end
+			Workspace:SetAttribute("PruebaPajaros", nil)
+			if activo then
+				pajaros()
+			else
+				avion:SetAttribute("Bandada", os.clock())
+				task.delay(3, function()
+					avion:SetAttribute("Pajaros", os.clock())
+				end)
+			end
+		end)
+	end
 
 	local acumulado = 0
 	RunService.Heartbeat:Connect(function(dt)

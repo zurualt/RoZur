@@ -1,0 +1,242 @@
+[
+  {
+    "nombre": "NaveCarga",
+    "archivo": "NaveCarga.fbx",
+    "bbox_min": [
+      -16.6,
+      0.0,
+      -20.6
+    ],
+    "bbox_max": [
+      16.6,
+      19.5,
+      20.6
+    ],
+    "triangulos": 2294
+  },
+  {
+    "nombre": "PersianaNave",
+    "archivo": "PersianaNave.fbx",
+    "bbox_min": [
+      -7.1,
+      0.0,
+      -0.36
+    ],
+    "bbox_max": [
+      7.1,
+      9.2,
+      0.36
+    ],
+    "triangulos": 1452
+  },
+  {
+    "nombre": "Tobogan1",
+    "archivo": "Tobogan1.fbx",
+    "bbox_min": [
+      -1.75,
+      0.0,
+      -6.55
+    ],
+    "bbox_max": [
+      1.75,
+      9.53,
+      4.1
+    ],
+    "triangulos": 896
+  },
+  {
+    "nombre": "Tobogan2",
+    "archivo": "Tobogan2.fbx",
+    "bbox_min": [
+      -1.75,
+      0.0,
+      -6.55
+    ],
+    "bbox_max": [
+      1.75,
+      9.53,
+      4.1
+    ],
+    "triangulos": 904
+  },
+  {
+    "nombre": "Tobogan3",
+    "archivo": "Tobogan3.fbx",
+    "bbox_min": [
+      -1.75,
+      0.0,
+      -6.55
+    ],
+    "bbox_max": [
+      1.75,
+      9.53,
+      4.1
+    ],
+    "triangulos": 900
+  },
+  {
+    "nombre": "Tobogan4",
+    "archivo": "Tobogan4.fbx",
+    "bbox_min": [
+      -1.75,
+      0.0,
+      -6.55
+    ],
+    "bbox_max": [
+      1.75,
+      9.53,
+      4.1
+    ],
+    "triangulos": 896
+  },
+  {
+    "nombre": "Surtidor",
+    "archivo": "Surtidor.fbx",
+    "bbox_min": [
+      -1.59,
+      0.0,
+      -1.3
+    ],
+    "bbox_max": [
+      1.52,
+      4.77,
+      1.45
+    ],
+    "triangulos": 1027
+  },
+  {
+    "nombre": "CorralAnimales",
+    "archivo": "CorralAnimales.fbx",
+    "bbox_min": [
+      -5.4,
+      0.0,
+      -8.5
+    ],
+    "bbox_max": [
+      5.4,
+      2.6,
+      8.52
+    ],
+    "triangulos": 3868
+  },
+  {
+    "nombre": "CuboMerienda",
+    "archivo": "CuboMerienda.fbx",
+    "bbox_min": [
+      -0.675,
+      0.0,
+      -0.675
+    ],
+    "bbox_max": [
+      0.675,
+      1.705,
+      0.675
+    ],
+    "triangulos": 1040
+  },
+  {
+    "nombre": "PilaCajas",
+    "archivo": "PilaCajas.fbx",
+    "bbox_min": [
+      -2.321,
+      0.0,
+      -2.12
+    ],
+    "bbox_max": [
+      2.21,
+      4.82,
+      2.348
+    ],
+    "triangulos": 856
+  },
+  {
+    "nombre": "LamparaNave",
+    "archivo": "LamparaNave.fbx",
+    "bbox_min": [
+      -0.916,
+      0.45,
+      -0.916
+    ],
+    "bbox_max": [
+      0.916,
+      5.0,
+      0.916
+    ],
+    "triangulos": 548
+  },
+  {
+    "nombre": "FlechaSuelo",
+    "archivo": "FlechaSuelo.fbx",
+    "bbox_min": [
+      -1.6,
+      0.0,
+      -2.2
+    ],
+    "bbox_max": [
+      1.6,
+      0.081,
+      2.2
+    ],
+    "triangulos": 50
+  },
+  {
+    "nombre": "CartelMaletas",
+    "archivo": "CartelMaletas.fbx",
+    "bbox_min": [
+      -3.5,
+      0.0,
+      -0.21
+    ],
+    "bbox_max": [
+      3.5,
+      2.6,
+      0.15
+    ],
+    "triangulos": 229
+  },
+  {
+    "nombre": "CartelAnimales",
+    "archivo": "CartelAnimales.fbx",
+    "bbox_min": [
+      -2.5,
+      0.0,
+      -0.21
+    ],
+    "bbox_max": [
+      2.5,
+      2.6,
+      0.15
+    ],
+    "triangulos": 211
+  },
+  {
+    "nombre": "CartelCombustible",
+    "archivo": "CartelCombustible.fbx",
+    "bbox_min": [
+      -1.6,
+      0.0,
+      -0.21
+    ],
+    "bbox_max": [
+      1.6,
+      2.6,
+      0.15
+    ],
+    "triangulos": 214
+  },
+  {
+    "nombre": "CartelSalida",
+    "archivo": "CartelSalida.fbx",
+    "bbox_min": [
+      -4.0,
+      0.0,
+      -0.21
+    ],
+    "bbox_max": [
+      4.0,
+      3.0,
+      0.15
+    ],
+    "triangulos": 213
+  }
+]

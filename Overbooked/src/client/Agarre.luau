@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Bofetada = require(script.Parent.Bofetada)
 local Manos = require(script.Parent.Manos)
 local Piloto = require(script.Parent.Piloto)
 local Sonido = require(script.Parent.Sonido)
@@ -80,6 +81,7 @@ local function limpiar()
 	posicion, orientacion, adjunto = nil, nil, nil
 	sostenido, raiz = nil, nil
 	usando = false
+	ContextActionService:SetTitle("Lanzar", "Bofetada")
 end
 
 local function empezar(objeto: Instance)
@@ -114,6 +116,7 @@ local function empezar(objeto: Instance)
 	adjunto, posicion, orientacion = a, p, o
 	confirmarAntes = os.clock() + 1
 	Manos.agarrar()
+	ContextActionService:SetTitle("Lanzar", "Lanzar")
 end
 
 local function soltar(lanzar: boolean)
@@ -188,12 +191,17 @@ function Agarre.iniciar()
 	end, true, Enum.UserInputType.MouseButton1, Enum.KeyCode.ButtonR2)
 	ContextActionService:SetTitle("Agarrar", "Coger")
 	ContextActionService:BindAction("Lanzar", function(_, estado)
-		if estado == Enum.UserInputState.Begin and sostenido then
-			soltar(true)
+		if estado == Enum.UserInputState.Begin then
+			if sostenido then
+				soltar(true)
+			elseif not Piloto.activo() then
+				Bofetada.dar()
+			end
 		end
 		return Enum.ContextActionResult.Pass
 	end, true, Enum.UserInputType.MouseButton2, Enum.KeyCode.ButtonL2)
-	ContextActionService:SetTitle("Lanzar", "Lanzar")
+	ContextActionService:SetTitle("Lanzar", if sostenido then "Lanzar" else "Bofetada")
+	Bofetada.iniciar()
 	ContextActionService:BindAction("Usar", function(_, estado)
 		usando = estado == Enum.UserInputState.Begin or estado == Enum.UserInputState.Change
 		return Enum.ContextActionResult.Pass

@@ -4,6 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Cielo = require(ReplicatedStorage.Shared.Cielo)
 local Config = require(ReplicatedStorage.Shared.Config)
+local Criaturas = require(ReplicatedStorage.Shared.Criaturas)
+local PasajerosVivos = require(ReplicatedStorage.Shared.PasajerosVivos)
 local Visuales = require(ReplicatedStorage.Shared.Visuales)
 
 local Activos = {}
@@ -115,6 +117,26 @@ function Activos.iniciar()
 	for _, nombre in { "Maleta1", "Maleta2", "Maleta3", "Bolso" } do
 		Activos.clonar(nombre, function(visual)
 			visual.Parent = intro
+		end)
+	end
+	local criaturas = Instance.new("Folder")
+	criaturas.Name = Criaturas.CARPETA
+	criaturas.Parent = ReplicatedStorage
+	for nombre, id in Criaturas.IDS do
+		Activos.registrar(nombre, id, Criaturas.CAJAS[nombre])
+		Activos.clonar(nombre, function(visual)
+			visual.Name = nombre
+			visual.Parent = criaturas
+		end)
+	end
+	local vivos = Instance.new("Folder")
+	vivos.Name = "ModelosVivos"
+	vivos.Parent = ReplicatedStorage
+	for nombre, id in PasajerosVivos.IDS do
+		Activos.registrar(nombre, id, PasajerosVivos.CAJAS[nombre])
+		Activos.clonar(nombre, function(visual)
+			visual.Name = nombre
+			visual.Parent = vivos
 		end)
 	end
 end

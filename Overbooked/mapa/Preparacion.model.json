@@ -1,0 +1,4244 @@
+{
+ "className": "Model",
+ "children": [
+  {
+   "name": "Nave",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     32.0,
+     0.5,
+     40.0
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       34.0,
+       90.25,
+       72.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.788235294117647,
+     0.7607843137254902,
+     0.7098039215686275
+    ],
+    "Material": "Concrete",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "NaveCarga",
+    "Base": 90.0
+   },
+   "children": [
+    {
+     "name": "ParedOeste",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.6,
+       18.0,
+       40.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         18.0,
+         99.5,
+         72.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9137254901960784,
+       0.8627450980392157,
+       0.7686274509803922
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "ParedEste",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.6,
+       18.0,
+       40.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         50.0,
+         99.5,
+         72.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9137254901960784,
+       0.8627450980392157,
+       0.7686274509803922
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "ParedSur",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       32.0,
+       18.0,
+       0.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         99.5,
+         92.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9137254901960784,
+       0.8627450980392157,
+       0.7686274509803922
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "ParedNorte",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       8.8,
+       18.0,
+       0.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         22.4,
+         99.5,
+         52.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9137254901960784,
+       0.8627450980392157,
+       0.7686274509803922
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "ParedNorte",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       8.8,
+       18.0,
+       0.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         45.6,
+         99.5,
+         52.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9137254901960784,
+       0.8627450980392157,
+       0.7686274509803922
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "DintelPuerta",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       14.4,
+       8.6,
+       0.6
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         104.2,
+         52.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9137254901960784,
+       0.8627450980392157,
+       0.7686274509803922
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Techo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       6.0,
+       0.6,
+       40.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.0,
+         108.8,
+         72.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5411764705882353,
+       0.5607843137254902,
+       0.5882352941176471
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "Techo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       6.0,
+       0.6,
+       40.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         47.0,
+         108.8,
+         72.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5411764705882353,
+       0.5607843137254902,
+       0.5882352941176471
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "Techo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       20.0,
+       0.6,
+       6.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         108.8,
+         55.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5411764705882353,
+       0.5607843137254902,
+       0.5882352941176471
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "Techo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       20.0,
+       0.6,
+       8.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         108.8,
+         66.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5411764705882353,
+       0.5607843137254902,
+       0.5882352941176471
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "Techo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       20.0,
+       0.6,
+       8.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         108.8,
+         78.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5411764705882353,
+       0.5607843137254902,
+       0.5882352941176471
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "Techo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       20.0,
+       0.6,
+       6.0
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         108.8,
+         89.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5411764705882353,
+       0.5607843137254902,
+       0.5882352941176471
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "Persiana",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     14.2,
+     9.2,
+     0.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       34.0,
+       95.1,
+       52.65
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.9647058823529412,
+     0.7686274509803922,
+     0.27058823529411763
+    ],
+    "Material": "Metal",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "PersianaNave",
+    "Movil": true,
+    "Subida": 8.8
+   }
+  },
+  {
+   "name": "Tobogan1",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     3.0,
+     8.4,
+     8.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       22.4,
+       94.7,
+       58.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        -1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "Transparency": 1,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "Tobogan1",
+    "Base": 90.5,
+    "Tobogan": 1
+   },
+   "children": [
+    {
+     "name": "RampaTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.3,
+       2.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         93.7,
+         58.0
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         56.7
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         56.7
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         59.3
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         59.3
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Bandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.4,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         91.7,
+         58.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "TopeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.3,
+       1.1,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         26.55,
+         92.25,
+         58.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Boca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         19.6,
+         96.2,
+         58.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          -1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "LuzTobogan1",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     0.5,
+     0.5,
+     1.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       18.55,
+       100.4,
+       58.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.35294117647058826,
+     0.37254901960784315,
+     0.4
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "children": [
+    {
+     "name": "Luz",
+     "className": "PointLight",
+     "properties": {
+      "Range": 10,
+      "Brightness": 0,
+      "Color": [
+       0.9647058823529412,
+       0.7686274509803922,
+       0.27058823529411763
+      ],
+      "Shadows": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "Tobogan2",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     3.0,
+     8.4,
+     8.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       22.4,
+       94.7,
+       65.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        -1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "Transparency": 1,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "Tobogan2",
+    "Base": 90.5,
+    "Tobogan": 2
+   },
+   "children": [
+    {
+     "name": "RampaTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.3,
+       2.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         93.7,
+         65.0
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         63.7
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         63.7
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         66.3
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         66.3
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Bandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.4,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         91.7,
+         65.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "TopeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.3,
+       1.1,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         26.55,
+         92.25,
+         65.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Boca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         19.6,
+         96.2,
+         65.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          -1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "LuzTobogan2",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     0.5,
+     0.5,
+     1.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       18.55,
+       100.4,
+       65.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.35294117647058826,
+     0.37254901960784315,
+     0.4
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "children": [
+    {
+     "name": "Luz",
+     "className": "PointLight",
+     "properties": {
+      "Range": 10,
+      "Brightness": 0,
+      "Color": [
+       0.9647058823529412,
+       0.7686274509803922,
+       0.27058823529411763
+      ],
+      "Shadows": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "Tobogan3",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     3.0,
+     8.4,
+     8.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       22.4,
+       94.7,
+       72.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        -1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "Transparency": 1,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "Tobogan3",
+    "Base": 90.5,
+    "Tobogan": 3
+   },
+   "children": [
+    {
+     "name": "RampaTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.3,
+       2.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         93.7,
+         72.0
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         70.7
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         70.7
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         73.3
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         73.3
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Bandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.4,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         91.7,
+         72.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "TopeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.3,
+       1.1,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         26.55,
+         92.25,
+         72.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Boca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         19.6,
+         96.2,
+         72.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          -1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "LuzTobogan3",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     0.5,
+     0.5,
+     1.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       18.55,
+       100.4,
+       72.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.35294117647058826,
+     0.37254901960784315,
+     0.4
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "children": [
+    {
+     "name": "Luz",
+     "className": "PointLight",
+     "properties": {
+      "Range": 10,
+      "Brightness": 0,
+      "Color": [
+       0.9647058823529412,
+       0.7686274509803922,
+       0.27058823529411763
+      ],
+      "Shadows": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "Tobogan4",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     3.0,
+     8.4,
+     8.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       22.4,
+       94.7,
+       79.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        -1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "Transparency": 1,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "Tobogan4",
+    "Base": 90.5,
+    "Tobogan": 4
+   },
+   "children": [
+    {
+     "name": "RampaTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.3,
+       2.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         93.7,
+         79.0
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         77.7
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         77.7
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeTobogan",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       5.6356,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         21.3,
+         94.05,
+         80.3
+        ],
+        "orientation": [
+         [
+          0.8872168012345956,
+          0.4613527366419887,
+          0.0
+         ],
+         [
+          -0.4613527366419887,
+          0.8872168012345956,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "BordeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.7,
+       0.2
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         92.2,
+         80.3
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Bandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       2.6,
+       0.4,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         25.1,
+         91.7,
+         79.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.6627450980392157,
+       0.6901960784313725,
+       0.7215686274509804
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "TopeBandeja",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.3,
+       1.1,
+       2.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         26.55,
+         92.25,
+         79.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.9490196078431372,
+       0.4823529411764706,
+       0.16862745098039217
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "Boca",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         19.6,
+         96.2,
+         79.0
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          -1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "LuzTobogan4",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     0.5,
+     0.5,
+     1.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       18.55,
+       100.4,
+       79.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.35294117647058826,
+     0.37254901960784315,
+     0.4
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "children": [
+    {
+     "name": "Luz",
+     "className": "PointLight",
+     "properties": {
+      "Range": 10,
+      "Brightness": 0,
+      "Color": [
+       0.9647058823529412,
+       0.7686274509803922,
+       0.27058823529411763
+      ],
+      "Shadows": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "ZonaToboganes",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     6,
+     4,
+     26
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       24.0,
+       92.5,
+       68.5
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": false,
+    "Transparency": 1,
+    "CanQuery": false
+   }
+  },
+  {
+   "name": "Surtidor",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     2.0,
+     4.6,
+     2.6
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       48.3,
+       92.8,
+       57.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.8509803921568627,
+     0.26666666666666666,
+     0.22745098039215686
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "Surtidor",
+    "Base": 90.5
+   }
+  },
+  {
+   "name": "PantallaSurtidor",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.5,
+     1.1,
+     0.05
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       47.05,
+       93.85,
+       57.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.10588235294117647,
+     0.10588235294117647,
+     0.12941176470588237
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": false,
+    "Transparency": 1,
+    "CanQuery": false
+   }
+  },
+  {
+   "name": "Corral",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     10.5,
+     2.6,
+     16.7
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       44.75,
+       91.8,
+       83.65
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": false,
+    "Transparency": 1,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "CorralAnimales",
+    "Base": 90.5
+   },
+   "children": [
+    {
+     "name": "VallaCorral",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       10.5,
+       2.6,
+       0.3
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         44.75,
+         91.8,
+         75.3
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.788235294117647,
+       0.5450980392156862,
+       0.3058823529411765
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    },
+    {
+     "name": "VallaCorral",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.3,
+       2.6,
+       16.7
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         39.5,
+         91.8,
+         83.65
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.788235294117647,
+       0.5450980392156862,
+       0.3058823529411765
+      ],
+      "Material": "Wood",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "CuboMerienda",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.4,
+     1.6,
+     1.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       38.2,
+       91.3,
+       73.4
+      ],
+      "orientation": [
+       [
+        0.8660254037844387,
+        0.0,
+        0.49999999999999994
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -0.49999999999999994,
+        0.0,
+        0.8660254037844387
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.12156862745098039,
+     0.6509803921568628,
+     0.6274509803921569
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "CuboMerienda",
+    "Base": 90.5
+   }
+  },
+  {
+   "name": "CarroDecorado",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     7,
+     1.9,
+     5
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       45.0,
+       91.45,
+       66.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "CarroEquipaje",
+    "Base": 90.5
+   }
+  },
+  {
+   "name": "PilaCajas",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     4.4,
+     4.8,
+     4.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       21.2,
+       92.9,
+       88.4
+      ],
+      "orientation": [
+       [
+        0.9781476007338057,
+        0.0,
+        0.20791169081775934
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -0.20791169081775934,
+        0.0,
+        0.9781476007338057
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.788235294117647,
+     0.5450980392156862,
+     0.3058823529411765
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "PilaCajas",
+    "Base": 90.5
+   }
+  },
+  {
+   "name": "PilaCajas",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     4.4,
+     4.8,
+     4.4
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       21.0,
+       92.9,
+       54.6
+      ],
+      "orientation": [
+       [
+        0.9902680687415704,
+        0.0,
+        -0.13917310096006544
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.13917310096006544,
+        0.0,
+        0.9902680687415704
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.788235294117647,
+     0.5450980392156862,
+     0.3058823529411765
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": true,
+    "CastShadow": true
+   },
+   "attributes": {
+    "Visual": "PilaCajas",
+    "Base": 90.5
+   }
+  },
+  {
+   "name": "Lampara",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.8,
+     5.0,
+     1.8
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       26.0,
+       106.0,
+       62.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "LamparaNave",
+    "Base": 103.5
+   },
+   "children": [
+    {
+     "name": "Bombilla",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       0.4,
+       0.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         26.0,
+         103.9,
+         62.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       0.8862745098039215,
+       0.6588235294117647
+      ],
+      "Material": "Neon",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Luz",
+       "className": "PointLight",
+       "properties": {
+        "Range": 34,
+        "Brightness": 0.75,
+        "Color": [
+         1.0,
+         0.8862745098039215,
+         0.6588235294117647
+        ],
+        "Shadows": false
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lampara",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.8,
+     5.0,
+     1.8
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       42.0,
+       106.0,
+       62.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "LamparaNave",
+    "Base": 103.5
+   },
+   "children": [
+    {
+     "name": "Bombilla",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       0.4,
+       0.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         42.0,
+         103.9,
+         62.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       0.8862745098039215,
+       0.6588235294117647
+      ],
+      "Material": "Neon",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Luz",
+       "className": "PointLight",
+       "properties": {
+        "Range": 34,
+        "Brightness": 0.75,
+        "Color": [
+         1.0,
+         0.8862745098039215,
+         0.6588235294117647
+        ],
+        "Shadows": false
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lampara",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.8,
+     5.0,
+     1.8
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       26.0,
+       106.0,
+       82.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "LamparaNave",
+    "Base": 103.5
+   },
+   "children": [
+    {
+     "name": "Bombilla",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       0.4,
+       0.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         26.0,
+         103.9,
+         82.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       0.8862745098039215,
+       0.6588235294117647
+      ],
+      "Material": "Neon",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Luz",
+       "className": "PointLight",
+       "properties": {
+        "Range": 34,
+        "Brightness": 0.75,
+        "Color": [
+         1.0,
+         0.8862745098039215,
+         0.6588235294117647
+        ],
+        "Shadows": false
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lampara",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     1.8,
+     5.0,
+     1.8
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       42.0,
+       106.0,
+       82.0
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.20392156862745098,
+     0.2196078431372549,
+     0.24705882352941178
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "LamparaNave",
+    "Base": 103.5
+   },
+   "children": [
+    {
+     "name": "Bombilla",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.4,
+       0.4,
+       0.4
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         42.0,
+         103.9,
+         82.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       0.8862745098039215,
+       0.6588235294117647
+      ],
+      "Material": "Neon",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "CanQuery": false
+     },
+     "children": [
+      {
+       "name": "Luz",
+       "className": "PointLight",
+       "properties": {
+        "Range": 34,
+        "Brightness": 0.75,
+        "Color": [
+         1.0,
+         0.8862745098039215,
+         0.6588235294117647
+        ],
+        "Shadows": false
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CartelMaletas",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     7.0,
+     2.6,
+     0.3
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       18.45,
+       101.6,
+       68.5
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        -1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.9490196078431372,
+     0.4823529411764706,
+     0.16862745098039217
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "CartelMaletas",
+    "Base": 100.3
+   }
+  },
+  {
+   "name": "CartelAnimales",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     5.0,
+     2.6,
+     0.3
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       44.6,
+       99.4,
+       91.55
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.12156862745098039,
+     0.6509803921568628,
+     0.6274509803921569
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "CartelAnimales",
+    "Base": 98.1
+   }
+  },
+  {
+   "name": "CartelCombustible",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     3.2,
+     2.6,
+     0.3
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       49.55,
+       98.4,
+       57.0
+      ],
+      "orientation": [
+       [
+        6.123233995736766e-17,
+        0.0,
+        1.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        -1.0,
+        0.0,
+        6.123233995736766e-17
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.8509803921568627,
+     0.26666666666666666,
+     0.22745098039215686
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "CartelCombustible",
+    "Base": 97.1
+   }
+  },
+  {
+   "name": "CartelSalida",
+   "className": "Part",
+   "properties": {
+    "Size": [
+     8.0,
+     3.0,
+     0.3
+    ],
+    "CFrame": {
+     "CFrame": {
+      "position": [
+       34.0,
+       103.0,
+       51.55
+      ],
+      "orientation": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     }
+    },
+    "Anchored": true,
+    "Color": [
+     0.12156862745098039,
+     0.6509803921568628,
+     0.6274509803921569
+    ],
+    "Material": "SmoothPlastic",
+    "TopSurface": "Smooth",
+    "BottomSurface": "Smooth",
+    "CanCollide": false,
+    "CastShadow": true,
+    "CanQuery": false
+   },
+   "attributes": {
+    "Visual": "CartelSalida",
+    "Base": 101.5
+   }
+  },
+  {
+   "name": "Marcas",
+   "className": "Folder",
+   "children": [
+    {
+     "name": "PuestoTractor",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         90.5,
+         60.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "PuestoCarro",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         90.5,
+         70.875
+        ],
+        "orientation": [
+         [
+          6.123233995736766e-17,
+          0.0,
+          1.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.0,
+          0.0,
+          6.123233995736766e-17
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "SitioJaula",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         46.4,
+         90.5,
+         84.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "SitioCocodrilo",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         42.0,
+         90.5,
+         79.0
+        ],
+        "orientation": [
+         [
+          0.766044443118978,
+          0.0,
+          0.6427876096865393
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -0.6427876096865393,
+          0.0,
+          0.766044443118978
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "SalidaNave",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1,
+       1,
+       1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         34.0,
+         90.5,
+         48.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "SpawnPreparacion",
+     "className": "SpawnLocation",
+     "properties": {
+      "Size": [
+       8,
+       0.4,
+       8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         28.5,
+         90.7,
+         81.0
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false,
+      "Enabled": false,
+      "Neutral": true,
+      "Duration": 0
+     }
+    }
+   ]
+  },
+  {
+   "name": "Sueltos",
+   "className": "Folder",
+   "children": []
+  }
+ ]
+}

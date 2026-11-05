@@ -4,12 +4,12 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
-local Visuales = require(ReplicatedStorage.Shared.Visuales)
 local Contratos = require(ReplicatedStorage.Shared.Contratos)
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local Agarre = require(script.Parent.Agarre)
@@ -20,7 +20,6 @@ local Sonido = require(script.Parent.Sonido)
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
 local RemotoResultados = Remotos:WaitForChild("Resultados") :: RemoteEvent
-local RemotoTienda = Remotos:WaitForChild("Tienda") :: RemoteEvent
 local Estado = ReplicatedStorage:WaitForChild("Estado") :: Folder
 
 local Interfaz = {}
@@ -64,8 +63,6 @@ local tableroGui: SurfaceGui
 local ayuda: ImageLabel
 local resaltado: Highlight
 local ultimoApuntado: Instance? = nil
-local panelTienda: ImageLabel? = nil
-local estadoTienda: { [string]: any }? = nil
 local panelIsla: ImageLabel
 local textosIsla: { [string]: TextLabel } = {}
 local iconoTiempoIsla: ImageLabel
@@ -98,12 +95,14 @@ local FILAS_ESTADO = {
 	{ clave = "Combustible", icono = "Combustible", letra = "" },
 }
 
-local LINEAS_AYUDA = {
+local LINEAS_AYUDA: { { string? } } = {
 	{ nil, "<b>Clic</b> coger / soltar · <b>Clic der.</b> lanzar" },
 	{ nil, "<b>F</b> usar extintor, llave o agua" },
 	{ nil, "<b>E</b> servir, coger comida y pulsar botones" },
 	{ nil, "<b>G</b> sentarte · <b>T</b> abrir o cerrar altillos" },
 	{ nil, "<b>R</b> (mantener) calmar a un pasajero" },
+	{ "Mano", "<b>Clic der.</b> con las manos vacías: ¡bofetada!" },
+	{ "Pasajero", "Mira a un pasajero para ver su carácter" },
 	{ "Hamburguesa", "Lanza la comida al pasajero que la pide" },
 	{ "Maleta", "Tapa un agujero lanzándole una maleta" },
 	{ "Cocodrilo", "El cocodrilo persigue la comida" },
@@ -197,7 +196,7 @@ local function construir()
 	filasResultados.Parent = panelResultados
 	Gui.lista(filasResultados, 3)
 
-	ayuda = Gui.panel(raiz, "Papel", UDim2.fromOffset(470, 476), UDim2.new(1, -12, 1, -12), Vector2.new(1, 1))
+	ayuda = Gui.panel(raiz, "Papel", UDim2.fromOffset(470, 536), UDim2.new(1, -12, 1, -12), Vector2.new(1, 1))
 	ayuda.Rotation = 1.2
 	ayuda.Visible = false
 	izquierda(Gui.texto(ayuda, "CONTROLES", UDim2.fromOffset(220, 36), UDim2.fromOffset(30, 22), Gui.TINTA, true))
@@ -277,6 +276,7 @@ end
 
 local NOMBRES_FASE = {
 	Aeropuerto = "AEROPUERTO · Elegid vuelo",
+	Preparacion = "PREPARACIÓN · ¡Cargad el avión!",
 	Embarque = "EMBARQUE · ¡Subid al avión!",
 	Despegue = "DESPEGUE",
 	Vuelo = "EN VUELO",
@@ -310,7 +310,7 @@ end
 local function actualizarBarra()
 	local faseJuego = Estado:GetAttribute("Fase")
 	local faseAvion = avion:GetAttribute("Fase")
-	local clave = if faseJuego == "Aeropuerto" or faseJuego == "Embarque" or faseJuego == "Isla" or faseJuego == "Resultados" then faseJuego else faseAvion
+	local clave = if faseJuego == "Aeropuerto" or faseJuego == "Preparacion" or faseJuego == "Embarque" or faseJuego == "Isla" or faseJuego == "Resultados" then faseJuego else faseAvion
 	textoFase.Text = NOMBRES_FASE[if typeof(clave) == "string" then clave else ""] or ""
 	local contrato = contratoCache
 	local progreso = 0
@@ -338,7 +338,7 @@ local function actualizarBarra()
 	Gui.llenar(relleno, progreso)
 	avionRuta.Position = UDim2.fromScale(progreso, 0.5)
 	local cuenta = Estado:GetAttribute("Cuenta")
-	local hayCuenta = typeof(cuenta) == "number" and cuenta > 0 and (faseJuego == "Embarque" or faseJuego == "Aeropuerto")
+	local hayCuenta = typeof(cuenta) == "number" and cuenta > 0 and (faseJuego == "Embarque" or faseJuego == "Aeropuerto" or faseJuego == "Preparacion")
 	textoCuenta.Text = if hayCuenta then tostring(cuenta) else ""
 	relojCuenta.Visible = hayCuenta
 end
@@ -767,6 +767,9 @@ local function resultados(datos: any)
 	if datos.piratas and datos.piratas > 0 then
 		linea("Pirata", `Piratas derribados: +{datos.piratas}`)
 	end
+	if typeof(datos.caos) == "number" and datos.caos ~= 0 then
+		linea("Medalla", `Caos a bordo: {if datos.caos > 0 then "+" else ""}{datos.caos}`)
+	end
 	if datos.bonus and datos.bonus > 0 then
 		linea("Estrella", `Bonus de aterrizaje: +{datos.bonus}`)
 	end
@@ -791,135 +794,9 @@ local function resultados(datos: any)
 	end)
 end
 
-local function boton(padre: Instance, contenido: string, tamano: UDim2, posicion: UDim2, color: Color3, accion: () -> ()): ImageButton
-	local b = Gui.panel(padre, "Boton", tamano, posicion, nil, true) :: any
-	b.ImageColor3 = color
-	local t = Gui.texto(b, contenido, UDim2.new(1, -16, 1, -12), UDim2.fromOffset(8, 4), Gui.PAPEL, true)
-	Gui.trazado(t)
-	local limite = Instance.new("UITextSizeConstraint")
-	limite.MaxTextSize = 22
-	limite.Parent = t
-	b.Activated:Connect(function()
-		Sonido.reproducir("UiClick", nil, 0.7, 1)
-		accion()
-	end)
-	return b
-end
-
-local function dibujarTienda()
-	local panel = panelTienda
-	local e = estadoTienda
-	if not panel or not e then
-		return
-	end
-	local contenido = panel:FindFirstChild("Contenido")
-	if contenido then
-		contenido:Destroy()
-	end
-	local c = Instance.new("Frame")
-	c.Name = "Contenido"
-	c.BackgroundTransparency = 1
-	c.Size = UDim2.new(1, -60, 1, -110)
-	c.Position = UDim2.fromOffset(30, 84)
-	c.Parent = panel
-	local dinero = if typeof(e.dinero) == "number" then e.dinero else 0
-	local gorros = if typeof(e.gorros) == "table" then e.gorros else {}
-	local mejoras = if typeof(e.mejoras) == "table" then e.mejoras else {}
-	local puesto = if typeof(e.gorro) == "string" then e.gorro else ""
-	local cabecera = panel:FindFirstChild("Dinero")
-	if cabecera and cabecera:IsA("TextLabel") then
-		cabecera.Text = tostring(dinero)
-	end
-	local columnaGorros = Instance.new("Frame")
-	columnaGorros.BackgroundTransparency = 1
-	columnaGorros.Size = UDim2.new(0.5, -10, 1, 0)
-	columnaGorros.Parent = c
-	local columnaMejoras = columnaGorros:Clone()
-	columnaMejoras.Position = UDim2.new(0.5, 10, 0, 0)
-	columnaMejoras.Parent = c
-	Gui.fila(columnaGorros, "Gorro", "<b>GORROS</b>", 28, Gui.TURQUESA)
-	Gui.fila(columnaMejoras, "Flecha", "<b>MEJORAS DEL AVIÓN</b>", 28, Gui.NARANJA)
-	local disponibles: { Config.Gorro } = {}
-	for _, g in Config.TIENDA.GORROS do
-		if Visuales.IDS[g.nombre] then
-			table.insert(disponibles, g)
-		end
-	end
-	if #disponibles == 0 then
-		izquierda(Gui.texto(columnaGorros, "Próximamente", UDim2.new(1, 0, 0, 30), UDim2.fromOffset(0, 38), Gui.LAPIZ, false, 20))
-	end
-	for i, g in disponibles do
-		local y = 36 + (i - 1) * 50
-		izquierda(Gui.texto(columnaGorros, g.titulo, UDim2.new(0.58, -6, 0, 40), UDim2.fromOffset(0, y), Gui.TINTA, false, 21))
-		local tiene = gorros[g.nombre] == true
-		local activo = puesto == g.nombre
-		local color = if activo then Gui.ROJO elseif tiene then Gui.TURQUESA elseif dinero >= g.precio then Gui.VERDE else Color3.fromRGB(150, 140, 130)
-		local b = boton(columnaGorros, if activo then "Quitar" elseif tiene then "Ponértelo" else tostring(g.precio), UDim2.new(0.42, 0, 0, 44), UDim2.new(0.58, 0, 0, y - 2), color, function()
-			RemotoTienda:FireServer(if activo then "quitar" else "gorro", g.nombre)
-		end)
-		if not tiene and not activo then
-			Gui.icono(b, "Moneda", UDim2.fromOffset(26, 26), UDim2.new(0, 10, 0.5, -2), Vector2.new(0, 0.5))
-		end
-	end
-	for i, m in Config.TIENDA.MEJORAS do
-		local nivel = if typeof(mejoras[m.nombre]) == "number" then mejoras[m.nombre] else 0
-		local precio = m.precios[nivel + 1]
-		local y = 36 + (i - 1) * 84
-		izquierda(Gui.texto(columnaMejoras, `<b>{m.titulo}</b>  ({nivel}/{#m.precios})`, UDim2.new(0.6, -6, 0, 26), UDim2.fromOffset(0, y), Gui.TINTA, false, 21))
-		local d = izquierda(Gui.texto(columnaMejoras, m.descripcion, UDim2.new(0.6, -6, 0, 44), UDim2.fromOffset(0, y + 26), Gui.LAPIZ, false, 17))
-		d.TextYAlignment = Enum.TextYAlignment.Top
-		if precio then
-			local b = boton(columnaMejoras, tostring(precio), UDim2.new(0.4, 0, 0, 44), UDim2.new(0.6, 0, 0, y + 10), if dinero >= precio then Gui.VERDE else Color3.fromRGB(150, 140, 130), function()
-				RemotoTienda:FireServer("mejora", m.nombre)
-			end)
-			Gui.icono(b, "Moneda", UDim2.fromOffset(26, 26), UDim2.new(0, 10, 0.5, -2), Vector2.new(0, 0.5))
-		else
-			local maximo = Gui.fila(columnaMejoras, "Tick", "Máximo", 30, Gui.VERDE)
-			maximo.Position = UDim2.new(0.6, 0, 0, y + 14)
-			maximo.Size = UDim2.new(0.4, 0, 0, 30)
-		end
-	end
-	local nota = izquierda(Gui.texto(columnaMejoras, "Las mejoras se aplican si alguien de la tripulación las tiene.", UDim2.new(1, 0, 0, 40), UDim2.fromOffset(0, 36 + #Config.TIENDA.MEJORAS * 84), Gui.LAPIZ, false, 17))
-	nota.TextYAlignment = Enum.TextYAlignment.Top
-end
-
-local function abrirTienda(abrir: any, datos: any)
-	if typeof(datos) == "table" then
-		estadoTienda = datos
-	end
-	if abrir == true and not panelTienda then
-		local panel = Gui.panel(raiz, "Papel", UDim2.fromOffset(800, 500), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
-		panel.Name = "Tienda"
-		panel.Rotation = -0.8
-		izquierda(Gui.texto(panel, "TIENDA DE LA TRIPULACIÓN", UDim2.new(1, -260, 0, 40), UDim2.fromOffset(32, 26), Gui.TINTA, true))
-		Gui.icono(panel, "Moneda", UDim2.fromOffset(34, 34), UDim2.new(1, -196, 0, 28))
-		local dinero = izquierda(Gui.texto(panel, "", UDim2.fromOffset(100, 36), UDim2.new(1, -156, 0, 28), Gui.NARANJA, true))
-		dinero.Name = "Dinero"
-		local cerrar = Gui.icono(panel, "Cerrar", UDim2.fromOffset(42, 42), UDim2.new(1, -58, 0, 22))
-		local zona = Instance.new("TextButton")
-		zona.BackgroundTransparency = 1
-		zona.Text = ""
-		zona.Size = UDim2.fromScale(1, 1)
-		zona.Modal = true
-		zona.Parent = cerrar
-		zona.Activated:Connect(function()
-			Sonido.reproducir("UiClick", nil, 0.7, 1)
-			local p = panelTienda
-			if p then
-				p.Visible = false
-			end
-		end)
-		panelTienda = panel
-	end
-	local p = panelTienda
-	if abrir == true and p then
-		p.Visible = true
-	end
-	dibujarTienda()
-end
-
 function Interfaz.iniciar()
 	Gui.precargar()
+	pcall(StarterGui.SetCoreGuiEnabled, StarterGui, Enum.CoreGuiType.PlayerList, false)
 	construir()
 	resaltado = Instance.new("Highlight")
 	resaltado.Name = "Apuntado"
@@ -935,7 +812,6 @@ function Interfaz.iniciar()
 		end
 	end)
 	RemotoResultados.OnClientEvent:Connect(resultados)
-	RemotoTienda.OnClientEvent:Connect(abrirTienda)
 	for _, modelo in CollectionService:GetTagged("Pasajero") do
 		task.spawn(burbuja, modelo)
 	end

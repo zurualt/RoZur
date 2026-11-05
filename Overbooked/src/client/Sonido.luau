@@ -212,6 +212,19 @@ function Sonido.iniciar()
 	grupo("Efectos", 0.9)
 	grupo("Ambiente", 0.7)
 	grupo("Musica", 0.45)
+	local function agrupar(d: Instance)
+		if d:IsA("Sound") and d.SoundGroup == nil then
+			d.SoundGroup = if d.Looped then grupos.Ambiente else grupos.Efectos
+		end
+	end
+	for _, d in Workspace:GetDescendants() do
+		agrupar(d)
+	end
+	Workspace.DescendantAdded:Connect(function(d)
+		if d:IsA("Sound") then
+			task.defer(agrupar, d)
+		end
+	end)
 	local motores: { Bucle } = {}
 	for _, lado in { "Izq", "Der" } do
 		local m = pieza("Motor" .. lado)

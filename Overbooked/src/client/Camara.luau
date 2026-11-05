@@ -30,10 +30,12 @@ local POSE_BRAZO: { [string]: { number } } = {
 	colgar = { 45, 15, 0, 6 },
 	dos = { 78, 18, 0, 10 },
 }
-local LEVANTE_PROPIO = math.rad(12)
-local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(55), 0, 0)
+local LEVANTE_PROPIO = math.rad(22)
+local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(64), 0, 0)
 local alcanceHasta = 0
-local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(45), 0, 0)
+local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(96), 0, 0)
+local ABRIR_REPOSO = math.rad(14)
+local ALTURA_OJOS = Vector3.new(0, -0.36, 0)
 
 function Camara.sacudir(cantidad: number)
 	trauma = math.min(1, trauma + cantidad)
@@ -148,6 +150,8 @@ local function poseSosteniendo(personaje: Model)
 	local m = datos.motores
 	local inclinacionVista = if propio then math.clamp(math.asin(math.clamp(Workspace.CurrentCamera.CFrame.LookVector.Y, -1, 1)), -0.8, 1.2) else 0
 	local reposo = CFrame.Angles(inclinacionVista, 0, 0) * GIRO_HOMBRO_REPOSO
+	local reposoDer = CFrame.Angles(0, -ABRIR_REPOSO, 0) * reposo
+	local reposoIzq = CFrame.Angles(0, ABRIR_REPOSO, 0) * reposo
 	if tipo ~= "" then
 		local estilo = Manos.estilo(tipo)
 		if personaje ~= jugador.Character then
@@ -169,16 +173,16 @@ local function poseSosteniendo(personaje: Model)
 			girar(m.LeftShoulder, CFrame.Angles(0, -dentro, 0) * subir)
 			girar(m.LeftElbow, codo)
 		elseif propio then
-			girar(m.LeftShoulder, reposo)
+			girar(m.LeftShoulder, reposoIzq)
 			girar(m.LeftElbow, GIRO_CODO_REPOSO)
 		end
 		return
 	end
 	local alcance = math.clamp((alcanceHasta - os.clock()) / 0.45, 0, 1)
 	local estirar = math.sin(alcance * math.pi)
-	girar(m.RightShoulder, if alcance > 0 then CFrame.Angles(inclinacionVista + math.rad(90) * estirar, 0, 0) else reposo)
-	girar(m.RightElbow, if alcance > 0 then CFrame.Angles(math.rad(45) * (1 - estirar), 0, 0) else GIRO_CODO_REPOSO)
-	girar(m.LeftShoulder, reposo)
+	girar(m.RightShoulder, reposoDer:Lerp(CFrame.Angles(inclinacionVista + math.rad(90), 0, 0), estirar))
+	girar(m.RightElbow, GIRO_CODO_REPOSO:Lerp(CFrame.identity, estirar))
+	girar(m.LeftShoulder, reposoIzq)
 	girar(m.LeftElbow, GIRO_CODO_REPOSO)
 end
 
@@ -216,6 +220,9 @@ function Camara.iniciar()
 		local personaje = jugador.Character
 		local humanoide = personaje and personaje:FindFirstChildOfClass("Humanoid")
 		local extra = CFrame.identity
+		if humanoide and humanoide.CameraOffset ~= ALTURA_OJOS then
+			humanoide.CameraOffset = ALTURA_OJOS
+		end
 		if humanoide and not terceraPersona then
 			if humanoide.MoveDirection.Magnitude > 0.1 and humanoide.FloorMaterial ~= Enum.Material.Air then
 				paso += dt * humanoide.WalkSpeed * 0.62

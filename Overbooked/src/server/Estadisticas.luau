@@ -14,6 +14,7 @@ local PREMIOS = {
 	{ clave = "pilotar", icono = "Volante", titulo = "Piloto del día" },
 	{ clave = "cocodrilo", icono = "Cocodrilo", titulo = "Domador" },
 	{ clave = "calmar", icono = "Corazon", titulo = "Relaciones públicas" },
+	{ clave = "caos", icono = "Medalla", titulo = "Domador del caos" },
 	{ clave = "caidas", icono = "Platano", titulo = "Más torpe" },
 }
 

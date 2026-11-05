@@ -364,7 +364,7 @@
   "archivo": "MotorAvion.ogg",
   "duracion": 5.0,
   "bucle": true,
-  "volumen": 0.45,
+  "volumen": 0.25,
   "descripcion": "Zumbido de motor a reacción dentro de la cabina (ElevenLabs)."
  },
  {
@@ -372,7 +372,7 @@
   "archivo": "VientoCabina.ogg",
   "duracion": 10.008,
   "bucle": true,
-  "volumen": 0.75,
+  "volumen": 0.55,
   "descripcion": "Bucle de viento que entra a chorro (puerta abierta o brecha en el casco)."
  },
  {
@@ -598,5 +598,101 @@
   "bucle": false,
   "volumen": 0.8,
   "descripcion": "Pollo de goma que chilla (ElevenLabs)."
+ },
+ {
+  "nombre": "Cabra",
+  "archivo": "Cabra.ogg",
+  "duracion": 1.2,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Balido de cabra cómico (ElevenLabs)."
+ },
+ {
+  "nombre": "Gallina",
+  "archivo": "Gallina.ogg",
+  "duracion": 1.48,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Gallina cacareando asustada y aleteando (ElevenLabs)."
+ },
+ {
+  "nombre": "Bebe",
+  "archivo": "Bebe.ogg",
+  "duracion": 2.48,
+  "bucle": false,
+  "volumen": 0.5,
+  "descripcion": "Bebé llorando a pleno pulmón (ElevenLabs)."
+ },
+ {
+  "nombre": "Estornudo",
+  "archivo": "Estornudo.ogg",
+  "duracion": 2.0,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Estornudo exagerado: a... a... ¡achís! (ElevenLabs)."
+ },
+ {
+  "nombre": "GolpesPuerta",
+  "archivo": "GolpesPuerta.ogg",
+  "duracion": 1.6,
+  "bucle": false,
+  "volumen": 0.9,
+  "descripcion": "Golpes desesperados en la puerta del baño (ElevenLabs)."
+ },
+ {
+  "nombre": "Cisterna",
+  "archivo": "Cisterna.ogg",
+  "duracion": 1.48,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Cisterna de vacío de avión (ElevenLabs)."
+ },
+ {
+  "nombre": "Cafetera",
+  "archivo": "Cafetera.ogg",
+  "duracion": 2.0,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Cafetera averiada que borbotea y suelta vapor (ElevenLabs)."
+ },
+ {
+  "nombre": "Hipo",
+  "archivo": "Hipo.ogg",
+  "duracion": 0.6,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Hipo de borracho (ElevenLabs)."
+ },
+ {
+  "nombre": "Disco",
+  "archivo": "Disco.ogg",
+  "duracion": 4.0,
+  "bucle": true,
+  "volumen": 0.35,
+  "descripcion": "Bucle de música disco para la turbulencia disco (ElevenLabs)."
+ },
+ {
+  "nombre": "Placaje",
+  "archivo": "Placaje.ogg",
+  "duracion": 0.8,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Placaje: golpe sordo de cuerpo con gruñido (ElevenLabs)."
+ },
+ {
+  "nombre": "Bofetada",
+  "archivo": "Bofetada.ogg",
+  "duracion": 0.68,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Bofetada de dibujos animados: palmada seca de mano abierta en la mejilla (ElevenLabs)."
+ },
+ {
+  "nombre": "Eructo",
+  "archivo": "Eructo.ogg",
+  "duracion": 0.88,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Eructo cómico del pasajero glotón tras comer (ElevenLabs)."
  }
 ]

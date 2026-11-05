@@ -38,7 +38,7 @@ local NOMBRES = {
 	"RightShoulder",
 	"RightElbow",
 }
-local ZANCADA = 3.2
+local ZANCADA = 4.6
 local ALCANCE = 160
 local rad = math.rad
 local datos: { [Model]: Juntas } = setmetatable({}, { __mode = "k" }) :: any
@@ -119,7 +119,7 @@ local function animar(personaje: Model, j: Juntas, dt: number)
 	local caida = j.aterrizaje * j.aterrizaje
 	local libre = 1 - se
 
-	local bote = (math.abs(s) * 0.3 * f + respira * 0.025 * quieto - caida * 0.35) * libre
+	local bote = (math.abs(s) * 0.38 * f + respira * 0.025 * quieto - caida * 0.35) * libre
 	poner(j, "Root", CFrame.new(0, bote, 0) * CFrame.Angles((rad(-6) * f - rad(65) * n) * libre, s * rad(7) * f * libre, s * rad(9) * f * libre))
 	poner(j, "Waist", CFrame.Angles(rad(-5) * f + respira * rad(1.5) * quieto + rad(10) * caida, -s * rad(12) * f, -s * rad(5) * f))
 	poner(j, "Neck", CFrame.Angles(rad(5) * f + math.sin(j.fase * 2) * rad(4) * f + rad(35) * n - rad(8) * caida, s * rad(4) * f, s * rad(3) * f))

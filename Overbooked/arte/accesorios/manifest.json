@@ -1,0 +1,386 @@
+[
+ {
+  "nombre": "CascoVikingo",
+  "parte": "Head",
+  "archivo": "CascoVikingo.fbx",
+  "triangulos": 1510,
+  "minimo": [
+   -0.915,
+   0.532,
+   -0.379
+  ],
+  "maximo": [
+   0.915,
+   1.362,
+   0.561
+  ]
+ },
+ {
+  "nombre": "Chistera",
+  "parte": "Head",
+  "archivo": "Chistera.fbx",
+  "triangulos": 262,
+  "minimo": [
+   -0.401,
+   0.79,
+   -0.171
+  ],
+  "maximo": [
+   0.209,
+   1.29,
+   0.379
+  ]
+ },
+ {
+  "nombre": "GorroPez",
+  "parte": "Head",
+  "archivo": "GorroPez.fbx",
+  "triangulos": 894,
+  "minimo": [
+   -0.355,
+   0.811,
+   -0.543
+  ],
+  "maximo": [
+   0.355,
+   1.491,
+   0.967
+  ]
+ },
+ {
+  "nombre": "GorroPlatano",
+  "parte": "Head",
+  "archivo": "GorroPlatano.fbx",
+  "triangulos": 1764,
+  "minimo": [
+   -0.635,
+   0.423,
+   -0.329
+  ],
+  "maximo": [
+   0.635,
+   1.453,
+   0.691
+  ]
+ },
+ {
+  "nombre": "CascoBombero",
+  "parte": "Head",
+  "archivo": "CascoBombero.fbx",
+  "triangulos": 889,
+  "minimo": [
+   -0.685,
+   0.335,
+   -0.44
+  ],
+  "maximo": [
+   0.685,
+   1.275,
+   0.91
+  ]
+ },
+ {
+  "nombre": "GorroCocodrilo",
+  "parte": "Head",
+  "archivo": "GorroCocodrilo.fbx",
+  "triangulos": 930,
+  "minimo": [
+   -0.6,
+   0.53,
+   -0.782
+  ],
+  "maximo": [
+   0.6,
+   1.19,
+   0.648
+  ]
+ },
+ {
+  "nombre": "NidoPajaro",
+  "parte": "Head",
+  "archivo": "NidoPajaro.fbx",
+  "triangulos": 1358,
+  "minimo": [
+   -0.715,
+   0.613,
+   -0.436
+  ],
+  "maximo": [
+   0.675,
+   1.373,
+   0.694
+  ]
+ },
+ {
+  "nombre": "Auriculares2",
+  "parte": "Head",
+  "archivo": "Auriculares2.fbx",
+  "triangulos": 604,
+  "minimo": [
+   -0.895,
+   -0.296,
+   -0.344
+  ],
+  "maximo": [
+   0.895,
+   1.154,
+   0.376
+  ]
+ },
+ {
+  "nombre": "GafasEstrella",
+  "parte": "Head",
+  "archivo": "GafasEstrella.fbx",
+  "triangulos": 712,
+  "minimo": [
+   -0.75,
+   -0.144,
+   -0.729
+  ],
+  "maximo": [
+   0.75,
+   0.566,
+   -0.039
+  ]
+ },
+ {
+  "nombre": "Monoculo",
+  "parte": "Head",
+  "archivo": "Monoculo.fbx",
+  "triangulos": 552,
+  "minimo": [
+   -0.702,
+   -1.078,
+   -0.727
+  ],
+  "maximo": [
+   0.038,
+   0.492,
+   -0.247
+  ]
+ },
+ {
+  "nombre": "Antifaz",
+  "parte": "Head",
+  "archivo": "Antifaz.fbx",
+  "triangulos": 924,
+  "minimo": [
+   -0.625,
+   -0.039,
+   -0.435
+  ],
+  "maximo": [
+   0.515,
+   0.351,
+   0.705
+  ]
+ },
+ {
+  "nombre": "GafasBuceo",
+  "parte": "Head",
+  "archivo": "GafasBuceo.fbx",
+  "triangulos": 1596,
+  "minimo": [
+   -0.868,
+   -0.189,
+   -0.716
+  ],
+  "maximo": [
+   0.622,
+   0.971,
+   0.564
+  ]
+ },
+ {
+  "nombre": "MochilaParacaidas",
+  "parte": "UpperTorso",
+  "archivo": "MochilaParacaidas.fbx",
+  "triangulos": 650,
+  "minimo": [
+   -0.565,
+   -0.466,
+   -0.415
+  ],
+  "maximo": [
+   0.565,
+   0.494,
+   0.665
+  ]
+ },
+ {
+  "nombre": "Jetpack",
+  "parte": "UpperTorso",
+  "archivo": "Jetpack.fbx",
+  "triangulos": 776,
+  "minimo": [
+   -0.565,
+   -0.901,
+   -0.412
+  ],
+  "maximo": [
+   0.565,
+   0.289,
+   0.648
+  ]
+ },
+ {
+  "nombre": "AlasAvion",
+  "parte": "UpperTorso",
+  "archivo": "AlasAvion.fbx",
+  "triangulos": 658,
+  "minimo": [
+   -1.28,
+   -0.254,
+   -0.414
+  ],
+  "maximo": [
+   1.28,
+   0.496,
+   0.666
+  ]
+ },
+ {
+  "nombre": "FlotadorPato",
+  "parte": "LowerTorso",
+  "archivo": "FlotadorPato.fbx",
+  "triangulos": 950,
+  "minimo": [
+   -0.765,
+   -0.315,
+   -0.821
+  ],
+  "maximo": [
+   0.765,
+   0.475,
+   0.639
+  ]
+ },
+ {
+  "nombre": "LlaveGigante",
+  "parte": "UpperTorso",
+  "archivo": "LlaveGigante.fbx",
+  "triangulos": 588,
+  "minimo": [
+   -0.576,
+   -0.667,
+   -0.411
+  ],
+  "maximo": [
+   0.634,
+   0.783,
+   0.539
+  ]
+ },
+ {
+  "nombre": "GorraPiloto",
+  "parte": "Head",
+  "archivo": "GorraPiloto.fbx",
+  "triangulos": 502,
+  "minimo": [
+   -0.64,
+   0.541,
+   -0.777
+  ],
+  "maximo": [
+   0.64,
+   1.291,
+   0.723
+  ]
+ },
+ {
+  "nombre": "GorroHelice",
+  "parte": "Head",
+  "archivo": "GorroHelice.fbx",
+  "triangulos": 408,
+  "minimo": [
+   -0.58,
+   0.55,
+   -0.481
+  ],
+  "maximo": [
+   0.58,
+   1.23,
+   0.499
+  ]
+ },
+ {
+  "nombre": "GorroChef",
+  "parte": "Head",
+  "archivo": "GorroChef.fbx",
+  "triangulos": 568,
+  "minimo": [
+   -0.66,
+   0.542,
+   -0.423
+  ],
+  "maximo": [
+   0.66,
+   1.712,
+   0.737
+  ]
+ },
+ {
+  "nombre": "SombreroVaquero",
+  "parte": "Head",
+  "archivo": "SombreroVaquero.fbx",
+  "triangulos": 564,
+  "minimo": [
+   -0.96,
+   0.477,
+   -0.797
+  ],
+  "maximo": [
+   0.96,
+   1.317,
+   0.953
+  ]
+ },
+ {
+  "nombre": "GorroCono",
+  "parte": "Head",
+  "archivo": "GorroCono.fbx",
+  "triangulos": 278,
+  "minimo": [
+   -0.58,
+   0.592,
+   -0.496
+  ],
+  "maximo": [
+   0.58,
+   1.782,
+   0.654
+  ]
+ },
+ {
+  "nombre": "Corona",
+  "parte": "Head",
+  "archivo": "Corona.fbx",
+  "triangulos": 486,
+  "minimo": [
+   -0.56,
+   0.542,
+   -0.371
+  ],
+  "maximo": [
+   0.56,
+   1.222,
+   0.549
+  ]
+ },
+ {
+  "nombre": "GorroPato",
+  "parte": "Head",
+  "archivo": "GorroPato.fbx",
+  "triangulos": 562,
+  "minimo": [
+   -0.6,
+   0.547,
+   -0.464
+  ],
+  "maximo": [
+   0.6,
+   1.667,
+   0.736
+  ]
+ }
+]

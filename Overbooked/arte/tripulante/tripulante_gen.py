@@ -10,7 +10,13 @@ OUT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else
 if len(sys.argv) > 1 and os.path.isdir(sys.argv[-1]):
     OUT = sys.argv[-1]
 
-ZCB, ZCT, RB, RT, DEPTH = 2.05, 3.55, 0.88, 0.80, 0.86
+HZB, HZT, HRB, HRT, HCB, HCT, HD = 3.98, 4.50, 0.56, 0.47, 0.50, 0.46, 0.92
+ZE = 4.32
+DZ = ZE - 4.04
+ZROOT, ZWAIST, ZNECK, ZTOP = 2.30, 2.70, 3.42, 4.96
+HOMBRO, CODO, MUNECA = Vector((0.62, 0.0, 3.17)), Vector((0.76, 0.0, 2.62)), Vector((0.84, 0.0, 2.00))
+CADERA, RODILLA, TOBILLO = Vector((0.27, 0.0, 2.18)), Vector((0.27, 0.0, 1.24)), Vector((0.28, 0.0, 0.34))
+HRP_Z = CADERA.z + 1.0
 
 PALETTE = {
     "body": (0, (1.0, 1.0, 1.0, 0.0)),
@@ -24,6 +30,8 @@ PALETTE = {
     "sole": (8, "EDE3CF"),
     "white": (9, "F7F7F2"),
     "mouth": (10, "2B1219"),
+    "tongue": (11, "E85A78"),
+    "navy": (12, "2C3A5E"),
 }
 
 PLAYER_COLORS = {
@@ -60,27 +68,12 @@ def ss(a, b, x):
     return t * t * (3.0 - 2.0 * t)
 
 
-def r_at(z):
-    if z < ZCB:
-        return RB * math.sqrt(max(0.0, 1.0 - (ZCB - z) ** 2))
-    if z > ZCT:
-        return RT * math.sqrt(max(0.0, 1.0 - (z - ZCT) ** 2))
-    return RB + (RT - RB) * (z - ZCB) / (ZCT - ZCB)
-
-
-VEST_TOP, VEST_BOT = 3.30, 2.0
-
-
-def vest_phi(z):
-    return max(0.035, 0.5 * (z - 2.6) / (VEST_TOP - 2.6)) if z > 2.6 else 0.035
-
-
-def under_vest(c):
-    if not (VEST_BOT + 0.12 < c.z < VEST_TOP - 0.08):
-        return False
-    th = math.atan2(c.y / DEPTH, c.x)
-    d = abs((th + math.pi / 2 + math.pi) % (2 * math.pi) - math.pi)
-    return d > vest_phi(c.z) + 0.3
+def r_cabeza(z):
+    if z < HZB:
+        return HRB * math.sqrt(max(0.0, 1.0 - ((HZB - z) / HCB) ** 2))
+    if z > HZT:
+        return HRT * math.sqrt(max(0.0, 1.0 - ((z - HZT) / HCT) ** 2))
+    return HRB + (HRT - HRB) * (z - HZB) / (HZT - HZB)
 
 
 def frame_from_normal(n):
@@ -95,18 +88,16 @@ def frame_from_normal(n):
 
 
 def core_weights(z):
-    t1 = ss(2.25, 2.65, z)
-    t2 = ss(3.30, 3.70, z)
+    t1 = ss(2.55, 2.85, z)
+    t2 = ss(3.38, 3.56, z)
     w = {"LowerTorso": 1.0 - t1, "UpperTorso": t1 * (1.0 - t2), "Head": t2}
     return {k: v for k, v in w.items() if v > 1e-4}
 
 
 def core_part(c):
-    if c.z < 2.45:
+    if c.z < 2.70:
         return "LowerTorso"
-    if c.z < 3.5:
-        return "UpperTorso"
-    return "Head"
+    return "UpperTorso"
 
 
 class Prim:
@@ -244,28 +235,18 @@ def tube(ctrl, radius_fn, k=12, steps=6, closed=False, up=None, caps=True, cap_r
     return bm, ctrl_s
 
 
-def build_body():
-    m = 28
-    prof = []
-    nb, nm, nt = 8, 7, 11
-    for i in range(nb):
-        a = math.radians(-90 + 90 * i / nb)
-        prof.append((ZCB + math.sin(a), RB * math.cos(a)))
-    for i in range(nm):
-        prof.append((ZCB + (ZCT - ZCB) * i / nm, RB + (RT - RB) * i / nm))
-    for i in range(nt + 1):
-        a = math.radians(90 * i / nt)
-        prof.append((ZCT + math.sin(a), RT * math.cos(a)))
+def revolucion(prof, m=24, n=2.0):
     bm = bmesh.new()
     rings = []
-    for z, r in prof:
-        if r < 1e-5:
+    for z, rx, ry in prof:
+        if rx < 1e-5:
             rings.append([bm.verts.new((0, 0, z))])
             continue
         ring = []
         for j in range(m):
             th = -math.pi / 2 + 2 * math.pi * j / m
-            ring.append(bm.verts.new((r * math.cos(th), DEPTH * r * math.sin(th), z)))
+            c, sn = math.cos(th), math.sin(th)
+            ring.append(bm.verts.new((rx * math.copysign(abs(c) ** (2 / n), c), ry * math.copysign(abs(sn) ** (2 / n), sn), z)))
         rings.append(ring)
     for i in range(len(rings) - 1):
         a, b = rings[i], rings[i + 1]
@@ -282,53 +263,28 @@ def build_body():
     return bm
 
 
-def cull_under_vest(bm):
-    dead = [f for f in bm.faces if under_vest(f.calc_center_median())]
-    bmesh.ops.delete(bm, geom=dead, context="FACES_ONLY")
-    loose = [v for v in bm.verts if not v.link_faces]
-    bmesh.ops.delete(bm, geom=loose, context="VERTS")
-    return bm
+def build_head():
+    prof = []
+    nb, nm, nt = 9, 5, 12
+    for i in range(nb):
+        a = math.radians(-90 + 90 * i / nb)
+        prof.append((HZB + HCB * math.sin(a), HRB * math.cos(a), HRB * math.cos(a) * HD))
+    for i in range(nm):
+        z = HZB + (HZT - HZB) * i / nm
+        prof.append((z, r_cabeza(z), r_cabeza(z) * HD))
+    for i in range(nt + 1):
+        a = math.radians(90 * i / nt)
+        prof.append((HZT + HCT * math.sin(a), HRT * math.cos(a), HRT * math.cos(a) * HD))
+    return revolucion(prof, 24)
 
 
-def build_vest():
-    rows, cols = 5, 20
-    z_top = VEST_TOP
-    off = 0.045
-    phi = vest_phi
-
-    def z_bot(th):
-        f = max(0.0, math.cos(th + math.pi / 2))
-        return VEST_BOT - 0.14 * f ** 6
-
-    bm = bmesh.new()
-    grid = []
-    for ri in range(rows + 1):
-        v = ri / rows
-        zn = VEST_BOT + (z_top - VEST_BOT) * v
-        p = phi(zn)
-        row = []
-        for ci in range(cols + 1):
-            th = (-math.pi / 2 + p) + (2 * math.pi - 2 * p) * ci / cols
-            z = z_bot(th) + (z_top - z_bot(th)) * v
-            r = r_at(z) + off
-            row.append(bm.verts.new((r * math.cos(th), DEPTH * r * math.sin(th), z)))
-        grid.append(row)
-    for ri in range(rows):
-        for ci in range(cols):
-            f = bm.faces.new((grid[ri][ci], grid[ri][ci + 1], grid[ri + 1][ci + 1], grid[ri + 1][ci]))
-    bm.normal_update()
-    for f in bm.faces:
-        c = f.calc_center_median()
-        if f.normal.dot(Vector((c.x, c.y, 0))) < 0:
-            f.normal_flip()
-    bm.normal_update()
-    bmesh.ops.solidify(bm, geom=bm.faces[:], thickness=0.03)
-    bm.normal_update()
-    return bm
+CAMISA = [(2.34, 0.43, 0.30), (2.50, 0.445, 0.315), (2.72, 0.47, 0.33), (2.92, 0.53, 0.345), (3.10, 0.585, 0.35), (3.22, 0.60, 0.34),
+          (3.31, 0.56, 0.31), (3.38, 0.44, 0.26), (3.43, 0.27, 0.20), (3.455, 0.0, 0.0)]
+PELVIS = [(1.97, 0.0, 0.0), (2.00, 0.20, 0.15), (2.07, 0.36, 0.26), (2.18, 0.44, 0.31), (2.32, 0.46, 0.325), (2.46, 0.455, 0.32)]
 
 
 def build_mouth(hit):
-    cols, rows, w = 11, 4, 0.15
+    cols, rows, w = 15, 5, 0.25
     bm = bmesh.new()
     ls = bm.verts.layers.float.new("ws")
     li = bm.verts.layers.float.new("wi")
@@ -338,8 +294,8 @@ def build_mouth(hit):
         row = []
         for ci in range(cols + 1):
             u = -1.0 + 2.0 * ci / cols
-            zt = 3.70 + 0.035 * u * u
-            t = 0.012 + 0.03 * math.sqrt(max(0.0, 1.0 - u * u))
+            zt = 3.69 + DZ + 0.055 * u * u
+            t = 0.014 + 0.04 * math.sqrt(max(0.0, 1.0 - u * u))
             loc, n = hit(u * w, zt - v * t)
             vert = bm.verts.new(loc + n * 0.012)
             c = max(0.0, 1.0 - u * u) ** 0.6
@@ -369,10 +325,45 @@ def chain_weights(bones, bounds, blend):
     return fn
 
 
+def redondeado(radii, mat, u=10, v=7, p=0.5):
+    bm = ellipsoid((1.0, 1.0, 1.0), Matrix(), u, v)
+    for vert in bm.verts:
+        vert.co = Vector([math.copysign(abs(c) ** p, c) for c in vert.co])
+    bmesh.ops.transform(bm, matrix=mat @ Matrix.Diagonal((*radii, 1.0)), verts=bm.verts)
+    return bm
+
+
+OJO_RADIO = 0.095
+OJOS = ((-1, 1.12), (1, 0.92))
+OJOS_MARCO = []
+VARIANTES_OJOS = {
+    "normal": (1.0, 1.0, 1.0, (0.3, -0.85), (0.3, -0.85)),
+    "grande": (1.32, 1.0, 0.7, (0.0, 0.0), (0.0, 0.0)),
+    "susto": (1.2, 1.0, 0.55, (0.0, -0.4), (0.0, -0.4)),
+    "mareo": (1.0, 0.85, 1.0, (-0.8, 0.5), (0.6, -0.7)),
+    "feliz": (1.05, 1.0, 1.3, (0.0, 0.1), (0.0, 0.1)),
+    "enfado": (1.0, 0.62, 1.0, (0.45, -0.3), (0.45, -0.3)),
+}
+BONES_CARA = []
+
+
+def ojos_render(variante):
+    esc, alto, pup, pi, pd = VARIANTES_OJOS[variante]
+    parte = "Ojos_" + variante
+    for (sx, e, c, n), (adentro, arriba) in zip(OJOS_MARCO, (pi, pd)):
+        fr = Matrix.Translation(c) @ frame_from_normal(n)
+        e2 = e * esc
+        add(ellipsoid((0.21 * e2, 0.21 * e2 * alto, 0.04), fr @ Matrix.Translation((0, 0, 0.07)), 20, 10), "black", parte, {"Head": 1.0})
+        add(ellipsoid((0.185 * e2, 0.185 * e2 * alto, 0.065), fr @ Matrix.Translation((0, 0, 0.1)), 20, 10), "white", parte, {"Head": 1.0})
+        r = OJO_RADIO * e2
+        add(ellipsoid((0.08 * e2 * pup, 0.08 * e2 * pup * alto, 0.025), fr @ Matrix.Translation((-sx * adentro * r, arriba * r * alto, 0.165)), 14, 8), "black", parte, {"Head": 1.0})
+
+
 LADOS = {"Left": "Izq", "Right": "Der"}
-DEDOS = (("Indice", -0.095), ("Medio", 0.0), ("Menique", 0.095))
+DEDOS = (("Indice", -0.195, 0.21), ("Medio", -0.065, 0.23), ("Anular", 0.065, 0.22), ("Menique", 0.195, 0.18))
+PALMA = (0.13, 0.26, 0.19)
 BONES_MANOS = []
-AGARRE = Vector((-1.18, -0.03, 1.70))
+AGARRE = Vector()
 
 
 def seglen_hasta(camino, i):
@@ -400,118 +391,181 @@ def falange(camino, s_punta, s_k, mano, base):
 def build_character():
     PRIMS.clear()
     BONES_MANOS.clear()
-    body = build_body()
-    tree = BVHTree.FromBMesh(body)
+    BONES_CARA.clear()
+    OJOS_MARCO.clear()
+    cabeza = build_head()
+    tree = BVHTree.FromBMesh(cabeza)
 
     def hit(x, z):
         loc, nrm, _, _ = tree.ray_cast(Vector((x, -5.0, z)), Vector((0, 1, 0)))
         return loc, nrm
 
-    add(cull_under_vest(body), "body", core_part, "core")
-    add(build_vest(), "vest", core_part, "core", angle=60.0)
+    def rayo(d, z, y=0.0):
+        d = Vector(d).normalized()
+        loc, nrm, _, _ = tree.ray_cast(Vector((0, y, z)) + d * 3.0, -d)
+        return loc, nrm
 
-    zs = 3.36
-    rs = r_at(zs) + 0.06
-    ring_pts = [Vector((rs * math.cos(-math.pi / 2 + 2 * math.pi * j / 20), DEPTH * rs * math.sin(-math.pi / 2 + 2 * math.pi * j / 20), zs)) for j in range(20)]
-    scarf, _ = tube(ring_pts, lambda u: 0.045, k=6, steps=1, closed=True, up=Vector((0, 0, 1)))
-    add(scarf, "teal", "UpperTorso", "core")
-    fy = -DEPTH * rs
-    add(ellipsoid((0.12, 0.07, 0.1), Matrix.Translation((0, fy - 0.035, 3.33)), 10, 7), "teal", "UpperTorso", "core")
+    add(cabeza, "body", "Head", {"Head": 1.0})
+    add(cylinder(0.16, 0.36, Matrix.Translation((0, 0, 3.45)), 12), "body", "Head", "core")
+
+    camisa = revolucion(CAMISA, 24, 2.6)
+    ttree = BVHTree.FromBMesh(camisa)
+
+    def frente(x, z):
+        loc, nrm, _, _ = ttree.ray_cast(Vector((x, -5.0, z)), Vector((0, 1, 0)))
+        return loc, nrm
+
+    add(camisa, "cream", core_part, "core", angle=60.0)
+    add(revolucion(PELVIS, 24, 2.6), "navy", "LowerTorso", "core", angle=60.0)
+    cin = []
+    for j in range(20):
+        th = -math.pi / 2 + 2 * math.pi * j / 20
+        c, sn = math.cos(th), math.sin(th)
+        cin.append(Vector((0.475 * math.copysign(abs(c) ** (2 / 2.6), c), 0.34 * math.copysign(abs(sn) ** (2 / 2.6), sn), 2.43)))
+    cinturon, _ = tube(cin, lambda u: 0.045, k=5, steps=1, closed=True)
+    add(cinturon, "shoe", "LowerTorso", {"LowerTorso": 1.0})
+    add(redondeado((0.075, 0.025, 0.055), Matrix.Translation((0, -0.375, 2.43)), 8, 5), "gold", "LowerTorso", {"LowerTorso": 1.0})
+
+    lk, _ = frente(0.0, 3.355)
+    add(ellipsoid((0.065, 0.05, 0.06), Matrix.Translation(lk + Vector((0, -0.03, 0))), 8, 6), "teal", "UpperTorso", "core")
+    corbata = ellipsoid((1.0, 1.0, 1.0), Matrix(), 8, 10)
+    for v in corbata.verts:
+        t = v.co.z
+        z = 2.96 + t * 0.34
+        lf, _ = frente(0.0, z)
+        v.co = Vector((v.co.x * 0.1 * (0.55 - 0.45 * t), lf.y - 0.03 + v.co.y * 0.022, z))
+    add(corbata, "teal", core_part, "core")
     for sx in (-1, 1):
-        mat = Matrix.Translation((sx * 0.08, fy - 0.02, 3.15)) @ Matrix.Rotation(math.radians(-sx * 22), 4, "Y")
-        add(ellipsoid((0.065, 0.022, 0.15), mat, 8, 5), "teal", "UpperTorso", "core")
+        lc, _ = frente(sx * 0.1, 3.39)
+        mat = Matrix.Translation(lc + Vector((0, -0.02, 0))) @ Matrix.Rotation(math.radians(-sx * 35), 4, "Y")
+        add(ellipsoid((0.10, 0.025, 0.055), mat, 6, 5), "cream", "UpperTorso", "core")
+        mat = Matrix.Translation((sx * 0.40, 0.0, 3.40)) @ Matrix.Rotation(math.radians(sx * 32), 4, "Y")
+        add(redondeado((0.15, 0.10, 0.03), mat, 8, 5), "vest", "UpperTorso", "core")
+
+    loc, n = frente(0.30, 3.02)
+    fr = Matrix.Translation(loc + n * 0.03) @ frame_from_normal(n)
+    add(cylinder(0.055, 0.03, fr, 8), "gold", "UpperTorso", "core", angle=40.0)
+    for sx in (-1, 1):
+        wm = fr @ Matrix.Translation((sx * 0.095, 0.012, 0.0)) @ Matrix.Rotation(math.radians(sx * 14), 4, "Z")
+        add(ellipsoid((0.09, 0.03, 0.015), wm, 6, 4), "gold", "UpperTorso", "core")
 
     for sx in (-1, 1):
-        loc, n = hit(sx * 0.24, 3.99)
-        ctr = loc - n * 0.05
-        add(ellipsoid((0.13, 0.13, 0.13), Matrix.Translation(ctr), 14, 10), "white", "Head", {"Head": 1.0})
-        fr = Matrix.Translation(ctr + n * 0.112) @ frame_from_normal(n)
-        add(ellipsoid((0.064, 0.07, 0.036), fr, 12, 8), "black", "Head", {"Head": 1.0})
-        add(ellipsoid((0.019, 0.019, 0.012), fr @ Matrix.Translation((0.022, 0.028, 0.03)), 6, 4), "white", "Head", {"Head": 1.0})
+        lo, no = hit(sx * 0.226, ZE)
+        ne = (no + Vector((0, -1, 0))).normalized()
+        OJOS_MARCO.append((sx, dict(OJOS)[sx], lo + ne * 0.036, ne))
+
+    for sx, ceja, mej in ((1, "CejaIzq", "MejillaIzq"), (-1, "CejaDer", "MejillaDer")):
         pts = []
-        for x, z in ((0.12, 4.215), (0.24, 4.255), (0.36, 4.22)):
-            l2, n2 = hit(sx * x, z)
-            pts.append(l2 + n2 * 0.004)
-        brow, _ = tube(pts, lambda u: 0.03 * (0.55 + 0.45 * math.sin(math.pi * u)), k=6, steps=3, cap_rings=2)
-        add(brow, "black", "Head", {"Head": 1.0})
+        for x, z in ((0.09, 4.33), (0.23, 4.385), (0.38, 4.35)):
+            l2, n2 = hit(sx * x, z + DZ)
+            pts.append(l2 + n2 * 0.035)
+        brow, _ = tube(pts, lambda u: 0.056 * (0.6 + 0.4 * math.sin(math.pi * u)), k=8, steps=4, cap_rings=2)
+        add(brow, "black", "Head", {ceja: 1.0})
+        BONES_CARA.append((ceja, "Head", tuple(pts[1]), tuple(pts[1] + Vector((0, 0, 0.08)))))
+        lc, nc = hit(sx * 0.40, 3.70 + DZ)
+        add(ellipsoid((0.135, 0.115, 0.1), Matrix.Translation(lc - nc * 0.03) @ frame_from_normal(nc), 12, 8), "body", "Head", {mej: 1.0})
+        BONES_CARA.append((mej, "Head", tuple(lc), tuple(lc + nc * 0.1)))
+
+    ln, nn = hit(0.0, 3.80 + DZ)
+    add(ellipsoid((0.125, 0.105, 0.12), Matrix.Translation(ln + nn * 0.05) @ frame_from_normal(nn), 14, 9), "body", "Head", {"Nariz": 1.0})
+    BONES_CARA.append(("Nariz", "Head", tuple(ln - nn * 0.04), tuple(ln + nn * 0.12)))
+
+    for sx, ang in ((-1, 4), (1, -7)):
+        lt, nt_ = hit(sx * 0.05, 3.655 + DZ)
+        fr = Matrix.Translation(lt + nt_ * 0.012) @ frame_from_normal(nt_) @ Matrix.Rotation(math.radians(ang), 4, "Z")
+        add(redondeado((0.043, 0.045, 0.022), fr), "white", "Head", {"BocaSup": 1.0})
+
+    lm, _ = hit(0.0, 3.68 + DZ)
+    ym, zl = lm.y + 0.683, 3.67 + DZ
+    tpts = [Vector((0, ym - 0.44, zl + 0.005)), Vector((0, ym - 0.53, zl)), Vector((0, ym - 0.60, zl - 0.005))]
+    lengua, tls = tube(tpts, lambda u: 0.085 + 0.01 * math.sin(math.pi * u), k=10, steps=3, cap_rings=3)
+    for v in lengua.verts:
+        v.co.z = zl + 0.005 + (v.co.z - zl) * 0.5
+    add(lengua, "tongue", "Head", chain_weights(["BocaInf", "Lengua"], [tls[1]], 0.05), s_layer=True)
+    BONES_CARA.append(("Lengua", "BocaInf", tuple(tpts[1]), (0.0, ym - 0.66, zl)))
+    BONES_CARA.insert(0, ("BocaInf", "Head", (0.0, lm.y, 3.66 + DZ), (0.0, lm.y, 3.56 + DZ)))
+    BONES_CARA.insert(0, ("BocaSup", "Head", (0.0, lm.y, 3.71 + DZ), (0.0, lm.y, 3.81 + DZ)))
+
+    for variante in VARIANTES_OJOS:
+        ojos_render(variante)
 
     add(build_mouth(hit), "mouth", "Head", "mouth", angle=80.0)
 
+    zc = 4.21
     band_pts = []
-    a0 = math.asin(3.93 - ZCT)
     for i in range(13):
-        a = a0 + (math.pi - 2 * a0) * i / 12
-        ca, sa = math.cos(a), math.sin(a)
-        nx, nz = ca / RT, sa
-        nl = math.hypot(nx, nz)
-        band_pts.append(Vector((RT * ca + 0.07 * nx / nl, 0.05, ZCT + sa + 0.07 * nz / nl)))
+        a = math.pi * i / 12
+        d = Vector((math.cos(a), 0.0, math.sin(a)))
+        l2, _ = rayo(d, zc, 0.05)
+        band_pts.append(l2 + d * 0.07)
     band, _ = tube(band_pts, lambda u: 0.05, k=8, steps=2, up=Vector((0, 1, 0)))
     add(band, "dark", "Head", {"Head": 1.0})
-    cr = r_at(3.93)
     for sx in (-1, 1):
+        lx, _ = rayo((sx, 0, 0), zc, 0.05)
         rot = Matrix.Rotation(math.radians(90), 4, "Y")
-        add(cylinder(0.2, 0.15, Matrix.Translation((sx * (cr + 0.06), 0.05, 3.93)) @ rot, 16), "dark", "Head", {"Head": 1.0}, angle=40.0)
-        add(cylinder(0.14, 0.05, Matrix.Translation((sx * (cr + 0.15), 0.05, 3.93)) @ rot, 16), "teal", "Head", {"Head": 1.0}, angle=40.0)
+        add(cylinder(0.2, 0.15, Matrix.Translation((lx.x + sx * 0.06, 0.05, zc)) @ rot, 16), "dark", "Head", {"Head": 1.0}, angle=40.0)
+        add(cylinder(0.14, 0.05, Matrix.Translation((lx.x + sx * 0.15, 0.05, zc)) @ rot, 16), "teal", "Head", {"Head": 1.0}, angle=40.0)
 
-    mic_raw = [(-0.86, -0.06, 3.87), (-0.80, -0.38, 3.74), (-0.58, -0.62, 3.64), (-0.31, -0.72, 3.62)]
     mic_pts = []
-    for x, y, z in mic_raw:
-        th = math.atan2(y / DEPTH, x)
-        r = r_at(z) + 0.075
-        mic_pts.append(Vector((r * math.cos(th), DEPTH * r * math.sin(th), z)))
+    for th, z in ((184, 4.15), (205, 4.02), (228, 3.86), (246, 3.80)):
+        d = Vector((math.cos(math.radians(th)), math.sin(math.radians(th)), 0.0))
+        l2, _ = rayo(d, z)
+        mic_pts.append(l2 + d * 0.075)
     mic, ms = tube(mic_pts, lambda u: 0.024, k=6, steps=4, cap_rings=2)
     add(mic, "dark", "Head", {"Head": 1.0})
     add(ellipsoid((0.065, 0.065, 0.065), Matrix.Translation(mic_pts[-1]), 10, 6), "black", "Head", {"Head": 1.0})
 
-    loc, n = hit(0.40, 2.95)
-    fr = Matrix.Translation(loc + n * 0.08) @ frame_from_normal(n)
-    add(cylinder(0.062, 0.03, fr, 8), "gold", "UpperTorso", "core", angle=40.0)
-    for sx in (-1, 1):
-        wm = fr @ Matrix.Translation((sx * 0.105, 0.015, 0.0)) @ Matrix.Rotation(math.radians(sx * 14), 4, "Z")
-        add(ellipsoid((0.1, 0.034, 0.016), wm, 6, 4), "gold", "UpperTorso", "core")
-    for z in (2.42, 2.17):
-        l2, n2 = hit(0.0, z)
-        bm_ = ellipsoid((0.048, 0.048, 0.026), Matrix.Translation(l2 + n2 * 0.08) @ frame_from_normal(n2), 6, 4)
-        add(bm_, "gold", core_part, "core")
-
     for side, sx in (("Left", 1), ("Right", -1)):
-        ctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.72, 0.0, 3.04), (0.84, 0.0, 3.0), (1.10, 0.0, 2.48), (1.24, 0.0, 1.98))]
-        arm, cs = tube(ctrl, lambda u: 0.135 - 0.025 * u, k=10, steps=5, cap_rings=3)
-        s_el, s_wr = cs[2], cs[3]
+        h, c, w = Vector((sx * HOMBRO.x, 0, HOMBRO.z)), Vector((sx * CODO.x, 0, CODO.z)), Vector((sx * MUNECA.x, 0, MUNECA.z))
+        dh = (c - h).normalized()
+        ctrl = [h, c, w]
+        arm, cs = tube(ctrl, lambda u: 0.104 - 0.018 * u, k=8, steps=4, cap_rings=2)
+        s_el, s_wr = cs[1], cs[2]
         wf = chain_weights([side + "UpperArm", side + "LowerArm", side + "Hand"], [s_el, s_wr - 0.04], 0.11)
-        add(arm, "body", (lambda c, s, se=s_el, sd=side: sd + ("UpperArm" if s < se else "LowerArm")), wf, s_layer=True)
+        add(arm, "body", (lambda c_, s_, se=s_el, sd=side: sd + ("UpperArm" if s_ < se else "LowerArm")), wf, s_layer=True)
+        ua = side + "UpperArm"
+        manga, _ = tube([h - dh * 0.03, h + dh * 0.17, h + dh * 0.36], lambda u: 0.15 + 0.022 * u, k=10, steps=1, cap_rings=1)
+        add(manga, "cream", ua, {ua: 1.0})
+        add(cylinder(0.178, 0.05, Matrix.Translation(h + dh * 0.345) @ Vector((0, 0, 1)).rotation_difference(dh).to_matrix().to_4x4(), 10), "teal", ua, {ua: 1.0}, angle=40.0)
+
         hp = side + "Hand"
         lado = LADOS[side]
-        add(ellipsoid((0.1, 0.17, 0.16), Matrix.Translation((sx * 1.275, 0.0, 1.83)), 12, 8), "body", hp, {hp: 1.0})
-        for nombre, fy_ in DEDOS:
-            fpts = [Vector((sx * 1.275, fy_, 1.77)), Vector((sx * 1.297, fy_, 1.67)), Vector((sx * 1.255, fy_, 1.585))]
-            fbm, fs = tube(fpts, lambda u: 0.056 - 0.007 * u, k=6, steps=3, cap_rings=2)
+        guante, _ = tube([w + Vector((0, 0, 0.04)), w + Vector((sx * 0.015, 0, -0.10))], lambda u: 0.11 + 0.035 * u, k=12, steps=1, cap_rings=1)
+        add(guante, "white", hp, {hp: 1.0})
+        pc = w + Vector((sx * 0.04, 0, -0.19))
+        add(ellipsoid(PALMA, Matrix.Translation(pc), 14, 9), "white", hp, {hp: 1.0})
+        for nombre, fy_, largo in DEDOS:
+            fondo = pc.z - PALMA[2] * math.sqrt(1.0 - (fy_ / PALMA[1]) ** 2)
+            fpts = [Vector((pc.x, fy_ * 0.9, pc.z - 0.06)), Vector((pc.x + sx * 0.03, fy_ * 1.05, fondo - largo * 0.45)), Vector((pc.x - sx * 0.03, fy_ * 1.2, fondo - largo))]
+            fbm, fs = tube(fpts, lambda u: 0.064 - 0.004 * u, k=8, steps=3, cap_rings=2)
             camino = catmull(fpts, 3)
-            fondo = 1.83 - 0.16 * math.sqrt(1.0 - (fy_ / 0.17) ** 2)
             s_k = next(seglen_hasta(camino, i) for i in range(len(camino)) if camino[i].z <= fondo + 0.03)
-            add(fbm, "body", hp, falange(camino, fs[-1] + 0.049, s_k, hp, lado + nombre), s_layer=True)
-        tpts = [Vector((sx * 1.265, -0.10, 1.87)), Vector((sx * 1.243, -0.225, 1.78))]
-        tbm, ts = tube(tpts, lambda u: 0.056, k=6, steps=2, cap_rings=2)
-        add(tbm, "body", hp, falange(catmull(tpts, 2), ts[-1] + 0.056, 0.045, hp, lado + "Pulgar"), s_layer=True)
+            add(fbm, "white", hp, falange(camino, fs[-1] + 0.06, s_k, hp, lado + nombre), s_layer=True)
+        tpts = [Vector((pc.x - sx * 0.01, -0.17, pc.z + 0.05)), Vector((pc.x - sx * 0.05, -0.33, pc.z - 0.06))]
+        tbm, ts = tube(tpts, lambda u: 0.07, k=8, steps=2, cap_rings=2)
+        add(tbm, "white", hp, falange(catmull(tpts, 2), ts[-1] + 0.07, 0.06, hp, lado + "Pulgar"), s_layer=True)
+        if side == "Right":
+            AGARRE.xyz = pc + Vector((-sx * 0.13, -0.03, -0.15))
 
-        lctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.39, 0.0, 1.45), (0.41, 0.0, 0.85), (0.42, 0.0, 0.24))]
-        leg, lcs = tube(lctrl, lambda u: 0.215 - 0.035 * u, k=10, steps=6, cap_rings=3)
+        k_, a_ = Vector((sx * RODILLA.x, 0, RODILLA.z)), Vector((sx * TOBILLO.x, 0, TOBILLO.z))
+        lctrl = [Vector((sx * CADERA.x, 0, CADERA.z + 0.1)), k_, a_ - Vector((0, 0, 0.06))]
+        leg, lcs = tube(lctrl, lambda u: 0.165 - 0.02 * u + 0.022 * ss(0.8, 1.0, u), k=12, steps=6, cap_rings=3)
         s_kn, s_an = lcs[1], lcs[2]
-        lw = chain_weights([side + "UpperLeg", side + "LowerLeg", side + "Foot"], [s_kn, s_an - 0.06], 0.15)
-        add(leg, "body", (lambda c, s, sk=s_kn, sd=side: sd + ("UpperLeg" if s < sk else "LowerLeg")), lw, s_layer=True)
+        lw = chain_weights([side + "UpperLeg", side + "LowerLeg", side + "Foot"], [s_kn, s_an - 0.1], 0.15)
+        add(leg, "navy", (lambda c_, s_, sk=s_kn, sd=side: sd + ("UpperLeg" if s_ < sk else "LowerLeg")), lw, s_layer=True)
         fp = side + "Foot"
-        shoe = ellipsoid((0.25, 0.37, 0.18), Matrix.Translation((sx * 0.42, -0.09, 0.155)), 14, 9)
+        shoe = ellipsoid((0.25, 0.48, 0.19), Matrix.Translation((sx * 0.30, -0.18, 0.18)), 14, 9)
         for v in shoe.verts:
             v.co.z = max(v.co.z, 0.03)
         add(shoe, "shoe", fp, {fp: 1.0})
-        sole = ellipsoid((0.26, 0.38, 0.055), Matrix.Translation((sx * 0.42, -0.09, 0.045)), 14, 6)
+        sole = ellipsoid((0.26, 0.49, 0.06), Matrix.Translation((sx * 0.30, -0.18, 0.05)), 14, 6)
         for v in sole.verts:
             v.co.z = max(v.co.z, 0.0)
         add(sole, "sole", fp, {fp: 1.0})
 
 
 def assemble():
-    acc = {p: {"v": [], "w": [], "f": [], "uv": [], "n": []} for p in PARTS}
+    acc = {p: {"v": [], "w": [], "f": [], "uv": [], "n": []} for p in PARTS + ["Ojos_" + v for v in VARIANTES_OJOS]}
     for pid, pr in enumerate(PRIMS):
         bm = pr.bm
         bm.verts.index_update()
@@ -619,29 +673,29 @@ def export_material(img):
 
 BONES = [
     ("Root", None, (0, 0, 0), (0, 0, 0.4)),
-    ("HumanoidRootNode", "Root", (0, 0, 2.05), (0, 0, 2.45)),
-    ("LowerTorso", "HumanoidRootNode", (0, 0, 2.05), (0, 0, 2.45)),
-    ("UpperTorso", "LowerTorso", (0, 0, 2.45), (0, 0, 3.5)),
-    ("Head", "UpperTorso", (0, 0, 3.5), (0, 0, 4.55)),
-    ("BocaSup", "Head", (0, -0.69, 3.71), (0, -0.69, 3.81)),
-    ("BocaInf", "Head", (0, -0.69, 3.66), (0, -0.69, 3.56)),
-    ("LeftUpperArm", "UpperTorso", (0.84, 0, 3.0), (1.10, 0, 2.48)),
-    ("LeftLowerArm", "LeftUpperArm", (1.10, 0, 2.48), (1.24, 0, 1.98)),
-    ("LeftHand", "LeftLowerArm", (1.24, 0, 1.98), (1.27, 0, 1.55)),
-    ("RightUpperArm", "UpperTorso", (-0.84, 0, 3.0), (-1.10, 0, 2.48)),
-    ("RightLowerArm", "RightUpperArm", (-1.10, 0, 2.48), (-1.24, 0, 1.98)),
-    ("RightHand", "RightLowerArm", (-1.24, 0, 1.98), (-1.27, 0, 1.55)),
-    ("LeftUpperLeg", "LowerTorso", (0.40, 0, 1.35), (0.41, 0, 0.85)),
-    ("LeftLowerLeg", "LeftUpperLeg", (0.41, 0, 0.85), (0.42, 0, 0.24)),
-    ("LeftFoot", "LeftLowerLeg", (0.42, 0, 0.24), (0.42, -0.36, 0.12)),
-    ("RightUpperLeg", "LowerTorso", (-0.40, 0, 1.35), (-0.41, 0, 0.85)),
-    ("RightLowerLeg", "RightUpperLeg", (-0.41, 0, 0.85), (-0.42, 0, 0.24)),
-    ("RightFoot", "RightLowerLeg", (-0.42, 0, 0.24), (-0.42, -0.36, 0.12)),
+    ("HumanoidRootNode", "Root", (0, 0, ZROOT), (0, 0, ZROOT + 0.4)),
+    ("LowerTorso", "HumanoidRootNode", (0, 0, ZROOT), (0, 0, ZWAIST)),
+    ("UpperTorso", "LowerTorso", (0, 0, ZWAIST), (0, 0, ZNECK)),
+    ("Head", "UpperTorso", (0, 0, ZNECK), (0, 0, ZTOP)),
 ]
+for _lado, _sx in (("Left", 1), ("Right", -1)):
+    _h, _c, _w = (_sx * HOMBRO.x, 0, HOMBRO.z), (_sx * CODO.x, 0, CODO.z), (_sx * MUNECA.x, 0, MUNECA.z)
+    BONES += [
+        (_lado + "UpperArm", "UpperTorso", _h, _c),
+        (_lado + "LowerArm", _lado + "UpperArm", _c, _w),
+        (_lado + "Hand", _lado + "LowerArm", _w, (_sx * (MUNECA.x + 0.03), 0, MUNECA.z - 0.45)),
+    ]
+for _lado, _sx in (("Left", 1), ("Right", -1)):
+    _h, _k, _a = (_sx * CADERA.x, 0, CADERA.z), (_sx * RODILLA.x, 0, RODILLA.z), (_sx * TOBILLO.x, 0, TOBILLO.z)
+    BONES += [
+        (_lado + "UpperLeg", "LowerTorso", _h, _k),
+        (_lado + "LowerLeg", _lado + "UpperLeg", _k, _a),
+        (_lado + "Foot", _lado + "LowerLeg", _a, (_sx * 0.29, -0.45, 0.12)),
+    ]
 
 
 def todos_huesos():
-    return BONES + BONES_MANOS
+    return BONES + BONES_CARA + BONES_MANOS
 
 
 def build_armature(coll):
@@ -665,9 +719,9 @@ def build_armature(coll):
     return obj
 
 
-def build_meshes(coll, rig, acc, mat):
+def build_meshes(coll, rig, acc, mat, partes):
     objs = []
-    for part in PARTS:
+    for part in partes:
         a = acc[part]
         me = bpy.data.meshes.new(part + "_Geo")
         me.from_pydata([tuple(v) for v in a["v"]], [], a["f"])
@@ -698,6 +752,26 @@ def build_meshes(coll, rig, acc, mat):
     return objs
 
 
+OJOS_OBJ = {}
+
+
+def cara(boca=0.0, cejas=0.0, giro=0.0, lengua=0.0, lado=0.0, mejillas=0.0):
+    r = [
+        ("BocaSup", "T", (0.0, 0.0, 0.065 * boca)),
+        ("BocaInf", "T", (lado * 0.04, -0.06 * boca, -0.25 * boca)),
+        ("Lengua", "T", (lado * 0.03, -(0.07 * boca + 0.14 * lengua), -0.03 * lengua)),
+    ]
+    if lado:
+        r.append(("Lengua", "Z", lado * 25))
+    for nombre, sx in (("CejaIzq", 1), ("CejaDer", -1)):
+        r.append((nombre, "T", (0.0, -0.05 * max(0.0, -cejas) - 0.03 * max(0.0, giro), 0.06 * cejas)))
+        r.append((nombre, "Y", -sx * giro * 22))
+    for nombre, sx in (("MejillaIzq", 1), ("MejillaDer", -1)):
+        p = 0.02 + 0.04 * mejillas + 0.03 * boca
+        r.append((nombre, "T", (sx * 0.4 * p, -0.8 * p, 0.035 * mejillas)))
+    return r
+
+
 def pose(rig, rots):
     for bone, axis, deg in rots:
         bpy.context.view_layer.update()
@@ -721,6 +795,12 @@ POSES_MANO = {
 }
 
 
+PRIMERA = (
+    ("reposo", (64, 96, -14), (64, 96, 14), "relajada"),
+    ("agarre", (90, 27, 12), (64, 96, 14), "agarre"),
+)
+
+
 def pose_mano(rig, side, vals):
     sx = 1 if side == "Left" else -1
     lado = LADOS[side]
@@ -728,7 +808,7 @@ def pose_mano(rig, side, vals):
     cierre = Vector((-sx, 0.3, -0.2)).normalized()
     frente = Vector((0, -1, 0))
     bones = rig.data.bones
-    for nombre, i, abre in (("Indice", 0, 1), ("Medio", 2, 0), ("Menique", 2, -1), ("Pulgar", 4, 0)):
+    for nombre, i, abre in (("Indice", 0, 1), ("Medio", 2, 0.3), ("Anular", 2, -0.3), ("Menique", 2, -1), ("Pulgar", 4, 0)):
         b1, b2 = bones[lado + nombre + "1"], bones[lado + nombre + "2"]
         d = (b2.head_local - b1.head_local).normalized()
         eje = d.cross(cierre if nombre == "Pulgar" else palma).normalized()
@@ -741,7 +821,7 @@ def pose_mano(rig, side, vals):
     bpy.context.view_layer.update()
 
 
-def clone(rig, objs, coll, mat, loc, rot_z=0.0, solo=None):
+def clone(rig, objs, coll, mat, loc, rot_z=0.0, solo=None, ojos=None):
     r2 = rig.copy()
     r2.data = rig.data
     r2.animation_data_clear()
@@ -749,7 +829,7 @@ def clone(rig, objs, coll, mat, loc, rot_z=0.0, solo=None):
     r2.location = loc
     r2.rotation_euler = (0, 0, math.radians(rot_z))
     r2.hide_render = False
-    for ob in objs:
+    for ob in objs + ([OJOS_OBJ[ojos]] if ojos else []):
         if solo and ob.name not in solo:
             continue
         o2 = ob.copy()
@@ -830,8 +910,20 @@ def main():
     mat = palette_material("Tripulante_Palette", img, PLAYER_COLORS["Lavanda"])
     exp = export_material(img)
     rig = build_armature(coll)
-    objs = build_meshes(coll, rig, acc, mat)
+    objs = build_meshes(coll, rig, acc, mat, PARTS)
+    for o in build_meshes(coll, rig, acc, mat, ["Ojos_" + v for v in VARIANTES_OJOS]):
+        OJOS_OBJ[o.name[5:-4]] = o
+        o.hide_render = True
+        o.hide_set(True)
     tc = {o.name[:-4]: sum(len(p.vertices) - 2 for p in o.data.polygons) for o in objs}
+    print("BONES", len(todos_huesos()), [b[0] for b in BONES_CARA])
+    for sx, e, c, n in OJOS_MARCO:
+        if sx < 0:
+            print("OJO CENTRO (%.3f, %.3f, %.3f) NORMAL (%.3f, %.3f, %.3f) z %.3f" % (-c.x, c.z - HRP_Z, c.y, -n.x, n.z, n.y, c.z))
+    m1 = next(b for b in BONES_MANOS if b[0] == "DerMedio1")
+    d = AGARRE - Vector(m1[2])
+    print("CameraOffset Y %.3f" % (ZE - HRP_Z - 1.5))
+    print("AGARRE_MANO (%.3f, %.3f, %.3f)" % (-d.x, d.z, d.y))
     budget = {"Head": (["Head"], 4000), "Torso": (["UpperTorso", "LowerTorso"], 1750)}
     for sd in ("Left", "Right"):
         budget[sd + "Arm"] = ([sd + "UpperArm", sd + "LowerArm", sd + "Hand"], 1248)
@@ -868,7 +960,7 @@ def main():
     img.pack()
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, "tripulante.blend"))
 
-    if "--render" not in sys.argv and "--manos" not in sys.argv:
+    if "--render" not in sys.argv and "--manos" not in sys.argv and "--primera" not in sys.argv:
         return
     rdir = os.path.join(OUT, "renders")
     os.makedirs(rdir, exist_ok=True)
@@ -897,7 +989,7 @@ def main():
             coll.objects.link(bo)
             hechos.append(bo)
     for nombre, loc in (("manos_prueba", (0.4, -6.0, 1.9)), ("manos_prueba_palma", (3.6, -4.6, 2.2))):
-        co = camera(scene, loc=loc, target=(0.43, 0, 1.72), ortho=3.9)
+        co = camera(scene, loc=loc, target=(0.82, 0, 1.68), ortho=3.9)
         scene.render.resolution_x, scene.render.resolution_y = 1600, 520
         scene.cycles.samples = 48
         scene.render.filepath = os.path.join(rdir, nombre + ".png")
@@ -907,16 +999,44 @@ def main():
         for ch in list(r2.children):
             bpy.data.objects.remove(ch)
         bpy.data.objects.remove(r2)
+    brazos = {p + "_Geo" for p in PARTS if "Arm" in p or "Hand" in p}
+    for nombre, der, izq, mano in PRIMERA:
+        if "--render" not in sys.argv and "--primera" not in sys.argv:
+            break
+        r2 = clone(rig, objs, coll, mats["Lavanda"], (0, 0, 0), solo=brazos)
+        bpy.context.view_layer.update()
+        p = []
+        for lado, (hombro, codo, giro) in (("Right", der), ("Left", izq)):
+            p += [(lado + "LowerArm", "X", -codo), (lado + "UpperArm", "X", -hombro), (lado + "UpperArm", "Z", giro)]
+        pose(r2, p)
+        pose_mano(r2, "Right", POSES_MANO[mano])
+        pose_mano(r2, "Left", POSES_MANO["relajada"])
+        zc = ZE
+        suelo = bpy.data.materials["Ground"].node_tree.nodes["Principled BSDF"].inputs["Base Color"]
+        suelo.default_value = (*lin(hex_rgb("6B7A8F")), 1.0)
+        co = camera(scene, loc=(0, 0, zc), target=(0, -5, zc), lens=20)
+        co.data.sensor_fit = "VERTICAL"
+        co.data.angle = math.radians(80)
+        scene.render.resolution_x, scene.render.resolution_y = 1600, 900
+        scene.cycles.samples = 48
+        scene.render.filepath = os.path.join(rdir, "primera_" + nombre + ".png")
+        bpy.ops.render.render(write_still=True)
+        for ch in list(r2.children):
+            bpy.data.objects.remove(ch)
+        bpy.data.objects.remove(r2)
+        bpy.data.objects.remove(co)
+        suelo.default_value = (*lin(hex_rgb("EFE9DC")), 1.0)
     if "--render" not in sys.argv:
         return
 
     def boca(k):
-        return [("BocaSup", "T", (0.0, -0.004 * k, 0.05 * k)), ("BocaInf", "T", (0.0, -0.02 * k, -0.24 * k))]
+        return cara(boca=k)
 
     def shot(name, cast, cam, res, samples):
         made = []
-        for nm, loc, rz, p in cast:
-            made.append((clone(rig, objs, coll, mats[nm], loc, rot_z=rz), p))
+        for c in cast:
+            nm, loc, rz, p = c[:4]
+            made.append((clone(rig, objs, coll, mats[nm], loc, rot_z=rz, ojos=c[4] if len(c) > 4 else "normal"), p))
         bpy.context.view_layer.update()
         for r2, p in made:
             pose(r2, p)
@@ -939,19 +1059,30 @@ def main():
         ("Lavanda", (-1.4, 0, 0), 4, []),
         ("Chicle", (1.4, 0, 0), -4, carry + boca(1.0)),
         ("Sol", (4.2, 0, 0), -14, run + boca(0.3)),
-    ], dict(loc=(0.6, -14.5, 5.0), target=(0, 0, 2.15), lens=42), (1600, 900), 96)
+    ], dict(loc=(0.6, -15.5, 5.4), target=(0, 0, 2.5), lens=42), (1600, 900), 96)
     shot("turnaround", [("Lavanda", (-4.5 + 3.0 * i, 0, 0), rz, []) for i, rz in enumerate((0, -40, -90, 180))],
-         dict(loc=(0, -20, 2.4), target=(0, 0, 2.4), ortho=13.2), (1600, 640), 96)
-    shot("boca_voz", [
+         dict(loc=(0, -20, 2.6), target=(0, 0, 2.6), ortho=13.6), (1600, 640), 96)
+    cam_caras = dict(loc=(0, -6.4, 4.2), target=(0, 0, 4.08), lens=38)
+    shot("caras_voz", [
         ("Lima", (-2.0, 0, 0), 0, []),
-        ("Lavanda", (0.0, 0, 0), 0, boca(0.5)),
-        ("Chicle", (2.0, 0, 0), 0, boca(1.0)),
-    ], dict(loc=(0, -6.4, 3.9), target=(0, 0, 3.72), lens=38), (1600, 700), 64)
+        ("Lavanda", (0.0, 0, 0), 0, cara(boca=0.55, cejas=0.4, lengua=0.1, mejillas=0.5)),
+        ("Chicle", (2.0, 0, 0), 0, cara(boca=1.15, cejas=1.2, giro=-0.5, lengua=0.5, mejillas=0.3), "grande"),
+    ], cam_caras, (1600, 700), 64)
+    shot("caras_eventos", [
+        ("Sol", (-3.0, 0, 0), 0, cara(boca=0.6, cejas=1.4), "grande"),
+        ("Lavanda", (-1.0, 0, 0), 0, cara(boca=0.35, cejas=0.9, giro=-1.0, mejillas=0.2) + [("Head", "Y", -6)], "susto"),
+        ("Lima", (1.0, 0, 0), 0, cara(boca=0.4, cejas=0.3, giro=0.4, lengua=1.0, lado=1.0) + [("CejaIzq", "T", (0, 0, 0.07)), ("Head", "Y", 12)], "mareo"),
+        ("Chicle", (3.0, 0, 0), 0, cara(boca=0.5, cejas=0.6, giro=-0.3, mejillas=1.0), "feliz"),
+    ], dict(loc=(0, -8.6, 4.2), target=(0, 0, 4.08), lens=38), (1600, 560), 64)
+    shot("caras_enfado", [
+        ("Sol", (-1.0, 0, 0), 0, cara(boca=0.12, cejas=-0.8, giro=1.0), "enfado"),
+        ("Lima", (1.0, 0, 0), 20, cara(boca=0.5, cejas=0.5, lengua=0.4, mejillas=0.5)),
+    ], dict(loc=(0, -5.4, 4.2), target=(0, 0, 4.08), lens=38), (1200, 600), 64)
     shot("brazos_prueba", [
         ("Sol", (-4.2, 0, 0), 20, [("LeftUpperArm", "Y", -150), ("RightUpperArm", "Y", 150)] + boca(0.6)),
         ("Lima", (-1.4, 0, 0), 30, [("LeftUpperArm", "X", -75), ("RightUpperArm", "X", -75), ("LeftLowerArm", "X", -35), ("RightLowerArm", "X", -35)]),
         ("Lavanda", (1.4, 0, 0), 30, [("LeftUpperArm", "Y", -88), ("RightUpperArm", "Y", 88), ("LeftLowerArm", "X", -90), ("RightLowerArm", "X", -90)]),
         ("Chicle", (4.2, 0, 0), 25, [("UpperTorso", "X", 15), ("LeftUpperArm", "X", 60), ("RightUpperArm", "X", 60), ("LeftLowerArm", "X", -40), ("RightLowerArm", "X", -40), ("LeftUpperLeg", "X", -60), ("RightUpperLeg", "X", -60), ("LeftLowerLeg", "X", 80), ("RightLowerLeg", "X", 80)]),
-    ], dict(loc=(0.6, -14.5, 5.0), target=(0, 0, 2.15), lens=42), (1600, 900), 64)
+    ], dict(loc=(0.6, -15.5, 5.4), target=(0, 0, 2.5), lens=42), (1600, 900), 64)
 
 main()

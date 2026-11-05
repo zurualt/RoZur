@@ -1,0 +1,21 @@
+--!strict
+return {
+	BocaAbierta = 73307961679104,
+	BocaBleh = 95477395495515,
+	BocaContento = 100035914591873,
+	BocaDormido = 130209205922725,
+	BocaEnfado = 128531437653994,
+	BocaGrito = 78200913922822,
+	BocaLengua = 131014995615420,
+	BocaMareo = 98753041999677,
+	BocaMasticar = 128458144097271,
+	BocaNeutra = 80093180566895,
+	BocaOoh = 105387685765052,
+	BocaPuchero = 136467343955567,
+	BocaSonrisa = 122219118895950,
+	Huella = 98212194545311,
+	PaletaPalido = 116782109659813,
+	PaletaRojo = 92546635284410,
+	PaletaVerde = 121587631104891,
+	Zeta = 133650556984923,
+} :: { [string]: number }

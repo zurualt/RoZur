@@ -69,20 +69,20 @@ local PROPIEDADES: { [string]: { [string]: any } } = {
 		WaterReflectance = 0.45,
 	},
 	Lighting = {
-		OutdoorAmbient = Color3.fromRGB(150, 140, 126),
-		ColorShift_Top = Color3.fromRGB(255, 236, 200),
+		OutdoorAmbient = Color3.fromRGB(122, 122, 128),
+		ColorShift_Top = Color3.fromRGB(255, 248, 236),
 		EnvironmentDiffuseScale = 0.5,
 	},
 	Atmosphere = {
-		Color = Color3.fromRGB(236, 226, 206),
+		Color = Color3.fromRGB(222, 228, 232),
 		Decay = Color3.fromRGB(150, 200, 226),
-		Haze = 1.4,
-		Glare = 0.35,
+		Haze = 0.9,
+		Glare = 0.18,
 	},
 	ColorCorrectionEffect = {
-		Saturation = 0.14,
+		Saturation = 0.06,
 		Contrast = 0.1,
-		TintColor = Color3.fromRGB(255, 248, 236),
+		TintColor = Color3.fromRGB(255, 253, 248),
 	},
 }
 
@@ -181,9 +181,15 @@ local function generarTerreno()
 	local ny = (techo - y0) // celda
 	local cx, cz = x0 + nx * celda / 2, z0 + nz * celda / 2
 	table.insert(zonasTerreno, { minimo = Vector3.new(cx - oceano / 2, y0, cz - oceano / 2), maximo = Vector3.new(cx + oceano / 2, techo, cz + oceano / 2) })
-	terreno:FillBlock(CFrame.new(cx, (y0 + fondo - 2) / 2, cz), Vector3.new(oceano, fondo - 2 - y0, oceano), Enum.Material.Slate)
-	terreno:FillBlock(CFrame.new(cx, (fondo - 2 + mar) / 2, cz), Vector3.new(oceano, mar - fondo + 2, oceano), Enum.Material.Water)
-	task.wait()
+	local trozo = 1024
+	for ox = -oceano / 2, oceano / 2 - 1, trozo do
+		for oz = -oceano / 2, oceano / 2 - 1, trozo do
+			local x, z = cx + ox + trozo / 2, cz + oz + trozo / 2
+			terreno:FillBlock(CFrame.new(x, (y0 + fondo - 2) / 2, z), Vector3.new(trozo, fondo - 2 - y0, trozo), Enum.Material.Slate)
+			terreno:FillBlock(CFrame.new(x, (fondo - 2 + mar) / 2, z), Vector3.new(trozo, mar - fondo + 2, trozo), Enum.Material.Water)
+		end
+		task.wait()
+	end
 	for bx = 0, nx - 1, BLOQUE do
 		local ancho = math.min(BLOQUE, nx - bx)
 		local solido, ocupado, liquido = table.create(ancho), table.create(ancho), table.create(ancho)
@@ -621,6 +627,7 @@ function Isla.jugar(): boolean
 	local pista = 0
 	local proximoHumo = 0
 	local proximoCoco = os.clock() + rng:NextNumber(14, 22)
+	local proximoPez = os.clock() + 3
 	local puntosHumo = motores()
 	table.insert(puntosHumo, centro + Vector3.new(0, 4, -44))
 	for _, f in fuegos do
@@ -639,6 +646,13 @@ function Isla.jugar(): boolean
 		if ahora >= proximoCoco then
 			proximoCoco = ahora + rng:NextNumber(16, 28)
 			caerCoco()
+		end
+		local peces = spots.pez
+		if peces and #peces > 0 and ahora >= proximoPez then
+			proximoPez = ahora + rng:NextNumber(3.5, 7)
+			local pez = peces[rng:NextInteger(1, #peces)].Position + Vector3.new(rng:NextNumber(-6, 6), 0, rng:NextNumber(-6, 6))
+			Rafagas.lanzar("Salpicadura", pez, rng:NextNumber(0.5, 0.8))
+			Sonidos.emitir("Salpicadura", pez)
 		end
 		for _, o in carpeta:GetChildren() do
 			if not o:IsA("BasePart") or not o:HasTag("ObjetivoIsla") then
@@ -734,6 +748,18 @@ function Isla.iniciar()
 		local visual = d:GetAttribute("Visual")
 		if typeof(visual) == "string" then
 			local base = d:GetAttribute("Base")
+			local normal = d:GetAttribute("Normal")
+			if typeof(normal) == "Vector3" and typeof(base) == "number" then
+				local pivote = Vector3.new(d.Position.X, base, d.Position.Z)
+				local inclinar = CFrame.new(pivote) * CFrame.fromRotationBetweenVectors(Vector3.yAxis, normal.Unit) * CFrame.new(-pivote)
+				local conexion: RBXScriptConnection
+				conexion = d.ChildAdded:Connect(function(hijo)
+					if hijo:IsA("Model") then
+						conexion:Disconnect()
+						hijo:PivotTo(inclinar * hijo:GetPivot())
+					end
+				end)
+			end
 			Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)
 		end
 		local spot = d:GetAttribute("Spot")

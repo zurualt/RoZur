@@ -231,7 +231,11 @@ function Vehiculos.carro(): BasePart?
 	return nil
 end
 
-function Vehiculos.reiniciar()
+function Vehiculos.tractor(): BasePart
+	return tractor
+end
+
+local function aparcar(cfTractor: CFrame, cfCarro: CFrame)
 	if perdido(tractor, inicioTractor) or perdido(carro, inicioCarro) then
 		rehacer()
 	end
@@ -243,12 +247,21 @@ function Vehiculos.reiniciar()
 	end
 	propietario(tractor, nil)
 	propietario(carro, nil)
-	tractor:PivotTo(inicioTractor)
-	carro:PivotTo(inicioCarro)
+	tractor:PivotTo(cfTractor)
+	carro:PivotTo(cfCarro)
 	for _, parte in { tractor, carro } do
 		parte.AssemblyLinearVelocity = Vector3.zero
 		parte.AssemblyAngularVelocity = Vector3.zero
 	end
+end
+
+function Vehiculos.reiniciar()
+	aparcar(inicioTractor, inicioCarro)
+end
+
+function Vehiculos.colocar(suelo: CFrame, sueloCarro: CFrame)
+	aparcar(suelo * CFrame.new(0, tractor.Size.Y / 2, 0), sueloCarro * CFrame.new(0, carro.Size.Y / 2, 0))
+	enganchar()
 end
 
 function Vehiculos.iniciar()

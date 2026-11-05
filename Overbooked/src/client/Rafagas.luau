@@ -247,6 +247,18 @@ local TIPOS: { [string]: Rafaga } = {
 			{ textura = "Brillito", cuenta = 4, tam = { 0.2, 1, 0 }, vida = { 0.3, 0.5 }, velocidad = { 6, 10 }, color = AMARILLO, giro = 90 },
 		},
 	},
+	Pitido = {
+		palabra = { textos = { "¡PIIIP!", "¡BIIIP!" }, color = BLANCO, fondo = ROJO, tam = 0.9 },
+		chorros = {
+			{ textura = "Onda", cuenta = 2, tam = { 0.5, 5 }, vida = { 0.3, 0.45 }, velocidad = { 0.05, 0.05 }, esparcir = 0, color = ROJO, transparencia = { 0, 1 } },
+		},
+	},
+	Ding = {
+		palabra = { textos = { "¡DING!", "¡DING DONG!" }, color = AMARILLO, fondo = TURQUESA, nube = true, tam = 0.8 },
+		chorros = {
+			{ textura = "Brillito", cuenta = 5, tam = { 0.2, 1, 0 }, vida = { 0.3, 0.5 }, velocidad = { 5, 9 }, color = ORO, giro = 90 },
+		},
+	},
 	Corazones = {
 		chorros = {
 			{ textura = "Corazon", cuenta = 4, tam = { 0.2, 1, 0.6 }, vida = { 0.9, 1.3 }, velocidad = { 3, 6 }, esparcir = 40, gravedad = Vector3.new(0, 4, 0), arrastre = 1, giro = 30, aplastar = POP },

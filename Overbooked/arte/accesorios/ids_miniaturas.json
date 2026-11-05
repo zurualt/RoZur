@@ -1,0 +1,122 @@
+{
+ "AlasAvion": {
+  "id": 72451033290559,
+  "decal": 92989739769196,
+  "sha1": "1ffc96a9b27b267a47bf3b4cc3afa5164955bfc6"
+ },
+ "Antifaz": {
+  "id": 119633504596884,
+  "decal": 70806282312804,
+  "sha1": "d84b59243ac91252bd73503e987c8ee7a5fb3e94"
+ },
+ "Auriculares2": {
+  "id": 124224981576024,
+  "decal": 123169242143391,
+  "sha1": "6e7483c8d6e5f326785c90bff6f93cf6d13b649f"
+ },
+ "CascoBombero": {
+  "id": 127688454766519,
+  "decal": 124763881649270,
+  "sha1": "7e605a5261b294cfb0b9073fa5f4f9d8eb297117"
+ },
+ "CascoVikingo": {
+  "id": 94809220083947,
+  "decal": 103162042627188,
+  "sha1": "579e151504d1f10482c34dc9aba5b5b3d4719744"
+ },
+ "Chistera": {
+  "id": 101349604944512,
+  "decal": 73842223249522,
+  "sha1": "308e17850dd10c50e40de9c482d59e9500437e15"
+ },
+ "Corona": {
+  "id": 133506324289733,
+  "decal": 126335462206638,
+  "sha1": "7ecf89f9df875dfa7d2c40ea95b0042fc189d6d7"
+ },
+ "FlotadorPato": {
+  "id": 71963819472810,
+  "decal": 112008325183662,
+  "sha1": "fb533c012e61ba1a8aa5a57ac96848e074b6948d"
+ },
+ "GafasBuceo": {
+  "id": 114033374978770,
+  "decal": 71259856204267,
+  "sha1": "533130d56c5b6c0f6fa78bb57226dc7a69f6ab75"
+ },
+ "GafasEstrella": {
+  "id": 124055472585376,
+  "decal": 126028666987337,
+  "sha1": "7d1e2bbc39155aaf007237116e56d317c62c14a3"
+ },
+ "GorraPiloto": {
+  "id": 88157401487659,
+  "decal": 119532049844926,
+  "sha1": "21458261398c0435212c47eea4f2a0cf1d867924"
+ },
+ "GorroChef": {
+  "id": 140539791133732,
+  "decal": 83473126515616,
+  "sha1": "84c13b9eb4f3d9169d52453ff7e739db84d1c505"
+ },
+ "GorroCocodrilo": {
+  "id": 82202604432325,
+  "decal": 81776196561055,
+  "sha1": "7e5144a4ef73fe0ba10816f74a8e20f0a26c2430"
+ },
+ "GorroCono": {
+  "id": 127924677743469,
+  "decal": 137023051384225,
+  "sha1": "b91df4d4bd84c4779cc13cac9399423f0ae1aa3e"
+ },
+ "GorroHelice": {
+  "id": 134757336237915,
+  "decal": 86727393640249,
+  "sha1": "5abaf3755f7fc4cf7c9813f5ed8983fb09eaf900"
+ },
+ "GorroPato": {
+  "id": 95923658551293,
+  "decal": 108021877182155,
+  "sha1": "4de0c694b8738a7e18794a8c1b261e8f98aed4a4"
+ },
+ "GorroPez": {
+  "id": 124947810711057,
+  "decal": 112373014273601,
+  "sha1": "692b36f68b4c0da30bec5b3cfc5ce9b84a1d8012"
+ },
+ "GorroPlatano": {
+  "id": 96662623004319,
+  "decal": 91963822733443,
+  "sha1": "283055ef689b6c78a1ba0a84c58a07f3ae368f1e"
+ },
+ "Jetpack": {
+  "id": 124994892790349,
+  "decal": 136126142860788,
+  "sha1": "0eaeddf10789ab41418e7097497d8929516d02f9"
+ },
+ "LlaveGigante": {
+  "id": 113404434757190,
+  "decal": 98811844612917,
+  "sha1": "9d829e1262a93becc585bb608407f967b645d6d8"
+ },
+ "MochilaParacaidas": {
+  "id": 112704202753568,
+  "decal": 121617600154052,
+  "sha1": "39b13143d3b2a7fa050aad3e25316144260056df"
+ },
+ "Monoculo": {
+  "id": 90617410072315,
+  "decal": 72679150804610,
+  "sha1": "87604979dfdf5afc4f541c4d1b180eb53133195a"
+ },
+ "NidoPajaro": {
+  "id": 126823331403784,
+  "decal": 133322353015581,
+  "sha1": "833f42460f626e120d31833ef143e1dfa2b632d7"
+ },
+ "SombreroVaquero": {
+  "id": 101368736687474,
+  "decal": 116914228895820,
+  "sha1": "a53574b7cfdb10220c5f9464e753dcc6732ff171"
+ }
+}

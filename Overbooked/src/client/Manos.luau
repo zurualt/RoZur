@@ -19,8 +19,9 @@ local jugador = Players.LocalPlayer
 local estados: { [Model]: Estado } = setmetatable({}, { __mode = "k" }) :: any
 local pulsarHasta = 0
 local abrirHasta = 0
+local bofetadaHasta = 0
 
-local AGARRE_MANO = Vector3.new(-0.117, 0.03, -0.03)
+local AGARRE_MANO = Vector3.new(-0.156, 0.061, 0.035)
 local DISTANCIA = 90
 local SUAVIDAD = 16
 
@@ -30,6 +31,7 @@ local POSES: { [string]: { number } } = {
 	agarre = { 60, 70, 60, 70, 35, 30, 0 },
 	pulsar = { 0, 0, 85, 95, 40, 45, 0 },
 	palma = { 5, 8, 5, 8, -15, 0, 6 },
+	bofetada = { -14, -10, -14, -10, -30, -8, 22 },
 	dos = { 45, 55, 45, 55, 20, 20, 6 },
 }
 
@@ -43,7 +45,8 @@ local POSE_MODO: { [string]: { number } } = {
 
 local DEDOS: { DefDedo } = {
 	{ nombre = "Indice", i = 1, abre = 1 },
-	{ nombre = "Medio", i = 3, abre = 0 },
+	{ nombre = "Medio", i = 3, abre = 0.3 },
+	{ nombre = "Anular", i = 3, abre = -0.3 },
 	{ nombre = "Menique", i = 3, abre = -1 },
 	{ nombre = "Pulgar", i = 5, abre = 0 },
 }
@@ -56,6 +59,8 @@ local ESTILOS: { [string]: Estilo } = {
 	RadioAntena = { modo = "puno", altura = -0.6 },
 	Agua = { modo = "vaso", altura = 0 },
 	Cafe = { modo = "vaso", altura = 0 },
+	Biberon = { modo = "vaso", altura = 0 },
+	Lata = { modo = "vaso", altura = 0 },
 	Hamburguesa = { modo = "palma", altura = 0 },
 	Bandeja = { modo = "palma", altura = 0 },
 	Coco = { modo = "palma", altura = 0 },
@@ -116,6 +121,10 @@ end
 
 function Manos.abrir()
 	abrirHasta = os.clock() + 0.45
+end
+
+function Manos.bofetada()
+	bofetadaHasta = os.clock() + 0.45
 end
 
 local function reposo(hueso: Bone): CFrame
@@ -212,6 +221,8 @@ local function paso(personaje: Model, propio: boolean, ahora: number, k: number)
 		izq = if dos then der else izq
 	elseif propio and ahora < pulsarHasta then
 		der = POSES.pulsar
+	elseif propio and ahora < bofetadaHasta then
+		der = POSES.bofetada
 	elseif propio and ahora < abrirHasta then
 		der = POSES.abierta
 	end

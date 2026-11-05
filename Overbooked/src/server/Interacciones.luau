@@ -80,6 +80,7 @@ local function charco(posicion: Vector3, tipo: string)
 		end
 	end
 end
+Interacciones.charco = charco
 
 local function romperLiquido(o: BasePart, tipo: string)
 	local pos = o.Position

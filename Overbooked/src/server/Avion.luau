@@ -165,6 +165,7 @@ local function puerta(parte: BasePart, abierta: boolean)
 		aviso.ActionText = if abierta then "Cerrar" else "Abrir"
 	end
 end
+Avion.puerta = puerta
 
 function Avion.puertas(abiertas: boolean)
 	for _, d in avion:GetDescendants() do

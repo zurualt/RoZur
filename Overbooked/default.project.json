@@ -99,6 +99,9 @@
     "ServerStorage": {
       "Isla": {
         "$path": "mapa/Isla.model.json"
+      },
+      "Preparacion": {
+        "$path": "mapa/Preparacion.model.json"
       }
     },
     "Lighting": {

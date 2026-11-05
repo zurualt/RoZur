@@ -3,17 +3,24 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local Cara = require(script.Parent.Cara)
+
 type Ojo = {
 	relativo: CFrame,
+	escala: number,
+	lado: number,
 	borde: Part,
 	blanco: Part,
 	pupila: Part,
+	mBorde: SpecialMesh,
+	mBlanco: SpecialMesh,
+	mPupila: SpecialMesh,
 	p: Vector2,
 	v: Vector2,
 	antes: Vector3?,
 	velAntes: Vector3,
 }
-type Cara = { cabeza: BasePart, ojos: { Ojo } }
+type Rostro = { cabeza: BasePart, ojos: { Ojo } }
 
 local Ojos = {}
 
@@ -22,18 +29,20 @@ local GRAVEDAD = 38
 local RADIO = 0.095
 local REBOTE = 0.5
 local FRENO = 2.6
-local CENTRO = Vector3.new(0.226, 1.69, -0.6)
-local NORMAL = Vector3.new(0.248, 0.14, -0.958)
+local CENTRO = Vector3.new(0.232, 1.143, -0.444)
+local NORMAL = Vector3.new(0.179, 0.08, -0.98)
+local ESCALAS = { [1] = 1.12, [-1] = 0.92 }
 local TINTA = Color3.fromRGB(27, 27, 33)
 local BLANCO = Color3.fromRGB(247, 247, 242)
 
 local carpeta = Instance.new("Folder")
 carpeta.Name = "OjosSaltones"
-local caras: { [Model]: Cara } = {}
+local rng = Random.new()
+local caras: { [Model]: Rostro } = {}
 local partes: { BasePart } = {}
 local marcos: { CFrame } = {}
 
-local function pieza(tamano: Vector3, color: Color3): Part
+local function pieza(tamano: Vector3, color: Color3): (Part, SpecialMesh)
 	local p = Instance.new("Part")
 	p.Size = tamano
 	p.Color = color
@@ -47,7 +56,7 @@ local function pieza(tamano: Vector3, color: Color3): Part
 	malla.MeshType = Enum.MeshType.Sphere
 	malla.Parent = p
 	p.Parent = carpeta
-	return p
+	return p, malla
 end
 
 local function motor(personaje: Model, nombre: string): Motor6D?
@@ -63,7 +72,7 @@ local function cabezaEnReposo(personaje: Model, cabeza: BasePart, raiz: BasePart
 	return raiz.CFrame:ToObjectSpace(cabeza.CFrame)
 end
 
-local function crear(personaje: Model): Cara?
+local function crear(personaje: Model): Rostro?
 	local cabeza = personaje:FindFirstChild("Head")
 	local raiz = personaje:FindFirstChild("HumanoidRootPart")
 	if not cabeza or not cabeza:IsA("BasePart") or not raiz or not raiz:IsA("BasePart") then
@@ -75,11 +84,19 @@ local function crear(personaje: Model): Cara?
 		local centro = Vector3.new(CENTRO.X * signo, CENTRO.Y, CENTRO.Z)
 		local normal = Vector3.new(NORMAL.X * signo, NORMAL.Y, NORMAL.Z).Unit
 		local enRaiz = CFrame.lookAt(centro, centro + normal)
+		local borde, mBorde = pieza(Vector3.new(0.42, 0.42, 0.08), TINTA)
+		local blanco, mBlanco = pieza(Vector3.new(0.37, 0.37, 0.13), BLANCO)
+		local pupila, mPupila = pieza(Vector3.new(0.16, 0.16, 0.05), TINTA)
 		table.insert(ojos, {
 			relativo = reposo:Inverse() * enRaiz,
-			borde = pieza(Vector3.new(0.42, 0.42, 0.08), TINTA),
-			blanco = pieza(Vector3.new(0.37, 0.37, 0.13), BLANCO),
-			pupila = pieza(Vector3.new(0.16, 0.16, 0.05), TINTA),
+			escala = ESCALAS[signo],
+			lado = signo,
+			borde = borde,
+			blanco = blanco,
+			pupila = pupila,
+			mBorde = mBorde,
+			mBlanco = mBlanco,
+			mPupila = mPupila,
 			p = Vector2.new(0, -RADIO),
 			v = Vector2.zero,
 			antes = nil,
@@ -103,7 +120,7 @@ local function quitar(personaje: Model)
 	end
 end
 
-local function fisica(o: Ojo, marco: CFrame, dt: number)
+local function fisica(o: Ojo, marco: CFrame, dt: number, radio: number, temblor: number)
 	local pos = marco.Position
 	local antes = o.antes
 	local acel = Vector3.zero
@@ -118,12 +135,15 @@ local function fisica(o: Ojo, marco: CFrame, dt: number)
 	o.antes = pos
 	local relativa = Vector3.new(0, -GRAVEDAD, 0) - acel
 	local empuje = Vector2.new(relativa:Dot(marco.RightVector), relativa:Dot(marco.UpVector))
+	if temblor > 0.05 then
+		empuje += Vector2.new(rng:NextNumber(-1, 1), rng:NextNumber(-1, 1)) * temblor * 250
+	end
 	o.v = (o.v + empuje * dt) * math.exp(-FRENO * dt)
 	o.p += o.v * dt
 	local largo = o.p.Magnitude
-	if largo > RADIO then
+	if largo > radio then
 		local dir = o.p / largo
-		o.p = dir * RADIO
+		o.p = dir * radio
 		local hacia = o.v:Dot(dir)
 		if hacia > 0 then
 			o.v -= dir * hacia * (1 + REBOTE)
@@ -133,6 +153,7 @@ end
 
 local function actualizar(dt: number)
 	dt = math.clamp(dt, 1 / 240, 0.1)
+	local ahora = os.clock()
 	local foco = Workspace.CurrentCamera.CFrame.Position
 	local vistos: { [Model]: boolean } = {}
 	for _, otro in Players:GetPlayers() do
@@ -154,22 +175,37 @@ local function actualizar(dt: number)
 		if not cara then
 			continue
 		end
+		local mirada = Cara.mirada(personaje)
 		local oculto = cara.cabeza.LocalTransparencyModifier > 0.5 or cara.cabeza.Transparency > 0.5
 		for _, o in cara.ojos do
 			local marco = cara.cabeza.CFrame * o.relativo
-			fisica(o, marco, dt)
+			local e = o.escala * (if mirada then mirada.escala else 1)
+			local alto = if mirada then mirada.alto else 1
+			local pupila = if mirada then mirada.pupila else 1
+			if mirada and mirada.mareo > 0.5 then
+				local a = ahora * 7 * o.lado
+				o.p = Vector2.new(math.cos(a), math.sin(a)) * RADIO * e * 0.85
+				o.v = Vector2.zero
+				o.antes = nil
+			else
+				fisica(o, marco, dt, RADIO * e, if mirada then mirada.temblor else 0)
+			end
 			local t = if oculto then 1 else 0
 			if o.blanco.Transparency ~= t then
 				o.borde.Transparency = t
 				o.blanco.Transparency = t
 				o.pupila.Transparency = t
 			end
+			local ojo = Vector3.new(e, e * alto, 1)
+			o.mBorde.Scale = ojo
+			o.mBlanco.Scale = ojo
+			o.mPupila.Scale = Vector3.new(e * pupila, e * pupila * alto, 1)
 			table.insert(partes, o.borde)
 			table.insert(marcos, marco * CFrame.new(0, 0, -0.07))
 			table.insert(partes, o.blanco)
 			table.insert(marcos, marco * CFrame.new(0, 0, -0.1))
 			table.insert(partes, o.pupila)
-			table.insert(marcos, marco * CFrame.new(o.p.X, o.p.Y, -0.165))
+			table.insert(marcos, marco * CFrame.new(o.p.X, o.p.Y * alto, -0.165))
 		end
 	end
 	if #partes > 0 then

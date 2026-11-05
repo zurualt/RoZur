@@ -13,6 +13,7 @@ local Contratos = require(ReplicatedStorage.Shared.Contratos)
 local Agarre = require(script.Parent.Agarre)
 local Avion = require(script.Parent.Avion)
 local Cabina = require(script.Parent.Cabina)
+local Caos = require(script.Parent.Caos)
 local Aduana = require(script.Parent.Aduana)
 local Carga = require(script.Parent.Carga)
 local Datos = require(script.Parent.Datos)
@@ -24,6 +25,7 @@ local Pasajeros = require(script.Parent.Pasajeros)
 local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
+local Preparacion = require(script.Parent.Preparacion)
 local Rafagas = require(script.Parent.Rafagas)
 local Roturas = require(script.Parent.Roturas)
 local Tienda = require(script.Parent.Tienda)
@@ -47,7 +49,9 @@ local resultado: { tipo: string, motivo: string }? = nil
 local listos = false
 local avisoListos: ProximityPrompt? = nil
 local vuelos = MemoryStoreService:GetSortedMap("OverbookedVuelos")
+local jornadas = MemoryStoreService:GetSortedMap("OverbookedJornadas")
 local esPartida = game.PrivateServerId ~= "" and game.PrivateServerOwnerId == 0
+local jornada = 1
 
 type Sala = { centro: BasePart, destino: TextLabel, info: TextLabel, estado: TextLabel, plazas: { Frame }, fin: number? }
 local COLORES_SALA = { Color3.fromRGB(242, 123, 43), Color3.fromRGB(31, 166, 160), Color3.fromRGB(246, 196, 69) }
@@ -199,13 +203,31 @@ local function enSala(sala: Sala): { Player }
 	return grupo
 end
 
+local function jornadaGrupo(grupo: { Player }): number
+	local n = 1
+	for _, jugador in grupo do
+		local ok, valor = pcall(jornadas.GetAsync, jornadas, tostring(jugador.UserId))
+		if ok and typeof(valor) == "number" then
+			n = math.max(n, valor)
+		end
+	end
+	return math.clamp(math.floor(n), 1, Config.RITMO.MAX_JORNADA)
+end
+
+local function guardarJornada()
+	for _, jugador in Players:GetPlayers() do
+		pcall(jornadas.SetAsync, jornadas, tostring(jugador.UserId), jornada, 3600)
+	end
+end
+
 local function despegarGrupo(contrato: Contratos.Contrato, grupo: { Player }): boolean
 	local ok, codigo, id = pcall(TeleportService.ReserveServer, TeleportService, game.PlaceId)
 	if not ok then
 		return false
 	end
+	local nivel = jornadaGrupo(grupo)
 	local guardado = pcall(function()
-		vuelos:SetAsync(id, HttpService:JSONEncode({ contrato = contrato, jugadores = #grupo }), 1800)
+		vuelos:SetAsync(id, HttpService:JSONEncode({ contrato = contrato, jugadores = #grupo, jornada = nivel }), 1800)
 	end)
 	if not guardado then
 		return false
@@ -234,6 +256,10 @@ local function enLobby(): Contratos.Contrato
 	publicarOfertas()
 	Estado:SetAttribute("Cuenta", 0)
 	while true do
+		if RunService:IsStudio() and Workspace:GetAttribute("PruebaPreparacion") == true then
+			Workspace:SetAttribute("PruebaPreparacion", nil)
+			return Preparacion.conCocodrilo(Contratos.generar(rng, ciudad))
+		end
 		for n, sala in salas do
 			local oferta = ofertas[n]
 			local grupo = enSala(sala)
@@ -268,16 +294,17 @@ local function enLobby(): Contratos.Contrato
 	end
 end
 
-local function leerVuelo(): (Contratos.Contrato?, number)
+local function leerVuelo(): (Contratos.Contrato?, number, number)
 	for _ = 1, 10 do
 		local ok, valor = pcall(vuelos.GetAsync, vuelos, game.PrivateServerId)
 		if ok and typeof(valor) == "string" then
 			local datos = HttpService:JSONDecode(valor)
-			return datos.contrato, datos.jugadores
+			local nivel = if typeof(datos.jornada) == "number" then math.clamp(math.floor(datos.jornada), 1, Config.RITMO.MAX_JORNADA) else 1
+			return datos.contrato, datos.jugadores, nivel
 		end
 		task.wait(1)
 	end
-	return nil, 1
+	return nil, 1, 1
 end
 
 local function esperarGrupo(esperados: number)
@@ -297,17 +324,32 @@ local function volverAlLobby()
 	end
 end
 
-local function embarque(contrato: Contratos.Contrato)
+local function embarque(contrato: Contratos.Contrato, preparado: boolean)
 	fase("Embarque")
+	local R = Config.RITMO
+	contrato.pasajeros += (jornada - 1) * R.PASAJEROS_POR_JORNADA
+	contrato.pagoPasajero = math.floor(contrato.pagoPasajero * (1 + R.PAGO_POR_JORNADA * (jornada - 1)))
+	Estado:SetAttribute("Jornada", jornada)
 	Estado:SetAttribute("Contrato", HttpService:JSONEncode(contrato))
 	Tienda.aplicar()
+	local combustible = Avion.estado.combustible
 	Avion.embarque(contrato.distancia)
+	if preparado then
+		Avion.estado.combustible = combustible
+	end
 	Cabina.reiniciar()
 	Estado:SetAttribute("Condicion", contrato.condicion)
 	Pasajeros.embarcar(contrato.pasajeros, contrato.riesgo, contrato.condicion)
-	Vehiculos.reiniciar()
-	Carga.cargar(contrato)
-	aviso(`¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
+	if preparado then
+		aviso(`¡Embarque! Meted las maletas del carro en la bodega (y pasadlas por el escáner de aduanas). Destino: {contrato.destino}`, "info")
+	else
+		Vehiculos.reiniciar()
+		Carga.cargar(contrato)
+		aviso(`¡Embarque! Llevad el carro con el tractor, pasad las maletas por el escáner de aduanas y metedlas en la bodega. Destino: {contrato.destino}`, "info")
+	end
+	if jornada > 1 then
+		task.delay(6, aviso, `Jornada {jornada}: más pasajeros, más caos y mejor paga`, "info")
+	end
 	listos = false
 	local p = avisoListos
 	if p then
@@ -358,6 +400,7 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 	local intacto, entregado, perdidoCarga, cocodrilo = Carga.resumen()
 	local confiscados, contrabando = Carga.aduana()
 	local casco = Avion.estado.casco
+	local caos = if tipo == "Estrellado" then 0 else Caos.bonus()
 	local datos: { [string]: any } = {
 		tipo = tipo,
 		motivo = motivo,
@@ -378,17 +421,18 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		bonusAduana = Aduana.BONUS,
 		multaAduana = Aduana.MULTA,
 		premios = Estadisticas.premios(),
+		caos = caos,
 	}
-	local total = 0
+	local total = caos
 	if tipo == "Aterrizado" then
 		local billetes = entregados * contrato.pagoPasajero * (0.4 + 0.6 * satisfaccion)
 		local bonus = if datos.aterrizaje == "Perfecto" then 150 elseif datos.aterrizaje == "Bueno" then 60 else 0
-		total = billetes + intacto + entregado * 1.5 + bonus + Piratas.bonus() + confiscados * Aduana.BONUS - contrabando * Aduana.MULTA - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
+		total += billetes + intacto + entregado * 1.5 + bonus + Piratas.bonus() + confiscados * Aduana.BONUS - contrabando * Aduana.MULTA - perdidos * contrato.multaPasajero - perdidoCarga * 0.5 - (100 - casco) * 3
 		datos.billetes = math.floor(billetes)
 		datos.bonus = bonus
 	elseif tipo == "Rescatado" then
 		local billetes = entregados * contrato.pagoPasajero * (0.4 + 0.6 * satisfaccion) * Config.ISLA.PAGO
-		total = billetes + Config.ISLA.BONUS_RESCATE + Piratas.bonus() - perdidos * contrato.multaPasajero * 0.5
+		total += billetes + Config.ISLA.BONUS_RESCATE + Piratas.bonus() - perdidos * contrato.multaPasajero * 0.5
 		datos.billetes = math.floor(billetes)
 		datos.rescate = Config.ISLA.BONUS_RESCATE
 	end
@@ -401,6 +445,12 @@ local function cobrar(contrato: Contratos.Contrato, tipo: string, motivo: string
 		Datos.sumar(jugador, parte, tipo == "Aterrizado")
 	end
 	RemotoResultados:FireAllClients(datos)
+	if tipo ~= "Estrellado" then
+		jornada = math.min(jornada + 1, Config.RITMO.MAX_JORNADA)
+	end
+	if esPartida then
+		task.spawn(guardarJornada)
+	end
 	if total > 0 then
 		for _, jugador in jugadores do
 			local raiz = Personajes.raiz(jugador)
@@ -446,7 +496,7 @@ local function naufragio(contrato: Contratos.Contrato, motivo: string)
 end
 
 local function jugar(contrato: Contratos.Contrato)
-	embarque(contrato)
+	embarque(contrato, Preparacion.jugar(contrato))
 	vuelo(contrato)
 	local r = resultado :: { tipo: string, motivo: string }
 	if r.tipo == "Estrellado" then
@@ -466,7 +516,8 @@ local function bucle()
 		spawnAvion.Enabled = true
 		spawnAeropuerto.Enabled = false
 		Avion.prepararTierra()
-		local leido, esperados = leerVuelo()
+		local leido, esperados, nivel = leerVuelo()
+		jornada = nivel
 		local contrato = leido or Contratos.generar(rng, ciudad)
 		ciudad = contrato.origen
 		Estado:SetAttribute("Contrato", HttpService:JSONEncode(contrato))

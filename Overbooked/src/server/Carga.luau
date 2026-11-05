@@ -171,6 +171,25 @@ local function registrar(parte: BasePart, tipo: string, valor: number, entrega: 
 	end
 end
 
+local function enBodega(alto: number): CFrame
+	return CFrame.new(-5.15, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
+end
+
+local function crearBulto(tipo: string, cf: CFrame, valor: number, entrega: boolean, riesgo: number): BasePart
+	local variante = if tipo == "Maleta" then rng:NextInteger(1, #MALETAS) else 0
+	local parte = Objetos.crear(tipo, cf, carpeta, if variante > 0 then MALETAS[variante] else nil)
+	if variante > 0 then
+		parte.Color = COLORES_MALETA[variante]
+	end
+	if tipo == "Jaula" then
+		jaula = parte
+		cuenta.cocodrilo = "Enjaulado"
+		parte.CustomPhysicalProperties = PhysicalProperties.new(2, 0.6, 0.1)
+	end
+	registrar(parte, tipo, valor, entrega, tipo == "Maleta" and rng:NextNumber() < 0.12 + riesgo * 0.05)
+	return parte
+end
+
 function Carga.cargar(contrato: Contratos.Contrato)
 	Carga.limpiar()
 	enEspera = 0
@@ -185,7 +204,7 @@ function Carga.cargar(contrato: Contratos.Contrato)
 			local cf
 			local enCarro = Vehiculos.carro()
 			if c.tipo == "Jaula" then
-				cf = CFrame.new(-5.15, Config.SUELO_Y + alto / 2 + 0.1, zona.Position.Z + zona.Size.Z / 2 - 3.6)
+				cf = enBodega(alto)
 			elseif c.tipo == "Maleta" and enCarro then
 				local k = enEspera
 				enEspera += 1
@@ -194,19 +213,42 @@ function Carga.cargar(contrato: Contratos.Contrato)
 				indice += 1
 				cf = hueco(indice, alto) * CFrame.Angles(0, if c.tipo == "Maleta" then rng:NextNumber(-0.4, 0.4) else 0, 0)
 			end
-			local variante = if c.tipo == "Maleta" then rng:NextInteger(1, #MALETAS) else 0
-			local parte = Objetos.crear(c.tipo, cf, carpeta, if variante > 0 then MALETAS[variante] else nil)
-			if variante > 0 then
-				parte.Color = COLORES_MALETA[variante]
-			end
-			if c.tipo == "Jaula" then
-				jaula = parte
-				cuenta.cocodrilo = "Enjaulado"
-				parte.CustomPhysicalProperties = PhysicalProperties.new(2, 0.6, 0.1)
-			end
-			registrar(parte, c.tipo, c.valor, c.entrega, c.tipo == "Maleta" and rng:NextNumber() < 0.12 + contrato.riesgo * 0.05)
+			crearBulto(c.tipo, cf, c.valor, c.entrega, contrato.riesgo)
 		end
 	end
+end
+
+function Carga.anadir(tipo: string, cf: CFrame, valor: number, riesgo: number): BasePart
+	return crearBulto(tipo, cf, valor, false, riesgo)
+end
+
+function Carga.guardarJaula(): boolean
+	local j = jaula
+	if not j or not j.Parent or cocodrilo then
+		return false
+	end
+	Agarre.soltarObjeto(j)
+	servidor(j)
+	local b = bultos[j]
+	if b then
+		b.vida = 100
+		b.gracia = os.clock() + 2
+		j:SetAttribute("Vida", 100)
+	end
+	j.AssemblyLinearVelocity = Vector3.zero
+	j.AssemblyAngularVelocity = Vector3.zero
+	j.CFrame = enBodega(j.Size.Y)
+	return true
+end
+
+function Carga.cocodriloEn(cf: CFrame)
+	if cocodrilo or not jaula then
+		return
+	end
+	cocodrilo = crearCocodrilo(cf)
+	cuenta.cocodrilo = "Suelto"
+	saciadoHasta = 0
+	aturdidoHasta = 0
 end
 
 function Carga.limpiar()
@@ -389,12 +431,14 @@ function Carga.danarJaula(cantidad: number)
 	end
 end
 
+function Carga.aBordo(p: Vector3): boolean
+	return math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 22
+end
+
 function Carga.dejarEnTierra(): number
 	local perdidas = 0
 	for parte, b in bultos do
-		local p = parte.Position
-		local dentro = math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 22
-		if not dentro then
+		if not Carga.aBordo(parte.Position) then
 			bultos[parte] = nil
 			perdidas += 1
 			cuenta.perdido += b.valor
@@ -409,8 +453,7 @@ function Carga.dejarEnTierra(): number
 	local c = cocodrilo
 	local cuerpo = c and c.PrimaryPart
 	if c and cuerpo then
-		local p = cuerpo.Position
-		if not (math.abs(p.X) < 7 and p.Y > 99 and p.Y < 112 and p.Z > -63 and p.Z < 22) then
+		if not Carga.aBordo(cuerpo.Position) then
 			cuenta.cocodrilo = "Perdido"
 			cuenta.perdido += 400
 			Agarre.soltarObjeto(c)

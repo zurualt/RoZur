@@ -24,6 +24,7 @@ type Pasajero = {
 	servir: ProximityPrompt,
 	calmar: ProximityPrompt,
 }
+type Caracter = { nombre: string, peso: number, pedido: number, paciencia: number, miedo: number, sueno: number }
 
 local Pasajeros = {}
 
@@ -36,6 +37,32 @@ local rng = Random.new()
 local cuenta = { embarcados = 0, perdidos = 0, servidos = 0 }
 local riesgo = 1
 local condicion = "Normal"
+local CARACTERES: { [string]: Caracter } = {}
+for _, c in P.CARACTERES do
+	CARACTERES[c.nombre] = c
+end
+local destinos: { [Model]: Vector3 } = {}
+local Estado = ReplicatedStorage:WaitForChild("Estado") :: Folder
+
+local function rasgo(modelo: Model): Caracter
+	local n = modelo:GetAttribute("Caracter")
+	return CARACTERES[if typeof(n) == "string" then n else "Normal"] or P.CARACTERES[1]
+end
+
+local function sortear(): string
+	local total = 0
+	for _, c in P.CARACTERES do
+		total += c.peso
+	end
+	local x = rng:NextNumber(0, total)
+	for _, c in P.CARACTERES do
+		x -= c.peso
+		if x <= 0 then
+			return c.nombre
+		end
+	end
+	return "Normal"
+end
 
 local function soldar(a: BasePart, b: BasePart)
 	local w = Instance.new("WeldConstraint")
@@ -68,6 +95,8 @@ local function sentar(p: Pasajero, asiento: BasePart)
 	p.cuerpo.Anchored = true
 	p.modelo:PivotTo(asiento.CFrame * CFrame.new(0, asiento.Size.Y / 2 + p.cuerpo.Size.Y / 2, 0.25))
 	p.modelo:SetAttribute("Estado", "Sentado")
+	p.modelo:SetAttribute("Perdido", nil)
+	destinos[p.modelo] = nil
 end
 
 local function levantar(p: Pasajero)
@@ -82,6 +111,7 @@ local function levantar(p: Pasajero)
 	end)
 	p.modelo:SetAttribute("Estado", "Suelto")
 	p.modelo:SetAttribute("Pedido", "")
+	p.modelo:SetAttribute("Dormido", nil)
 end
 
 local function coincide(pedido: string, tipo: string?): boolean
@@ -97,9 +127,17 @@ local function quitarRacion(objeto: Instance): boolean
 	return false
 end
 
-local function atender(modelo: Model)
+local function atender(modelo: Model, doble: boolean?)
 	local s = modelo:GetAttribute("Satisfaccion")
-	modelo:SetAttribute("Satisfaccion", math.min(1, (if typeof(s) == "number" then s else 0.5) + P.SUBIDA_SERVIR))
+	local gloton = rasgo(modelo).nombre == "Gloton"
+	modelo:SetAttribute("Satisfaccion", math.min(1, (if typeof(s) == "number" then s else 0.5) + P.SUBIDA_SERVIR + (if gloton then 0.1 else 0) + (if doble then 0.2 else 0)))
+	if gloton then
+		task.delay(2.8, function()
+			if modelo.Parent then
+				modelo:SetAttribute("Eructo", os.clock())
+			end
+		end)
+	end
 	modelo:SetAttribute("Pedido", "")
 	modelo:SetAttribute("Feliz", os.clock())
 	cuenta.servidos += 1
@@ -182,12 +220,15 @@ local function crear(indice: number): Pasajero
 			RemotoAviso:FireClient(jugador, `Quiere {Config.PEDIDOS[pedido] or pedido}`, "info")
 			return
 		end
+		local doble = false
 		if not quitarRacion(objeto) then
 			Agarre.consumir(jugador)
+		elseif rasgo(modelo).nombre == "Gloton" then
+			doble = quitarRacion(objeto)
 		end
 		Sonidos.emitir("Servir", cuerpo.Position)
 		Estadisticas.sumar(jugador, "servir")
-		atender(modelo)
+		atender(modelo, doble)
 	end)
 	calmar.Triggered:Connect(function(jugador)
 		if modelo:GetAttribute("Alborotador") == true then
@@ -216,6 +257,8 @@ local function crear(indice: number): Pasajero
 	end)
 	modelo.Parent = carpeta
 	local visual = P.VISUALES[rng:NextInteger(1, #P.VISUALES)]
+	modelo:SetAttribute("Aspecto", visual)
+	modelo:SetAttribute("Caracter", sortear())
 	Activos.cuando(visual, function()
 		cabeza.Transparency = 1
 		piernas.Transparency = 1
@@ -286,8 +329,46 @@ function Pasajeros.limpiar()
 end
 
 local function sumar(modelo: Model, atributo: string, cantidad: number)
+	if atributo == "Miedo" and cantidad > 0 then
+		cantidad *= rasgo(modelo).miedo
+	end
 	local v = modelo:GetAttribute(atributo)
 	modelo:SetAttribute(atributo, math.clamp((if typeof(v) == "number" then v else 0) + cantidad, 0, 1))
+end
+
+local function despertar(modelo: Model, ruido: boolean)
+	if modelo:GetAttribute("Dormido") ~= true then
+		return
+	end
+	modelo:SetAttribute("Dormido", nil)
+	if ruido and rasgo(modelo).nombre == "Dormilon" then
+		modelo:SetAttribute("Enfado", os.clock())
+		sumar(modelo, "Satisfaccion", -0.05)
+	end
+end
+
+local function hayCaos(): boolean
+	for nombre in Estado:GetAttributes() do
+		if string.sub(nombre, 1, 4) == "Caos" then
+			return true
+		end
+	end
+	return avion:GetAttribute("Disco") ~= nil
+end
+
+local function puntoPasillo(): Vector3
+	return Vector3.new(rng:NextNumber(-0.6, 0.6), Config.SUELO_Y + 1.4, rng:NextNumber(-45, -6))
+end
+
+local function marear(modelo: Model)
+	modelo:SetAttribute("Mareado", true)
+	task.delay(rng:NextNumber(6, 11), function()
+		if modelo.Parent and modelo:GetAttribute("Mareado") == true then
+			modelo:SetAttribute("Mareado", false)
+			modelo:SetAttribute("Vomito", os.clock())
+			sumar(modelo, "Satisfaccion", -0.06)
+		end
+	end)
 end
 
 function Pasajeros.asustar(cantidad: number, centro: Vector3?, radio: number?)
@@ -377,12 +458,40 @@ function Pasajeros.servirCon(modelo: Model, objeto: BasePart): boolean
 	if typeof(pedido) ~= "string" or pedido == "" or typeof(tipo) ~= "string" or not coincide(pedido, tipo) then
 		return false
 	end
+	local doble = false
 	if not quitarRacion(objeto) then
 		Agarre.soltarObjeto(objeto)
 		objeto:Destroy()
+	elseif rasgo(modelo).nombre == "Gloton" then
+		doble = quitarRacion(objeto)
 	end
-	atender(modelo)
+	atender(modelo, doble)
 	return true
+end
+
+function Pasajeros.abofetear(modelo: Model, direccion: Vector3, herramienta: boolean): boolean
+	local p = lista[modelo]
+	if not p or Agarre.portador(modelo) then
+		return false
+	end
+	despertar(modelo, true)
+	if not herramienta then
+		modelo:SetAttribute("Bofetada", os.clock())
+	end
+	reaccion(modelo, "Golpe")
+	sumar(modelo, "Satisfaccion", if herramienta then -0.02 else -0.04)
+	modelo:SetAttribute("Miedo", 0)
+	if modelo:GetAttribute("Alborotador") == true then
+		modelo:SetAttribute("Alborotador", false)
+	end
+	if modelo:GetAttribute("Mareado") == true then
+		modelo:SetAttribute("Mareado", false)
+	end
+	if not p.asiento and Agarre.delServidor(p.cuerpo) then
+		local d = direccion * Vector3.new(1, 0, 1)
+		p.cuerpo.AssemblyLinearVelocity += (if d.Magnitude > 0.01 then d.Unit else Vector3.xAxis) * 14 + Vector3.new(0, 6, 0)
+	end
+	return rasgo(modelo).nombre == "Grunon"
 end
 
 function Pasajeros.golpear(modelo: Model, impacto: number, direccion: Vector3, motivo: string, cinturones: boolean)
@@ -478,6 +587,7 @@ function Pasajeros.iniciar()
 		if objeto:IsA("Model") then
 			local p = lista[objeto]
 			if p and p.asiento then
+				despertar(objeto, true)
 				levantar(p)
 				sumar(objeto, "Miedo", 0.3)
 			end
@@ -505,7 +615,33 @@ function Pasajeros.iniciar()
 
 	task.spawn(function()
 		while true do
+			task.wait(0.25)
+			for modelo, p in lista do
+				local destino = destinos[modelo]
+				if not destino or p.asiento or Agarre.portador(modelo) or not Agarre.delServidor(p.cuerpo) then
+					continue
+				end
+				local pos = p.cuerpo.Position
+				local plano = (destino - pos) * Vector3.new(1, 0, 1)
+				if plano.Magnitude < 2 then
+					destinos[modelo] = puntoPasillo()
+					continue
+				end
+				local dir = plano.Unit
+				p.cuerpo.CFrame = CFrame.lookAt(pos, pos + dir)
+				p.cuerpo.AssemblyAngularVelocity = Vector3.zero
+				p.cuerpo.AssemblyLinearVelocity = dir * 4.5 + Vector3.new(0, if rng:NextNumber() < 0.25 then 6 else p.cuerpo.AssemblyLinearVelocity.Y, 0)
+			end
+		end
+	end)
+
+	task.spawn(function()
+		local vuelta = 0
+		while true do
 			task.wait(1)
+			vuelta += 1
+			local fase = avion:GetAttribute("Fase")
+			local fiesta = hayCaos()
 			local pidiendo = 0
 			for modelo in lista do
 				local pedido = modelo:GetAttribute("Pedido")
@@ -514,6 +650,8 @@ function Pasajeros.iniciar()
 				end
 			end
 			local maximoPedidos = P.PEDIDOS_BASE + P.PEDIDOS_POR_JUGADOR * #Players:GetPlayers()
+			local turbulencia = avion:GetAttribute("Turbulencia")
+			local mareo = (if typeof(turbulencia) == "number" and turbulencia > 0.25 then turbulencia * 0.025 else 0) + (if avion:GetAttribute("CaidaLibre") == true then 0.05 else 0)
 			for modelo, p in lista do
 				if not modelo.Parent then
 					lista[modelo] = nil
@@ -532,12 +670,48 @@ function Pasajeros.iniciar()
 				end
 				local miedo = modelo:GetAttribute("Miedo")
 				local m = if typeof(miedo) == "number" then miedo else 0
+				if p.asiento and rng:NextNumber() < mareo and modelo:GetAttribute("Mareado") ~= true then
+					marear(modelo)
+				end
+				local c = rasgo(modelo)
 				if p.asiento then
 					local pedido = modelo:GetAttribute("Pedido")
+					local dormido = modelo:GetAttribute("Dormido") == true
+					local calma = fase == "Vuelo" and pedido == "" and m < 0.15 and (if typeof(turbulencia) == "number" then turbulencia else 0) < 0.25 and modelo:GetAttribute("Alborotador") ~= true and modelo:GetAttribute("Mareado") ~= true
+					if dormido and not calma then
+						despertar(modelo, m >= 0.15)
+					elseif not dormido and calma and rng:NextNumber() < 0.006 * c.sueno then
+						modelo:SetAttribute("Dormido", true)
+					elseif dormido and rng:NextNumber() < 0.03 / math.max(c.sueno, 0.1) then
+						despertar(modelo, false)
+					end
+					if c.nombre == "Despistado" and pedido == "" and not dormido and fase == "Vuelo" and rng:NextNumber() < 0.006 then
+						levantar(p)
+						modelo:SetAttribute("Perdido", true)
+						local bano = avion:FindFirstChild("PuertaBano", true)
+						destinos[modelo] = if bano and bano:IsA("BasePart") then Vector3.new(bano.Position.X * 0.6, Config.SUELO_Y + 1.4, bano.Position.Z) else puntoPasillo()
+						continue
+					end
+					if vuelta % 5 == 0 and (c.nombre == "Charlatan" or (c.nombre == "Fiestero" and fiesta)) then
+						for otro, q in lista do
+							if otro ~= modelo and q.asiento and (q.cuerpo.Position - p.cuerpo.Position).Magnitude < (if c.nombre == "Charlatan" then 4.5 else 6) then
+								if c.nombre == "Charlatan" then
+									if rasgo(otro).nombre ~= "Charlatan" then
+										sumar(otro, "Satisfaccion", -0.005)
+										if rng:NextNumber() < 0.2 then
+											despertar(otro, true)
+										end
+									end
+								else
+									sumar(otro, "Satisfaccion", 0.01)
+								end
+							end
+						end
+					end
 					if pedido == "" then
-						if pidiendo < maximoPedidos and rng:NextNumber() < P.PEDIDO_PROB * (0.8 + riesgo * 0.2) * (if condicion == "Hambre" then 2.2 elseif condicion == "VIP" then 1.3 else 1) then
+						if pidiendo < maximoPedidos and modelo:GetAttribute("Dormido") ~= true and rng:NextNumber() < P.PEDIDO_PROB * c.pedido * (0.8 + riesgo * 0.2) * (if condicion == "Hambre" then 2.2 elseif condicion == "VIP" then 1.3 else 1) then
 							modelo:SetAttribute("Pedido", Config.COMIDA[rng:NextInteger(1, #Config.COMIDA)])
-							local maximo = math.floor((P.PACIENCIA + 6 * Mejoras.nivel("Cocina")) * (if condicion == "VIP" then 0.7 else 1))
+							local maximo = math.floor((P.PACIENCIA + 6 * Mejoras.nivel("Cocina")) * c.paciencia * (if condicion == "VIP" then 0.7 else 1))
 							modelo:SetAttribute("PacienciaMax", maximo)
 							modelo:SetAttribute("Paciencia", maximo)
 							pidiendo += 1
@@ -552,6 +726,8 @@ function Pasajeros.iniciar()
 							sumar(modelo, "Satisfaccion", -P.BAJADA_ESPERA)
 						end
 					end
+				elseif destinos[modelo] then
+					sumar(modelo, "Satisfaccion", -0.004)
 				else
 					sumar(modelo, "Satisfaccion", -0.015)
 					m = math.min(1, m + 0.04)

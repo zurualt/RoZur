@@ -224,6 +224,23 @@ function Cabina.reiniciar()
 	end
 end
 
+function Cabina.reventar(centro: Vector3, radio: number): { Vector3 }
+	local abiertos: { Vector3 } = {}
+	for _, a in altillos do
+		if (a.puerta.Position - centro).Magnitude < radio then
+			if not a.abierto then
+				moverAltillo(a, true)
+			end
+			a.contenido = math.max(a.contenido, 2)
+			task.delay(0.15, soltarBolso, a)
+			task.delay(0.4, soltarBolso, a)
+			table.insert(abiertos, a.puerta.Position)
+		end
+	end
+	Cabina.parpadeo(0.8)
+	return abiertos
+end
+
 local function sacudida(magnitud: number)
 	if magnitud > 0.45 then
 		for _, a in altillos do

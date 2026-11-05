@@ -10,8 +10,8 @@ type Perfil = {
 	Dinero: number,
 	Vuelos: number,
 	Mejor: number,
-	Gorros: { [string]: boolean },
-	Gorro: string,
+	Accesorios: { [string]: boolean },
+	Puestos: { [string]: string },
 	Mejoras: { [string]: number },
 	Ajustes: { [string]: any },
 }
@@ -33,13 +33,13 @@ local function numero(t: { [string]: any }, clave: string): number
 	return if typeof(v) == "number" and v == v then v else 0
 end
 
-local function gorroValido(nombre: string): boolean
-	for _, g in Config.TIENDA.GORROS do
-		if g.nombre == nombre then
-			return true
+local function ranuraDe(nombre: string): string?
+	for _, a in Config.TIENDA.ACCESORIOS do
+		if a.nombre == nombre then
+			return a.ranura
 		end
 	end
-	return false
+	return nil
 end
 
 local function mejoraMaxima(nombre: string): number
@@ -51,14 +51,27 @@ local function mejoraMaxima(nombre: string): number
 	return 0
 end
 
-local function leerGorros(v: any): { [string]: boolean }
+local function leerTenidos(v: any): { [string]: boolean }
 	local r: { [string]: boolean } = {}
 	local n = 0
 	if typeof(v) == "table" then
 		for nombre, tiene in v do
-			if typeof(nombre) == "string" and #nombre <= 40 and tiene == true and n < 64 then
+			if typeof(nombre) == "string" and #nombre <= 40 and tiene == true and n < 128 then
 				r[nombre] = true
 				n += 1
+			end
+		end
+	end
+	return r
+end
+
+local function leerPuestos(v: any, tiene: { [string]: boolean }): { [string]: string }
+	local r: { [string]: string } = {}
+	if typeof(v) == "table" then
+		for _, ranura in Config.TIENDA.RANURAS do
+			local nombre = v[ranura]
+			if typeof(nombre) == "string" and tiene[nombre] and ranuraDe(nombre) == ranura then
+				r[ranura] = nombre
 			end
 		end
 	end
@@ -91,6 +104,7 @@ local function leerAjustes(v: any): { [string]: any }
 	numeroEn("Fov", 60, 100)
 	numeroEn("Musica", 0, 1)
 	numeroEn("Efectos", 0, 1)
+	numeroEn("Ambiente", 0, 1)
 	if typeof(v.Tercera) == "boolean" then
 		r.Tercera = v.Tercera
 	end
@@ -162,14 +176,16 @@ local function futura(t: any): boolean
 end
 
 local function leerTienda(perfil: Perfil, t: { [string]: any })
-	perfil.Gorros = leerGorros(t.Gorros)
+	perfil.Accesorios = leerTenidos(t.Accesorios)
+	for nombre in leerTenidos(t.Gorros) do
+		perfil.Accesorios[nombre] = true
+	end
 	perfil.Mejoras = leerMejoras(t.Mejoras)
-	local g = t.Gorro
-	perfil.Gorro = if typeof(g) == "string" and perfil.Gorros[g] then g else ""
+	perfil.Puestos = leerPuestos(if typeof(t.Puestos) == "table" then t.Puestos else { Cabeza = t.Gorro }, perfil.Accesorios)
 end
 
 local function cargar(jugador: Player)
-	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0, Gorros = {}, Gorro = "", Mejoras = {}, Ajustes = {} }
+	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0, Accesorios = {}, Puestos = {}, Mejoras = {}, Ajustes = {} }
 	local tienda = almacen
 	if tienda then
 		local clave = "j_" .. jugador.UserId
@@ -248,7 +264,8 @@ local function guardar(jugador: Player, liberar: boolean)
 		return
 	end
 	local copia = table.clone(perfil)
-	copia.Gorros = table.clone(perfil.Gorros)
+	copia.Accesorios = table.clone(perfil.Accesorios)
+	copia.Puestos = table.clone(perfil.Puestos)
 	copia.Mejoras = table.clone(perfil.Mejoras)
 	copia.Ajustes = table.clone(perfil.Ajustes)
 	local escrito = false
@@ -289,9 +306,11 @@ local function guardar(jugador: Player, liberar: boolean)
 				end
 				local t: { [string]: any } = if typeof(anterior) == "table" then anterior else {}
 				t.Version = VERSION
-				t.Gorros = copia.Gorros
-				t.Gorro = copia.Gorro
+				t.Accesorios = copia.Accesorios
+				t.Puestos = copia.Puestos
 				t.Mejoras = copia.Mejoras
+				t.Gorros = nil
+				t.Gorro = nil
 				return t
 			end)
 		end)
@@ -338,28 +357,41 @@ function Datos.gastar(jugador: Player, cantidad: number): boolean
 	return true
 end
 
-function Datos.gorros(jugador: Player): ({ [string]: boolean }, string)
+function Datos.vuelos(jugador: Player): number
+	local perfil = perfiles[jugador]
+	return if perfil then perfil.Vuelos else 0
+end
+
+function Datos.accesorios(jugador: Player): ({ [string]: boolean }, { [string]: string })
 	local perfil = perfiles[jugador]
 	if not perfil then
-		return {}, ""
+		return {}, {}
 	end
-	return table.clone(perfil.Gorros), perfil.Gorro
+	return table.clone(perfil.Accesorios), table.clone(perfil.Puestos)
 end
 
-function Datos.darGorro(jugador: Player, nombre: string)
+function Datos.darAccesorio(jugador: Player, nombre: string)
 	local perfil = perfiles[jugador]
-	if perfil and gorroValido(nombre) then
-		perfil.Gorros[nombre] = true
+	if perfil and ranuraDe(nombre) then
+		perfil.Accesorios[nombre] = true
 	end
 end
 
-function Datos.equipar(jugador: Player, nombre: string): boolean
+function Datos.poner(jugador: Player, nombre: string): boolean
 	local perfil = perfiles[jugador]
-	if not perfil or (nombre ~= "" and not perfil.Gorros[nombre]) then
+	local ranura = ranuraDe(nombre)
+	if not perfil or not ranura or not perfil.Accesorios[nombre] then
 		return false
 	end
-	perfil.Gorro = nombre
+	perfil.Puestos[ranura] = nombre
 	return true
+end
+
+function Datos.quitar(jugador: Player, ranura: string)
+	local perfil = perfiles[jugador]
+	if perfil then
+		perfil.Puestos[ranura] = nil
+	end
 end
 
 function Datos.mejoras(jugador: Player): { [string]: number }

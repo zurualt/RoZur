@@ -20,6 +20,11 @@ TEXTO_UI = re.compile(r"(\bText\s*=|ActionText|ObjectText|SetTitle)")
 TAG = re.compile(r"<[^>]*>")
 
 IGNORAR = {
+    "Lengua",
+    "Nariz",
+    "Gamepad",
+    "Pajaro",
+    "Ambiente",
     "%d:%02d",
     "Dark stone grey",
     "info",

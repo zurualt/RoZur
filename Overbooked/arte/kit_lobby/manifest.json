@@ -1,0 +1,407 @@
+[
+  {
+    "nombre": "LobbySuelo",
+    "archivo": "LobbySuelo.fbx",
+    "bbox_min": [
+      -32.6,
+      0.0,
+      -48.0
+    ],
+    "bbox_max": [
+      32.0,
+      0.559,
+      48.0
+    ],
+    "triangulos": 3441
+  },
+  {
+    "nombre": "LobbyParedes",
+    "archivo": "LobbyParedes.fbx",
+    "bbox_min": [
+      -32.7,
+      0.0,
+      -48.7
+    ],
+    "bbox_max": [
+      36.5,
+      22.0,
+      48.7
+    ],
+    "triangulos": 3261
+  },
+  {
+    "nombre": "LobbyTecho",
+    "archivo": "LobbyTecho.fbx",
+    "bbox_min": [
+      -33.13,
+      9.2,
+      -49.5
+    ],
+    "bbox_max": [
+      36.0,
+      23.63,
+      49.5
+    ],
+    "triangulos": 6844
+  },
+  {
+    "nombre": "Facturacion",
+    "archivo": "Facturacion.fbx",
+    "bbox_min": [
+      -3.7,
+      0.0,
+      -1.8
+    ],
+    "bbox_max": [
+      3.7,
+      5.497,
+      2.55
+    ],
+    "triangulos": 960
+  },
+  {
+    "nombre": "ArcoSeguridad",
+    "archivo": "ArcoSeguridad.fbx",
+    "bbox_min": [
+      -2.2,
+      0.0,
+      -0.75
+    ],
+    "bbox_max": [
+      2.2,
+      7.88,
+      0.75
+    ],
+    "triangulos": 672
+  },
+  {
+    "nombre": "RayosX",
+    "archivo": "RayosX.fbx",
+    "bbox_min": [
+      -2.553,
+      0.0,
+      -5.2
+    ],
+    "bbox_max": [
+      1.65,
+      4.05,
+      5.2
+    ],
+    "triangulos": 861
+  },
+  {
+    "nombre": "CintaEquipaje",
+    "archivo": "CintaEquipaje.fbx",
+    "bbox_min": [
+      -12.6,
+      0.0,
+      -4.9
+    ],
+    "bbox_max": [
+      10.9,
+      6.0,
+      4.9
+    ],
+    "triangulos": 982
+  },
+  {
+    "nombre": "IslaInfo",
+    "archivo": "IslaInfo.fbx",
+    "bbox_min": [
+      -10.1,
+      0.0,
+      -8.4
+    ],
+    "bbox_max": [
+      10.1,
+      14.65,
+      0.782
+    ],
+    "triangulos": 1082
+  },
+  {
+    "nombre": "Cafeteria",
+    "archivo": "Cafeteria.fbx",
+    "bbox_min": [
+      -7.4,
+      0.0,
+      -2.22
+    ],
+    "bbox_max": [
+      7.4,
+      8.2,
+      3.25
+    ],
+    "triangulos": 2166
+  },
+  {
+    "nombre": "MesaCafe",
+    "archivo": "MesaCafe.fbx",
+    "bbox_min": [
+      -2.75,
+      -0.002,
+      -1.2
+    ],
+    "bbox_max": [
+      2.75,
+      3.0,
+      1.2
+    ],
+    "triangulos": 828
+  },
+  {
+    "nombre": "ExpendedoraRoja",
+    "archivo": "ExpendedoraRoja.fbx",
+    "bbox_min": [
+      -1.62,
+      0.0,
+      -1.2
+    ],
+    "bbox_max": [
+      1.62,
+      6.2,
+      1.1
+    ],
+    "triangulos": 510
+  },
+  {
+    "nombre": "ExpendedoraAzul",
+    "archivo": "ExpendedoraAzul.fbx",
+    "bbox_min": [
+      -1.62,
+      0.0,
+      -1.2
+    ],
+    "bbox_max": [
+      1.62,
+      6.2,
+      1.1
+    ],
+    "triangulos": 510
+  },
+  {
+    "nombre": "Fotomaton",
+    "archivo": "Fotomaton.fbx",
+    "bbox_min": [
+      -2.08,
+      0.0,
+      -1.75
+    ],
+    "bbox_max": [
+      2.05,
+      8.15,
+      1.63
+    ],
+    "triangulos": 756
+  },
+  {
+    "nombre": "CarroMaletas",
+    "archivo": "CarroMaletas.fbx",
+    "bbox_min": [
+      -0.85,
+      0.0,
+      -1.25
+    ],
+    "bbox_max": [
+      0.85,
+      3.17,
+      1.42
+    ],
+    "triangulos": 680
+  },
+  {
+    "nombre": "PlantaGrande",
+    "archivo": "PlantaGrande.fbx",
+    "bbox_min": [
+      -1.725,
+      0.0,
+      -1.363
+    ],
+    "bbox_max": [
+      1.619,
+      7.094,
+      1.493
+    ],
+    "triangulos": 552
+  },
+  {
+    "nombre": "PlantaMonstera",
+    "archivo": "PlantaMonstera.fbx",
+    "bbox_min": [
+      -2.877,
+      0.0,
+      -2.962
+    ],
+    "bbox_max": [
+      2.592,
+      3.771,
+      2.671
+    ],
+    "triangulos": 928
+  },
+  {
+    "nombre": "Jardinera",
+    "archivo": "Jardinera.fbx",
+    "bbox_min": [
+      -4.05,
+      0.0,
+      -0.85
+    ],
+    "bbox_max": [
+      4.05,
+      2.363,
+      0.85
+    ],
+    "triangulos": 1212
+  },
+  {
+    "nombre": "RinconLounge",
+    "archivo": "RinconLounge.fbx",
+    "bbox_min": [
+      -4.05,
+      0.0,
+      -1.225
+    ],
+    "bbox_max": [
+      4.05,
+      4.5,
+      2.95
+    ],
+    "triangulos": 1560
+  },
+  {
+    "nombre": "EstanteriaTienda",
+    "archivo": "EstanteriaTienda.fbx",
+    "bbox_min": [
+      -3.05,
+      0.0,
+      -0.5
+    ],
+    "bbox_max": [
+      3.05,
+      4.5,
+      1.05
+    ],
+    "triangulos": 1474
+  },
+  {
+    "nombre": "ChocolateGigante",
+    "archivo": "ChocolateGigante.fbx",
+    "bbox_min": [
+      -3.0,
+      0.0,
+      -1.05
+    ],
+    "bbox_max": [
+      3.0,
+      1.79,
+      1.05
+    ],
+    "triangulos": 28
+  },
+  {
+    "nombre": "Pelota",
+    "archivo": "Pelota.fbx",
+    "bbox_min": [
+      -1.1,
+      0.0,
+      -1.1
+    ],
+    "bbox_max": [
+      1.1,
+      2.2,
+      1.1
+    ],
+    "triangulos": 168
+  },
+  {
+    "nombre": "Lata",
+    "archivo": "Lata.fbx",
+    "bbox_min": [
+      -0.247,
+      0.0,
+      -0.247
+    ],
+    "bbox_max": [
+      0.247,
+      0.75,
+      0.247
+    ],
+    "triangulos": 80
+  },
+  {
+    "nombre": "Papelera",
+    "archivo": "Papelera.fbx",
+    "bbox_min": [
+      -0.65,
+      0.0,
+      -0.65
+    ],
+    "bbox_max": [
+      0.65,
+      1.8,
+      0.65
+    ],
+    "triangulos": 116
+  },
+  {
+    "nombre": "PostesCola",
+    "archivo": "PostesCola.fbx",
+    "bbox_min": [
+      -3.8,
+      0.0,
+      -3.3
+    ],
+    "bbox_max": [
+      3.8,
+      2.08,
+      3.3
+    ],
+    "triangulos": 1080
+  },
+  {
+    "nombre": "Timbre",
+    "archivo": "Timbre.fbx",
+    "bbox_min": [
+      -0.32,
+      0.0,
+      -0.32
+    ],
+    "bbox_max": [
+      0.32,
+      0.41,
+      0.32
+    ],
+    "triangulos": 158
+  },
+  {
+    "nombre": "Microfono",
+    "archivo": "Microfono.fbx",
+    "bbox_min": [
+      -0.296,
+      0.0,
+      -0.584
+    ],
+    "bbox_max": [
+      0.296,
+      0.885,
+      0.296
+    ],
+    "triangulos": 336
+  },
+  {
+    "nombre": "BotonRojo",
+    "archivo": "BotonRojo.fbx",
+    "bbox_min": [
+      -0.3,
+      -0.3,
+      -0.21
+    ],
+    "bbox_max": [
+      0.3,
+      0.3,
+      0.0
+    ],
+    "triangulos": 114
+  }
+]

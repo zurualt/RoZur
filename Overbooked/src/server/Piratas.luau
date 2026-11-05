@@ -41,6 +41,7 @@ local piratas: { Pirata } = {}
 local ultimoDisparo: { [Player]: number } = {}
 local derribados = 0
 local fin = 0
+local prueba = false
 local rng = Random.new()
 
 function Piratas.posicion(radio: number, velocidad: number, fase: number, altura: number, inicio: number, t: number): Vector3
@@ -90,6 +91,7 @@ function Piratas.detener()
 	end
 	table.clear(piratas)
 	fin = 0
+	prueba = false
 end
 
 function Piratas.bonus(): number
@@ -150,6 +152,15 @@ function Piratas.iniciar()
 	Players.PlayerRemoving:Connect(function(jugador)
 		ultimoDisparo[jugador] = nil
 	end)
+	if RunService:IsStudio() then
+		Workspace:GetAttributeChangedSignal("PruebaPiratas"):Connect(function()
+			if Workspace:GetAttribute("PruebaPiratas") then
+				Workspace:SetAttribute("PruebaPiratas", nil)
+				Piratas.lanzar()
+				prueba = true
+			end
+		end)
+	end
 	local acumulado = 0
 	RunService.Heartbeat:Connect(function(dt)
 		acumulado += dt
@@ -158,7 +169,7 @@ function Piratas.iniciar()
 		end
 		acumulado = 0
 		local ahora = os.clock()
-		if Avion.estado.enTierra then
+		if Avion.estado.enTierra and not prueba then
 			Piratas.detener()
 			return
 		end
@@ -170,6 +181,7 @@ function Piratas.iniciar()
 		for _, p in piratas do
 			if ahora >= p.proximoDisparo then
 				p.proximoDisparo = ahora + rng:NextNumber(3.5, 6.5)
+				p.carpeta:SetAttribute("Disparo", ahora)
 				Avion.danar(1.6)
 				chispazo()
 				RemotoSacudida:FireAllClients(0.3)

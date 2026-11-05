@@ -131,7 +131,8 @@ function Tutorial.iniciar()
 		while panel.Parent do
 			task.wait(0.5)
 			local fase = Estado:GetAttribute("Fase")
-			if fase == "Embarque" or fase == "Vuelo" then
+			panel.Visible = fase ~= "Preparacion"
+			if fase == "Preparacion" or fase == "Embarque" or fase == "Vuelo" then
 				marcar(1)
 			end
 			if fase == "Vuelo" then

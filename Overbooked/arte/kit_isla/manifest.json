@@ -30,16 +30,6 @@
     "triangulos": 320
   },
   {
-    "nombre": "ArbustoTropical",
-    "archivo": "ArbustoTropical.fbx",
-    "tamano": [
-      5.03,
-      2.99,
-      5.055
-    ],
-    "triangulos": 504
-  },
-  {
     "nombre": "Hoguera",
     "archivo": "Hoguera.fbx",
     "tamano": [
@@ -128,16 +118,6 @@
       9.6
     ],
     "triangulos": 190
-  },
-  {
-    "nombre": "RestosMotor",
-    "archivo": "RestosMotor.fbx",
-    "tamano": [
-      5.706,
-      5.699,
-      6.327
-    ],
-    "triangulos": 307
   },
   {
     "nombre": "Cajon",
@@ -248,16 +228,6 @@
       9.408
     ],
     "triangulos": 1084
-  },
-  {
-    "nombre": "Helecho",
-    "archivo": "Helecho.fbx",
-    "tamano": [
-      4.618,
-      1.588,
-      4.657
-    ],
-    "triangulos": 776
   },
   {
     "nombre": "HojasGrandes",
@@ -420,16 +390,6 @@
     "triangulos": 394
   },
   {
-    "nombre": "Cascada",
-    "archivo": "Cascada.fbx",
-    "tamano": [
-      12.557,
-      15.533,
-      9.266
-    ],
-    "triangulos": 1324
-  },
-  {
     "nombre": "Mirador",
     "archivo": "Mirador.fbx",
     "tamano": [
@@ -468,5 +428,125 @@
       2.754
     ],
     "triangulos": 517
+  },
+  {
+    "nombre": "Helecho",
+    "archivo": "Helecho.fbx",
+    "tamano": [
+      4.374,
+      1.606,
+      4.081
+    ],
+    "triangulos": 640
+  },
+  {
+    "nombre": "Cascada",
+    "archivo": "Cascada.fbx",
+    "tamano": [
+      12.557,
+      15.304,
+      18.3
+    ],
+    "triangulos": 1420
+  },
+  {
+    "nombre": "PalmeraGigante",
+    "archivo": "PalmeraGigante.fbx",
+    "tamano": [
+      20.878,
+      42.354,
+      19.376
+    ],
+    "triangulos": 2961
+  },
+  {
+    "nombre": "Tiki",
+    "archivo": "Tiki.fbx",
+    "tamano": [
+      4.087,
+      10.243,
+      3.064
+    ],
+    "triangulos": 1074
+  },
+  {
+    "nombre": "RocaCangrejo",
+    "archivo": "RocaCangrejo.fbx",
+    "tamano": [
+      17.752,
+      8.523,
+      15.338
+    ],
+    "triangulos": 1182
+  },
+  {
+    "nombre": "SantuarioBotellas",
+    "archivo": "SantuarioBotellas.fbx",
+    "tamano": [
+      5.673,
+      3.789,
+      2.72
+    ],
+    "triangulos": 1940
+  },
+  {
+    "nombre": "Gaviota",
+    "archivo": "Gaviota.fbx",
+    "tamano": [
+      0.696,
+      1.21,
+      1.69
+    ],
+    "triangulos": 290
+  },
+  {
+    "nombre": "Espuma",
+    "archivo": "Espuma.fbx",
+    "tamano": [
+      12.0,
+      0.08,
+      2.776
+    ],
+    "triangulos": 85
+  },
+  {
+    "nombre": "HierbaPlaya",
+    "archivo": "HierbaPlaya.fbx",
+    "tamano": [
+      3.432,
+      2.714,
+      3.721
+    ],
+    "triangulos": 504
+  },
+  {
+    "nombre": "Pilote",
+    "archivo": "Pilote.fbx",
+    "tamano": [
+      0.751,
+      10.0,
+      0.77
+    ],
+    "triangulos": 108
+  },
+  {
+    "nombre": "ArbustoTropical",
+    "archivo": "ArbustoTropical.fbx",
+    "tamano": [
+      4.341,
+      2.609,
+      4.504
+    ],
+    "triangulos": 918
+  },
+  {
+    "nombre": "RestosMotor",
+    "archivo": "RestosMotor.fbx",
+    "tamano": [
+      5.897,
+      4.485,
+      6.215
+    ],
+    "triangulos": 736
   }
 ]

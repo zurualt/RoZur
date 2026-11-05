@@ -10,6 +10,7 @@ local Workspace = game:GetService("Workspace")
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Camara = require(script.Parent.Camara)
+local Pajaros = require(script.Parent.Pajaros)
 local Rafagas = require(script.Parent.Rafagas)
 local Sonido = require(script.Parent.Sonido)
 
@@ -465,43 +466,6 @@ local function ambiente()
 	end
 end
 
-local function bandada()
-	local carpeta = Instance.new("Folder")
-	carpeta.Name = "Bandada"
-	carpeta.Parent = Workspace
-	local pajaros: { { parte: BasePart, pos: Vector3, vel: Vector3, fase: number } } = {}
-	for _ = 1, 70 do
-		local p = Instance.new("WedgePart")
-		p.Size = Vector3.new(1.6, 0.3, 1)
-		p.Color = Color3.fromRGB(40, 40, 46)
-		p.Anchored = true
-		p.CanCollide = false
-		p.CanQuery = false
-		p.CanTouch = false
-		p.CastShadow = false
-		p.Parent = carpeta
-		table.insert(pajaros, {
-			parte = p :: BasePart,
-			pos = Vector3.new(rng:NextNumber(-60, 60), 100 + rng:NextNumber(-10, 22), rng:NextNumber(-520, -160)),
-			vel = Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(-2, 2), rng:NextNumber(150, 230)),
-			fase = rng:NextNumber(0, 6),
-		})
-	end
-	local inicio = os.clock()
-	local conexion: RBXScriptConnection
-	conexion = RunService.PreRender:Connect(function(dt)
-		local t = os.clock() - inicio
-		for _, b in pajaros do
-			b.pos += b.vel * dt
-			b.parte.CFrame = CFrame.new(b.pos) * CFrame.Angles(math.sin(t * 14 + b.fase) * 0.6, 0, 0)
-		end
-		if t > 4.5 then
-			conexion:Disconnect()
-			carpeta:Destroy()
-		end
-	end)
-end
-
 function Efectos.iniciar()
 	pantalla()
 	avion:GetAttributeChangedSignal("Tormenta"):Connect(function()
@@ -516,8 +480,9 @@ function Efectos.iniciar()
 			Camara.sacudir(0.5)
 		end
 	end)
-	avion:GetAttributeChangedSignal("Bandada"):Connect(bandada)
+	avion:GetAttributeChangedSignal("Bandada"):Connect(Pajaros.bandada)
 	avion:GetAttributeChangedSignal("Pajaros"):Connect(function()
+		Pajaros.choque()
 		Camara.sacudir(0.9)
 		destellar(Color3.fromRGB(255, 170, 90), 0.35, 0.5)
 		drama()

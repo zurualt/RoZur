@@ -1,0 +1,42 @@
+[
+  {
+    "nombre": "Cabra",
+    "archivo": "Cabra.fbx",
+    "tamano": [
+      1.176,
+      2.287,
+      2.519
+    ],
+    "triangulos": 1468
+  },
+  {
+    "nombre": "Gallina",
+    "archivo": "Gallina.fbx",
+    "tamano": [
+      0.833,
+      1.317,
+      1.148
+    ],
+    "triangulos": 796
+  },
+  {
+    "nombre": "Bebe",
+    "archivo": "Bebe.fbx",
+    "tamano": [
+      0.88,
+      1.151,
+      0.748
+    ],
+    "triangulos": 856
+  },
+  {
+    "nombre": "Biberon",
+    "archivo": "Biberon.fbx",
+    "tamano": [
+      0.39,
+      1.0,
+      0.371
+    ],
+    "triangulos": 272
+  }
+]

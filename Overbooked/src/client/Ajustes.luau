@@ -13,13 +13,13 @@ local Sonido = require(script.Parent.Sonido)
 
 local RemotoAjustes = ReplicatedStorage:WaitForChild("Remotos"):WaitForChild("Ajustes") :: RemoteEvent
 
-type Valores = { Fov: number, Musica: number, Efectos: number, Tercera: boolean, Idioma: string }
+type Valores = { Fov: number, Musica: number, Efectos: number, Ambiente: number, Tercera: boolean, Idioma: string }
 type Deslizador = { relleno: ImageLabel, pomo: ImageLabel, valor: TextLabel, fijar: (number) -> () }
 
 local Ajustes = {}
 
 local jugador = Players.LocalPlayer
-local valores: Valores = { Fov = 80, Musica = 1, Efectos = 1, Tercera = false, Idioma = "en" }
+local valores: Valores = { Fov = 80, Musica = 1, Efectos = 1, Ambiente = 0.8, Tercera = false, Idioma = "en" }
 local cargados = false
 local envioPendiente = 0
 local gui: ScreenGui
@@ -69,7 +69,7 @@ local function aplicar()
 	Camara.fov(valores.Fov)
 	Sonido.volumen("Musica", valores.Musica)
 	Sonido.volumen("Efectos", valores.Efectos)
-	Sonido.volumen("Ambiente", valores.Efectos)
+	Sonido.volumen("Ambiente", valores.Ambiente)
 	Camara.preferirTercera(valores.Tercera)
 	local m = modulo()
 	if m and typeof(m.cambiar) == "function" then
@@ -81,6 +81,7 @@ local function aplicar()
 		deslizadores.Fov.fijar((valores.Fov - 60) / 40)
 		deslizadores.Musica.fijar(valores.Musica)
 		deslizadores.Efectos.fijar(valores.Efectos)
+		deslizadores.Ambiente.fijar(valores.Ambiente)
 	end
 end
 
@@ -116,6 +117,9 @@ local function leerGuardados()
 	end
 	if typeof(t.Efectos) == "number" then
 		valores.Efectos = math.clamp(t.Efectos, 0, 1)
+	end
+	if typeof(t.Ambiente) == "number" then
+		valores.Ambiente = math.clamp(t.Ambiente, 0, 1)
 	end
 	if typeof(t.Tercera) == "boolean" then
 		valores.Tercera = t.Tercera
@@ -276,7 +280,7 @@ local function construir()
 		end
 	end)
 
-	panel = Gui.panel(raiz, "Papel", UDim2.fromOffset(640, 470), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
+	panel = Gui.panel(raiz, "Papel", UDim2.fromOffset(640, 608), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
 	panel.Visible = false
 	panel.ZIndex = 2
 	aparicion = Instance.new("UIScale")
@@ -315,16 +319,21 @@ local function construir()
 	end, function(x)
 		valores.Efectos = x
 		Sonido.volumen("Efectos", x)
+	end)
+	deslizador("Ambiente", 4, "Avión y ambiente", function(x)
+		return `{math.floor(x * 100 + 0.5)}%`
+	end, function(x)
+		valores.Ambiente = x
 		Sonido.volumen("Ambiente", x)
 	end)
-	local filaCamara = fila(4, "Cámara")
+	local filaCamara = fila(5, "Cámara")
 	local _, tc = boton(filaCamara, "", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.AMARILLO, function()
 		valores.Tercera = not valores.Tercera
 		aplicar()
 		guardar()
 	end)
 	textoCamara = tc
-	local filaIdioma = fila(5, "Idioma")
+	local filaIdioma = fila(6, "Idioma")
 	local _, ti = boton(filaIdioma, "", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.TURQUESA, function()
 		local lista = idiomas()
 		local i = 1
@@ -338,6 +347,15 @@ local function construir()
 		guardar()
 	end)
 	textoIdioma = ti
+	boton(fila(7, "Modo clip"), "Entrar (P)", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.NARANJA, function()
+		local m = script.Parent:FindFirstChild("ModoClip")
+		if m and m:IsA("ModuleScript") then
+			Ajustes.cerrar()
+			pcall(function()
+				(require(m) :: any).entrar()
+			end)
+		end
+	end)
 end
 
 function Ajustes.iniciar()

@@ -1,0 +1,92 @@
+[
+  {
+    "nombre": "VivoAbuela",
+    "archivo": "VivoAbuela.fbx",
+    "bbox_min": [
+      -1.055,
+      -1.581,
+      -1.635
+    ],
+    "bbox_max": [
+      1.055,
+      3.493,
+      0.754
+    ],
+    "triangulos": 6444
+  },
+  {
+    "nombre": "VivoTurista",
+    "archivo": "VivoTurista.fbx",
+    "bbox_min": [
+      -1.2,
+      -1.581,
+      -1.994
+    ],
+    "bbox_max": [
+      1.2,
+      3.86,
+      1.072
+    ],
+    "triangulos": 4260
+  },
+  {
+    "nombre": "VivoEjecutivo",
+    "archivo": "VivoEjecutivo.fbx",
+    "bbox_min": [
+      -1.055,
+      -1.581,
+      -1.635
+    ],
+    "bbox_max": [
+      1.055,
+      3.511,
+      0.715
+    ],
+    "triangulos": 3322
+  },
+  {
+    "nombre": "VivoNino",
+    "archivo": "VivoNino.fbx",
+    "bbox_min": [
+      -0.782,
+      -1.204,
+      -1.211
+    ],
+    "bbox_max": [
+      0.782,
+      2.688,
+      0.53
+    ],
+    "triangulos": 3590
+  },
+  {
+    "nombre": "VivoDeportista",
+    "archivo": "VivoDeportista.fbx",
+    "bbox_min": [
+      -1.105,
+      -1.581,
+      -1.635
+    ],
+    "bbox_max": [
+      1.105,
+      3.382,
+      0.765
+    ],
+    "triangulos": 4146
+  },
+  {
+    "nombre": "VivoRockero",
+    "archivo": "VivoRockero.fbx",
+    "bbox_min": [
+      -1.055,
+      -1.581,
+      -1.635
+    ],
+    "bbox_max": [
+      1.055,
+      4.092,
+      0.966
+    ],
+    "triangulos": 3758
+  }
+]

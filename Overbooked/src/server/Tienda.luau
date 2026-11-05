@@ -3,12 +3,13 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+local Accesorios = require(ReplicatedStorage.Shared.Accesorios)
 local Config = require(ReplicatedStorage.Shared.Config)
-local Visuales = require(ReplicatedStorage.Shared.Visuales)
+local ModelosAccesorios = require(ReplicatedStorage.Shared.ModelosAccesorios)
 local Activos = require(script.Parent.Activos)
 local Datos = require(script.Parent.Datos)
 local Mejoras = require(script.Parent.Mejoras)
-local Sonidos = require(script.Parent.Sonidos)
+local Rafagas = require(script.Parent.Rafagas)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoTienda = Remotos:WaitForChild("Tienda") :: RemoteEvent
@@ -19,47 +20,40 @@ local Tienda = {}
 local esperas: { [Player]: number } = {}
 
 local function estado(jugador: Player): { [string]: any }
-	local gorros, gorro = Datos.gorros(jugador)
-	return { dinero = Datos.dinero(jugador), gorros = gorros, gorro = gorro, mejoras = Datos.mejoras(jugador) }
+	local tiene, puestos = Datos.accesorios(jugador)
+	return { dinero = Datos.dinero(jugador), vuelos = Datos.vuelos(jugador), tiene = tiene, puestos = puestos, mejoras = Datos.mejoras(jugador) }
 end
 
-local function enviar(jugador: Player, abrir: boolean)
-	RemotoTienda:FireClient(jugador, abrir, estado(jugador))
+local function enviar(jugador: Player, abrir: boolean, evento: { [string]: string }?)
+	RemotoTienda:FireClient(jugador, abrir, estado(jugador), evento)
 end
 
-local function ponerGorro(jugador: Player)
+local function vestir(jugador: Player)
 	local personaje = jugador.Character
 	if not personaje then
 		return
 	end
-	for _, h in personaje:GetChildren() do
-		if h.Name == "Gorro" and h:IsA("Model") then
-			h:Destroy()
-		end
-	end
-	local _, gorro = Datos.gorros(jugador)
-	if gorro == "" or not Visuales.IDS[gorro] then
-		return
-	end
-	local cabeza = personaje:FindFirstChild("Head")
-	if not cabeza or not cabeza:IsA("BasePart") then
-		return
-	end
+	local _, puestos = Datos.accesorios(jugador)
 	local escala = personaje:GetScale()
-	local ancla = Visuales.ANCLAS[gorro] or Vector3.new(0, cabeza.Size.Y / 2 / escala, 0)
-	Activos.adjuntar(cabeza, gorro, CFrame.new(ancla * escala), escala, "Gorro", function()
-		local _, actual = Datos.gorros(jugador)
-		return actual == gorro and jugador.Character == personaje
-	end)
-end
-
-local function gorroDe(nombre: string): Config.Gorro?
-	for _, g in Config.TIENDA.GORROS do
-		if g.nombre == nombre and Visuales.IDS[g.nombre] then
-			return g
+	for _, ranura in Config.TIENDA.RANURAS do
+		local etiqueta = "Accesorio" .. ranura
+		for _, h in personaje:GetChildren() do
+			if h.Name == etiqueta and h:IsA("Model") then
+				h:Destroy()
+			end
+		end
+		local nombre = puestos[ranura]
+		if not nombre or not Accesorios.disponible(nombre) then
+			continue
+		end
+		local parte = personaje:FindFirstChild(Accesorios.parte(nombre))
+		if parte and parte:IsA("BasePart") then
+			Activos.adjuntar(parte, Accesorios.modelo(nombre), CFrame.identity, escala, etiqueta, function()
+				local _, actuales = Datos.accesorios(jugador)
+				return actuales[ranura] == nombre and jugador.Character == personaje
+			end)
 		end
 	end
-	return nil
 end
 
 local function mejoraDe(nombre: string): Config.Mejora?
@@ -84,80 +78,134 @@ function Tienda.aplicar()
 	Mejoras.fijar(maximos)
 end
 
+local function sinPerfil(jugador: Player): boolean
+	if Datos.guardable(jugador) then
+		return false
+	end
+	RemotoAviso:FireClient(jugador, "No se ha podido cargar tu perfil: la tienda no está disponible en este servidor", "peligro")
+	return true
+end
+
+local function comprar(jugador: Player, nombre: string): { [string]: string }?
+	local a = Accesorios.de(nombre)
+	local tiene = Datos.accesorios(jugador)
+	if not a or tiene[nombre] or not Accesorios.disponible(nombre) or sinPerfil(jugador) then
+		return nil
+	end
+	if Datos.vuelos(jugador) < a.vuelos then
+		return { tipo = "bloqueado", nombre = nombre }
+	end
+	if not Datos.gastar(jugador, a.precio) then
+		return { tipo = "pobre", nombre = nombre }
+	end
+	Datos.darAccesorio(jugador, nombre)
+	Datos.poner(jugador, nombre)
+	vestir(jugador)
+	local personaje = jugador.Character
+	local raiz = personaje and personaje:FindFirstChild("HumanoidRootPart")
+	if raiz and raiz:IsA("BasePart") then
+		Rafagas.lanzar("Monedas", raiz.Position + Vector3.new(0, 3, 0), 0.8)
+	end
+	return { tipo = "comprado", nombre = nombre }
+end
+
+local function mejorar(jugador: Player, nombre: string): { [string]: string }?
+	local m = mejoraDe(nombre)
+	if not m or sinPerfil(jugador) then
+		return nil
+	end
+	local precio = m.precios[(Datos.mejoras(jugador)[m.nombre] or 0) + 1]
+	if not precio then
+		return nil
+	end
+	if not Datos.gastar(jugador, precio) then
+		return { tipo = "pobre", nombre = nombre }
+	end
+	Datos.subirMejora(jugador, m.nombre)
+	return { tipo = "mejora", nombre = nombre }
+end
+
 local function pedir(jugador: Player, accion: any, nombre: any)
 	local ahora = os.clock()
-	if (esperas[jugador] or 0) > ahora or typeof(accion) ~= "string" or not Datos.listo(jugador) then
+	if (esperas[jugador] or 0) > ahora or typeof(accion) ~= "string" or typeof(nombre) ~= "string" or #nombre > 40 or not Datos.listo(jugador) then
 		return
 	end
-	esperas[jugador] = ahora + 0.3
-	if (accion == "gorro" or accion == "mejora") and not Datos.guardable(jugador) then
-		RemotoAviso:FireClient(jugador, "No se ha podido cargar tu perfil: la tienda no está disponible en este servidor", "peligro")
+	esperas[jugador] = ahora + 0.25
+	local evento: { [string]: string }? = nil
+	if accion == "comprar" then
+		evento = comprar(jugador, nombre)
+	elseif accion == "mejora" then
+		evento = mejorar(jugador, nombre)
+	elseif accion == "poner" and Datos.poner(jugador, nombre) then
+		vestir(jugador)
+		evento = { tipo = "puesto", nombre = nombre }
+	elseif accion == "quitar" and table.find(Config.TIENDA.RANURAS, nombre) then
+		Datos.quitar(jugador, nombre)
+		vestir(jugador)
+		evento = { tipo = "quitado", nombre = nombre }
+	end
+	enviar(jugador, false, evento)
+end
+
+local function ponerAviso(aeropuerto: Instance)
+	local puesto = aeropuerto:FindFirstChild("Tienda", true)
+	if not puesto or not puesto:IsA("BasePart") or puesto:FindFirstChild("AvisoTienda") then
 		return
 	end
-	if accion == "quitar" then
-		Datos.equipar(jugador, "")
-		ponerGorro(jugador)
-	elseif accion == "gorro" and typeof(nombre) == "string" then
-		local g = gorroDe(nombre)
-		if not g then
-			return
+	local aviso = Instance.new("ProximityPrompt")
+	aviso.Name = "AvisoTienda"
+	aviso.ActionText = "Abrir tienda"
+	aviso.ObjectText = "Tienda de la tripulación"
+	aviso.KeyboardKeyCode = Enum.KeyCode.E
+	aviso.MaxActivationDistance = 10
+	aviso.RequiresLineOfSight = false
+	aviso.Parent = puesto
+	aviso.Triggered:Connect(function(jugador)
+		if Datos.listo(jugador) then
+			enviar(jugador, true)
 		end
-		local tiene = Datos.gorros(jugador)
-		if tiene[g.nombre] then
-			Datos.equipar(jugador, g.nombre)
-			ponerGorro(jugador)
-		elseif Datos.gastar(jugador, g.precio) then
-			Datos.darGorro(jugador, g.nombre)
-			Datos.equipar(jugador, g.nombre)
-			ponerGorro(jugador)
-			Sonidos.emitirA(jugador, "Caja")
-			RemotoAviso:FireClient(jugador, `¡Has comprado: {g.titulo}!`, "bien")
-		else
-			RemotoAviso:FireClient(jugador, "No tienes dinero suficiente", "info")
-		end
-	elseif accion == "mejora" and typeof(nombre) == "string" then
-		local m = mejoraDe(nombre)
-		if not m then
-			return
-		end
-		local nivel = Datos.mejoras(jugador)[m.nombre] or 0
-		local precio = m.precios[nivel + 1]
-		if not precio then
-			return
-		end
-		if Datos.gastar(jugador, precio) then
-			Datos.subirMejora(jugador, m.nombre)
-			Sonidos.emitirA(jugador, "Caja")
-			RemotoAviso:FireClient(jugador, `{m.titulo}: nivel {nivel + 1}`, "bien")
-		else
-			RemotoAviso:FireClient(jugador, "No tienes dinero suficiente", "info")
+	end)
+end
+
+local function prepararModelos()
+	for nombre, id in ModelosAccesorios.IDS do
+		local caja = ModelosAccesorios.CAJAS[nombre]
+		if caja then
+			Activos.registrar(Accesorios.modelo(nombre), id, caja)
 		end
 	end
-	enviar(jugador, false)
+	local carpeta = Instance.new("Folder")
+	carpeta.Name = Accesorios.CARPETA
+	carpeta.Parent = ReplicatedStorage
+	for _, a in Config.TIENDA.ACCESORIOS do
+		if Accesorios.disponible(a.nombre) then
+			Activos.clonar(Accesorios.modelo(a.nombre), function(visual)
+				visual.Name = a.nombre
+				visual.Parent = carpeta
+			end)
+		end
+	end
 end
 
 function Tienda.iniciar()
-	local puesto = Workspace:WaitForChild("Aeropuerto"):FindFirstChild("Tienda", true)
-	if puesto and puesto:IsA("BasePart") then
-		local aviso = Instance.new("ProximityPrompt")
-		aviso.ActionText = "Abrir tienda"
-		aviso.ObjectText = "Tienda de la tripulación"
-		aviso.KeyboardKeyCode = Enum.KeyCode.E
-		aviso.MaxActivationDistance = 10
-		aviso.RequiresLineOfSight = false
-		aviso.Parent = puesto
-		aviso.Triggered:Connect(function(jugador)
-			if Datos.listo(jugador) then
-				enviar(jugador, true)
-			end
-		end)
-	end
+	prepararModelos()
 	RemotoTienda.OnServerEvent:Connect(pedir)
+	local aeropuerto = Workspace:FindFirstChild("Aeropuerto")
+	if aeropuerto then
+		ponerAviso(aeropuerto)
+	end
+	Workspace.ChildAdded:Connect(function(hijo)
+		if hijo.Name == "Aeropuerto" then
+			task.wait(1)
+			ponerAviso(hijo)
+		end
+	end)
 	local function alEntrar(jugador: Player)
 		jugador.CharacterAdded:Connect(function(personaje)
 			personaje:WaitForChild("Head", 10)
+			personaje:WaitForChild("UpperTorso", 10)
 			task.wait(0.5)
-			ponerGorro(jugador)
+			vestir(jugador)
 		end)
 		task.spawn(function()
 			local limite = os.clock() + 90
@@ -165,7 +213,7 @@ function Tienda.iniciar()
 				task.wait(0.5)
 			end
 			if jugador.Parent then
-				ponerGorro(jugador)
+				vestir(jugador)
 			end
 		end)
 	end
