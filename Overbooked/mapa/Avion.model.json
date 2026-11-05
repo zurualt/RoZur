@@ -15,14 +15,14 @@
       "Size": [
        13.4,
        0.3,
-       84.5
+       74.3
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          0,
          99.85,
-         -20.25
+         -15.15
         ],
         "orientation": [
          [
@@ -15462,6 +15462,54 @@
        }
       }
      ]
+    },
+    {
+     "name": "SueloCabina",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       11,
+       0.3,
+       9.9
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         99.85,
+         -57.25
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.16862745098039217,
+       0.32941176470588235,
+       0.34901960784313724
+      ],
+      "Material": "Fabric",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": true,
+      "CastShadow": true
+     }
     },
     {
      "name": "Parabrisas",

@@ -109,7 +109,7 @@ FILA_SALIDA = 4
 
 def estructura():
     p = []
-    p.append(part("Suelo", (INTERIOR * 2, G, 84.5), (0, SUELO_Y - G / 2, -20.25), MOQUETA, "Fabric"))
+    p.append(part("Suelo", (INTERIOR * 2, G, 74.3), (0, SUELO_Y - G / 2, -15.15), MOQUETA, "Fabric"))
     p.append(part("Pasillo", (2.2, 0.06, 37), (0, SUELO_Y + 0.03, -25.75), NARANJA, "Fabric", colision=False))
     p.append(part("Techo", (INTERIOR * 2, G, 74), (0, TECHO_Y + G / 2, -15), TECHO))
     for z in (-48, -4, 6, 16):
@@ -203,6 +203,7 @@ def cabina():
         part("ParabrisasAlto", (11, 0.5, G), (0, 107.75, -62.35), CREMA),
         part("Parteluz", (0.36, 3.78, 0.31), (0, 105.61, -62.045), GRIS),
     ]))
+    p.append(part("SueloCabina", (11, G, 9.9), (0, SUELO_Y - G / 2, -57.25), MOQUETA, "Fabric"))
     p.append(part("Parabrisas", (11, 4, 0.2), (0, 105.5, -62.35), CRISTAL, "Glass", transp=0.55))
     for sx in (-1, 1):
         for alto, ancho, y, z in ((1.6, 2.1, 105.2, -60.4), (1.4, 1.5, 105.25, -58.15)):

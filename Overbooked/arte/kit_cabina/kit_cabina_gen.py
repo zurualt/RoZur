@@ -1135,7 +1135,7 @@ def p_forro():
 
     hole = rr_pts(11.04, 4.04, 0.32, 3)
     hole = [(x, z + 5.5) for x, z in hole]
-    outer = [(-(WALL_X + 0.3), 0.0), (WALL_X + 0.3, 0.0), (WALL_X + 0.3, 8.0), (-(WALL_X + 0.3), 8.0)]
+    outer = [(-5.4, 0.0), (5.4, 0.0), (WALL_X + 0.3, 0.5), (WALL_X + 0.3, 7.6), (5.4, 8.0), (-5.4, 8.0), (-(WALL_X + 0.3), 7.6), (-(WALL_X + 0.3), 0.5)]
     wfm = frame((0, SHELL_Y1, 0), (-1, 0, 0), (0, 0, 1))
     p.add(plate(outer, [hole], FRAME_Y1 - SHELL_Y1, wfm, z0=0.0), "wall")
     lip = [(5.52, 3.75)]

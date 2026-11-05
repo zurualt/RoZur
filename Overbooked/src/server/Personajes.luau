@@ -269,20 +269,6 @@ local function cargarPlantilla()
 	modelo.Name = "StarterCharacter"
 	modelo.Parent = nil
 	resultado:Destroy()
-	while not modelo:FindFirstChild("Animate") do
-		for _, jugador in Players:GetPlayers() do
-			local personaje = jugador.Character
-			local h = personaje and personaje:FindFirstChildOfClass("Humanoid")
-			local animar = personaje and personaje:FindFirstChild("Animate")
-			if h and h.RigType == Enum.HumanoidRigType.R15 and animar and animar:IsA("BaseScript") then
-				animar:Clone().Parent = modelo
-				break
-			end
-		end
-		if not modelo:FindFirstChild("Animate") then
-			task.wait(1)
-		end
-	end
 	modelo.Parent = StarterPlayer
 	local estado = ReplicatedStorage:FindFirstChild("Estado")
 	local fase = if estado then estado:GetAttribute("Fase") else nil

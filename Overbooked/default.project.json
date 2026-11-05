@@ -76,6 +76,11 @@
         "Client": {
           "$path": "src/client"
         }
+      },
+      "StarterCharacterScripts": {
+        "Animate": {
+          "$className": "LocalScript"
+        }
       }
     },
     "Workspace": {

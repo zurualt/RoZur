@@ -1,15 +1,5 @@
 [
   {
-    "nombre": "CabinaForro",
-    "archivo": "CabinaForro.fbx",
-    "tamano": [
-      11.6,
-      8.0,
-      10.2
-    ],
-    "triangulos": 5880
-  },
-  {
     "nombre": "CabinaVolante",
     "archivo": "CabinaVolante.fbx",
     "tamano": [
@@ -98,5 +88,15 @@
       1.873
     ],
     "triangulos": 9240
+  },
+  {
+    "nombre": "CabinaForro",
+    "archivo": "CabinaForro.fbx",
+    "tamano": [
+      11.6,
+      8.0,
+      10.2
+    ],
+    "triangulos": 5896
   }
 ]
