@@ -250,12 +250,10 @@ function Agarre.iniciar()
 		end
 		esperas[jugador] = ahora + 0.25
 		local agarrable = Agarre.agarrable(objeto)
-		if not agarrable then
-			return
-		end
-		local raiz = Agarre.raiz(agarrable)
+		local raiz = agarrable and Agarre.raiz(agarrable)
 		local raizJugador = Personajes.raiz(jugador)
-		if not raiz or not raizJugador then
+		if not agarrable or not raiz or not raizJugador then
+			RemotoSostener:FireClient(jugador, nil)
 			return
 		end
 		if (raiz.Position - raizJugador.Position).Magnitude > Config.AGARRE.DISTANCIA + 4 or not visible(jugador, raiz, agarrable) then
@@ -269,7 +267,7 @@ function Agarre.iniciar()
 
 	RemotoSoltar.OnServerEvent:Connect(function(jugador, velocidad)
 		local v: Vector3? = nil
-		if typeof(velocidad) == "Vector3" and velocidad == velocidad and velocidad.Magnitude <= Config.AGARRE.LANZAMIENTO + 12 then
+		if typeof(velocidad) == "Vector3" and velocidad == velocidad and velocidad.Magnitude <= Config.AGARRE.LANZAMIENTO_FUERTE + 16 then
 			v = velocidad
 		end
 		soltarInterno(jugador, v)

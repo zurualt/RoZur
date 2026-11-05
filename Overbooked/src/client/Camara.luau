@@ -28,8 +28,9 @@ local POSE_BRAZO: { [string]: { number } } = {
 	vaso = { 68, 27, 0, 12 },
 	palma = { 55, 55, -90, 12 },
 	colgar = { 45, 15, 0, 6 },
-	dos = { 78, 18, 0, 10 },
+	dos = { 78, 18, 0, 16 },
 }
+local tensionLanzar = 0
 local LEVANTE_PROPIO = math.rad(22)
 local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(64), 0, 0)
 local alcanceHasta = 0
@@ -161,9 +162,10 @@ local function poseSosteniendo(personaje: Model)
 			inclinacionVista += LEVANTE_PROPIO
 		end
 		local p = POSE_BRAZO[estilo.modo]
+		local tension = if personaje == jugador.Character then tensionLanzar else 0
 		local dentro = math.rad(p[4])
-		local subir = CFrame.Angles(inclinacionVista + math.rad(p[1]), 0, 0)
-		local codo = CFrame.Angles(math.rad(p[2]), 0, 0)
+		local subir = CFrame.Angles(inclinacionVista + math.rad(p[1]) + math.rad(40) * tension, 0, 0)
+		local codo = CFrame.Angles(math.rad(p[2]) + math.rad(40) * tension, 0, 0)
 		girar(m.RightShoulder, CFrame.Angles(0, dentro, 0) * subir)
 		girar(m.RightElbow, codo)
 		if p[3] ~= 0 then
@@ -175,6 +177,9 @@ local function poseSosteniendo(personaje: Model)
 		elseif propio then
 			girar(m.LeftShoulder, reposoIzq)
 			girar(m.LeftElbow, GIRO_CODO_REPOSO)
+		else
+			girar(m.LeftShoulder, CFrame.Angles(math.rad(5), 0, -math.rad(12)))
+			girar(m.LeftElbow, CFrame.Angles(math.rad(20), 0, 0))
 		end
 		return
 	end
@@ -184,6 +189,10 @@ local function poseSosteniendo(personaje: Model)
 	girar(m.RightElbow, GIRO_CODO_REPOSO:Lerp(CFrame.identity, estirar))
 	girar(m.LeftShoulder, reposoIzq)
 	girar(m.LeftElbow, GIRO_CODO_REPOSO)
+end
+
+function Camara.tension(fuerza: number)
+	tensionLanzar = fuerza
 end
 
 function Camara.alcanzar()

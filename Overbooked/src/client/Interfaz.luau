@@ -65,8 +65,6 @@ local tituloResultados: TextLabel
 local filasResultados: ScrollingFrame
 local tableroGui: SurfaceGui
 local ayuda: ImageLabel
-local resaltado: Highlight
-local ultimoApuntado: Instance? = nil
 local escalaSello: UIScale
 local resultadosId = 0
 
@@ -445,32 +443,18 @@ local function actualizarPiloto()
 end
 
 local function actualizarPista()
-	local objetivo = if Agarre.sostenido() then nil else Agarre.apuntado()
-	if objetivo ~= ultimoApuntado then
-		ultimoApuntado = objetivo
-		resaltado.Adornee = objetivo
-		resaltado.Enabled = objetivo ~= nil
-	end
 	local objeto = Agarre.sostenido()
 	if objeto then
 		local tipo = Agarre.tipo(objeto)
 		local raciones = objeto:GetAttribute("Raciones")
 		if TACTIL then
-			pista.Text = if tipo == "Extintor" or tipo == "Llave" then "Mantén «Usar» para usarlo" elseif tipo == "Agua" then "Toca la etiqueta para servir · «Usar» la echa al fuego" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "«Piolet» para clavarte · salta para soltarte · «Usar» junto al panel: martillear" elseif typeof(raciones) == "number" then `{raciones} raciones · toca la etiqueta para servir` else ""
+			pista.Text = if tipo == "Extintor" or tipo == "Llave" then "Mantén «Usar» para usarlo" elseif tipo == "Agua" then "Toca la etiqueta para servir · «Usar» la echa al fuego" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "«Piolet» para clavarte · salta para soltarte · «Usar» junto al panel: martillear" elseif typeof(raciones) == "number" then `{raciones} raciones · toca la etiqueta para servir` else "«Dejar» lo posa con cuidado · mantén «Lanzar» para más fuerza"
 			return
 		end
-		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F usar · Clic soltar · Clic der. lanzar" elseif tipo == "Agua" then "E servir · F echar al fuego · Clic der. lanzar" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "F clavarte al casco · Espacio soltarte · F junto al panel: martillear" elseif typeof(raciones) == "number" then `{raciones} raciones · E servir · Clic soltar` else "Clic soltar · Clic der. lanzar"
+		pista.Text = if tipo == "Extintor" or tipo == "Llave" then "F usar · Clic soltar · Clic der. lanzar" elseif tipo == "Agua" then "E servir · F echar al fuego · Clic der. lanzar" elseif tipo == "Bolso" then "Suéltalo junto a un altillo abierto para guardarlo" elseif tipo == "Piolet" then "F clavarte al casco · Espacio soltarte · F junto al panel: martillear" elseif typeof(raciones) == "number" then `{raciones} raciones · E servir · Clic soltar` elseif Agarre.dosManos() then "Clic soltar · G dejar · R girar · rueda: distancia · Clic der. lanzar" else "Clic soltar · G dejar · R girar · mantén Clic der. para lanzar fuerte"
 		return
 	end
-	local apuntado = Agarre.apuntado()
-	if apuntado then
-		local tipo = Agarre.tipo(apuntado)
-		local def = Config.OBJETOS[tipo]
-		local nombre = if def then def.nombre elseif tipo == "Pasajero" then "pasajero" else string.lower(tipo)
-		pista.Text = if TACTIL then `«Coger»: {nombre}` else `Clic coger {nombre}`
-	else
-		pista.Text = ""
-	end
+	pista.Text = ""
 end
 
 local function burbuja(modelo: Instance)
@@ -857,14 +841,6 @@ function Interfaz.iniciar()
 	Gui.precargar()
 	pcall(StarterGui.SetCoreGuiEnabled, StarterGui, Enum.CoreGuiType.PlayerList, false)
 	construir()
-	resaltado = Instance.new("Highlight")
-	resaltado.Name = "Apuntado"
-	resaltado.FillTransparency = 1
-	resaltado.OutlineColor = Color3.new(1, 1, 1)
-	resaltado.OutlineTransparency = 0.15
-	resaltado.DepthMode = Enum.HighlightDepthMode.Occluded
-	resaltado.Enabled = false
-	resaltado.Parent = Workspace.CurrentCamera
 	RemotoAviso.OnClientEvent:Connect(function(contenido, tipo)
 		if typeof(contenido) == "string" then
 			aviso(contenido, if typeof(tipo) == "string" then tipo else "info")

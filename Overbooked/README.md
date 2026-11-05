@@ -29,8 +29,11 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 
 | Acción | Teclado | Mando |
 |---|---|---|
-| Coger / soltar | Clic | R2 |
-| Lanzar | Clic derecho | L2 |
+| Coger / soltar (con ayuda de puntería: vale apuntar cerca; en móvil también tocando el objeto) | Clic | R2 |
+| Lanzar (toque rápido) / lanzar fuerte con arco de puntos (mantener y soltar) | Clic derecho | L2 |
+| Dejar con cuidado, de pie y delante | G | L1 |
+| Girar lo que llevas | R | R1 |
+| Acercar / alejar lo grande | Rueda | Cruceta arriba / abajo |
 | Bofetada (con las manos vacías) | Clic derecho | L2 |
 | Usar extintor, llave o agua | F (mantener) | X |
 | Tocar la bocina del carrito | F (con el carrito) | X |
@@ -55,7 +58,7 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Pasajeros | `src/server/Pasajeros.luau` | Pedidos 🍔 ☕ 💧 con paciencia, miedo y satisfacción (cada bandeja lleva 3 hamburguesas); salen volando si no llevan cinturón |
 | Carga | `src/server/Carga.luau` | Daños por golpes, cajas frágiles, entregas aéreas desde la rampa y el cocodrilo |
 | Peligros | `src/server/Peligros.luau` | Turbulencias, pájaros que incendian un motor, fuego que se extiende, agujeros que succionan, caída libre, tormenta y fallo de motor |
-| Agarrar | `src/server/Agarre.luau` + `src/client/Agarre.luau` | Física con propiedad de red para quien sostiene; se puede coger a pasajeros y lanzarlos por la puerta. Lo pequeño va en la mano derecha (empuñado, en la palma o colgando, según `Manos.estilo`); lo grande, con las dos manos delante |
+| Agarrar | `src/server/Agarre.luau` + `src/client/Agarre.luau` | Física con propiedad de red para quien sostiene; se puede coger a pasajeros y lanzarlos por la puerta. Lo pequeño va en la mano derecha (empuñado, en la palma o colgando, según `Manos.estilo`); lo grande, con las dos manos delante, más lento y con vaivén. `src/client/AgarreVista.luau` dibuja el contorno y la etiqueta «Coger» de lo que vas a coger, el arco del lanzamiento y el aplastado al cogerlo |
 | Manos | `src/client/Manos.luau` | Dedos con huesos: relajados, se abren y cierran al coger, aprietan lo que llevas, se abren al alcanzar algo y el índice señala al pulsar botones. También los de los demás jugadores |
 | Personajes | `src/server/Personajes.luau` + `src/client/Cuerpo.luau` | Tripulante como StarterCharacter, color por jugador, ragdoll, caídas del avión, viento en las alas |
 | Cámara | `src/client/Camara.luau` | Primera persona con brazos visibles, balanceo al andar, inclinación con el avión y sacudidas |
