@@ -1285,7 +1285,7 @@
      "CFrame": {
       "position": [
        0,
-       91.3,
+       91.35,
        31.4
       ],
       "orientation": [
@@ -1841,15 +1841,15 @@
      "className": "Part",
      "properties": {
       "Size": [
-       2.6,
+       2.4,
        0.2,
-       11
+       10.9
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          22.0,
-         91.3,
+         91.2,
          26.0
         ],
         "orientation": [
@@ -3820,9 +3820,9 @@
      "className": "Part",
      "properties": {
       "Size": [
-       32.1908,
+       31.9908,
        0.2,
-       6.0
+       5.8
       ],
       "CFrame": {
        "CFrame": {
@@ -3870,9 +3870,9 @@
      "className": "Part",
      "properties": {
       "Size": [
-       32.1908,
+       31.9908,
        0.2,
-       6.0
+       5.8
       ],
       "CFrame": {
        "CFrame": {
@@ -3920,9 +3920,9 @@
      "className": "Part",
      "properties": {
       "Size": [
-       32.1908,
+       31.9908,
        0.2,
-       6.0
+       5.8
       ],
       "CFrame": {
        "CFrame": {
@@ -3978,7 +3978,7 @@
        "CFrame": {
         "position": [
          60.0,
-         105.7562,
+         105.7062,
          -62.0
         ],
         "orientation": [
@@ -4044,7 +4044,7 @@
        "CFrame": {
         "position": [
          60.0,
-         105.7562,
+         105.7062,
          -38.0
         ],
         "orientation": [
@@ -4110,7 +4110,7 @@
        "CFrame": {
         "position": [
          60.0,
-         105.7562,
+         105.7062,
          -20.0
         ],
         "orientation": [
@@ -4176,7 +4176,7 @@
        "CFrame": {
         "position": [
          60.0,
-         105.7562,
+         105.7062,
          6.0
         ],
         "orientation": [
@@ -4242,7 +4242,7 @@
        "CFrame": {
         "position": [
          76.0,
-         104.0062,
+         103.9562,
          -62.0
         ],
         "orientation": [
@@ -4308,7 +4308,7 @@
        "CFrame": {
         "position": [
          76.0,
-         104.0062,
+         103.9562,
          -38.0
         ],
         "orientation": [
@@ -4374,7 +4374,7 @@
        "CFrame": {
         "position": [
          76.0,
-         104.0062,
+         103.9562,
          -20.0
         ],
         "orientation": [
@@ -4440,7 +4440,7 @@
        "CFrame": {
         "position": [
          76.0,
-         104.0062,
+         103.9562,
          6.0
         ],
         "orientation": [
@@ -4506,7 +4506,7 @@
        "CFrame": {
         "position": [
          92.0,
-         102.2562,
+         102.2062,
          -62.0
         ],
         "orientation": [
@@ -4572,7 +4572,7 @@
        "CFrame": {
         "position": [
          92.0,
-         102.2562,
+         102.2062,
          -38.0
         ],
         "orientation": [
@@ -4638,7 +4638,7 @@
        "CFrame": {
         "position": [
          92.0,
-         102.2562,
+         102.2062,
          -20.0
         ],
         "orientation": [
@@ -4704,7 +4704,7 @@
        "CFrame": {
         "position": [
          92.0,
-         102.2562,
+         102.2062,
          6.0
         ],
         "orientation": [
@@ -4770,7 +4770,7 @@
        "CFrame": {
         "position": [
          106.0,
-         100.725,
+         100.675,
          -62.0
         ],
         "orientation": [
@@ -4836,7 +4836,7 @@
        "CFrame": {
         "position": [
          106.0,
-         100.725,
+         100.675,
          -38.0
         ],
         "orientation": [
@@ -4902,7 +4902,7 @@
        "CFrame": {
         "position": [
          106.0,
-         100.725,
+         100.675,
          -20.0
         ],
         "orientation": [
@@ -4968,7 +4968,7 @@
        "CFrame": {
         "position": [
          106.0,
-         100.725,
+         100.675,
          6.0
         ],
         "orientation": [
@@ -5034,7 +5034,7 @@
        "CFrame": {
         "position": [
          61.375,
-         92.235,
+         92.295,
          -4.0
         ],
         "orientation": [
@@ -5071,7 +5071,7 @@
      },
      "attributes": {
       "Visual": "PuertaSala1",
-      "Base": 90.5
+      "Base": 90.56
      }
     },
     {
@@ -5140,8 +5140,8 @@
       "CFrame": {
        "CFrame": {
         "position": [
-         56.85,
-         93.15,
+         57.03,
+         93.21,
          -4.0
         ],
         "orientation": [
@@ -5194,7 +5194,7 @@
        "CFrame": {
         "position": [
          61.375,
-         92.235,
+         92.295,
          -28.0
         ],
         "orientation": [
@@ -5231,7 +5231,7 @@
      },
      "attributes": {
       "Visual": "PuertaSala2",
-      "Base": 90.5
+      "Base": 90.56
      }
     },
     {
@@ -5300,8 +5300,8 @@
       "CFrame": {
        "CFrame": {
         "position": [
-         56.85,
-         93.15,
+         57.03,
+         93.21,
          -28.0
         ],
         "orientation": [
@@ -5354,7 +5354,7 @@
        "CFrame": {
         "position": [
          61.375,
-         92.235,
+         92.295,
          -52.0
         ],
         "orientation": [
@@ -5391,7 +5391,7 @@
      },
      "attributes": {
       "Visual": "PuertaSala3",
-      "Base": 90.5
+      "Base": 90.56
      }
     },
     {
@@ -5460,8 +5460,8 @@
       "CFrame": {
        "CFrame": {
         "position": [
-         56.85,
-         93.15,
+         57.03,
+         93.21,
          -52.0
         ],
         "orientation": [
@@ -7956,14 +7956,14 @@
       "Size": [
        17.6,
        8.8,
-       0.2
+       0.06
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          88.0,
          97.9,
-         -13.28
+         -13.25
         ],
         "orientation": [
          [
@@ -8528,7 +8528,7 @@
         "CFrame": {
          "CFrame": {
           "position": [
-           109.68,
+           109.6,
            93.475,
            -5.65
           ],
@@ -8887,7 +8887,7 @@
         "CFrame": {
          "CFrame": {
           "position": [
-           109.68,
+           109.6,
            93.475,
            -15.65
           ],
@@ -9246,7 +9246,7 @@
         "CFrame": {
          "CFrame": {
           "position": [
-           109.68,
+           109.6,
            93.475,
            -25.65
           ],
@@ -12924,7 +12924,7 @@
         "position": [
          102.0,
          98.45,
-         -67.92
+         -67.87
         ],
         "orientation": [
          [

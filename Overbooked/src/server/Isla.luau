@@ -460,12 +460,12 @@ local function cascadaViva(mirador: Vector3): Vector3?
 	local suelo = CFrame.new(centro.X, agua, centro.Z) * giro
 	local base = zonaVfx("NieblaCascada", suelo * CFrame.new(0, 1, -1.5), Vector3.new(9, 1.5, 5))
 	local niebla = emisor(base, "NieblaCascada", ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(214, 236, 248)),
-		curva({ { 0, 4 }, { 0.4, 10 }, { 1, 15 } }), 5, NumberRange.new(4, 6), NumberRange.new(1, 2.5), VIENTO * 0.3 + Vector3.new(0, 0.6, 0))
+		curva({ { 0, 4 }, { 0.4, 10 }, { 1, 15 } }), 4, NumberRange.new(4, 6), NumberRange.new(1, 2.5), VIENTO * 0.3 + Vector3.new(0, 0.6, 0))
 	niebla.EmissionDirection = Enum.NormalId.Top
 	niebla.SpreadAngle = Vector2.new(55, 55)
 	niebla.Drag = 0.5
 	niebla.RotSpeed = NumberRange.new(-12, 12)
-	niebla.Transparency = curva({ { 0, 1 }, { 0.18, 0.45 }, { 0.6, 0.6 }, { 1, 1 } })
+	niebla.Transparency = curva({ { 0, 1 }, { 0.18, 0.6 }, { 0.6, 0.72 }, { 1, 1 } })
 	niebla.LightInfluence = 0.7
 	niebla.LightEmission = 0.08
 	enCaja(niebla)
@@ -537,9 +537,9 @@ local function cascadaViva(mirador: Vector3): Vector3?
 		b.TextureMode = Enum.TextureMode.Stretch
 		b.TextureLength = 1
 		b.Segments = 32
-		b.LightEmission = 0.7
+		b.LightEmission = 0.5
 		b.LightInfluence = 0
-		local opaco = if k == 1 then 0.45 else 0.78
+		local opaco = if k == 1 then 0.5 else 0.8
 		b.Transparency = curva({ { 0, 1 }, { 0.12, opaco }, { 0.88, opaco }, { 1, 1 } })
 	end
 	for i = 1, 3 do
@@ -552,11 +552,12 @@ local function cascadaViva(mirador: Vector3): Vector3?
 			b.LightEmission = 0.9
 			b.LightInfluence = 0
 			b.Color = ColorSequence.new(Color3.fromRGB(255, 244, 210))
-			b.Transparency = NumberSequence.new(0.5 + i * 0.08)
+			b.Transparency = NumberSequence.new(0.62 + i * 0.06)
 		end
 	end
 	sonidoBucle("Cascada", impacto, 160)
-	for i, s in spots.rapido or {} do
+	local rapidos: { BasePart } = spots.rapido or {}
+	for i, s in rapidos do
 		local a = punto(s.Position, "Rapido")
 		local e = emisor(a, "Humo2", blanco, curva({ { 0, 0.8 }, { 1, 2.4 } }), 3, NumberRange.new(0.7, 1.2), NumberRange.new(1, 2.5), Vector3.new(0, -3, 0))
 		e.EmissionDirection = Enum.NormalId.Top

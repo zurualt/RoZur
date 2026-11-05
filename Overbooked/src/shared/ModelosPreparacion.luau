@@ -2,22 +2,22 @@
 local ModelosPreparacion = {}
 
 ModelosPreparacion.IDS = {
-	CartelAnimales = 115870586719990,
-	CartelCombustible = 131167330198652,
-	CartelMaletas = 78317387015558,
-	CartelSalida = 131846260542237,
-	CorralAnimales = 79594012391033,
-	CuboMerienda = 127536624245117,
-	FlechaSuelo = 83635838906847,
+	CartelAnimales = 75468403907813,
+	CartelCombustible = 136249828462670,
+	CartelMaletas = 133933059246316,
+	CartelSalida = 111918568192304,
+	CorralAnimales = 98714186567066,
+	CuboMerienda = 114927437716180,
+	FlechaSuelo = 127848616945468,
 	LamparaNave = 86140905231043,
-	NaveCarga = 113420751024919,
-	PersianaNave = 139901991008671,
-	PilaCajas = 116217065560055,
-	Surtidor = 118766647985502,
-	Tobogan1 = 115615590069346,
-	Tobogan2 = 73482721912226,
-	Tobogan3 = 127289289280312,
-	Tobogan4 = 123233887425863,
+	NaveCarga = 137875192053353,
+	PersianaNave = 95952857309967,
+	PilaCajas = 128042252486496,
+	Surtidor = 111866396200947,
+	Tobogan1 = 138243303430937,
+	Tobogan2 = 77824776284376,
+	Tobogan3 = 127585283344345,
+	Tobogan4 = 84476062301094,
 } :: { [string]: number }
 
 ModelosPreparacion.CAJAS = {

@@ -6,6 +6,10 @@ import sys
 import json
 from mathutils import Vector, Matrix
 
+_SEP = {}
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "herramientas", "separar_capas.py"), encoding="utf-8") as _fh:
+    exec(compile(_fh.read(), "separar_capas.py", "exec"), _SEP)
+
 OUT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
 RENDER = "--norender" not in sys.argv
 PREVIEW = "--preview" in sys.argv
@@ -291,6 +295,7 @@ def export_fbx(ob, path):
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    _SEP["separar_capas"](ob)
     bpy.ops.export_scene.fbx(
         filepath=path,
         use_selection=True,

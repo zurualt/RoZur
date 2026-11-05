@@ -8,6 +8,10 @@ import mathutils
 from mathutils import Vector, Matrix, Euler
 from mathutils.bvhtree import BVHTree
 
+_SEP = {}
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "herramientas", "separar_capas.py"), encoding="utf-8") as _fh:
+    exec(compile(_fh.read(), "separar_capas.py", "exec"), _SEP)
+
 OUT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
 ARTE = os.path.dirname(OUT)
 TRIP_BLEND = os.path.join(ARTE, "tripulante", "tripulante.blend")
@@ -1244,6 +1248,7 @@ def make_object(p, mat):
 
 
 def export_fbx(ob):
+    _SEP["separar_capas"](ob)
     bpy.ops.object.select_all(action="DESELECT")
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob

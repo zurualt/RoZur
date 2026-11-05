@@ -694,5 +694,13 @@
   "bucle": false,
   "volumen": 0.6,
   "descripcion": "Eructo cómico del pasajero glotón tras comer (ElevenLabs)."
+ },
+ {
+  "nombre": "Cascada",
+  "archivo": "Cascada.ogg",
+  "duracion": 5.0,
+  "bucle": true,
+  "volumen": 0.8,
+  "descripcion": "Cascada de la isla cayendo en la poza: rugido de agua continuo con salpicaduras (ElevenLabs)."
  }
 ]

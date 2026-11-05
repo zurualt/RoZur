@@ -144,7 +144,7 @@ def estructura():
             part("ParedBodega" + lado, (G, 10, 22), (x, 105, 11), "C9C2B5"),
         ]))
         p.append(part("Pilastra" + lado, (0.35, 10, 1), (sx * 6.35, 105, 22.5), "C9C2B5"))
-        p.append(part("Relleno" + lado, (0.9, 10, 1), (sx * 6.25, 105, -52), CREMA))
+        p.append(part("Relleno" + lado, (0.9, 10, 0.9), (sx * 6.25, 105, -52.05), CREMA))
     p.append(part("ParedTraseraIzq", (G, 10, 8), (-MURO, 105, -4), CREMA))
     p.append(part("ParedSalida", (G, 10, 3.25), (MURO, 105, -1.625), CREMA))
     p.append(part("ParedSalida", (G, 10, 0.25), (MURO, 105, -7.875), CREMA))
@@ -208,7 +208,7 @@ def cabina():
     p.append(part("Parabrisas", (11, 4, 0.2), (0, 105.5, -62.35), CRISTAL, "Glass", transp=0.55))
     for sx in (-1, 1):
         for alto, ancho, y, z in ((1.6, 2.1, 105.2, -60.4), (1.4, 1.5, 105.25, -58.15)):
-            p.append(part("CristalCabina", (0.04, alto, ancho), (sx * 5.48, y, z), CRISTAL, "Glass", transp=0.5, colision=False))
+            p.append(part("CristalCabina", (0.04, alto, ancho), (sx * 5.62, y, z), CRISTAL, "Glass", transp=0.5, colision=False))
     for nombre, x in (("AsientoPiloto", -2.6), ("AsientoCopiloto", 2.6)):
         p.append(part(nombre, (2.2, 1.2, 2.2), (x, 101.0, -57.5), GRIS, "Fabric", clase="Seat",
                       atributos={"Visual": "AsientoPiloto", "Base": SUELO_Y},
@@ -248,8 +248,8 @@ def cocina():
                   atributos={"Tipo": "Cafe", "Visual": "Cafetera"}, hijos=[cartel("CAFÉ", "Front", fondo="FFF4E0")]))
     p.append(part("DispensadorAgua", (1.8, 1.3, 1.2), (5.4, 104.15, -46), TURQUESA, r=rot(0, 90, 0),
                   atributos={"Tipo": "Agua", "Visual": "Nevera"}, hijos=[cartel("AGUA", "Front", fondo="FFF4E0")]))
-    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (-6.0, SUELO_Y + 0.15, -43.4), GRIS, atributos={"Tipo": "Extintor"}))
-    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (6.0, SUELO_Y + 0.15, -43.4), GRIS, atributos={"Tipo": "Llave"}))
+    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (-6.0, SUELO_Y + 0.2, -43.4), GRIS, atributos={"Tipo": "Extintor"}))
+    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (6.0, SUELO_Y + 0.2, -43.4), GRIS, atributos={"Tipo": "Llave"}))
     p.append(part("SoporteCarrito", (1.8, 0.1, 2.8), (-2.6, SUELO_Y + 0.05, -45.2), GRIS, transp=1, colision=False,
                   atributos={"Tipo": "Carrito"}))
     p.append(part("CartelCocina", (4, 1.2, 0.2), (0, 108.6, -51.6), NARANJA, colision=False,
@@ -288,10 +288,10 @@ def bodega():
         for y in (103.35, 106.2):
             p.append(part("Estante", (2.2, 0.35, 18), (sx * 5.6, y, 11), MADERA, "Wood"))
     p.append(part("ZonaCarga", (8, 5, 15), (0, 103, 12), "FFFFFF", transp=1, colision=False, sombra=False))
-    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (6.0, SUELO_Y + 0.15, 1.0), GRIS, atributos={"Tipo": "Extintor"}))
-    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (-6.0, SUELO_Y + 0.15, 1.0), GRIS, atributos={"Tipo": "Llave"}))
+    p.append(part("SoporteExtintor", (1.2, 0.3, 1.2), (6.0, SUELO_Y + 0.2, 1.0), GRIS, atributos={"Tipo": "Extintor"}))
+    p.append(part("SoporteLlave", (1.2, 0.3, 1.2), (-6.0, SUELO_Y + 0.2, 1.0), GRIS, atributos={"Tipo": "Llave"}))
     for x in (-6.0, 6.0):
-        p.append(part("SoportePiolet", (1.2, 0.3, 1.2), (x, SUELO_Y + 0.15, 20.0), GRIS, atributos={"Tipo": "Piolet"}))
+        p.append(part("SoportePiolet", (1.2, 0.3, 1.2), (x, SUELO_Y + 0.2, 20.0), GRIS, atributos={"Tipo": "Piolet"}))
     p.append(part("BotonRampaBodega", (0.4, 0.9, 0.9), (6.5, 103.5, 19.5), TURQUESA, forma="Cylinder"))
     angulo = -90.0
     largo = 9.6
@@ -425,7 +425,7 @@ def aduana():
         hijos.append(part("ParedEscaner", (7, 4.2, 0.7), (ex, base + 2.1, ez + dz), "D9D2C5"))
     hijos.append(part("TechoEscaner", (7, 1.0, 4), (ex, base + 3.7, ez), "D9D2C5"))
     a.append(marca("Escaner", (4, 4.2, 7), (ex, base + 2.1, ez), "Escaner", r=rot(0, 90, 0), base=base, hijos=hijos))
-    a.append(part("Cinta", (2.6, 0.2, 11), (ex, base + 0.9, ez), "1B1B21", "Rubber",
+    a.append(part("Cinta", (2.4, 0.2, 10.9), (ex, base + 0.8, ez), "1B1B21", "Rubber",
                   r=rot(0, 90, 0), atributos={"Velocidad": 7}))
     a.append(part("BaseCinta", (2.6, 0.8, 11), (ex, base + 0.4, ez), GRIS, r=rot(0, 90, 0)))
     a.append(part("Tunel", (7, 2.2, 2.6), (ex, base + 2.1, ez), "FFFFFF", transp=1, colision=False, sombra=False))
@@ -518,11 +518,11 @@ def lobby_casco():
     xs = (-18.0 + 14.0) / 2
     largo = (14.0 + 18.0) / math.cos(math.radians(teta))
     for z0, z1 in LOBBY_TRAGALUCES:
-        t.append(part("Tragaluz", (largo, 0.2, z1 - z0), (cx + xs, 90 + techo_lobby(xs) + 1.2, cz + (z0 + z1) / 2), CRISTAL, "Glass",
+        t.append(part("Tragaluz", (largo - 0.2, 0.2, z1 - z0 - 0.2), (cx + xs, 90 + techo_lobby(xs) + 1.2, cz + (z0 + z1) / 2), CRISTAL, "Glass",
                       r=rot(0, 0, -teta), transp=0.55, sombra=False, colision=False))
     for x, z in LOBBY_LAMPARAS:
         wx, wz = tl(x, z)
-        t.append(luz_neon("LamparaLobby", (0.1, 2.0, 2.0), (wx, 90 + techo_lobby(x) - 5.15, wz), "FFE2A8", 30, 0.55,
+        t.append(luz_neon("LamparaLobby", (0.1, 2.0, 2.0), (wx, 90 + techo_lobby(x) - 5.2, wz), "FFE2A8", 30, 0.55,
                           forma="Cylinder", r=rot(0, 0, 90)))
     return t
 
@@ -532,10 +532,10 @@ def lobby_puertas():
     cx, cz = TC
     for i, zg in enumerate(LOBBY_PUERTAS):
         sx, sz = cx - 20.0, cz + zg
-        t.append(deco("PuertaSala", f"PuertaSala{i + 1}", (9.2, 3.47, 10.45), sx - 0.625, SUELO_T, sz, -90, GRIS, colision=False))
+        t.append(deco("PuertaSala", f"PuertaSala{i + 1}", (9.2, 3.47, 10.45), sx - 0.625, SUELO_T + 0.06, sz, -90, GRIS, colision=False))
         t.append(part("SalaSalida", (0.12, 8.4, 8.4), (sx, SUELO_T + 0.06, sz), CRUDO, forma="Cylinder", r=rot(0, 0, 90),
                       transp=1, colision=False, sombra=False, atributos={"Sala": i + 1}))
-        t.append(part("PantallaSala", (1.95, 1.05, 0.04), (sx - 5.15, SUELO_T + 2.65, sz), "1B1B21", r=rot(0, -90, 0),
+        t.append(part("PantallaSala", (1.95, 1.05, 0.04), (sx - 4.97, SUELO_T + 0.06 + 2.65, sz), "1B1B21", r=rot(0, -90, 0),
                       transp=1, colision=False, sombra=False, atributos={"Sala": i + 1}))
     for x in (-27.0, -23.0):
         for z in (8.0, -16.0, -39.0):
@@ -557,8 +557,8 @@ def lobby_isla():
              part("MostradorInfo", (2.45, 8.4, 8.4), desde(o[0], o[1], SUELO_T, 180, 0.0, -4.2, 1.225), "1FA6A0", forma="Cylinder",
                   r=rot(0, 0, 90))]
     t.append(pieza("IslaInfo", "IslaInfo", 6.0, 10.0, 180, (2, 2, 2), hijos=hijos))
-    tx, ty, tz = desde(o[0], o[1], SUELO_T, 180, 0.0, -0.72, 7.4)
-    t.append(part("Tablero", (17.6, 8.8, 0.2), (tx, ty, tz), "1B1B21", atributos={"Tablero": True}))
+    tx, ty, tz = desde(o[0], o[1], SUELO_T, 180, 0.0, -0.75, 7.4)
+    t.append(part("Tablero", (17.6, 8.8, 0.06), (tx, ty, tz), "1B1B21", atributos={"Tablero": True}))
     for nombre, xb, yb in (("Timbre", 1.6, -7.65), ("Microfono", -1.6, -7.6)):
         px, _, pz = desde(o[0], o[1], SUELO_T, 180, xb, yb, 0.0)
         t.append(part(nombre, (0.8, 0.5, 0.8) if nombre == "Timbre" else (0.7, 0.9, 0.9), (px, SUELO_T + 2.45 + 0.4, pz), CRUDO,
@@ -581,7 +581,7 @@ def lobby_facturacion():
             caja("Bascula", o, 90, 0.6, 3.4, -1.8, -0.15, 0.0, 0.45, "A9B0B8", atributos={"Mostrador": i + 1}),
             caja("CintaLobby", o, 90, 0.78, 3.22, -0.15, 2.1, 0.25, 0.5, "2A2C31", girar=180, atributos={"Velocidad": 4}),
             caja("PortalFacturacion", o, 90, 0.4, 3.6, 2.1, 2.5, 0.0, 3.1, "157F7B"),
-            caja("PantallaBascula", o, 90, -0.12, 0.82, -1.19, -1.15, 2.72, 3.23, "1B1B21", transp=1, colision=False, sombra=False,
+            caja("PantallaBascula", o, 90, -0.12, 0.82, -1.27, -1.23, 2.72, 3.23, "1B1B21", transp=1, colision=False, sombra=False,
                  atributos={"Mostrador": i + 1}),
             zona("Trampilla", o, 90, 0.8, 3.2, 1.5, 2.1, 0.5, 2.6, {"Mostrador": i + 1}),
         ]
@@ -660,7 +660,7 @@ def lobby_rincones():
         caja("MesaColision", o, 0, -0.9, 0.9, -0.9, 0.9, 0.0, 1.2, "C08A57")]))
     o = tl(20.0, -45.77)
     t.append(pieza("Fotomaton", "Fotomaton", 20.0, -45.77, 180, (4.0, 8.0, 3.0), "F27B2B", colision=True))
-    fx, fy, fz = desde(o[0], o[1], SUELO_T, 180, 0.0, -1.85, 7.95)
+    fx, fy, fz = desde(o[0], o[1], SUELO_T, 180, 0.0, -1.9, 7.95)
     t.append(luz_neon("FlashFoto", (2.0, 0.4, 0.15), (fx, fy, fz), "FFF6E0", 26, 0, transp=1))
     fx, fy, fz = desde(o[0], o[1], SUELO_T, 180, 2.3, -0.7, 1.3)
     t.append(part("SalidaFoto", (0.3, 0.3, 0.3), (fx, fy, fz), CRUDO, transp=1, colision=False, sombra=False))
@@ -732,7 +732,7 @@ def aeropuerto():
     for x in (-15.8, 15.8):
         p.append(part("Borde", (0.5, 0.05, 520), (x, 90.22, -40), "F5CD3D", colision=False))
     p.append(part("Plataforma", (30, 0.4, 110), (32, 90.2, -5), "8A8F96", "Concrete"))
-    p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart",
+    p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.35, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart",
                   r=rot(0, 180, 0)))
     p.append(vehiculos())
     p.append(aduana())
@@ -806,6 +806,11 @@ TIKI = (56.0, -6.0)
 GIGANTE = (-70.0, -44.0)
 SANTUARIO = (74.0, 46.0)
 ROCA_CANGREJO = (-116.0, 64.0)
+ARROYO = [(14.0, -206.0), (36.0, -214.0), (60.0, -222.0), (84.0, -224.0), (108.0, -228.0), (132.0, -232.0)]
+ARROYO_PERFIL = [(0.0, 99.0), (0.12, 98.0), (0.19, 96.0), (0.3, 93.6), (0.4, 91.6), (0.6, 89.8), (0.78, 89.0), (1.0, 89.0)]
+ARROYO_PASOS = [99.0, 98.0, 96.8, 95.5, 94.2, 92.9, 91.6, 90.4, 89.5, 89.0]
+CASCADA_ESCALA, CASCADA_CY, CASCADA_ZMIN, CASCADA_BASE, CASCADA_T = 0.85, -5.81, -0.271, 98.75, 14.5
+LABIO_CX, LABIO_CY = -0.13, -4.585
 PECES = [(-172, -52), (-160, -36), (-182, -62), (-150, -58), (-196, -48), (206, -40), (212, -112)]
 
 
@@ -908,6 +913,29 @@ def dist_rect(x, z, r):
     return math.hypot(dx, dz)
 
 
+def arroyo(x, z):
+    mejor, s_ = 1e9, 0.0
+    acum = 0.0
+    total = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(ARROYO, ARROYO[1:]))
+    for a, b in zip(ARROYO, ARROYO[1:]):
+        largo = math.hypot(b[0] - a[0], b[1] - a[1])
+        d, t = dist_seg(x, z, *a, *b)
+        if d < mejor:
+            mejor, s_ = d, (acum + t * largo) / total
+        acum += largo
+    return mejor, s_
+
+
+def paso_arroyo(s_):
+    for (a, va), (b, vb) in zip(ARROYO_PERFIL, ARROYO_PERFIL[1:]):
+        if s_ <= b:
+            v = va + (vb - va) * (s_ - a) / (b - a)
+            break
+    else:
+        v = ARROYO_PERFIL[-1][1]
+    return max([p for p in ARROYO_PASOS if p <= v + 0.35] or [ARROYO_PASOS[-1]])
+
+
 def acantilado(x, z):
     return max(ss(r, r * 0.45, math.hypot(x - cx, z - cz)) for cx, cz, r in ACANTILADOS)
 
@@ -933,6 +961,10 @@ class Terreno:
                 self.s[iz * ISLA_NX + ix] = s
         nivel_estanque = self.nivel(99.0)
         nivel_arroyo = self.nivel(111.2)
+        self.pasos = {99.0: nivel_estanque, MAR: 0}
+        for v in ARROYO_PASOS:
+            if v not in self.pasos:
+                self.pasos[v] = self.nivel(v)
         for iz in range(ISLA_NZ):
             for ix in range(ISLA_NX):
                 i = iz * ISLA_NX + ix
@@ -1020,12 +1052,31 @@ class Terreno:
         abierto = (1 - ss(14, 42, r_est)) * ss(-2, -16, t)
         if abierto > 0:
             h = mezcla(h, min(h, 100.4 + 0.08 * max(0.0, r_est - 14)), abierto)
-        if r_est < 17:
-            fondo = 96.0 + 3.6 * ss(8, 15, r_est)
-            h = min(h, fondo) if r_est < 14 else mezcla(min(h, fondo), h, ss(14, 17, r_est))
+        if r_est < 18:
+            fondo = 93.6 + 5.0 * ss(4, 14, r_est)
+            h = min(h, fondo) if r_est < 14 else mezcla(min(h, fondo), h, ss(14, 18, r_est))
             if r_est < 14:
                 agua = nivel_estanque
-            mat = "Rock" if 11 < r_est < 16 and t > -5 else ("Sand" if r_est <= 13 else mat)
+            if t > -5:
+                mat = "Rock" if 11 < r_est < 17 else ("Sand" if r_est <= 11 else mat)
+            else:
+                mat = "Salt" if 11.5 < r_est < 16 else ("Sand" if r_est <= 11.5 else mat)
+        dA, sA = arroyo(x, z)
+        if dA < 10 and r_est > 11:
+            ancho = 3.6 + 1.6 * sA
+            nivel = paso_arroyo(sA)
+            if dA < ancho:
+                h = min(h, nivel - 1.0 - 0.45 * (1 - dA / ancho))
+                agua = self.pasos[nivel]
+                mat = "Sand"
+            else:
+                borde = 1 - ss(ancho, 10, dA)
+                if h < nivel + 0.55:
+                    h = mezcla(h, nivel + 0.55, min(1.0, borde * 2.5))
+                elif h > nivel + 1.6:
+                    h = mezcla(h, nivel + 1.6, borde * 0.6)
+                if dA < ancho + 1.8 and mat in ("Grass", "LeafyGrass", "Sand"):
+                    mat = "Rock" if (dA - ancho) < 1.0 else "Salt"
         if s > -4:
             for linea in SENDAS:
                 d = dist_linea(x, z, linea)
@@ -1182,6 +1233,8 @@ class Dispersor:
             return False
         if 150 < x < 240 and abs(z + 74) < 8 + r:
             return False
+        if arroyo(x, z)[0] < 7.0 + r * 0.6 and x > 4:
+            return False
         if alto and self.t.pendiente(x, z) > 0.55:
             return False
         for ox, oz, orr in self.ocupado:
@@ -1195,6 +1248,8 @@ class Dispersor:
         if radio is not None:
             self.ocupado.append((x, z, radio))
         atributos = dict(atributos or {})
+        if abs(escala - 1.0) > 1e-3:
+            atributos["Escala"] = round(escala, 4)
         if base is None:
             h0 = self.t.altura(x, z)
             if hundir is None:
@@ -1228,8 +1283,13 @@ class Dispersor:
             self.poner(visual, x, z, giro, escala, "Palmera" if visual != "PalmeraGigante" else visual, radio=2.4 * escala, base=y)
         alto = 6.0 * escala
         grueso = 1.5 * escala * (2.0 if visual == "PalmeraGigante" else 1.0)
-        self.lista.append(part("TroncoPalmera", (alto, grueso, grueso), (x, y + alto / 2, z), "9C6B3E", "Wood", forma="Cylinder", r=rot(0, 0, 90),
-                               transp=1, sombra=False))
+        if visual == "PalmeraInclinada":
+            largo = 9.0 * escala
+            self.lista.append(part("TroncoPalmera", (largo, grueso, grueso), (x + fx * 0.3 * largo, y + 0.4 * largo, z + fz * 0.3 * largo), "9C6B3E", "Wood",
+                                   forma="Cylinder", r=rot(0, giro + 90, 53.13), transp=1, sombra=False))
+        else:
+            self.lista.append(part("TroncoPalmera", (alto, grueso, grueso), (x, y + alto / 2, z), "9C6B3E", "Wood", forma="Cylinder", r=rot(0, 0, 90),
+                                   transp=1, sombra=False))
         if cocos:
             for k in range(2):
                 a = self.rnd.uniform(0, 6.28)
@@ -1355,8 +1415,89 @@ def isla():
     ux, uz = CIMA[0] - ex, CIMA[1] - ez
     L = math.hypot(ux, uz)
     ux, uz = ux / L, uz / L
-    D.poner("Cascada", ex + ux * 14.5, ez + uz * 14.5, giro_hacia(-ux, -uz), 0.85, base=98.75, radio=5)
+    gc = giro_hacia(-ux, -uz)
+    ccx, ccz = ex + ux * CASCADA_T, ez + uz * CASCADA_T
+    D.poner("Cascada", ccx, ccz, gc, CASCADA_ESCALA, base=CASCADA_BASE, radio=5)
     D.ocupado.append((ex, ez, 15))
+    cr, sr = math.cos(math.radians(gc)), math.sin(math.radians(gc))
+    derecha, atras = (cr, -sr), (sr, cr)
+
+    def local(xm, ym, zm):
+        return -xm * CASCADA_ESCALA, CASCADA_BASE + (zm - CASCADA_ZMIN) * CASCADA_ESCALA - MAR - 10.0, (ym - CASCADA_CY) * CASCADA_ESCALA
+
+    def mundo(lx, lz):
+        return ccx + derecha[0] * lx + atras[0] * lz, ccz + derecha[1] * lx + atras[1] * lz
+    lx, _, lz = local(LABIO_CX, LABIO_CY, 0.0)
+    wx, wz = mundo(lx, lz)
+    D.poner("LabioCascada", wx, wz, gc, CASCADA_ESCALA, base=CASCADA_BASE + (0.0 - CASCADA_ZMIN) * CASCADA_ESCALA, atributos={"Apoyo": "Cascada"})
+    anclas = []
+    rc = random.Random(77)
+
+    def roca_suelta(v, x, z, e):
+        tam = [k * e for k in TAM_ISLA[v]]
+        r = 0.4 * max(tam[0], tam[2])
+        hs = [t.altura(x, z)] + [t.altura(x + r * math.cos(k * 0.785), z + r * math.sin(k * 0.785)) for k in range(8)]
+        if max(hs) - min(hs) > 0.75 * tam[1]:
+            return
+        D.poner(v, x, z, rc.uniform(0, 360), e, base=min(hs) - 0.12 * tam[1], radio=r)
+
+    def ancla(nombre, xm, ym, zm):
+        ax, ay, az = local(xm, ym, zm)
+        anclas.append({"name": nombre, "className": "Attachment",
+                       "properties": {"CFrame": {"CFrame": {"position": [round(ax, 3), round(ay, 3), round(az, 3)], "orientation": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]}}}})
+    for i, xm in enumerate((-3.0, -1.5, 0.0, 1.5, 3.0)):
+        ancla("Labio%d" % (i + 1), xm, 0.45, 14.95)
+        ancla("Base%d" % (i + 1), xm * 1.15, -8.3, 0.75)
+    ancla("Impacto", 0.0, -8.6, 0.72)
+    ancla("ArcoA", -13.5, -11.0, 1.4)
+    ancla("ArcoB", 13.5, -11.0, 1.4)
+    for i, xm in enumerate((-4.0, 0.5, 4.5)):
+        ancla("Rayo%d" % (i + 1), xm + 14.0, 12.0, 34.0)
+        ancla("RayoFin%d" % (i + 1), xm, -9.5, 1.5)
+    ancla("Lago", 0.0, -16.0, 0.72)
+    d.append(part("CascadaVFX", (14, 4, 10), (ccx, MAR + 10.0, ccz), "FFFFFF", r=rot(0, gc, 0), transp=1, colision=False, sombra=False, hijos=anclas))
+    for k, (r, a, v, e) in enumerate(((14.8, 150, "RocaMedia", 0.75), (15.5, 180, "RocaPequena", 1.1), (14.6, 205, "RocaMedia", 0.6),
+                                      (15.2, 235, "RocaPequena", 0.9), (14.9, 262, "RocaMedia", 0.65), (15.6, 290, "RocaPequena", 0.8),
+                                      (14.7, 110, "RocaPequena", 1.0), (15.4, 320, "RocaPequena", 0.8))):
+        ang = math.radians(a) + math.atan2(uz, ux)
+        rx, rz = ex + r * math.cos(ang), ez + r * math.sin(ang)
+        if arroyo(rx, rz)[0] < 7 or dist_linea(rx, rz, SENDAS[1]) < 3:
+            continue
+        roca_suelta(v, rx, rz, e)
+    for r, a in ((7.5, 150), (9.5, 215), (6.0, 250)):
+        ang = math.radians(a) + math.atan2(uz, ux)
+        D.poner("Nenufares", ex + r * math.cos(ang), ez + r * math.sin(ang), rc.uniform(0, 360), rc.uniform(0.9, 1.2), base=99.02,
+                atributos={"Apoyo": "Agua"})
+    d.append(punto("pez", ex - ux * 5, 99.0, ez - uz * 5))
+    previo = None
+    total = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(ARROYO, ARROYO[1:]))
+    for k in range(121):
+        s_ = k / 120
+        acum = 0.0
+        for a, b in zip(ARROYO, ARROYO[1:]):
+            largo = math.hypot(b[0] - a[0], b[1] - a[1])
+            if acum + largo >= s_ * total - 1e-6:
+                f = (s_ * total - acum) / largo
+                px, pz = a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f
+                break
+            acum += largo
+        nivel = paso_arroyo(s_)
+        a, b = ARROYO[min(len(ARROYO) - 2, int(s_ * (len(ARROYO) - 1)))], ARROYO[min(len(ARROYO) - 1, int(s_ * (len(ARROYO) - 1)) + 1)]
+        nx_, nz_ = -(b[1] - a[1]), b[0] - a[0]
+        n = math.hypot(nx_, nz_)
+        nx_, nz_ = nx_ / n, nz_ / n
+        ancho = 3.6 + 1.6 * s_
+        if previo is not None and nivel != previo and nivel > MAR:
+            d.append(punto("rapido", px, nivel + 0.15, pz))
+            dx_, dz_ = b[0] - a[0], b[1] - a[1]
+            n = math.hypot(dx_, dz_)
+            for lado, e in ((1, 0.8), (-1, 0.65)):
+                roca_suelta("RocaPequena", px + dx_ / n * 3 + nx_ * ancho * 0.62 * lado, pz + dz_ / n * 3 + nz_ * ancho * 0.62 * lado, e)
+        if k % 14 == 7 and s_ < 0.8:
+            lado = 1 if (k // 14) % 2 else -1
+            roca_suelta("RocaMedia" if k % 28 == 7 else "RocaPequena", px + nx_ * (ancho + 3.4) * lado, pz + nz_ * (ancho + 3.4) * lado,
+                        rc.uniform(0.45, 0.65))
+        previo = nivel
 
     for linea in (SENDAS[0], SENDAS[1], SENDAS[3]):
         a, b = linea[0], linea[1]
@@ -1409,7 +1550,9 @@ def isla():
         D.roca("Acantilado", x, z, rnd.uniform(0, 360), rnd.uniform(0.7, 1.3))
     for x, z in D.poisson(6000, 14, lambda x, z: (lambda s, W, c: (c > 0.3 and -4 < s < 30) or t.material(x, z) == "Rock")(*zona(x, z)) and t.pendiente(x, z) < 1.1 and D.libre(x, z, 3)):
         v = elegir((("RocaGrande", 0.25), ("RocaMedia", 0.4), ("RocaPequena", 0.35)))
-        D.roca(v, x, z, rnd.uniform(0, 360), rnd.uniform(0.6, 1.1) if v == "RocaGrande" else rnd.uniform(0.7, 1.3))
+        g, e = rnd.uniform(0, 360), rnd.uniform(0.6, 1.1) if v == "RocaGrande" else rnd.uniform(0.7, 1.3)
+        if D.libre(x, z, 0.45 * max(TAM_ISLA[v][0], TAM_ISLA[v][2]) * e):
+            D.roca(v, x, z, g, e)
     for x, z in D.poisson(3000, 34, lambda x, z: (lambda s, W, c: -6 < s < 8 and c < 0.4)(*zona(x, z)) and D.libre(x, z, 5)):
         D.roca(elegir((("RocasPlanas", 0.6), ("RocaPequena", 0.4))), x, z, rnd.uniform(0, 360), rnd.uniform(0.8, 1.2))
 
@@ -1552,7 +1695,7 @@ def tobogan(n, z):
     luz_ = part(f"LuzTobogan{n}", (0.5, 0.5, 1.4), (18.55, s + 9.9, z), "5A5F66", colision=False,
                 hijos=[{"name": "Luz", "className": "PointLight",
                         "properties": {"Range": 10, "Brightness": 0, "Color": rgb("F6C445"), "Shadows": False}}])
-    return [deco(f"Tobogan{n}", f"Tobogan{n}", (3.0, 8.4, 8.4), 22.4, s, z, -90, GRIS, colision=False, transp=1,
+    return [deco(f"Tobogan{n}", f"Tobogan{n}", (3.0, 8.4, 8.4), 22.4, s + 0.12, z, -90, GRIS, colision=False, transp=1,
                  hijos=hijos, atributos={"Tobogan": n}), luz_]
 
 
@@ -1587,8 +1730,8 @@ def preparacion():
                   colision=False, sombra=False))
     vallas = [part("VallaCorral", (x1 - 39.5, 2.6, 0.3), ((39.5 + x1) / 2, s + 1.3, 75.3), MADERA, "Wood"),
               part("VallaCorral", (0.3, 2.6, z1 - 75.3), (39.5, s + 1.3, (75.3 + z1) / 2), MADERA, "Wood")]
-    p.append(marca("Corral", (x1 - 39.5, 2.6, z1 - 75.3), ((39.5 + x1) / 2, s + 1.3, (75.3 + z1) / 2), "CorralAnimales",
-                   base=s, hijos=vallas))
+    p.append(marca("Corral", (x1 - 39.5, 2.6, z1 - 75.3), ((39.5 + x1) / 2, s + 1.3, (75.3 + z1) / 2 + 0.06), "CorralAnimales",
+                   base=s + 0.06, hijos=vallas))
     p.append(deco("CuboMerienda", "CuboMerienda", (1.4, 1.6, 1.4), 38.2, s, 73.4, 30, TURQUESA))
     p.append(deco("CarroDecorado", "CarroEquipaje", (7, 1.9, 5), 45.0, s, 66.0, 90, GRIS))
     for x, z, g in ((21.2, 88.4, 12), (21.0, 54.6, -8)):

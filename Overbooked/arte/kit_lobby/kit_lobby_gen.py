@@ -68,6 +68,9 @@ TRAGALUZ_X = (-18.0, 14.0)
 LAMPARAS = [(x, z) for x in (-22.0, -6.0, 10.0, 24.0) for z in (-38.0, -14.0, 4.0, 30.0)]
 FACTURACION = (18.0, 8.0, -2.0)
 TETA = math.atan((HW - HE) / (XE - XO))
+G = 0.06
+SL = 0.08
+D = 0.05
 
 
 def techo_y(x):
@@ -119,7 +122,6 @@ def flecha(p, m, cx, cy, s, rol, w, grados):
 
 def p_suelo():
     p = Prop("LobbySuelo", None, 7000)
-    p.add(bl(XO, XE, ZN, ZS, 0.0, FL - 0.03), "concrete")
 
     def zona(c, n):
         x, z = c.x, -c.y
@@ -133,46 +135,46 @@ def p_suelo():
     p.add(gridplane(xs, ys, FL), zona)
     m = M((0, 0, FL))
     for x0, x1, z0, z1 in ((-31.4, -14.0, -46.0, -45.6), (-31.4, -14.0, 29.6, 30.0), (-14.4, -14.0, -46.0, 30.0)):
-        p.add(decal(rect(x0, x1, -z1, -z0), m, 0.02), "dcarpet")
-    p.add(decal(rect(12.0, 31.4, -30.3, -30.0), m, 0.02), "wainscot")
-    p.add(decal(rect(11.7, 12.0, -47.4, -30.0), m, 0.02), "wainscot")
+        p.add(decal(rect(x0, x1, -z1, -z0), m, SL), "dcarpet")
+    p.add(decal(rect(12.0, 31.4, -30.3, -30.0), m, SL), "wainscot")
+    p.add(decal(rect(11.7, 12.0, -47.4, -30.0), m, SL), "wainscot")
     sx, sz = 2.0, 34.0
-    p.add(decal(circ(sx, -sz, 4.4, 32), m, 0.02), "dteal")
-    p.add(decal(circ(sx, -sz, 3.9, 32), m, 0.03), "cream")
+    p.add(decal(circ(sx, -sz, 4.4, 32), m, SL), "dteal")
+    p.add(decal(circ(sx, -sz, 3.9, 32), m, 2 * SL), "cream")
     for k in range(16):
         a0 = 22.5 * k
-        p.add(arc_strip(sx, -sz, 3.95, 4.25, a0, a0 + 11.0, 2, m, 0.035), "orange")
-    logo(p, M((sx, -sz, FL + 0.035)), 2.8, base=False, step=0.012)
+        p.add(arc_strip(sx, -sz, 3.95, 4.25, a0, a0 + 11.0, 2, m, 2 * SL), "orange")
+    logo(p, M((sx, -sz, FL + 2 * SL)), 2.8, base=False, step=SL)
     rutas = [
-        ("yellow", [(-2.0, 32.6), (-6.0, 32.6), (-6.0, -28.0), (-15.6, -28.0)]),
-        ("teal", [(-2.4, 34.0), (-8.0, 34.0), (-8.0, -4.0), (-15.6, -4.0)]),
-        ("orange", [(-2.0, 35.4), (-10.0, 35.4), (-10.0, 20.0), (-15.6, 20.0)]),
+        ("yellow", [(-2.3, 32.6), (-6.0, 32.6), (-6.0, -28.0), (-14.3, -28.0)]),
+        ("teal", [(-2.3, 34.0), (-8.0, 34.0), (-8.0, -4.0), (-14.3, -4.0)]),
+        ("orange", [(-2.3, 35.4), (-10.0, 35.4), (-10.0, 20.0), (-14.3, 20.0)]),
     ]
     for rol, pts in rutas:
         for (x0, z0), (x1, z1) in zip(pts, pts[1:]):
             h = 0.32
             xa, xb = sorted((x0, x1))
             za, zb = sorted((z0, z1))
-            p.add(decal(rect(xa - h, xb + h, -zb - h, -za + h), m, 0.04), rol)
+            p.add(decal(rect(xa - h, xb + h, -zb - h, -za + h), m, 3 * SL), rol)
         (x0, z0), (x1, z1) = pts[-2], pts[-1]
         d = math.atan2(-(z1 - z0), x1 - x0)
-        poner(p, [[(0.0, -0.9), (1.0, 0.0), (0.0, 0.9)]], m, x1, -z1, 1.0, rol, 0.045, d)
+        poner(p, [[(0.0, -0.9), (1.0, 0.0), (0.0, 0.9)]], m, x1, -z1, 1.0, rol, 3 * SL, d)
         for k in range(1, 4):
             t = k / 4.0
             ax, az = pts[1][0] + (pts[2][0] - pts[1][0]) * t, pts[1][1] + (pts[2][1] - pts[1][1]) * t
-            poner(p, [[(-0.5, -0.55), (0.3, 0.0), (-0.5, 0.55), (-0.25, 0.0)]], m, ax, -az, 1.0, "white", 0.05,
+            poner(p, [[(-0.5, -0.55), (0.3, 0.0), (-0.5, 0.55), (-0.25, 0.0)]], m, ax, -az, 1.0, "white", 4 * SL,
                   math.atan2(-(pts[2][1] - pts[1][1]), pts[2][0] - pts[1][0]))
-    p.add(decal(rrect(-29.0, -38.0, 3.6, 7.0, 0.4, 2), m, 0.02), "rubber")
+    p.add(decal(rrect(-29.0, -38.0, 3.6, 7.0, 0.4, 2), m, SL), "rubber")
     for k in range(6):
-        p.add(decal(rect(-30.4, -27.6, -35.4 - 0.9 * k - 0.2, -35.4 - 0.9 * k), m, 0.03), "dgrey")
-    p.add(decal(rrect(-7.0, 39.0, 15.0, 9.0, 1.0, 3), m, 0.02), "plum")
-    p.add(decal(rrect(-7.0, 39.0, 13.8, 7.8, 0.8, 3), m, 0.03), "peach")
-    p.add(decal(rrect(-7.0, 39.0, 11.0, 5.0, 0.6, 3), m, 0.04), "mustard")
-    p.add(decal(elipse(20.0, 28.0, 12.6, 6.6, 40), m, 0.02), "dgrey")
-    p.add(decal(elipse(20.0, 28.0, 12.0, 6.0, 40), m, 0.03), "lgrey")
+        p.add(decal(rect(-30.4, -27.6, -35.4 - 0.9 * k - 0.2, -35.4 - 0.9 * k), m, 2 * SL), "dgrey")
+    p.add(decal(rrect(-6.5, 39.0, 13.0, 9.0, 1.0, 3), m, SL), "plum")
+    p.add(decal(rrect(-6.5, 39.0, 11.8, 7.8, 0.8, 3), m, 2 * SL), "peach")
+    p.add(decal(rrect(-6.5, 39.0, 9.0, 5.0, 0.6, 3), m, 3 * SL), "mustard")
+    p.add(decal(elipse(19.6, 28.0, 12.6, 6.6, 40), m, SL), "dgrey")
+    p.add(decal(elipse(19.6, 28.0, 12.0, 6.0, 40), m, 2 * SL), "lgrey")
     for z in (-10.0, -18.0):
         for ax in (2.0, 8.0):
-            p.add(decal(rect(ax - 1.5, ax + 1.5, -z - 0.15, -z + 0.15), m, 0.02), "yellow")
+            p.add(decal(rect(ax - 1.5, ax + 1.5, -z - 0.15, -z + 0.15), m, SL), "yellow")
     return p
 
 
@@ -184,10 +186,12 @@ def pared_ns(p, zc, signo):
     pts = [(XO, 0.0), (XE, 0.0), (XE, HE), (XO, HW)]
     p.add(prism(pts, 0.6, frame((0, -zc, 0), (1, 0, 0), (0, 0, 1))), lambda c, n: "wall" if n.y * signo < -0.5 else "cream")
     yi = -zc - signo * 0.3
-    y0, y1 = sorted((yi, yi + signo * 0.08))
-    p.add(bb(XO + 0.3, XE - 0.6, y0, y1, FL, 3.0), "wainscot")
-    y0, y1 = sorted((yi, yi + signo * 0.12))
-    p.add(bb(XO + 0.3, XE - 0.6, y0, y1, 3.0, 3.25, 0.03, 1), "orange")
+    tramos = ((XO + 0.75, 4.0), (11.6, XE - 0.75)) if signo > 0 else ((XO + 0.75, XE - 0.75),)
+    for xa, xb in tramos:
+        y0, y1 = sorted((yi + signo * 0.1, yi - signo * 0.08))
+        p.add(bb(xa, xb, y0, y1, FL, 3.0), "wainscot")
+        y0, y1 = sorted((yi + signo * 0.1, yi - signo * 0.14))
+        p.add(bb(xa, xb, y0, y1, 3.0, 3.25, 0.03, 1), "orange")
     yo = -zc + signo * 0.3
     y0, y1 = sorted((yo, yo + signo * 0.08))
     p.add(bb(XO, XE, y0, y1, 0.0, 1.6), "teal")
@@ -197,75 +201,75 @@ def pared_ns(p, zc, signo):
 def p_paredes():
     p = Prop("LobbyParedes", None, 12000)
     p.add(bl(31.4, 32.0, ZN, ZS, 0.0, HE), lambda c, n: "wall" if n.x < -0.5 else "cream")
-    p.add(bl(31.32, 31.4, ZN + 0.6, ZS - 0.6, FL, 3.0), "wainscot")
-    p.add(bl(31.28, 31.4, ZN + 0.6, ZS - 0.6, 3.0, 3.25, 0.03, 1), "orange")
+    p.add(bl(31.32, 31.5, ZN + 0.75, ZS - 0.75, FL, 3.0), "wainscot")
+    p.add(bl(31.26, 31.5, ZN + 0.75, ZS - 0.75, 3.0, 3.25, 0.03, 1), "orange")
     p.add(bl(32.0, 32.08, ZN, ZS, 0.0, 1.6), "teal")
     p.add(bl(32.0, 32.08, ZN, ZS, 8.4, 8.9), "orange")
     pared_ns(p, ZN + 0.3, 1)
     pared_ns(p, ZS - 0.3, -1)
     for x, z in ((XO, ZN), (XO, ZS), (XE, ZN), (XE, ZS)):
-        p.add(bl(x - 0.7, x + 0.7, z - 0.7, z + 0.7, 0.0, techo_y(x)), "white")
-    me = fr((31.32, 0, 0), "-x")
-    p.add(decal(rect(-7.5, 23.5, 3.6, 11.4), me, 0.03), "dteal")
-    p.add(decal(rect(-7.1, 23.1, 4.0, 11.0), me, 0.045), "teal")
+        p.add(bl(x - 0.7, x + 0.7, z - 0.7, z + 0.7, 0.0, techo_y(x) + 0.1), "white")
+    me = fr((31.4, 0, 0), "-x")
+    p.add(decal(rect(-7.5, 23.5, 3.6, 11.4), me, G), "dteal")
+    p.add(decal(rect(-7.1, 23.1, 4.0, 11.0), me, 2 * G), "teal")
     for i, z in enumerate(FACTURACION):
-        p.add(decal(circ(z, 9.0, 1.3, 20), me, 0.06), "cream")
-        seg7(p, me, z, 9.0, 1.5, 0.3, i + 1, "dteal", 0.075)
-        poner(p, MALETA, me, z, 6.0, 1.3, "cream", 0.06)
-    p.add(decal(rect(-34.0, -22.0, 5.5, 9.5), me, 0.03), "dteal")
-    poner(p, MALETA, me, -30.0, 7.5, 1.8, "cream", 0.045)
+        p.add(decal(circ(z, 9.0, 1.3, 20), me, 3 * G), "cream")
+        seg7(p, me, z, 9.0, 1.5, 0.3, i + 1, "dteal", 4 * G)
+        poner(p, MALETA, me, z, 6.0, 1.3, "cream", 3 * G)
+    p.add(decal(rect(-34.0, -22.0, 5.5, 9.5), me, G), "dteal")
+    poner(p, MALETA, me, -30.0, 7.5, 1.8, "cream", 2 * G)
     for k in range(3):
-        arco(p, me, -25.4, 7.5, 1.0 + 0.0 * k, 1.35, 30 + 120 * k, 120 + 120 * k, "yellow", 0.045)
-    poner(p, [[(0.0, -0.35), (0.5, 0.0), (0.0, 0.35)]], me, -25.4 + 1.18, 7.5 + 0.2, 1.0, "yellow", 0.05, math.radians(120))
-    mn = fr((0, 47.32, 0), "-y")
+        arco(p, me, -25.4, 7.5, 1.0, 1.35, 30 + 120 * k, 120 + 120 * k, "yellow", 2 * G)
+    poner(p, [[(0.0, -0.35), (0.5, 0.0), (0.0, 0.35)]], me, -25.4 + 1.18, 7.5 + 0.2, 1.0, "yellow", 2 * G, math.radians(120))
+    mn = fr((0, 47.4, 0), "-y")
     for i, x in enumerate((-12.0, -6.0, 0.0)):
-        p.add(decal(rect(x - 2.4, x + 2.4, 4.6, 11.0), mn, 0.03), "wainscot")
-        p.add(decal(rect(x - 2.1, x + 2.1, 4.9, 10.7), mn, 0.045), ("sky", "lblue", "peach")[i])
+        p.add(decal(rect(x - 2.4, x + 2.4, 4.6, 11.0), mn, G), "wainscot")
+        p.add(decal(rect(x - 2.1, x + 2.1, 4.9, 10.7), mn, 2 * G), ("sky", "lblue", "peach")[i])
         if i == 0:
-            p.add(decal(rect(x - 2.1, x + 2.1, 4.9, 6.6), mn, 0.06), "teal")
-            p.add(decal(rect(x - 2.1, x + 2.1, 4.9, 5.6), mn, 0.07), "sand")
-            p.add(decal(circ(x + 1.0, 9.3, 0.7, 14), mn, 0.06), "yellow")
-            p.add(decal([(x - 1.0, 5.3), (x - 0.7, 5.3), (x - 0.5, 8.4), (x - 0.75, 8.4)], mn, 0.08), "trunk")
+            p.add(decal(rect(x - 2.1, x + 2.1, 4.9, 6.6), mn, 3 * G), "teal")
+            p.add(decal(rect(x - 2.1, x + 2.1, 4.9, 5.6), mn, 4 * G), "sand")
+            p.add(decal(circ(x + 1.0, 9.3, 0.7, 14), mn, 3 * G), "yellow")
+            p.add(decal([(x - 1.0, 5.3), (x - 0.7, 5.3), (x - 0.5, 8.4), (x - 0.75, 8.4)], mn, 5 * G), "trunk")
             for a in (20, 70, 120, 160, 200):
-                poner(p, [K["pill"](0.55, 0, 1.1, 0.16, 0.0, 2)], mn, x - 0.62, 8.5, 1.0, "leaf", 0.09, math.radians(a))
+                poner(p, [K["pill"](0.55, 0, 1.1, 0.16, 0.0, 2)], mn, x - 0.62, 8.5, 1.0, "leaf", 6 * G, math.radians(a))
         elif i == 1:
-            p.add(decal([(x - 2.1, 4.9), (x + 2.1, 4.9), (x + 2.1, 6.0), (x + 0.6, 8.6), (x - 0.4, 6.8), (x - 1.2, 8.0), (x - 2.1, 6.4)], mn, 0.06), "dgrey")
-            p.add(decal([(x + 0.25, 7.9), (x + 0.6, 8.6), (x + 0.95, 7.9)], mn, 0.07), "white")
-            p.add(decal([(x - 1.5, 7.3), (x - 1.2, 8.0), (x - 0.9, 7.3)], mn, 0.07), "white")
-            poner(p, AVION, mn, x - 0.6, 9.8, 0.55, "orange", 0.07, math.radians(15))
+            p.add(decal([(x - 2.1, 4.9), (x + 2.1, 4.9), (x + 2.1, 6.0), (x + 0.6, 8.6), (x - 0.4, 6.8), (x - 1.2, 8.0), (x - 2.1, 6.4)], mn, 3 * G), "dgrey")
+            p.add(decal([(x + 0.25, 7.9), (x + 0.6, 8.6), (x + 0.95, 7.9)], mn, 4 * G), "white")
+            p.add(decal([(x - 1.5, 7.3), (x - 1.2, 8.0), (x - 0.9, 7.3)], mn, 4 * G), "white")
+            poner(p, AVION, mn, x - 0.6, 9.8, 0.55, "orange", 3 * G, math.radians(15))
         else:
             for k, (w, h) in enumerate(((0.8, 2.6), (0.9, 3.8), (0.7, 2.0), (1.0, 3.1))):
                 bx = x - 2.0 + 1.0 * k
-                p.add(decal(rect(bx, bx + w, 4.9, 4.9 + h), mn, 0.06), "plum")
+                p.add(decal(rect(bx, bx + w, 4.9, 4.9 + h), mn, 3 * G), "plum")
                 for j in range(int(h / 0.7)):
-                    p.add(decal(rect(bx + 0.2, bx + 0.4, 5.3 + 0.7 * j, 5.6 + 0.7 * j), mn, 0.07), "lamp")
-            p.add(decal(circ(x + 1.3, 9.6, 0.5, 14), mn, 0.06), "cream")
-            p.add(decal(circ(x + 1.5, 9.75, 0.42, 14), mn, 0.07), "peach")
+                    p.add(decal(rect(bx + 0.2, bx + 0.4, 5.3 + 0.7 * j, 5.6 + 0.7 * j), mn, 4 * G), "lamp")
+            p.add(decal(circ(x + 1.3, 9.6, 0.5, 14), mn, 3 * G), "cream")
+            p.add(decal(circ(x + 1.5, 9.75, 0.42, 14), mn, 4 * G), "peach")
     for i, (x0, x1) in enumerate(((4.6, 7.0), (8.6, 11.0))):
-        p.add(bb(x0 - 0.25, x1 + 0.25, 47.26, 47.4, FL, 7.8, 0.04, 1), "dteal")
-        p.add(bb(x0, x1, 47.2, 47.4, FL, 7.5, 0.03, 1), "mint")
+        p.add(bb(x0 - 0.25, x1 + 0.25, 47.26, 47.55, FL, 7.8, 0.04, 1), "dteal")
+        p.add(bb(x0, x1, 47.2, 47.48, FL + 0.08, 7.5, 0.03, 1), "mint")
         p.add(bb(x1 - 0.5, x1 - 0.3, 47.12, 47.2, 3.4, 3.6), "chrome")
-        poner(p, (HOMBRE, MUJER)[i], fr((0, 47.2, 0), "-y"), (x0 + x1) / 2, 5.4, 1.0, "white", 0.02)
-        p.add(decal(circ(x0 + 0.5, 6.9, 0.14, 8), fr((0, 47.2, 0), "-y"), 0.02), "green")
-    p.add(bb(4.0, 11.6, 47.0, 47.4, 8.3, 10.3, 0.1, 2), "navy")
+        poner(p, (HOMBRE, MUJER)[i], fr((0, 47.2, 0), "-y"), (x0 + x1) / 2, 5.4, 1.0, "white", G)
+        p.add(decal(circ(x0 + 0.5, 6.9, 0.14, 8), fr((0, 47.2, 0), "-y"), G), "green")
+    p.add(bb(4.0, 11.6, 47.0, 47.5, 8.3, 10.3, 0.1, 2), "navy")
     mw = fr((0, 47.0, 0), "-y")
-    poner(p, HOMBRE, mw, 6.4, 9.3, 0.95, "white", 0.02)
-    poner(p, MUJER, mw, 9.2, 9.3, 0.95, "white", 0.02)
-    p.add(decal(rect(7.75, 7.85, 8.6, 10.0), mw, 0.02), "white")
-    ms = fr((0, -47.32, 0), "+y")
-    p.add(decal(rect(-6.0, 14.0, 7.0, 11.5), ms, 0.03), "plum")
-    p.add(decal(rect(-5.6, 13.6, 7.4, 11.1), ms, 0.045), "purple")
-    poner(p, BOLSA, ms, 4.0, 9.25, 1.6, "white", 0.06)
+    poner(p, HOMBRE, mw, 6.4, 9.3, 0.95, "white", G)
+    poner(p, MUJER, mw, 9.2, 9.3, 0.95, "white", G)
+    p.add(decal(rect(7.75, 7.85, 8.6, 10.0), mw, G), "white")
+    ms = fr((0, -47.4, 0), "+y")
+    p.add(decal(rect(-6.0, 14.0, 7.0, 11.5), ms, G), "plum")
+    p.add(decal(rect(-5.6, 13.6, 7.4, 11.1), ms, 2 * G), "purple")
+    poner(p, BOLSA, ms, 4.0, 9.25, 1.6, "white", 3 * G)
     for k, (x, y) in enumerate(((-3.0, 9.8), (0.5, 8.3), (8.0, 10.1), (11.5, 8.6))):
         estrella = [(x + (0.55 if j % 2 == 0 else 0.2) * math.cos(math.pi / 2 + j * math.pi / 4), y + (0.55 if j % 2 == 0 else 0.2) * math.sin(math.pi / 2 + j * math.pi / 4)) for j in range(8)]
-        p.add(decal(estrella, ms, 0.06), ("yellow", "pink", "lamp", "yellow")[k])
+        p.add(decal(estrella, ms, 3 * G), ("yellow", "pink", "lamp", "yellow")[k])
     mo = fr((-31.75, 0, 0), "+x")
     for z in MONTANTES:
         if any(zg - 3.0 < z < zg + 3.0 for zg, _ in PUERTAS) or SALIDA[0] < z < SALIDA[1]:
             continue
         p.add(bl(-32.25, -31.75, z - 0.2, z + 0.2, 0.0, techo_y(XO)), "dteal")
     for y0, y1 in ((0.0, FL + 0.1), (9.3, 9.7), (16.0, 16.3)):
-        p.add(bl(-32.3, -31.7, ZN, ZS, y0, y1), "dteal")
+        p.add(bl(-32.3, -31.7, ZN + 0.7, ZS - 0.7, y0, y1), "dteal")
     for zg, col in PUERTAS:
         p.add(bl(-32.4, -31.5, zg - 3.0, zg - 2.6, 0.0, 9.3), "dteal")
         p.add(bl(-32.4, -31.5, zg + 2.6, zg + 3.0, 0.0, 9.3), "dteal")
@@ -273,36 +277,39 @@ def p_paredes():
             z0, z1 = sorted((zg, zg + s * 2.6))
             p.add(bl(-32.15, -31.85, z0 + 0.03, z1 - 0.03, FL, 9.0, 0.04, 1), "cream")
             mp = fr((-31.85, 0, 0), "+x")
-            p.add(decal(circ(-(zg + s * 1.3), 6.2, 0.62, 16), mp, 0.02), "dteal")
-            p.add(decal(circ(-(zg + s * 1.3), 6.2, 0.5, 16), mp, 0.035), "glass")
+            p.add(decal(circ(-(zg + s * 1.3), 6.2, 0.62, 16), mp, G), "dteal")
+            p.add(decal(circ(-(zg + s * 1.3), 6.2, 0.5, 16), mp, 2 * G), "glass")
             p.add(bl(-31.85, -31.6, zg + s * 0.35 - 0.06, zg + s * 0.35 + 0.06, 3.0, 4.6), "chrome")
             u0, u1 = sorted((-(zg + s * 2.5), -(zg + s * 0.1)))
-            p.add(decal(rect(u0, u1, 1.4, 1.65), mp, 0.02), col)
+            p.add(decal(rect(u0, u1, 1.4, 1.65), mp, G), col)
         p.add(bl(-32.4, -31.4, zg - 2.4, zg + 2.4, 9.8, 13.6, 0.12, 2), "navy")
         mq = fr((-31.4, 0, 0), "+x")
-        p.add(decal(rrect(-zg, 11.7, 4.4, 3.4, 0.3, 2), mq, 0.02), col)
-        p.add(decal(rrect(-zg, 11.7, 4.0, 3.0, 0.25, 2), mq, 0.035), "navy")
-        seg7(p, mq, -zg - 0.85, 11.7, 2.2, 0.42, PUERTAS.index((zg, col)) + 1, col, 0.05)
-        poner(p, AVION, mq, -zg + 0.95, 11.7, 0.62, "white", 0.05, math.radians(35))
+        p.add(decal(rrect(-zg, 11.7, 4.4, 3.4, 0.3, 2), mq, G), col)
+        p.add(decal(rrect(-zg, 11.7, 4.0, 3.0, 0.25, 2), mq, 2 * G), "navy")
+        seg7(p, mq, -zg - 0.85, 11.7, 2.2, 0.42, PUERTAS.index((zg, col)) + 1, col, 3 * G)
+        poner(p, AVION, mq, -zg + 0.95, 11.7, 0.62, "white", 3 * G, math.radians(35))
     z0, z1 = SALIDA
     p.add(bl(-32.45, -31.5, z0 - 0.4, z0, 0.0, 9.3), "dteal")
     p.add(bl(-32.45, -31.5, z1, z1 + 0.4, 0.0, 9.3), "dteal")
     for zz0, zz1 in ((z0 - 2.4, z0 - 0.1), (z1 + 0.1, z1 + 2.4)):
         p.add(bl(-31.6, -31.4, zz0, zz1, FL, 9.0, 0.04, 1), "dteal")
-        p.add(bl(-31.62, -31.38, zz0 + 0.25, zz1 - 0.25, FL + 0.25, 8.75), "glass")
+        for xg, lado in ((-31.4, "+x"), (-31.6, "-x")):
+            mg = fr((xg, 0, 0), lado)
+            u0, u1 = sorted((-(zz0 + 0.25), -(zz1 - 0.25)) if lado == "+x" else ((zz0 + 0.25), (zz1 - 0.25)))
+            p.add(decal(rect(u0, u1, FL + 0.25, 8.75), mg, G), "glass")
     p.add(bl(-31.6, -31.2, z0 + 1.0, z1 - 1.0, 9.8, 11.6, 0.12, 2), "green")
     mx = fr((-31.2, 0, 0), "+x")
-    poner(p, CORRER, mx, -(z0 + z1) / 2 - 1.3, 10.7, 1.2, "white", 0.02)
-    flecha(p, mx, -(z0 + z1) / 2 + 1.4, 10.7, 1.6, "white", 0.02, 0)
+    poner(p, CORRER, mx, -(z0 + z1) / 2 - 1.3, 10.7, 1.2, "white", G)
+    flecha(p, mx, -(z0 + z1) / 2 + 1.4, 10.7, 1.6, "white", G, 0)
     p.add(bl(-36.5, -32.3, z0 - 1.0, z1 + 1.0, 9.6, 10.2, 0.1, 2), lambda c, n: "orange" if n.z > 0.5 else "cream")
     for zz in (z0 - 0.8, z1 + 0.8):
         p.add(bar((-36.0, -zz, 9.7), (-32.3, -zz, 13.5), 0.12, 0.12, caps=False), "dark")
-    p.add(cyl(4.2, 0.1, (32.0, 0, 8.0), (0, 90, 0), seg=28), "cream")
-    logo(p, fr((32.1, 0, 8.0), "+x"), 4.2, base=False, step=0.02)
-    p.add(cyl(3.0, 0.1, (10.0, 48.0, 6.5), (-90, 0, 0), seg=24), "cream")
-    logo(p, fr((10.0, 48.1, 6.5), "+y"), 3.0, base=False, step=0.02)
-    p.add(cyl(3.0, 0.1, (10.0, -48.0, 6.5), (90, 0, 0), seg=24), "cream")
-    logo(p, fr((10.0, -48.1, 6.5), "-y"), 3.0, base=False, step=0.02)
+    p.add(cyl(4.2, 0.21, (31.95, 0, 8.0), (0, 90, 0), seg=28), "cream")
+    logo(p, fr((32.16, 0, 8.0), "+x"), 4.2, base=False, step=G)
+    p.add(cyl(3.0, 0.21, (10.0, 47.95, 6.5), (-90, 0, 0), seg=24), "cream")
+    logo(p, fr((10.0, 48.16, 6.5), "+y"), 3.0, base=False, step=G)
+    p.add(cyl(3.0, 0.21, (10.0, -47.95, 6.5), (90, 0, 0), seg=24), "cream")
+    logo(p, fr((10.0, -48.16, 6.5), "-y"), 3.0, base=False, step=G)
     return p
 
 
@@ -346,7 +353,7 @@ def p_techo():
         p.add(cyl(0.9, 0.15, (0, 0, 1.6), seg=12, m=mm), "dgrey")
         for a in (0, 60, 120):
             p.add(rbox((1.6, 0.18, 0.06), (0, 0, 1.78), rot=(0, 0, a), m=mm), "metal")
-    logo(p, R @ M((-6.0 / c, -9.0, 1.205)), 7.0, step=0.02)
+    logo(p, R @ M((-6.0 / c, -9.0, 1.2)), 7.0, step=G)
     for x, z in LAMPARAS:
         y = techo_y(x) - 0.35
         p.add(cyl(0.05, 3.7, (x, -z, y - 3.7), seg=5, cap0=False, cap1=False), "dark")
@@ -365,10 +372,10 @@ def p_techo():
         for ox, oy, side in ((x0 + 1.8, 0.0, "+x"), (x0 - 1.8, 0.0, "-x"), (0.0, -zg - 1.8, "-y"), (0.0, -zg + 1.8, "+y")):
             mf = fr((ox, oy, 0), side)
             u = {"+x": -zg, "-x": zg, "-y": x0, "+y": -x0}[side]
-            p.add(decal(rrect(u, y0 + 1.5, 3.3, 2.7, 0.25, 2), mf, 0.02), col)
-            p.add(decal(rrect(u, y0 + 1.5, 3.0, 2.4, 0.2, 2), mf, 0.035), "navy")
-            seg7(p, mf, u - 0.55, y0 + 1.5, 1.7, 0.34, i + 1, col, 0.05)
-            poner(p, AVION, mf, u + 0.75, y0 + 1.5, 0.45, "white", 0.05, math.radians(35))
+            p.add(decal(rrect(u, y0 + 1.5, 3.3, 2.7, 0.25, 2), mf, G), col)
+            p.add(decal(rrect(u, y0 + 1.5, 3.0, 2.4, 0.2, 2), mf, 2 * G), "navy")
+            seg7(p, mf, u - 0.55, y0 + 1.5, 1.7, 0.34, i + 1, col, 3 * G)
+            poner(p, AVION, mf, u + 0.75, y0 + 1.5, 0.45, "white", 3 * G, math.radians(35))
     bx, by, bz = 2.0, -22.0, 9.2
     top = techo_y(bx) - 0.35
     for dx in (-2.8, 2.8):
@@ -381,9 +388,9 @@ def p_techo():
         for k, (polys, col, ang) in enumerate(filas):
             yrow = bz + 2.95 - 1.15 * k
             ux = s * bx
-            poner(p, polys, mf, ux - 1.6, yrow, 0.45, col, 0.02, math.radians(35) if polys is AVION else 0.0)
-            flecha(p, mf, ux + 1.4, yrow, 0.9, col, 0.02, ang)
-            p.add(decal(rect(ux - 3.3, ux + 3.3, yrow - 0.6, yrow - 0.56), mf, 0.02), "dgrey")
+            poner(p, polys, mf, ux - 1.6, yrow, 0.45, col, G, math.radians(35) if polys is AVION else 0.0)
+            flecha(p, mf, ux + 1.4, yrow, 0.9, col, G, ang)
+            p.add(decal(rect(ux - 3.3, ux + 3.3, yrow - 0.6, yrow - 0.56), mf, G), "dgrey")
     return p
 
 
@@ -391,27 +398,27 @@ def p_facturacion():
     p = Prop("Facturacion", None, 2200)
     p.add(bb(-3.5, 0.4, -0.85, 1.0, 0.0, 0.2), "dark")
     p.add(bb(-3.6, 0.5, -0.95, 1.1, 0.2, 2.25, 0.08, 1), lambda c, n: "cream" if n.y < -0.5 else "teal")
-    p.add(bb(-3.4, 0.3, -0.98, -0.95, 0.5, 2.0), "teal")
-    logo(p, fr((-1.55, -0.98, 1.25), "-y"), 0.5, step=0.008)
+    p.add(bb(-3.4, 0.25, -1.0, -0.95, 0.5, 2.0), "teal")
+    logo(p, fr((-1.55, -1.0, 1.25), "-y"), 0.5, step=D)
     p.add(bb(-3.7, 0.55, -1.15, 1.15, 2.25, 2.42, 0.04, 1), "wood")
-    p.add(bb(-3.7, 0.55, -1.17, -1.12, 2.25, 2.42), "orange")
+    p.add(bb(-3.75, 0.6, -1.2, -1.15, 2.25, 2.42), "orange")
     p.add(bb(-2.6, -1.4, 0.3, 0.45, 2.42, 3.3, 0.04, 1), "dark")
-    p.add(bb(-2.55, -1.45, 0.28, 0.31, 2.55, 3.25), "glass")
+    p.add(bb(-2.55, -1.45, 0.25, 0.3, 2.55, 3.25), "glass")
     p.add(bb(-2.15, -1.85, 0.4, 0.7, 2.42, 2.55), "dark")
     p.add(bb(-0.6, 0.2, -0.3, 0.3, 2.42, 2.6, 0.03, 1), "black")
     p.add(bb(0.6, 3.4, -1.8, -0.15, 0.0, 0.45, 0.06, 1), lambda c, n: "metal" if n.z > 0.5 else "steel")
     p.add(bb(0.8, 3.2, -1.62, -0.33, 0.45, 0.5), "rubber")
-    for x in (0.7, 3.3):
-        p.add(bb(x - 0.08, x + 0.08, -1.8, 2.2, 0.2, 0.95, 0.03, 1), "metal")
+    for x0, x1 in ((0.55, 0.75), (3.25, 3.45)):
+        p.add(bb(x0, x1, -1.85, 2.2, 0.2, 0.95, 0.03, 1), "metal")
     p.add(bb(0.78, 3.22, -0.15, 2.1, 0.25, 0.5), "rubber")
     for k in range(9):
         y = -0.05 + 0.24 * k
-        p.add(decal(rect(0.8, 3.2, y - 0.025, y + 0.025), M((0, 0, 0.5)), 0.008), "dark")
+        p.add(decal(rect(0.8, 3.2, y - 0.025, y + 0.025), M((0, 0, 0.5)), D), "dark")
     p.add(bar((0.35, -1.0, 0.0), (0.35, -1.0, 2.7), 0.12, 0.12, caps=False), "dark")
     p.add(bb(-0.2, 0.9, -1.12, -0.88, 2.65, 3.3, 0.05, 1), "dark")
-    p.add(bb(-0.12, 0.82, -1.15, -1.12, 2.72, 3.23), "black")
-    p.add(bb(0.4, 0.8, 2.1, 2.5, 0.0, 3.1), "dteal")
-    p.add(bb(3.2, 3.6, 2.1, 2.5, 0.0, 3.1), "dteal")
+    p.add(bb(-0.12, 0.82, -1.17, -1.12, 2.72, 3.23), "black")
+    p.add(bb(0.4, 0.8, 2.1, 2.5, 0.0, 2.0), "dteal")
+    p.add(bb(3.2, 3.6, 2.1, 2.5, 0.0, 2.0), "dteal")
     p.add(bb(0.4, 3.6, 2.1, 2.5, 2.0, 3.1), "dteal")
     p.add(bb(0.35, 3.65, 2.05, 2.55, 3.1, 3.3, 0.04, 1), "orange")
     for k in range(8):
@@ -420,10 +427,10 @@ def p_facturacion():
     mh = fr((0, 2.1, 0), "-y")
     for k in range(6):
         x = 0.4 + 0.55 * k
-        p.add(decal([(x, 2.05), (x + 0.3, 2.05), (x + 0.55, 2.95), (x + 0.25, 2.95)], mh, 0.006), "yellow")
+        p.add(decal([(x, 2.05), (x + 0.3, 2.05), (x + 0.55, 2.95), (x + 0.25, 2.95)], mh, D), "yellow")
     p.add(bar((-2.9, 0.85, 2.42), (-2.9, 0.85, 4.3), 0.1, 0.1, caps=False), "dark")
     p.add(cyl(0.75, 0.25, (-2.9, 0.85, 4.75), (90, 0, 0), seg=18, center=True), "cream")
-    logo(p, fr((-2.9, 0.72, 4.75), "-y"), 0.75, base=False, step=0.006)
+    logo(p, fr((-2.9, 0.725, 4.75), "-y"), 0.75, base=False, step=D)
     p.add(cyl(0.3, 0.08, (-1.9, 1.7, 0.0), seg=8), "dark")
     p.add(cyl(0.06, 1.3, (-1.9, 1.7, 0.08), seg=6, cap0=False, cap1=False), "metal")
     p.add(cyl(0.5, 0.18, (-1.9, 1.7, 1.38), seg=12, bev=0.05), "orange")
@@ -440,18 +447,18 @@ def p_arco():
         mi = fr((s * 1.5, 0, 0), "-x" if s > 0 else "+x")
         for j in range(9):
             for i in range(2):
-                p.add(decal(circ((i - 0.5) * 0.4 * s, 1.0 + 0.6 * j, 0.07, 6), mi, 0.006), "steel")
+                p.add(decal(circ((i - 0.5) * 0.4 * s, 1.0 + 0.6 * j, 0.07, 6), mi, D), "steel")
         mo = fr((s * 2.05, 0, 0), "+x" if s > 0 else "-x")
-        p.add(decal(rect(-0.4, 0.4, 2.0, 5.0), mo, 0.006), "orange")
+        p.add(decal(rect(-0.4, 0.4, 2.0, 5.0), mo, D), "orange")
     p.add(bb(-2.05, 2.05, -0.5, 0.5, 6.9, 7.7, 0.12, 2), "cream")
     p.add(bb(-2.1, 2.1, -0.55, 0.55, 6.85, 7.0, 0.03, 1), "orange")
     p.add(cyl(0.38, 0.18, (0, 0, 7.7), seg=10), "dark")
     for side in ("-y", "+y"):
         y = -0.5 if side == "-y" else 0.5
         mf = fr((0, y, 0), side)
-        p.add(decal(rrect(0, 7.3, 2.6, 0.5, 0.1, 1), mf, 0.006), "navy")
+        p.add(decal(rrect(0, 7.3, 2.6, 0.5, 0.1, 1), mf, D), "navy")
         for k in range(5):
-            p.add(decal(rect(-1.0 + 0.45 * k, -0.85 + 0.45 * k, 7.15, 7.15 + 0.1 + 0.06 * k), mf, 0.012), "lime")
+            p.add(decal(rect(-1.0 + 0.45 * k, -0.85 + 0.45 * k, 7.15, 7.15 + 0.1 + 0.06 * k), mf, 2 * D), "lime")
     return p
 
 
@@ -459,14 +466,14 @@ def p_rayosx():
     p = Prop("RayosX", None, 1800)
     p.add(bb(-1.6, 1.6, -1.9, 1.9, 0.0, 3.1, 0.15, 2), lambda c, n: "dark" if n.z < -0.5 else "lgrey")
     p.add(bb(-1.65, 1.65, -1.95, 1.95, 0.0, 0.6, 0.05, 1), "dteal")
-    p.add(bb(-1.62, 1.62, -1.92, 1.92, 2.6, 2.75), "orange")
+    p.add(bb(-1.65, 1.65, -1.95, 1.95, 2.6, 2.75), "orange")
     for s in (-1, 1):
         mf = fr((0, s * 1.95, 0), "-y" if s < 0 else "+y")
-        p.add(decal(rrect(0, 1.65, 2.3, 1.3, 0.12, 2), mf, 0.006), "black")
+        p.add(decal(rrect(0, 1.65, 2.3, 1.3, 0.12, 2), mf, D), "black")
         for k in range(7):
             x = -0.95 + 0.32 * k
-            p.add(decal(rect(x - 0.13, x + 0.13, 1.05, 2.25), mf, 0.014), "rubber")
-        poner(p, [[(0.0, 0.0), (0.4, 0.0), (0.2, 0.36)]], mf, -0.55, 2.62, 1.0, "yellow", 0.012)
+            p.add(decal(rect(x - 0.13, x + 0.13, 1.05, 2.25), mf, 2 * D), "rubber")
+        poner(p, [[(0.0, 0.0), (0.4, 0.0), (0.2, 0.36)]], mf, -0.55, 2.4, 1.0, "yellow", 2 * D)
     for s in (-1, 1):
         y0, y1 = sorted((s * 1.9, s * 5.2))
         p.add(bb(-1.25, 1.25, y0, y1, 0.75, 0.95, 0.04, 1), "rubber")
@@ -477,22 +484,21 @@ def p_rayosx():
                 p.add(bar((xx, yy, 0.0), (xx, yy, 0.75), 0.12, 0.12, caps=False), "steel")
         for k in range(7):
             yy = (y0 + 0.25) + (y1 - y0 - 0.5) * k / 6
-            p.add(decal(rect(-1.2, 1.2, yy - 0.03, yy + 0.03), M((0, 0, 0.95)), 0.006), "dark")
+            p.add(decal(rect(-1.2, 1.2, yy - 0.03, yy + 0.03), M((0, 0, 0.95)), D), "dark")
     for yy, col in ((-4.0, "grey"), (-2.6, "dgrey")):
         p.add(bb(-0.9, 0.9, yy - 0.6, yy + 0.6, 0.95, 1.3, 0.05, 1), col)
-        p.add(bb(-0.75, 0.75, yy - 0.45, yy + 0.45, 1.0, 1.31), "dark")
-    p.add(bb(-0.4, 0.3, -4.2, -3.8, 1.3, 1.5, 0.04, 1), "orange")
+        p.add(decal(rect(-0.75, 0.75, yy - 0.45, yy + 0.45), M((0, 0, 1.3)), D), "dark")
+    p.add(bb(-0.4, 0.3, -4.2, -3.8, 1.35, 1.55, 0.04, 1), "orange")
     p.add(cyl(0.18, 0.5, (0.25, -2.5, 1.3), (90, 0, 0), seg=8), "chrome")
     p.add(bar((2.1, -0.6, 0.0), (2.1, -0.6, 3.0), 0.14, 0.14, caps=False), "dark")
     p.add(cyl(0.45, 0.08, (2.1, -0.6, 0.0), seg=10), "dark")
     m = M((2.1, -0.6, 3.5), (0, 0, -60))
     p.add(rbox((1.6, 0.18, 1.1), (0, 0, 0), 0.05, 1, m=m), "dark")
-    pant = m @ M((0, -0.095, 0), (90, 0, 0))
-    p.add(decal(rect(-0.7, 0.7, -0.48, 0.48), m @ frame((0, -0.095, 0), (1, 0, 0), (0, 0, 1)), 0.003), "navy")
-    mf = m @ frame((0, -0.095, 0), (1, 0, 0), (0, 0, 1))
+    mf = m @ frame((0, -0.09, 0), (1, 0, 0), (0, 0, 1))
+    p.add(decal(rect(-0.7, 0.7, -0.48, 0.48), mf, D), "navy")
     pollo = [K["circ"](0.0, 0.0, 0.26, 10), K["circ"](0.28, 0.2, 0.13, 8), [(0.4, 0.22), (0.55, 0.18), (0.4, 0.14)],
              [(-0.05, -0.25), (0.0, -0.42), (0.05, -0.25)], [(-0.3, 0.05), (-0.48, 0.2), (-0.35, -0.05)]]
-    poner(p, pollo, mf, -0.05, 0.0, 0.9, "lime", 0.006)
+    poner(p, pollo, mf, -0.05, 0.0, 0.9, "lime", 2 * D)
     return p
 
 
@@ -554,17 +560,17 @@ def p_cinta():
         for side in ("-y", "+y"):
             mf = fr((0, -0.12 if side == "-y" else 0.12, 0), side)
             ux = x if side == "-y" else -x
-            poner(p, MALETA, mf, ux, 5.3, 0.75, "yellow", 0.01)
+            poner(p, MALETA, mf, ux, 5.3, 0.75, "yellow", D)
     PX = L + R1 + 0.2
     p.add(bb(PX, PX + 1.8, -2.6, 2.6, 0.0, 5.2, 0.08, 1), "dteal")
-    p.add(bb(PX - 0.02, PX, -1.6, 1.6, 2.4, 4.4), "black")
+    p.add(bb(PX - 0.06, PX, -1.6, 1.6, 2.4, 4.4), "black")
     for k in range(8):
         y = -1.5 + 0.38 * k
-        p.add(bb(PX - 0.1, PX - 0.04, y, y + 0.34, 2.5, 4.4), "rubber")
+        p.add(bb(PX - 0.16, PX - 0.11, y, y + 0.34, 2.5, 4.4), "rubber")
     mf = fr((PX, 0, 0), "-x")
     for k in range(7):
         y = -2.5 + 0.75 * k
-        p.add(decal([(y, 4.5), (y + 0.4, 4.5), (y + 0.75, 5.1), (y + 0.35, 5.1)], mf, 0.01), "yellow")
+        p.add(decal([(y, 4.5), (y + 0.4, 4.5), (y + 0.75, 5.1), (y + 0.35, 5.1)], mf, D), "yellow")
     bmr = bmesh.new()
     rx0, rz0, rx1, rz1 = PX, 2.6, L + R0 + 0.6, 1.55
     v = [bmr.verts.new((rx0, -1.4, rz0)), bmr.verts.new((rx0, 1.4, rz0)), bmr.verts.new((rx1, 1.4, rz1)), bmr.verts.new((rx1, -1.4, rz1))]
@@ -591,29 +597,29 @@ def p_isla():
     p.add(prism(pts, 2 * T, frame((0, 0, 0), (1, 0, 0), (0, 0, 1))), lambda c, n: "dteal" if abs(n.y) < 0.5 else "teal")
     p.add(bb(-W - 0.1, W + 0.1, -T - 0.1, T + 0.1, 0.0, 0.6, 0.05, 1), "dark")
     mf = fr((0, -T, 0), "-y")
-    p.add(decal(rrect(0, 7.4, 18.6, 9.8, 0.4, 2), mf, 0.02), "orange")
-    p.add(decal(rrect(0, 7.4, 17.9, 9.1, 0.3, 2), mf, 0.035), "black")
-    p.add(decal(rrect(0, 12.55, 7.0, 0.95, 0.3, 2), mf, 0.02), "navy")
-    poner(p, AVION, mf, -2.2, 12.55, 0.4, "white", 0.035, math.radians(30))
+    p.add(decal(rrect(0, 7.4, 18.6, 9.8, 0.4, 2), mf, D), "orange")
+    p.add(decal(rrect(0, 7.4, 17.9, 9.1, 0.3, 2), mf, 2 * D), "black")
+    p.add(decal(rrect(0, 12.55, 9.6, 0.95, 0.3, 2), mf, 2 * D), "navy")
+    poner(p, AVION, mf, -3.3, 12.55, 0.4, "white", 3 * D, math.radians(30))
     for k, col in enumerate(("orange", "teal", "yellow")):
-        p.add(decal(circ(-0.4 + 1.2 * k, 12.55, 0.3, 12), mf, 0.035), col)
+        p.add(decal(circ(2.5 + 0.85 * k, 12.55, 0.3, 12), mf, 3 * D), col)
     mb = fr((0, T, 0), "+y")
-    p.add(decal(circ(0, 6.5, 4.4, 32), mb, 0.02), "cream")
-    logo(p, fr((0, T + 0.02, 6.5), "+y"), 4.0, base=False, step=0.012)
+    p.add(decal(circ(0, 6.5, 4.4, 32), mb, D), "cream")
+    logo(p, fr((0, T + D, 6.5), "+y"), 4.0, base=False, step=D)
     for k, col in enumerate(("orange", "teal", "yellow")):
-        p.add(decal(rect(-W + 0.6, W - 0.6, 1.0 + 0.5 * k, 1.3 + 0.5 * k), mb, 0.02), col)
-    p.add(cyl(1.7, 1.5, (0, 0, H - 0.4), (90, 0, 0), seg=24, center=True), "cream")
+        p.add(decal(rect(-W + 0.6, W - 0.6, 0.8 + 0.4 * k, 1.05 + 0.4 * k), mb, D), col)
+    p.add(cyl(1.7, 1.7, (0, 0, H - 0.4), (90, 0, 0), seg=24, center=True), "cream")
     p.add(cyl(1.85, 1.2, (0, 0, H - 0.4), (90, 0, 0), seg=24, center=True, cap0=False, cap1=False), "orange")
     for side, sy in (("-y", -0.76), ("+y", 0.76)):
-        mc = fr((0, sy, H - 0.4), side)
-        p.add(decal(circ(0, 0, 1.45, 24), mc, 0.006), "white")
+        mc = fr((0, math.copysign(0.85, sy), H - 0.4), side)
+        p.add(decal(circ(0, 0, 1.45, 24), mc, D), "white")
         for k in range(12):
             a = math.radians(30 * k)
-            p.add(decal(circ(1.2 * math.cos(a), 1.2 * math.sin(a), 0.07, 6), mc, 0.012), "dark")
-        poner(p, [K["rect"](-0.05, 0.05, -0.1, 1.0)], mc, 0, 0, 1.0, "dark", 0.016, math.radians(-75))
-        poner(p, [K["rect"](-0.07, 0.07, -0.1, 0.7)], mc, 0, 0, 1.0, "dark", 0.018, math.radians(140))
-        poner(p, [K["rect"](-0.025, 0.025, -0.2, 1.15)], mc, 0, 0, 1.0, "red", 0.02, math.radians(200))
-        p.add(decal(circ(0, 0, 0.1, 8), mc, 0.022), "dark")
+            p.add(decal(circ(1.2 * math.cos(a), 1.2 * math.sin(a), 0.07, 6), mc, 2 * D), "dark")
+        poner(p, [K["rect"](-0.05, 0.05, -0.1, 1.0)], mc, 0, 0, 1.0, "dark", 2 * D, math.radians(-75))
+        poner(p, [K["rect"](-0.07, 0.07, -0.1, 0.7)], mc, 0, 0, 1.0, "dark", 2 * D, math.radians(140))
+        poner(p, [K["rect"](-0.025, 0.025, -0.2, 1.15)], mc, 0, 0, 1.0, "red", 3 * D, math.radians(200))
+        p.add(decal(circ(0, 0, 0.1, 8), mc, 4 * D), "dark")
     cy_, r0, r1 = -4.2, 3.0, 4.0
     m = M((0, cy_, 0))
     prof_ext = []
@@ -651,17 +657,17 @@ def p_isla():
     ap = math.cos(math.radians(180 / n / 2))
     mfr = fr((0, cy_ - r1 * ap - 0.005, 0), "-y")
     p.add(decal(circ(0, 1.3, 0.75, 20), mfr, 0.07), "white")
-    poner(p, INFO, mfr, 0, 1.3, 0.95, "teal", 0.085)
+    poner(p, INFO, mfr, 0, 1.3, 0.95, "teal", 0.07 + D)
     for s in (-1, 1):
         a = math.radians(270 + s * 40)
         mm = M((r1 * ap * math.cos(a) * 1.002, cy_ + r1 * ap * math.sin(a) * 1.002, 0), (0, 0, s * 40))
-        p.add(decal(rect(-0.8, 0.8, 0.5, 0.6), mm @ frame((0, 0, 0), (1, 0, 0), (0, 0, 1)), 0.006), "orange")
+        p.add(decal(rect(-0.8, 0.8, 0.5, 0.6), mm @ frame((0, 0, 0), (1, 0, 0), (0, 0, 1)), 0.07), "orange")
     p.add(bb(-2.0, -1.0, cy_ - 3.1, cy_ - 2.9, 2.45, 3.2, 0.03, 1), "cream")
     mt = fr((0, cy_ - 3.1, 0), "-y")
-    p.add(decal(circ(-1.5, 2.85, 0.24, 12), mt, 0.004), "dark")
-    p.add(decal(circ(-1.5, 2.85, 0.19, 12), mt, 0.008), "white")
-    p.add(decal(rect(-1.51, -1.49, 2.85, 3.0), mt, 0.012), "dark")
-    p.add(decal(rect(-1.5, -1.38, 2.84, 2.86), mt, 0.012), "dark")
+    p.add(decal(circ(-1.5, 2.85, 0.24, 12), mt, D), "dark")
+    p.add(decal(circ(-1.5, 2.85, 0.19, 12), mt, 2 * D), "white")
+    p.add(decal(rect(-1.51, -1.49, 2.85, 3.0), mt, 3 * D), "dark")
+    p.add(decal(rect(-1.5, -1.38, 2.84, 2.86), mt, 3 * D), "dark")
     p.add(cyl(0.45, 0.1, (0.0, cy_ - 1.0, 0.0), seg=10), "dark")
     p.add(cyl(0.06, 1.5, (0.0, cy_ - 1.0, 0.1), seg=6, cap0=False), "metal")
     p.add(cyl(0.55, 0.2, (0.0, cy_ - 1.0, 1.6), seg=14, bev=0.06), "orange")
@@ -674,15 +680,18 @@ def p_cafeteria():
     p.add(bb(-7.1, 7.1, -1.0, 0.6, 0.25, 2.3, 0.08, 1), lambda c, n: "wood" if n.y < -0.5 else "woodb")
     for k in range(14):
         x = -6.6 + 1.0 * k
-        p.add(bb(x - 0.04, x + 0.04, -1.04, -1.0, 0.35, 2.2), "woodb")
+        p.add(bb(x - 0.04, x + 0.04, -1.06, -1.0, 0.35, 2.2), "woodb")
     p.add(bb(-7.25, 7.25, -1.2, 0.7, 2.3, 2.5, 0.05, 1), "cream")
-    p.add(bb(-6.5, -1.5, -0.9, 0.4, 2.5, 3.6, 0.05, 1), lambda c, n: "glass" if abs(n.z) < 0.5 else "metal")
+    p.add(bb(-6.5, -1.5, -0.9, 0.4, 3.5, 3.6, 0.03, 1), "metal")
+    for x in (-6.45, -1.55):
+        for y in (-0.85, 0.35):
+            p.add(bar((x, y, 2.5), (x, y, 3.5), 0.06, 0.06, caps=False), "metal")
     for x, col in ((-5.8, "cake"), (-4.6, "pink"), (-3.4, "coffee"), (-2.3, "cake")):
         p.add(cyl(0.45, 0.4, (x, -0.25, 2.55), seg=10), col)
         p.add(cyl(0.48, 0.08, (x, -0.25, 2.95), seg=10), "white" if col != "coffee" else "pink")
         p.add(lathe([(0.12, 3.0), (0.1, 3.12), (0.0, 3.16)], 6, M((x, -0.25, 0))), "red")
     p.add(bb(2.5, 3.6, -0.6, 0.0, 2.5, 2.9, 0.06, 1), "dark")
-    p.add(bb(2.6, 3.5, -0.62, -0.55, 2.65, 2.85), "lime")
+    p.add(bb(2.6, 3.5, -0.65, -0.6, 2.65, 2.85), "lime")
     p.add(cyl(0.22, 0.4, (5.2, -0.4, 2.5), seg=10, cap1=False), "glass")
     for k in range(3):
         p.add(cyl(0.18, 0.3, (6.2, 0.1, 2.5 + 0.28 * k), seg=10, r2=0.22), "white")
@@ -702,12 +711,12 @@ def p_cafeteria():
     p.add(bb(-7.2, 7.2, 3.05, 3.25, 2.35, 8.2), "beam")
     mm = fr((0, 3.05, 0), "-y")
     for k, x in enumerate((-4.6, 0.0, 4.6)):
-        p.add(decal(rrect(x, 6.2, 4.2, 2.8, 0.2, 2), mm, 0.01), "wood")
-        p.add(decal(rrect(x, 6.2, 3.9, 2.5, 0.15, 2), mm, 0.02), "navy")
-        poner(p, TAZA if k != 1 else [K["circ"](0, 0, 0.5, 12)], mm, x - 1.1, 6.2, 0.9, ("cream", "pink", "cake")[k], 0.03)
+        p.add(decal(rrect(x, 6.2, 4.2, 2.8, 0.2, 2), mm, D), "wood")
+        p.add(decal(rrect(x, 6.2, 3.9, 2.5, 0.15, 2), mm, 2 * D), "navy")
+        poner(p, TAZA if k != 1 else [K["circ"](0, 0, 0.5, 12)], mm, x - 1.1, 6.2, 0.9, ("cream", "pink", "cake")[k], 3 * D)
         for j in range(3):
-            p.add(decal(rect(x - 0.2, x + 1.0 + 0.2 * j, 6.95 - 0.55 * j, 7.1 - 0.55 * j), mm, 0.03), "white")
-            p.add(decal(circ(x + 1.5, 7.02 - 0.55 * j, 0.12, 8), mm, 0.03), "yellow")
+            p.add(decal(rect(x - 0.2, x + 1.0 + 0.2 * j, 6.95 - 0.55 * j, 7.1 - 0.55 * j), mm, 3 * D), "white")
+            p.add(decal(circ(x + 1.65, 7.02 - 0.55 * j, 0.12, 8), mm, 3 * D), "yellow")
     for x in (-7.0, 7.0):
         p.add(bar((x, -1.7, 2.5), (x, -1.7, 5.2), 0.16, 0.16, caps=False), "wainscot")
     bma = bmesh.new()
@@ -750,34 +759,33 @@ def p_expendedora(nombre, cuerpo, franja):
     p.add(bb(-1.6, 1.6, -1.1, 1.1, 0.0, 6.2, 0.12, 2), lambda c, n: "dark" if n.z < -0.5 else cuerpo)
     p.add(bb(-1.55, 1.55, -1.05, 1.05, 0.0, 0.3), "dark")
     mf = fr((0, -1.1, 0), "-y")
-    p.add(decal(rect(-1.45, 0.65, 1.9, 5.7), mf, 0.01), "white")
-    p.add(decal(rect(-1.35, 0.55, 2.0, 5.6), mf, 0.02), "black")
+    p.add(decal(rect(-1.45, 0.65, 1.9, 5.7), mf, D), "white")
+    p.add(decal(rect(-1.35, 0.55, 2.0, 5.6), mf, 2 * D), "black")
     cols = ("red", "yellow", "lime", "blue", "orange", "pink")
     for j in range(4):
         y = 2.2 + 0.88 * j
-        p.add(decal(rect(-1.35, 0.55, y - 0.08, y), mf, 0.03), "metal")
+        p.add(decal(rect(-1.35, 0.55, y - 0.08, y), mf, 3 * D), "metal")
         for i in range(5):
             x = -1.15 + 0.37 * i
-            p.add(decal(rrect(x, y + 0.32, 0.26, 0.58, 0.08, 1), mf, 0.035), cols[(i + j * 2) % len(cols)])
-            p.add(decal(rect(x - 0.13, x + 0.13, y + 0.3, y + 0.38), mf, 0.04), "white")
+            p.add(decal(rrect(x, y + 0.32, 0.26, 0.58, 0.08, 1), mf, 3 * D), cols[(i + j * 2) % len(cols)])
+            p.add(decal(rect(x - 0.13, x + 0.13, y + 0.3, y + 0.38), mf, 4 * D), "white")
     p.add(bb(0.75, 1.5, -1.16, -1.1, 2.0, 5.6, 0.02, 1), "dgrey")
     mp = fr((0, -1.16, 0), "-y")
     for j in range(4):
         for i in range(2):
-            p.add(decal(circ(0.95 + 0.35 * i, 4.9 - 0.32 * j, 0.11, 8), mp, 0.006), "lgrey")
-    p.add(decal(rrect(1.12, 3.0, 0.5, 0.3, 0.06, 1), mp, 0.006), "black")
-    p.add(decal(rect(1.05, 1.19, 3.6, 3.62), mp, 0.01), "metal") if False else None
-    p.add(bb(1.08, 1.16, -1.2, -1.16, 3.5, 3.85), "black")
+            p.add(decal(circ(0.95 + 0.35 * i, 4.9 - 0.32 * j, 0.11, 8), mp, D), "lgrey")
+    p.add(decal(rrect(1.12, 3.0, 0.5, 0.3, 0.06, 1), mp, D), "black")
+    p.add(bb(1.08, 1.16, -1.21, -1.16, 3.5, 3.85), "black")
     p.add(bb(-1.3, 0.5, -1.16, -1.1, 0.6, 1.5, 0.04, 1), "dgrey")
-    p.add(bb(-1.15, 0.35, -1.19, -1.16, 0.75, 1.35), "black")
-    p.add(decal(rrect(0, 5.95, 3.0, 0.45, 0.1, 1), mf, 0.01), franja)
-    poner(p, [K["rrect"](0, 0, 0.3, 0.6, 0.08, 1)], mf, -0.9, 5.95, 0.6, "white", 0.02)
-    poner(p, [K["pill"](0, 0, 1.4, 0.06, 0.0, 2)], mf, 0.4, 5.95, 1.0, "white", 0.02)
+    p.add(bb(-1.15, 0.35, -1.21, -1.16, 0.75, 1.35), "black")
+    p.add(decal(rrect(0, 5.95, 3.0, 0.45, 0.1, 1), mf, D), franja)
+    poner(p, [K["rrect"](0, 0, 0.3, 0.6, 0.08, 1)], mf, -0.9, 5.95, 0.6, "white", 2 * D)
+    poner(p, [K["pill"](0, 0, 1.4, 0.06, 0.0, 2)], mf, 0.4, 5.95, 1.0, "white", 2 * D)
     for s in (-1, 1):
         ms = fr((s * 1.6, 0, 0), "+x" if s > 0 else "-x")
-        p.add(decal([(-1.0, 0.8), (1.0, 2.2), (1.0, 2.8), (-1.0, 1.4)], ms, 0.01), franja)
-        poner(p, [K["rrect"](0, 0, 0.7, 1.4, 0.2, 2)], ms, 0, 4.2, 1.0, "white", 0.01)
-        poner(p, [K["rrect"](0, 0, 0.56, 0.4, 0.06, 1)], ms, 0, 4.2, 1.0, franja, 0.02)
+        p.add(decal([(-1.0, 0.8), (1.0, 2.2), (1.0, 2.8), (-1.0, 1.4)], ms, D), franja)
+        poner(p, [K["rrect"](0, 0, 0.7, 1.4, 0.2, 2)], ms, 0, 4.2, 1.0, "white", D)
+        poner(p, [K["rrect"](0, 0, 0.56, 0.4, 0.06, 1)], ms, 0, 4.2, 1.0, franja, 2 * D)
     return p
 
 
@@ -786,35 +794,35 @@ def p_fotomaton():
     p.add(bb(-2.0, 2.0, -1.5, 1.5, 0.0, 6.8, 0.15, 2), lambda c, n: "dark" if n.z < -0.5 else ("yellow" if abs(n.x) > 0.5 else "orange"))
     p.add(bb(-2.05, 2.05, -1.55, 1.55, 0.0, 0.5, 0.05, 1), "navy")
     mf = fr((0, -1.5, 0), "-y")
-    p.add(decal(rect(-1.2, 1.2, 0.5, 5.2), mf, 0.01), "black")
+    p.add(decal(rect(-1.2, 1.2, 0.5, 5.2), mf, D), "black")
     p.add(bb(-2.0, 2.0, -1.65, -1.5, 5.2, 5.5, 0.04, 1), "orange")
-    p.add(bb(-1.25, 1.25, -1.58, -1.5, 5.15, 5.25), "metal")
+    p.add(bb(-1.25, 1.25, -1.62, -1.5, 5.05, 5.15), "metal")
     for k in range(6):
         x = -1.15 + 0.22 * k
-        p.add(bb(x, x + 0.2, -1.6 + 0.03 * (k % 2), -1.52, 1.0, 5.15), "red")
+        p.add(bb(x, x + 0.2, -1.68 + 0.05 * (k % 2), -1.58, 1.0, 5.05), "red")
     p.add(cyl(0.5, 0.5, (0.6, -0.6, 0.5), seg=10), "metal")
     p.add(cyl(0.6, 0.12, (0.6, -0.6, 1.0), seg=12, bev=0.03), "red")
     p.add(bb(-1.9, 1.9, -1.6, 1.6, 6.8, 8.0, 0.12, 2), "white")
     for side, y in (("-y", -1.6), ("+y", 1.6)):
         mt = fr((0, y, 0), side)
-        poner(p, CAMARA, mt, -0.8, 7.4, 0.9, "navy", 0.01)
-        p.add(decal(circ(-0.8 if side == "-y" else 0.8, 7.36, 0.24, 12), mt, 0.03), "yellow")
+        poner(p, CAMARA, mt, -0.8, 7.4, 0.9, "navy", D)
+        p.add(decal(circ(-0.8, 7.36, 0.24, 12), mt, 2 * D), "yellow")
         for k in range(3):
-            p.add(decal(circ(0.5 + 0.45 * k if side == "-y" else -0.5 - 0.45 * k, 7.4, 0.14, 8), mt, 0.01), ("orange", "teal", "yellow")[k])
+            p.add(decal(circ(0.5 + 0.45 * k, 7.4, 0.14, 8), mt, D), ("orange", "teal", "yellow")[k])
     ml = fr((2.0, 0, 0), "+x")
-    p.add(decal(rect(-1.1, 1.1, 1.8, 5.8), ml, 0.01), "white")
+    p.add(decal(rect(-1.1, 1.1, 1.8, 5.8), ml, D), "white")
     for k in range(4):
         y = 5.4 - 0.95 * k
-        p.add(decal(rect(-0.8, 0.8, y - 0.8, y), ml, 0.02), "lblue")
-        p.add(decal(circ(0.0, y - 0.45, 0.22, 10), ml, 0.03), "skin")
-        p.add(decal(rect(-0.35, 0.35, y - 0.8, y - 0.65), ml, 0.03), ("orange", "teal", "pink", "yellow")[k])
-        p.add(decal(rect(-0.12, -0.06, y - 0.45, y - 0.4), ml, 0.04), "black")
-        p.add(decal(rect(0.06, 0.12, y - 0.45, y - 0.4), ml, 0.04), "black")
+        p.add(decal(rect(-0.8, 0.8, y - 0.8, y), ml, 2 * D), "lblue")
+        p.add(decal(circ(0.0, y - 0.45, 0.22, 10), ml, 3 * D), "skin")
+        p.add(decal(rect(-0.35, 0.35, y - 0.8, y - 0.65), ml, 3 * D), ("orange", "teal", "pink", "yellow")[k])
+        p.add(decal(rect(-0.12, -0.06, y - 0.45, y - 0.4), ml, 4 * D), "black")
+        p.add(decal(rect(0.06, 0.12, y - 0.45, y - 0.4), ml, 4 * D), "black")
     p.add(bb(1.98, 2.08, -1.2, -0.2, 1.2, 1.32), "black")
     mo = fr((-2.0, 0, 0), "-x")
-    poner(p, CAMARA, mo, 0, 3.6, 1.6, "navy", 0.01)
-    p.add(decal(circ(0, 3.55, 0.42, 14), mo, 0.03), "yellow")
-    p.add(decal(circ(0, 3.55, 0.25, 14), mo, 0.04), "navy")
+    poner(p, CAMARA, mo, 0, 3.6, 1.6, "navy", D)
+    p.add(decal(circ(0, 3.55, 0.42, 14), mo, 2 * D), "yellow")
+    p.add(decal(circ(0, 3.55, 0.25, 14), mo, 3 * D), "navy")
     p.add(bb(-1.0, 1.0, -1.75, -1.6, 7.75, 8.15, 0.05, 1), "lamp")
     return p
 
@@ -824,7 +832,7 @@ def p_carro_maletas():
     p.add(bb(-0.85, 0.85, -1.2, 1.1, 0.42, 0.55, 0.03, 1), "steel")
     for k in range(5):
         y = -1.0 + 0.45 * k
-        p.add(decal(rect(-0.8, 0.8, y - 0.05, y + 0.05), M((0, 0, 0.55)), 0.005), "dark")
+        p.add(decal(rect(-0.8, 0.8, y - 0.05, y + 0.05), M((0, 0, 0.55)), D), "dark")
     for x in (-0.75, 0.75):
         for y in (-0.95, 0.85):
             p.add(bar((x, y, 0.42), (x, y, 0.3), 0.08, 0.08, caps=False), "dark")
@@ -834,12 +842,12 @@ def p_carro_maletas():
     p.add(bar((-0.85, 1.35, 3.1), (0.85, 1.35, 3.1), 0.14, 0.14, 0.04), "red")
     p.add(bar((-0.75, 1.2, 1.6), (0.75, 1.2, 1.6), 0.07, 0.07, caps=False), "metal")
     p.add(bb(-0.8, 0.8, -1.15, 1.0, 0.55, 1.45, 0.12, 2), "blue")
-    p.add(bb(-0.82, 0.82, -0.2, 0.0, 0.55, 1.47), "yellow")
+    p.add(bb(-0.85, 0.85, -0.2, 0.0, 0.6, 1.5), "yellow")
     p.add(bb(-0.25, 0.25, -1.25, -1.15, 1.0, 1.15), "dark")
     p.add(bb(-0.6, 0.55, -0.9, 0.4, 1.45, 2.35, 0.1, 2), "pink")
     p.add(bb(-0.25, 0.2, -0.3, -0.2, 2.35, 2.55), "dark")
     p.add(bb(-0.25, 0.2, -0.3, 0.1, 2.5, 2.58), "dark")
-    p.add(decal(circ(0.0, 0.0, 0.18, 8), fr((0.55, -0.25, 1.9), "+x"), 0.004), "yellow")
+    p.add(decal(circ(0.0, 0.0, 0.18, 8), fr((0.55, -0.25, 1.9), "+x"), D), "yellow")
     return p
 
 
@@ -881,9 +889,13 @@ def p_jardinera():
     for k in range(16):
         x = -3.75 + 0.5 * k
         for s in (-1, 1):
-            y0, y1 = sorted((s * 0.8, s * 0.84))
+            y0, y1 = sorted((s * 0.8, s * 0.86))
             p.add(bb(x - 0.02, x + 0.02, y0, y1, 0.1, 1.2), "woodb")
-    p.add(bb(-4.05, 4.05, -0.85, 0.85, 1.3, 1.42, 0.03, 1), "woodb")
+    for s in (-1, 1):
+        y0, y1 = sorted((s * 0.7, s * 0.88))
+        p.add(bb(-4.08, 4.08, y0, y1, 1.3, 1.42, 0.03, 1), "woodb")
+        x0, x1 = sorted((s * 3.9, s * 4.08))
+        p.add(bb(x0, x1, -0.7, 0.7, 1.3, 1.42, 0.03, 1), "woodb")
     rnd = random.Random(9)
     for k in range(7):
         x = -3.3 + 1.1 * k
@@ -912,11 +924,11 @@ def p_lounge():
     sillon(3.0, 0.0, -90, "teal")
     p.add(cyl(1.0, 0.12, (0, 0, 1.1), seg=18, bev=0.04), "wood")
     p.add(cyl(0.12, 1.1, (0, 0, 0), seg=8, cap0=False, cap1=False), "dark")
-    p.add(cyl(0.6, 0.08, (0, 0, 0), seg=12), "dark")
+    p.add(cyl(0.6, 0.3, (0, 0, 0), seg=12), "dark")
     for k, col in enumerate(("red", "sky", "yellow")):
-        p.add(rbox((0.7, 0.5, 0.03), (-0.2 + 0.25 * k, -0.15 + 0.2 * k, 1.24 + 0.03 * k), rot=(0, 0, 15 * k - 10)), col)
-    p.add(cyl(0.35, 0.08, (2.8, 2.2, 0.0), seg=10), "dark")
-    p.add(cyl(0.05, 4.0, (2.8, 2.2, 0.08), seg=6, cap0=False), "dark")
+        p.add(rbox((0.7, 0.5, 0.03), (-0.2 + 0.25 * k, -0.15 + 0.2 * k, 1.27 + D * k), rot=(0, 0, 15 * k - 10)), col)
+    p.add(cyl(0.35, 0.3, (2.8, 2.2, 0.0), seg=10), "dark")
+    p.add(cyl(0.05, 3.78, (2.8, 2.2, 0.3), seg=6, cap0=False), "dark")
     p.add(lathe([(0.75, 3.6), (0.75, 4.1), (0.45, 4.5)], 12, M((2.8, 2.2, 0)), cap0=False, cap1=False), "shade")
     p.add(lathe([(0.7, 3.6), (0.7, 4.05), (0.4, 4.45)], 12, M((2.8, 2.2, 0)), cap0=False, cap1=False), "lamp")
     return p
@@ -943,7 +955,7 @@ def p_estanteria():
             x += w + 0.08
     p.add(bb(-3.05, 3.05, -0.5, 1.05, 4.2, 4.5, 0.05, 1), "gold")
     mf = fr((0, 0.2, 0), "-y")
-    p.add(decal(rect(-2.9, 2.9, 3.8, 4.15), mf, 0.01), "hpink")
+    p.add(decal(rect(-2.9, 2.9, 3.8, 4.15), mf, D), "hpink")
     return p
 
 
@@ -1007,7 +1019,7 @@ def p_papelera():
     p = Prop("Papelera", None, 300)
     p.add(lathe([(0.0, 0.0), (0.55, 0.0), (0.6, 1.4), (0.0, 1.4)], 12), lambda c, n: "dark" if c.z < 0.1 else "dteal", 40)
     p.add(lathe([(0.65, 1.4), (0.65, 1.55), (0.4, 1.75), (0.0, 1.8)], 12, cap0=False), "lgrey")
-    p.add(decal(circ(0, 0.8, 0.22, 10), fr((0, -0.585, 0), "-y"), 0.01), "lime")
+    p.add(decal(circ(0, 0.8, 0.22, 10), fr((0, -0.58, 0), "-y"), D), "lime")
     return p
 
 

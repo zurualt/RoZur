@@ -1661,50 +1661,123 @@ def girado(rol, T):
     return lambda c, n: rol(Ti @ c, R @ n)
 
 
-def p_cascada():
-    p = Prop("Cascada", None, 1500)
-    nx, ny = 12, 14
-    rnd = random.Random(441)
-    rayas = [rnd.random() for _ in range(nx)]
+def perfil_cascada(t):
+    return 0.6 - 8.8 * t + 0.7 * math.sin(math.pi * t), 15.0 - 14.4 * t
+
+
+def lamina(p, u0, ancho, t0, t1, adelante, grosor, rol, nx, ny, semilla, ondas=0.18):
+    rnd = random.Random(semilla)
+    fase = rnd.uniform(0, 6.28)
     for capa in (0, 1):
         bm = bmesh.new()
         filas = []
-        for j in range(-2, ny + 1):
-            t = max(j, 0) / ny
-            z = 15.0 - 14.4 * t + (0.25 * math.sin(j * 1.7) if 0 < j < ny else 0.0) - (0.06 * j if j < 0 else 0.0)
-            w = 3.6 * (1 - 0.16 * math.sin(math.pi * t)) + 0.8 * t * t
+        for j in range(ny + 1):
+            t = t0 + (t1 - t0) * j / ny
+            y, z = perfil_cascada(t)
+            w = ancho * (1 + 0.12 * t) * (1 - 0.1 * math.sin(math.pi * t))
             fila = []
             for i in range(nx + 1):
                 u = -1 + 2 * i / nx
-                if j < 0:
-                    y = 0.6 - 1.3 * j - 0.35 * (1 - u * u) * 0.4 + capa * 0.2
-                else:
-                    y = 0.6 - 8.8 * t + 0.7 * math.sin(math.pi * t) + 0.16 * math.sin(u * 9.0 + t * 4.0) - 0.35 * (1 - u * u) * (1 - t) + capa * 0.2
-                fila.append(bm.verts.new((u * w, y, z - (0.0 if j < 0 else capa * 0.12))))
+                borde = 0.25 * math.sin(j * 1.3 + fase + u * 3) * abs(u) ** 3
+                yy = y - adelante + ondas * math.sin(u * 7.0 + t * 5.0 + fase) - 0.3 * (1 - u * u) * (1 - t) + capa * grosor
+                fila.append(bm.verts.new((u0 + u * w + borde, yy, z)))
             filas.append(fila)
-        for j in range(ny + 2):
+        for j in range(ny):
             for i in range(nx):
                 f = (filas[j][i], filas[j][i + 1], filas[j + 1][i + 1], filas[j + 1][i])
                 bm.faces.new(f[::-1] if capa else f)
+        p.add(bm, rol if capa == 0 else "dsea", 40)
 
-        def agua(c, n, w=4.4):
-            i = min(nx - 1, max(0, int((c.x / w + 1) / 2 * nx)))
-            if c.z < 1.8 or (c.z > 14.4 and c.y < 1.3):
-                return "foam"
-            r = rayas[i]
-            if r > 0.78:
-                return "foam"
-            return "lsea" if r > 0.3 else "sea"
-        p.add(bm, agua if capa == 0 else "sea", 40)
-    for k in range(10):
-        a = math.pi * (k / 9)
+
+def p_cascada():
+    p = Prop("Cascada", None, 2600)
+    rnd = random.Random(441)
+    rayas = [rnd.random() for _ in range(14)]
+
+    def agua(c, n):
+        i = min(13, max(0, int((c.x / 4.6 + 1) / 2 * 14)))
+        if c.z < 1.8:
+            return "foam"
+        r = rayas[i]
+        if r > 0.8:
+            return "white"
+        return "lsea" if r > 0.32 else "sea"
+    lamina(p, 0.0, 3.7, 0.0, 1.0, 0.0, 0.3, agua, 12, 14, 1)
+    lamina(p, -1.2, 1.9, 0.04, 0.88, 0.32, 0.12, lambda c, n: "foam" if int(c.z * 0.9 + c.x * 0.4) % 3 == 0 else "lsea", 6, 12, 2, 0.24)
+    lamina(p, 1.5, 1.4, 0.1, 0.8, 0.5, 0.1, lambda c, n: "white" if int(c.z * 1.1) % 2 == 0 else "foam", 5, 10, 3, 0.3)
+    bm = bmesh.new()
+    filas = []
+    for j in range(3):
+        fila = []
+        for i in range(13):
+            u = -1 + 2 * i / 12
+            fila.append(bm.verts.new((u * 3.7, 0.6 + 1.3 * j + 0.08 * math.sin(i), 15.0 + 0.06 * j)))
+        filas.append(fila)
+    for j in range(2):
+        for i in range(12):
+            bm.faces.new((filas[j + 1][i], filas[j + 1][i + 1], filas[j][i + 1], filas[j][i]))
+    p.add(bm, lambda c, n: "foam" if c.y < 1.2 else "lsea", 40)
+    p.add(tube([(-3.6, 0.45, 14.75), (0.0, 0.25, 14.9), (3.6, 0.45, 14.75)], lambda u: 0.42, 6, 4, caps=True, cap_rings=1), "foam")
+    for k in range(8):
+        a = math.pi * (k / 7)
         c = Vector((4.3 * math.cos(a) * 0.95, -8.6 - 1.6 * math.sin(a), 0.45))
-        p.add(ellipsoid((rnd.uniform(0.7, 1.1), rnd.uniform(0.6, 0.9), rnd.uniform(0.4, 0.65)), Matrix.Translation(c), 7, 4), "foam")
+        p.add(ellipsoid((rnd.uniform(0.8, 1.2), rnd.uniform(0.6, 0.9), rnd.uniform(0.45, 0.75)), Matrix.Translation(c), 7, 4), "foam")
     p.add(arc_strip(0, -8.4, 3.6, 5.2, 180, 360, 14, None, 0.62), "foam")
     p.add(arc_strip(0, -8.4, 5.9, 6.5, 195, 345, 12, None, 0.61), "white")
-    for k in range(5):
-        c = Vector((rnd.uniform(-2.6, 2.6), -9.0 + rnd.uniform(-0.6, 0.6), 1.4 + rnd.uniform(0, 1.4)))
-        p.add(ellipsoid((0.55, 0.55, 0.45), Matrix.Translation(c), 6, 4), "white")
+    for k in range(6):
+        c = Vector((rnd.uniform(-2.8, 2.8), -8.8 + rnd.uniform(-0.8, 0.8), 1.2 + rnd.uniform(0, 1.8)))
+        p.add(ellipsoid((0.65, 0.6, 0.5), Matrix.Translation(c), 6, 4), "white")
+    return p
+
+
+def p_labio_cascada():
+    p = Prop("LabioCascada", None, 3000)
+
+    def rol(c, n):
+        if n.z > 0.62:
+            return "leaf" if c.z > 3 else "vdleaf"
+        if c.z < 1.2:
+            return "drock"
+        return "rock" if int(c.z / 2.4) % 2 else "lrock"
+    rnd = random.Random(501)
+
+    def cara(z):
+        t = (15.0 - z) / 14.4
+        return perfil_cascada(max(0.0, min(1.0, t)))[0]
+    piezas = [((3.4, 2.8, 1.7), (-6.4, 2.4, 14.6), 2), ((3.3, 2.6, 1.6), (6.5, 2.2, 14.7), 2), ((3.9, 1.5, 0.8), (0.0, 1.9, 14.0), 1)]
+    for s in (-1, 1):
+        for k, z in enumerate((1.8, 4.6, 7.4, 10.2, 12.8)):
+            r = 2.3 - 0.12 * k + rnd.uniform(-0.2, 0.2)
+            piezas.append(((r * 0.95, r * 0.9, r * 0.85), (s * (5.9 + 0.5 * math.sin(k * 1.7)), cara(z) - 0.5, z), 2 if k % 2 == 0 else 1))
+    piezas += [((2.7, 2.2, 1.7), (-6.6, -9.4, 0.4), 2), ((2.3, 2.0, 1.5), (6.9, -8.6, 0.3), 2), ((1.3, 1.1, 0.7), (-4.0, -12.8, 0.0), 1),
+               ((1.5, 1.2, 0.8), (5.2, -13.2, 0.0), 1), ((1.0, 0.9, 0.5), (-7.4, -12.4, 0.0), 1)]
+    for i, (r, loc, sub) in enumerate(piezas):
+        p.add(roca(r, loc, 510 + i, sub, 0.22), rol, 16)
+    for s in (-1, 1):
+        for k in range(3):
+            top = Vector((s * (5.2 + 1.2 * k), 1.6 - 0.5 * k, 15.3 + 0.2 * k))
+            p.add(tube([top, top + Vector((s * 0.2, -0.9, -2.4)), top + Vector((s * 0.1, -1.5, -4.8 - k))], lambda u: 0.08, 4, 2, caps=False), "dleaf")
+            p.add(ellipsoid((0.25, 0.18, 0.22), Matrix.Translation(top + Vector((s * 0.1, -1.5, -4.8 - k))), 5, 3), "leaf")
+        for k in range(4):
+            a = 2 * math.pi * k / 4 + 0.4
+            b = Vector((s * 6.4 + 0.9 * math.cos(a), 2.4 + 0.9 * math.sin(a), 16.0))
+            p.add(hoja([b, b + Vector((0.5 * math.cos(a), 0.5 * math.sin(a), 0.7)), b + Vector((1.1 * math.cos(a), 1.1 * math.sin(a), 0.7)), b + Vector((1.5 * math.cos(a), 1.5 * math.sin(a), 0.4))],
+                       [0.12, 0.3, 0.26, 0.02], 0.2, 0.03), "lgrass" if k % 2 else "leaf")
+    return p
+
+
+def p_nenufares():
+    p = Prop("Nenufares", None, 600)
+    rnd = random.Random(521)
+    for k, (x, y, r) in enumerate(((0.0, 0.0, 0.95), (1.7, 0.6, 0.7), (-1.4, 1.0, 0.8), (0.6, -1.6, 0.65), (-1.2, -1.2, 0.5))):
+        g = rnd.uniform(0, 6.28)
+        pts = [(x + r * math.cos(g + 0.35 + (2 * math.pi - 0.7) * i / 14), y + r * math.sin(g + 0.35 + (2 * math.pi - 0.7) * i / 14)) for i in range(15)]
+        p.add(prism(pts + [(x, y)], 0.06, Matrix.Translation((0, 0, 0.03))), lambda c, n: "leaf" if n.z > 0.5 else "dleaf", 30)
+        p.add(decal([(x + 0.85 * r * math.cos(g + 0.5 + 5.4 * i / 8), y + 0.85 * r * math.sin(g + 0.5 + 5.4 * i / 8)) for i in range(9)] + [(x, y)], None, 0.065), "lgrass")
+    p.add(flor((0.1, 0.1, 0.22), (0, 0, 1), 0.42, 6, 0.3), "pink", 30)
+    p.add(flor((0.1, 0.1, 0.3), (0, 0, 1), 0.26, 5, 0.9), "hpink", 30)
+    p.add(ellipsoid((0.1, 0.1, 0.08), Matrix.Translation((0.1, 0.1, 0.3)), 5, 3), "yellow")
+    p.add(ellipsoid((0.12, 0.12, 0.2), Matrix.Translation((-1.4, 1.0, 0.22)), 5, 3), "hpink")
     return p
 
 
@@ -2090,7 +2163,7 @@ BUILDERS = [p_terreno, p_palmera1, p_palmera2, p_palmera3, p_palmera_inclinada, 
             p_hojas_grandes, p_flores, p_hierba, p_madera_deriva, p_conchas, p_charca, p_roca_media, p_acantilado, p_rocas_planas,
             p_asiento_roto, p_maleta_abierta, p_maleta_cerrada, p_trozo_fuselaje, p_caja_abierta, p_caja_bengala, p_bote, p_cascada,
             p_mirador, p_cartel, p_refugio, p_pila_lena, p_palmera_gigante, p_tiki, p_roca_cangrejo, p_santuario, p_gaviota,
-            p_espuma, p_hierba_playa, p_pilote,
+            p_espuma, p_hierba_playa, p_pilote, p_labio_cascada, p_nenufares,
             p_roca_grande, p_roca_pequena, p_arbusto, p_hoguera, p_tronco, p_coco, p_cangrejo, p_antena, p_bateria, p_radio,
             p_estacion, p_bengala, p_hidroavion, p_restos_ala, p_restos_motor, p_cajon, p_sos, p_muelle]
 
@@ -2114,6 +2187,7 @@ SHEETS = [("isla_kit.png", lambda st: sheet_catalog(st, [["Coco", "Bengala", "Ra
           ("isla_vegetacion.png", lambda st: sheet_catalog(st, [["Hierba", "Conchas", "Helecho", "Flores", "HojasGrandes", "Charca"], ["PalmeraJoven", "Platanera", "MaderaDeriva", "RocaMedia", "RocasPlanas"], ["Palmera2", "Palmera1", "Palmera3", "PalmeraInclinada", "Acantilado"]], 1.2)),
           ("isla_restos.png", lambda st: sheet_catalog(st, [["MaletaCerrada", "MaletaAbierta", "AsientoRoto", "CajaBengala", "CajaAbierta", "PilaLena"], ["Cartel", "Bote", "TrozoFuselaje", "Cascada"], ["Refugio", "Mirador"]], 1.2)),
           ("isla_heroes.png", lambda st: sheet_catalog(st, [["Gaviota", "HierbaPlaya", "ArbustoTropical", "Espuma", "SantuarioBotellas", "RestosMotor"], ["Tiki", "RocaCangrejo", "PalmeraGigante"]], 1.4)),
+          ("isla_cascada.png", lambda st: sheet_catalog(st, [["Nenufares"], ["Cascada", "LabioCascada"]], 1.0)),
           ("isla_heroes_detalle.png", lambda st: sheet_catalog(st, [["Gaviota", "HierbaPlaya", "ArbustoTropical", "Espuma"], ["SantuarioBotellas", "RestosMotor", "Tiki"], ["RocaCangrejo"]], 0.8))]
 
 

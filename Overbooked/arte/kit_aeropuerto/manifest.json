@@ -20,16 +20,6 @@
     "triangulos": 758
   },
   {
-    "nombre": "BancoEspera",
-    "archivo": "BancoEspera.fbx",
-    "tamano": [
-      10.0,
-      2.2,
-      2.0
-    ],
-    "triangulos": 1168
-  },
-  {
     "nombre": "Kiosko",
     "archivo": "Kiosko.fbx",
     "tamano": [
@@ -48,46 +38,6 @@
       0.8
     ],
     "triangulos": 156
-  },
-  {
-    "nombre": "TorreControl",
-    "archivo": "TorreControl.fbx",
-    "tamano": [
-      10.0,
-      40.0,
-      10.0
-    ],
-    "triangulos": 1718
-  },
-  {
-    "nombre": "CarroEquipaje",
-    "archivo": "CarroEquipaje.fbx",
-    "tamano": [
-      7.0,
-      1.9,
-      5.0
-    ],
-    "triangulos": 736
-  },
-  {
-    "nombre": "Tractor",
-    "archivo": "Tractor.fbx",
-    "tamano": [
-      4.0,
-      4.76,
-      7.0
-    ],
-    "triangulos": 1410
-  },
-  {
-    "nombre": "Escalera",
-    "archivo": "Escalera.fbx",
-    "tamano": [
-      3.0,
-      9.0,
-      9.0
-    ],
-    "triangulos": 956
   },
   {
     "nombre": "Arbol",
@@ -148,6 +98,56 @@
       4.0
     ],
     "triangulos": 368
+  },
+  {
+    "nombre": "BancoEspera",
+    "archivo": "BancoEspera.fbx",
+    "tamano": [
+      10.0,
+      2.2,
+      2.0
+    ],
+    "triangulos": 1168
+  },
+  {
+    "nombre": "TorreControl",
+    "archivo": "TorreControl.fbx",
+    "tamano": [
+      10.0,
+      40.0,
+      10.0
+    ],
+    "triangulos": 1718
+  },
+  {
+    "nombre": "CarroEquipaje",
+    "archivo": "CarroEquipaje.fbx",
+    "tamano": [
+      7.0,
+      1.9,
+      5.0
+    ],
+    "triangulos": 736
+  },
+  {
+    "nombre": "Tractor",
+    "archivo": "Tractor.fbx",
+    "tamano": [
+      4.0,
+      4.76,
+      7.048
+    ],
+    "triangulos": 1410
+  },
+  {
+    "nombre": "Escalera",
+    "archivo": "Escalera.fbx",
+    "tamano": [
+      3.0,
+      9.0,
+      9.0
+    ],
+    "triangulos": 956
   },
   {
     "nombre": "Hangar",
