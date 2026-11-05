@@ -4631,7 +4631,7 @@
        "className": "PointLight",
        "properties": {
         "Range": 34,
-        "Brightness": 0.9,
+        "Brightness": 0.5,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -4697,7 +4697,7 @@
        "className": "PointLight",
        "properties": {
         "Range": 34,
-        "Brightness": 0.9,
+        "Brightness": 0.5,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -4763,7 +4763,7 @@
        "className": "PointLight",
        "properties": {
         "Range": 34,
-        "Brightness": 0.9,
+        "Brightness": 0.5,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -4829,7 +4829,7 @@
        "className": "PointLight",
        "properties": {
         "Range": 34,
-        "Brightness": 0.9,
+        "Brightness": 0.5,
         "Color": [
          1.0,
          0.9137254901960784,

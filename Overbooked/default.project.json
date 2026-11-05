@@ -8,21 +8,51 @@
       },
       "Remotos": {
         "$className": "Folder",
-        "Piloto": { "$className": "UnreliableRemoteEvent" },
-        "Agarrar": { "$className": "RemoteEvent" },
-        "Soltar": { "$className": "RemoteEvent" },
-        "Usar": { "$className": "RemoteEvent" },
-        "Sostener": { "$className": "RemoteEvent" },
-        "Ragdoll": { "$className": "RemoteEvent" },
-        "Aviso": { "$className": "RemoteEvent" },
-        "Sacudida": { "$className": "UnreliableRemoteEvent" },
-        "Sonido": { "$className": "UnreliableRemoteEvent" },
-        "Tienda": { "$className": "RemoteEvent" },
-        "Resultados": { "$className": "RemoteEvent" },
-        "Disparar": { "$className": "RemoteEvent" },
-        "Efecto": { "$className": "UnreliableRemoteEvent" },
-        "Ajustes": { "$className": "RemoteEvent" },
-        "Pulsar": { "$className": "RemoteEvent" }
+        "Piloto": {
+          "$className": "UnreliableRemoteEvent"
+        },
+        "Agarrar": {
+          "$className": "RemoteEvent"
+        },
+        "Soltar": {
+          "$className": "RemoteEvent"
+        },
+        "Usar": {
+          "$className": "RemoteEvent"
+        },
+        "Sostener": {
+          "$className": "RemoteEvent"
+        },
+        "Ragdoll": {
+          "$className": "RemoteEvent"
+        },
+        "Aviso": {
+          "$className": "RemoteEvent"
+        },
+        "Sacudida": {
+          "$className": "UnreliableRemoteEvent"
+        },
+        "Sonido": {
+          "$className": "UnreliableRemoteEvent"
+        },
+        "Tienda": {
+          "$className": "RemoteEvent"
+        },
+        "Resultados": {
+          "$className": "RemoteEvent"
+        },
+        "Disparar": {
+          "$className": "RemoteEvent"
+        },
+        "Efecto": {
+          "$className": "UnreliableRemoteEvent"
+        },
+        "Ajustes": {
+          "$className": "RemoteEvent"
+        },
+        "Pulsar": {
+          "$className": "RemoteEvent"
+        }
       },
       "Estado": {
         "$className": "Folder"
@@ -68,10 +98,18 @@
     },
     "Lighting": {
       "$properties": {
-        "Ambient": [0.26, 0.25, 0.27],
-        "OutdoorAmbient": [0.44, 0.44, 0.48],
-        "Brightness": 1.6,
-        "ExposureCompensation": -0.25,
+        "Ambient": [
+          0.2,
+          0.19,
+          0.21
+        ],
+        "OutdoorAmbient": [
+          0.38,
+          0.38,
+          0.42
+        ],
+        "Brightness": 1.4,
+        "ExposureCompensation": -0.6,
         "ClockTime": 14.2,
         "GlobalShadows": true,
         "EnvironmentDiffuseScale": 0.35,
@@ -82,8 +120,16 @@
         "$properties": {
           "Density": 0.3,
           "Offset": 0.12,
-          "Color": [0.78, 0.86, 0.95],
-          "Decay": [0.55, 0.68, 0.85],
+          "Color": [
+            0.78,
+            0.86,
+            0.95
+          ],
+          "Decay": [
+            0.55,
+            0.68,
+            0.85
+          ],
           "Glare": 0.08,
           "Haze": 0.7
         }
@@ -99,10 +145,14 @@
       "Color": {
         "$className": "ColorCorrectionEffect",
         "$properties": {
-          "Saturation": -0.05,
-          "Contrast": 0.08,
+          "Saturation": 0.05,
+          "Contrast": 0.12,
           "Brightness": 0,
-          "TintColor": [1, 0.96, 0.9]
+          "TintColor": [
+            1,
+            0.96,
+            0.9
+          ]
         }
       },
       "ColorGrading": {

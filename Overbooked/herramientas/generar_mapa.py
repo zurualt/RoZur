@@ -481,7 +481,7 @@ def terminal():
         t.append(deco("Planta", "Arbusto", (3, 2, 3), 81.5 + dx, base + 0.5, z, 0, "6BBF59", colision=False))
     for x, z in ((45, cz - 13), (45, cz + 13), (70, cz - 13), (70, cz + 13)):
         t.append(part("LuzTerminal", (0.4, 0.1, 0.4), (x + dx, base + 12.3, z), "FFFFFF", transp=1, colision=False, sombra=False,
-                      hijos=[luz(34, 0.9)]))
+                      hijos=[luz(34, 0.5)]))
     t.append(part("SpawnAeropuerto", (8, 0.4, 8), (62 + dx, base + 0.7, cz), "FFFFFF", clase="SpawnLocation", transp=1,
                   colision=False, extra={"Enabled": True, "Neutral": True, "Duration": 0}))
     return carpeta("Terminal", t)
