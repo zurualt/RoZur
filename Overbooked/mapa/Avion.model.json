@@ -206,8 +206,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 20,
-        "Brightness": 0.8,
+        "Range": 18,
+        "Brightness": 0.42,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -271,8 +271,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 20,
-        "Brightness": 0.8,
+        "Range": 18,
+        "Brightness": 0.42,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -336,8 +336,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 20,
-        "Brightness": 0.8,
+        "Range": 18,
+        "Brightness": 0.42,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -401,8 +401,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 20,
-        "Brightness": 0.8,
+        "Range": 18,
+        "Brightness": 0.42,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -467,8 +467,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -533,8 +533,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -599,8 +599,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -665,8 +665,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -731,8 +731,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -797,8 +797,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -863,8 +863,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -929,8 +929,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 16,
-        "Brightness": 0.55,
+        "Range": 14,
+        "Brightness": 0.28,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -994,8 +994,8 @@
        "name": "Luz",
        "className": "PointLight",
        "properties": {
-        "Range": 14,
-        "Brightness": 0.8,
+        "Range": 12,
+        "Brightness": 0.45,
         "Color": [
          1.0,
          0.9137254901960784,
@@ -1013,14 +1013,14 @@
       "Size": [
        0.3,
        10,
-       8
+       8.25
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          -6.85,
          105,
-         -48
+         -47.875
         ],
         "orientation": [
          [
@@ -1052,6 +1052,55 @@
       "BottomSurface": "Smooth",
       "CanCollide": true,
       "CastShadow": true
+     }
+    },
+    {
+     "name": "JuntaCocinaIzq",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.12,
+       10,
+       0.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -7.25,
+         105,
+         -43.75
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.8509803921568627,
+       0.8235294117647058,
+       0.7725490196078432
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "CanQuery": false
      }
     },
     {
@@ -3601,14 +3650,14 @@
       "Size": [
        0.3,
        10,
-       8
+       8.25
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          6.85,
          105,
-         -48
+         -47.875
         ],
         "orientation": [
          [
@@ -3640,6 +3689,55 @@
       "BottomSurface": "Smooth",
       "CanCollide": true,
       "CastShadow": true
+     }
+    },
+    {
+     "name": "JuntaCocinaDer",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.12,
+       10,
+       0.8
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         7.25,
+         105,
+         -43.75
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.8509803921568627,
+       0.8235294117647058,
+       0.7725490196078432
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "CanQuery": false
      }
     },
     {

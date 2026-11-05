@@ -114,15 +114,16 @@ def estructura():
     p.append(part("Techo", (INTERIOR * 2, G, 74), (0, TECHO_Y + G / 2, -15), TECHO))
     for z in (-48, -4, 6, 16):
         p.append(part("Lampara", (1, 0.2, 1), (0, TECHO_Y - 0.1, z), "F2E6CC", "Neon", colision=False, sombra=False,
-                      hijos=[luz(20, 0.8)]))
+                      hijos=[luz(18, 0.42)]))
     for z in FILAS:
         p.append(part("LuzFila", (0.4, 0.1, 0.4), (0, TECHO_Y - 0.4, z), "FFFFFF", transp=1, colision=False, sombra=False,
-                      hijos=[luz(16, 0.55)]))
-    p.append(part("Lampara", (1, 0.2, 1), (0, 107.9, -57), "F2E6CC", "Neon", colision=False, sombra=False, hijos=[luz(14, 0.8)]))
+                      hijos=[luz(14, 0.28)]))
+    p.append(part("Lampara", (1, 0.2, 1), (0, 107.9, -57), "F2E6CC", "Neon", colision=False, sombra=False, hijos=[luz(12, 0.45)]))
     for lado, sx in (("Izq", -1), ("Der", 1)):
         x = sx * MURO
         giro = rot(0, 90 * sx, 0)
-        p.append(part("ParedCocina" + lado, (G, 10, 8), (x, 105, -48), CREMA))
+        p.append(part("ParedCocina" + lado, (G, 10, 8.25), (x, 105, -47.875), CREMA))
+        p.append(part("JuntaCocina" + lado, (0.12, 10, 0.8), (sx * 7.25, 105, -43.75), CREMA_OSC, colision=False, sombra=False))
         for i, z in enumerate(FILAS):
             if i == FILA_SALIDA:
                 p.append(marca("PanelSalida", (4.5, 10, 0.7), (sx * 7.05, 105, z), "PanelSalida", r=giro, hijos=[
