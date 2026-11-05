@@ -1746,8 +1746,8 @@ def preparacion():
                   colision=False))
     p.append(deco("CartelSalida", "CartelSalida", (8.0, 3.0, 0.3), NAVE_X, s + ph + 1.6, z0 - 0.45, 0, TURQUESA, colision=False))
     marcas = [
-        part("PuestoTractor", (1, 1, 1), (NAVE_X, s, 60.0), "FFFFFF", transp=1, colision=False, sombra=False),
-        part("PuestoCarro", (1, 1, 1), (NAVE_X, s, 70.875), "FFFFFF", r=rot(0, 90, 0), transp=1, colision=False, sombra=False),
+        part("PuestoTractor", (1, 1, 1), (NAVE_X, s, 63.5), "FFFFFF", transp=1, colision=False, sombra=False),
+        part("PuestoCarro", (1, 1, 1), (NAVE_X, s, 74.375), "FFFFFF", r=rot(0, 90, 0), transp=1, colision=False, sombra=False),
         part("SitioJaula", (1, 1, 1), (46.4, s, 84.0), "FFFFFF", transp=1, colision=False, sombra=False),
         part("SitioCocodrilo", (1, 1, 1), (42.0, s, 79.0), "FFFFFF", r=rot(0, 40, 0), transp=1, colision=False, sombra=False),
         part("SalidaNave", (1, 1, 1), (NAVE_X, s, z0 - 4.0), "FFFFFF", transp=1, colision=False, sombra=False),

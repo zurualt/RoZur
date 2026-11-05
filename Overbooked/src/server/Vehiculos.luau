@@ -8,6 +8,7 @@ local Workspace = game:GetService("Workspace")
 
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
+local Rafagas = require(script.Parent.Rafagas)
 local Sonidos = require(script.Parent.Sonidos)
 
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
@@ -255,16 +256,50 @@ local function aparcar(cfTractor: CFrame, cfCarro: CFrame)
 	end
 end
 
+
+local function sobreSuelo(cf: CFrame, parte: BasePart): CFrame
+	local filtro = RaycastParams.new()
+	filtro.FilterType = Enum.RaycastFilterType.Exclude
+	local excluir: { Instance } = { tractor, carro }
+	for _, j in Players:GetPlayers() do
+		if j.Character then
+			table.insert(excluir, j.Character)
+		end
+	end
+	filtro.FilterDescendantsInstances = excluir
+	filtro.RespectCanCollide = true
+	local r = Workspace:Raycast(cf.Position + Vector3.new(0, 8, 0), Vector3.new(0, -30, 0), filtro)
+	local y = if r then r.Position.Y else cf.Position.Y
+	return cf.Rotation + Vector3.new(cf.Position.X, y + parte.Size.Y / 2 + 0.08, cf.Position.Z)
+end
+
 function Vehiculos.reiniciar()
-	aparcar(inicioTractor, inicioCarro)
+	aparcar(sobreSuelo(inicioTractor, tractor), sobreSuelo(inicioCarro, carro))
 end
 
 function Vehiculos.colocar(suelo: CFrame, sueloCarro: CFrame)
-	aparcar(suelo * CFrame.new(0, tractor.Size.Y / 2, 0), sueloCarro * CFrame.new(0, carro.Size.Y / 2, 0))
+	aparcar(sobreSuelo(suelo, tractor), sobreSuelo(sueloCarro, carro))
 	enganchar()
 end
 
 function Vehiculos.iniciar()
+	local remotoClaxon = Instance.new("RemoteEvent")
+	remotoClaxon.Name = "Claxon"
+	remotoClaxon.Parent = Remotos
+	local ultimos: { [Player]: number } = {}
+	remotoClaxon.OnServerEvent:Connect(function(jugador)
+		local ahora = os.clock()
+		if conductor() ~= jugador or (ultimos[jugador] or 0) > ahora then
+			return
+		end
+		ultimos[jugador] = ahora + 0.8
+		local frente = tractor.CFrame * Vector3.new(0, 1.5, -tractor.Size.Z / 2 - 1)
+		Sonidos.emitir("Bocina", frente, 0.3)
+		Rafagas.lanzar("Bocina", frente)
+	end)
+	Players.PlayerRemoving:Connect(function(jugador)
+		ultimos[jugador] = nil
+	end)
 	plantillaTractor = plantilla(tractor)
 	plantillaCarro = plantilla(carro)
 	preparar(tractor, 0.25)
