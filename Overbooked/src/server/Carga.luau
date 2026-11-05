@@ -121,10 +121,10 @@ local function crearCocodrilo(cf: CFrame): Model
 	CollectionService:AddTag(modelo, "Cocodrilo")
 	modelo.Parent = carpeta
 	servidor(cuerpo)
-	if Activos.tiene("Cocodrilo") then
+	Activos.cuando("Cocodrilo", function()
 		boca.Transparency = 1
-		Activos.vestirDinamico(cuerpo, "Cocodrilo")
-	end
+	end)
+	Activos.vestirDinamico(cuerpo, "Cocodrilo")
 	return modelo
 end
 
@@ -547,7 +547,7 @@ local function vigilarCocodrilo(dt: number)
 					local dir = (raiz.Position - cuerpo.Position) * Vector3.new(1, 0, 1)
 					Personajes.ragdoll(jugador, 1.8, (if dir.Magnitude > 0 then dir.Unit else Vector3.zAxis) * 45 + Vector3.new(0, 25, 0))
 					Sonidos.emitir("Mordisco", boca)
-					Rafagas.lanzar("Estrellas", raiz.Position)
+					Rafagas.lanzar("Ay", raiz.Position)
 					RemotoAviso:FireClient(jugador, "¡Te ha mordido el cocodrilo!", "peligro")
 				end
 			end

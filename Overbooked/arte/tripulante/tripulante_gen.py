@@ -3,7 +3,7 @@ import bmesh
 import math
 import os
 import sys
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Quaternion
 from mathutils.bvhtree import BVHTree
 
 OUT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
@@ -369,8 +369,37 @@ def chain_weights(bones, bounds, blend):
     return fn
 
 
+LADOS = {"Left": "Izq", "Right": "Der"}
+DEDOS = (("Indice", -0.095), ("Medio", 0.0), ("Menique", 0.095))
+BONES_MANOS = []
+AGARRE = Vector((-1.18, -0.03, 1.70))
+
+
+def seglen_hasta(camino, i):
+    return sum((camino[j] - camino[j - 1]).length for j in range(1, i + 1))
+
+
+def en_camino(camino, s):
+    acc = 0.0
+    for i in range(1, len(camino)):
+        seg = (camino[i] - camino[i - 1]).length
+        if acc + seg >= s:
+            return camino[i - 1].lerp(camino[i], (s - acc) / seg)
+        acc += seg
+    return camino[-1] + (camino[-1] - camino[-2]).normalized() * (s - acc)
+
+
+def falange(camino, s_punta, s_k, mano, base):
+    s_m = (s_k + s_punta) / 2
+    b1, b2 = base + "1", base + "2"
+    BONES_MANOS.append((b1, mano, tuple(en_camino(camino, s_k)), tuple(en_camino(camino, s_m))))
+    BONES_MANOS.append((b2, b1, tuple(en_camino(camino, s_m)), tuple(en_camino(camino, s_punta))))
+    return chain_weights([mano, b1, b2], [s_k, s_m], 0.024)
+
+
 def build_character():
     PRIMS.clear()
+    BONES_MANOS.clear()
     body = build_body()
     tree = BVHTree.FromBMesh(body)
 
@@ -452,14 +481,18 @@ def build_character():
         wf = chain_weights([side + "UpperArm", side + "LowerArm", side + "Hand"], [s_el, s_wr - 0.04], 0.11)
         add(arm, "body", (lambda c, s, se=s_el, sd=side: sd + ("UpperArm" if s < se else "LowerArm")), wf, s_layer=True)
         hp = side + "Hand"
+        lado = LADOS[side]
         add(ellipsoid((0.1, 0.17, 0.16), Matrix.Translation((sx * 1.275, 0.0, 1.83)), 12, 8), "body", hp, {hp: 1.0})
-        for fy_ in (-0.095, 0.0, 0.095):
+        for nombre, fy_ in DEDOS:
             fpts = [Vector((sx * 1.275, fy_, 1.77)), Vector((sx * 1.297, fy_, 1.67)), Vector((sx * 1.255, fy_, 1.585))]
-            fbm, _ = tube(fpts, lambda u: 0.056 - 0.007 * u, k=6, steps=3, cap_rings=2)
-            add(fbm, "body", hp, {hp: 1.0})
+            fbm, fs = tube(fpts, lambda u: 0.056 - 0.007 * u, k=6, steps=3, cap_rings=2)
+            camino = catmull(fpts, 3)
+            fondo = 1.83 - 0.16 * math.sqrt(1.0 - (fy_ / 0.17) ** 2)
+            s_k = next(seglen_hasta(camino, i) for i in range(len(camino)) if camino[i].z <= fondo + 0.03)
+            add(fbm, "body", hp, falange(camino, fs[-1] + 0.049, s_k, hp, lado + nombre), s_layer=True)
         tpts = [Vector((sx * 1.265, -0.10, 1.87)), Vector((sx * 1.243, -0.225, 1.78))]
-        tbm, _ = tube(tpts, lambda u: 0.056, k=6, steps=2, cap_rings=2)
-        add(tbm, "body", hp, {hp: 1.0})
+        tbm, ts = tube(tpts, lambda u: 0.056, k=6, steps=2, cap_rings=2)
+        add(tbm, "body", hp, falange(catmull(tpts, 2), ts[-1] + 0.056, 0.045, hp, lado + "Pulgar"), s_layer=True)
 
         lctrl = [Vector((sx * x, y, z)) for x, y, z in ((0.39, 0.0, 1.45), (0.41, 0.0, 0.85), (0.42, 0.0, 0.24))]
         leg, lcs = tube(lctrl, lambda u: 0.215 - 0.035 * u, k=10, steps=6, cap_rings=3)
@@ -607,6 +640,10 @@ BONES = [
 ]
 
 
+def todos_huesos():
+    return BONES + BONES_MANOS
+
+
 def build_armature(coll):
     arm = bpy.data.armatures.new("Tripulante_Rig")
     obj = bpy.data.objects.new("Tripulante", arm)
@@ -614,7 +651,7 @@ def build_armature(coll):
     bpy.context.view_layer.objects.active = obj
     bpy.ops.object.mode_set(mode="EDIT")
     ebs = {}
-    for name, parent, h, t in BONES:
+    for name, parent, h, t in todos_huesos():
         eb = arm.edit_bones.new(name)
         eb.head = h
         eb.tail = t
@@ -648,7 +685,7 @@ def build_meshes(coll, rig, acc, mat):
         ob = bpy.data.objects.new(part + "_Geo", me)
         coll.objects.link(ob)
         ob.parent = rig
-        for bone, _, _, _ in BONES:
+        for bone, _, _, _ in todos_huesos():
             if bone in ("Root", "HumanoidRootNode"):
                 continue
             ob.vertex_groups.new(name=bone)
@@ -675,7 +712,36 @@ def pose(rig, rots):
     bpy.context.view_layer.update()
 
 
-def clone(rig, objs, coll, mat, loc, rot_z=0.0):
+POSES_MANO = {
+    "abierta": (-8, -6, -8, -6, -25, -5, 14),
+    "relajada": (18, 22, 22, 28, 8, 10, 0),
+    "agarre": (60, 70, 60, 70, 35, 30, 0),
+    "puno": (85, 95, 85, 95, 40, 45, 0),
+    "pulsar": (0, 0, 85, 95, 40, 45, 0),
+}
+
+
+def pose_mano(rig, side, vals):
+    sx = 1 if side == "Left" else -1
+    lado = LADOS[side]
+    palma = Vector((-sx, 0, 0))
+    cierre = Vector((-sx, 0.3, -0.2)).normalized()
+    frente = Vector((0, -1, 0))
+    bones = rig.data.bones
+    for nombre, i, abre in (("Indice", 0, 1), ("Medio", 2, 0), ("Menique", 2, -1), ("Pulgar", 4, 0)):
+        b1, b2 = bones[lado + nombre + "1"], bones[lado + nombre + "2"]
+        d = (b2.head_local - b1.head_local).normalized()
+        eje = d.cross(cierre if nombre == "Pulgar" else palma).normalized()
+        giro = Quaternion(d.cross(frente).normalized(), math.radians(abre * vals[6])) @ Quaternion(eje, math.radians(vals[i]))
+        for b, q in ((b1, giro), (b2, Quaternion(eje, math.radians(vals[i + 1])))):
+            r = b.matrix_local.to_quaternion()
+            pb = rig.pose.bones[b.name]
+            pb.rotation_mode = "QUATERNION"
+            pb.rotation_quaternion = r.inverted() @ q @ r
+    bpy.context.view_layer.update()
+
+
+def clone(rig, objs, coll, mat, loc, rot_z=0.0, solo=None):
     r2 = rig.copy()
     r2.data = rig.data
     r2.animation_data_clear()
@@ -684,6 +750,8 @@ def clone(rig, objs, coll, mat, loc, rot_z=0.0):
     r2.rotation_euler = (0, 0, math.radians(rot_z))
     r2.hide_render = False
     for ob in objs:
+        if solo and ob.name not in solo:
+            continue
         o2 = ob.copy()
         coll.objects.link(o2)
         o2.parent = r2
@@ -800,7 +868,7 @@ def main():
     img.pack()
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, "tripulante.blend"))
 
-    if "--render" not in sys.argv:
+    if "--render" not in sys.argv and "--manos" not in sys.argv:
         return
     rdir = os.path.join(OUT, "renders")
     os.makedirs(rdir, exist_ok=True)
@@ -809,6 +877,38 @@ def main():
         o.hide_render = True
     render_setup(scene, (1600, 900))
     mats = {nm: palette_material("Tripulante_" + nm, img, hx) for nm, hx in PLAYER_COLORS.items()}
+
+    cm = bpy.data.materials.new("Barra")
+    cm.use_nodes = True
+    cm.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (*lin(hex_rgb("F0B73A")), 1.0)
+    hechos = []
+    for i, nm in enumerate(POSES_MANO):
+        r2 = clone(rig, objs, coll, mats["Lavanda"], (i * 0.85, 0, 0), solo={"RightHand_Geo", "RightLowerArm_Geo"})
+        bpy.context.view_layer.update()
+        pose_mano(r2, "Right", POSES_MANO[nm])
+        hechos.append(r2)
+        if nm == "agarre":
+            c = r2.matrix_world @ AGARRE
+            bm = cylinder(0.08, 0.55, Matrix.Translation(c) @ Matrix.Rotation(math.radians(90), 4, "X"), 16)
+            me = bpy.data.meshes.new("Barra")
+            bm.to_mesh(me)
+            me.materials.append(cm)
+            bo = bpy.data.objects.new("Barra", me)
+            coll.objects.link(bo)
+            hechos.append(bo)
+    for nombre, loc in (("manos_prueba", (0.4, -6.0, 1.9)), ("manos_prueba_palma", (3.6, -4.6, 2.2))):
+        co = camera(scene, loc=loc, target=(0.43, 0, 1.72), ortho=3.9)
+        scene.render.resolution_x, scene.render.resolution_y = 1600, 520
+        scene.cycles.samples = 48
+        scene.render.filepath = os.path.join(rdir, nombre + ".png")
+        bpy.ops.render.render(write_still=True)
+        bpy.data.objects.remove(co)
+    for r2 in hechos:
+        for ch in list(r2.children):
+            bpy.data.objects.remove(ch)
+        bpy.data.objects.remove(r2)
+    if "--render" not in sys.argv:
+        return
 
     def boca(k):
         return [("BocaSup", "T", (0.0, -0.004 * k, 0.05 * k)), ("BocaInf", "T", (0.0, -0.02 * k, -0.24 * k))]

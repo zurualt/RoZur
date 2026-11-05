@@ -588,7 +588,7 @@ local function usarPiolet(jugador: Player)
 	for parte, p in paneles do
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_PIOLET then
 			Sonidos.emitir("GolpeMetal", parte.Position, 0.15)
-			Rafagas.lanzar("Chispas", parte.Position, 0.5)
+			Rafagas.lanzar("Martillazo", parte.Position, 0.5)
 			p.reparacion += H.REPARACION_PIOLET
 			Estadisticas.sumar(jugador, "reparar")
 			parte:SetAttribute("Reparacion", math.min(100, p.reparacion))
@@ -609,7 +609,7 @@ local function usarLlave(jugador: Player)
 	local H = Config.HERRAMIENTAS
 	for parte, b in brechas do
 		if (parte.Position - origen).Magnitude <= H.ALCANCE_LLAVE then
-			Rafagas.lanzar("Chispas", parte.Position, 0.5)
+			Rafagas.lanzar("Martillazo", parte.Position, 0.5)
 			b.reparacion += H.REPARACION_LLAVE
 			parte:SetAttribute("Reparacion", math.min(100, b.reparacion))
 			Estadisticas.sumar(jugador, "reparar")
@@ -651,6 +651,13 @@ function Peligros.iniciar()
 			usarAgua(jugador, m)
 		elseif tipo == "Piolet" then
 			usarPiolet(jugador)
+		elseif tipo == "Carrito" then
+			ultimoUso[jugador] = ahora + 1.2
+			local raiz = Personajes.raiz(jugador)
+			if raiz then
+				Sonidos.emitir("Bocina", raiz.Position, 0.5)
+				Rafagas.lanzar("Bocina", raiz.Position + raiz.CFrame.LookVector * 3 + Vector3.new(0, 1.5, 0))
+			end
 		end
 	end)
 	Players.PlayerRemoving:Connect(function(jugador)

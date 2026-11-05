@@ -386,6 +386,9 @@ TH = [-90.0, -78.0, -66.0, -56.0,
 KB = 4
 NCOL = 2 * (len(TH) - 1)
 WINDOW_ROWS = [-41.5 + 4.5 * i for i in range(8)]
+T_CASCO = 0.3
+PUERTAS = ((1, -23.5), (-1, -23.5), (-1, -5.5))
+HW, TOPE, RC = 2.05, 6.8, 0.6
 
 
 def ring_pts(y, zc, W, Ht, Hb, nt, nb, th_kb):
@@ -434,7 +437,7 @@ def nose_params(y):
 
 def build_fuselage():
     stations = []
-    for y in (-65.6, -65.0, -64.0, -62.5, -61.0, -59.0, -56.5, -53.5):
+    for y in (-65.6, -65.0, -64.0, -62.5, -61.0, -59.0, -56.5, -53.5, -52.0):
         zc, R = nose_params(y)
         stations.append((y, ring_pts(y, zc, R, R, R, 2.0, 2.0, TH[KB])))
     for y in (-50.0, -25.0, -22.0, 12.0):
@@ -450,17 +453,15 @@ def build_fuselage():
 
     bm = bmesh.new()
     cl = bm.faces.layers.int.new("c")
+    zl = bm.faces.layers.int.new("zona")
     nose_zc, _ = nose_params(-66.0)
     rings = [(-66.0, [bm.verts.new((0.0, -66.0, nose_zc))])]
     for y, pts in stations:
         rings.append((y, [bm.verts.new(p) for p in pts]))
     rings.append((31.3, [bm.verts.new((0.0, 31.3, 10.75))]))
+    e = 1e-3
 
-    def color(ya, yb, j):
-        jr = j if j < NCOL // 2 else NCOL - 1 - j
-        e = 1e-3
-        if ya >= -25 - e and yb <= -22 + e and 6 <= jr <= 10:
-            return None
+    def color(ya, yb, jr):
         if ya >= 22 - e and yb <= 30 + e and jr <= 3:
             return None
         if ya >= -64 - e and yb <= -61 + e and jr >= 11:
@@ -475,7 +476,8 @@ def build_fuselage():
         ya, A = rings[i]
         yb, B = rings[i + 1]
         for j in range(NCOL):
-            c = color(ya, yb, j)
+            jr = j if j < NCOL // 2 else NCOL - 1 - j
+            c = color(ya, yb, jr)
             if c is None:
                 continue
             j2 = (j + 1) % NCOL
@@ -486,8 +488,90 @@ def build_fuselage():
             else:
                 f = bm.faces.new((A[j], B[j], B[j2], A[j2]))
             f[cl] = c
+            zs = [v.co.z for v in f.verts]
+            f[zl] = 0 if yb <= -52.0 + e else (1 if yb <= 22.0 + e and min(zs) > -0.05 and max(zs) < 9.4 else 2)
     loose = [v for v in bm.verts if not v.link_faces]
     bmesh.ops.delete(bm, geom=loose, context="VERTS")
+    return bm
+
+
+def door_poly(yc, m=0.0):
+    y0, y1, r = yc - HW - m, yc + HW + m, RC + m
+    pts = [(y0, 0.0)]
+    for a0, cy in ((180.0, yc - HW + RC), (90.0, yc + HW - RC)):
+        for k in range(5):
+            a = math.radians(a0 - 22.5 * k)
+            pts.append((cy + r * math.cos(a), TOPE - RC + r * math.sin(a)))
+    pts.append((y1, 0.0))
+    return pts
+
+
+def abrir_puerta(bm, sx, yc):
+    cl = bm.faces.layers.int["c"]
+    pts = door_poly(yc)
+    y0, y1 = pts[0][0], pts[-1][0]
+    planos = [(Vector((0.0, ya, za)), Vector((0.0, za - zb, yb - ya)).normalized())
+              for (ya, za), (yb, zb) in zip(pts, pts[1:])]
+
+    def zona(ya, yb, za, zb):
+        return [f for f in bm.faces if all(v.co.x * sx > 0.5 for v in f.verts)
+                and min(v.co.y for v in f.verts) < yb and max(v.co.y for v in f.verts) > ya
+                and max(v.co.z for v in f.verts) > za and min(v.co.z for v in f.verts) < zb]
+
+    for (ya, za), (yb, zb) in zip(pts, pts[1:]):
+        fs = zona(min(ya, yb) - 0.05, max(ya, yb) + 0.05, max(min(za, zb) - 0.05, 0.01), max(za, zb) + 0.05)
+        geom = fs + list({e for f in fs for e in f.edges}) + list({v for f in fs for v in f.verts})
+        bmesh.ops.bisect_plane(bm, geom=geom, dist=1e-4, plane_co=Vector((0.0, ya, za)),
+                               plane_no=Vector((0.0, za - zb, yb - ya)).normalized())
+    dentro = [f for f in zona(y0 - 0.01, y1 + 0.01, 0.01, TOPE + 0.01)
+              if all(no.dot(f.calc_center_median() - co) < -1e-5 for co, no in planos)]
+    bmesh.ops.delete(bm, geom=dentro, context="FACES")
+    bmesh.ops.dissolve_degenerate(bm, dist=1e-3, edges=bm.edges)
+    bmesh.ops.triangulate(bm, faces=[f for f in bm.faces if len(f.verts) > 4], quad_method="BEAUTY", ngon_method="BEAUTY")
+    borde = [ed for ed in bm.edges if ed.is_boundary and max(v.co.z for v in ed.verts) > 1e-3
+             and all(v.co.x * sx > 0.5 and y0 - 1e-3 < v.co.y < y1 + 1e-3 and v.co.z < TOPE + 1e-3 for v in ed.verts)]
+    r = bmesh.ops.extrude_edge_only(bm, edges=borde)
+    for v in r["geom"]:
+        if isinstance(v, bmesh.types.BMVert):
+            v.co.x = sx * min(7.3, abs(v.co.x) - 0.15)
+    bm.normal_update()
+    for f in r["geom"]:
+        if isinstance(f, bmesh.types.BMFace):
+            f[cl] = WHITE
+            c = f.calc_center_median()
+            if f.normal.dot(Vector((0.0, yc - c.y, min(c.z, TOPE - HW) - c.z))) < 0:
+                f.normal_flip()
+    return bm
+
+
+def piel(sx, y, z, off):
+    th = math.asin((z - ZC0) / R0)
+    return Vector((sx * (R0 + off) * math.cos(th), y, ZC0 + (R0 + off) * math.sin(th)))
+
+
+def ribete(sx, yc, m=0.17, radio=0.14):
+    pts = door_poly(yc, m)
+    ruta = []
+    for (ya, za), (yb, zb) in zip(pts, pts[1:]):
+        n = max(1, int(math.ceil(math.hypot(yb - ya, zb - za) / 0.6)))
+        ruta += [(ya + (yb - ya) * k / n, za + (zb - za) * k / n) for k in range(n)]
+    ruta.append(pts[-1])
+    ruta = [(y, max(z, radio)) for y, z in ruta]
+    return tube([piel(sx, y, z, 0.02) for y, z in ruta], lambda u: radio, k=6, steps=1, up=Vector((sx, 0, 0)), cap_rings=2)
+
+
+def forro():
+    bm = build_fuselage()
+    cl, zl = bm.faces.layers.int["c"], bm.faces.layers.int["zona"]
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if f[zl] != 2], context="FACES")
+    fuera = list(bm.faces)
+    vs = set(bm.verts)
+    bmesh.ops.solidify(bm, geom=fuera, thickness=T_CASCO)
+    viejas = set(fuera)
+    for f in bm.faces:
+        if f not in viejas:
+            f[cl] = WHITE if any(v in vs for v in f.verts) else DARK
+    bmesh.ops.delete(bm, geom=fuera, context="FACES")
     return bm
 
 
@@ -566,7 +650,12 @@ def sym_section(le, te, t, at):
 
 def build_plane():
     PRIMS.clear()
-    add(build_fuselage(), None, 35.0)
+    casco = build_fuselage()
+    for sx, yc in PUERTAS:
+        abrir_puerta(casco, sx, yc)
+        add(ribete(sx, yc), ORANGE, 70.0)
+    add(casco, None, 35.0)
+    add(forro(), None, 35.0)
 
     for sx in (-1, 1):
         for i, yc in enumerate(WINDOW_ROWS):
@@ -574,9 +663,8 @@ def build_plane():
                 continue
             for bm, col in window(yc, sx):
                 add(bm, col, 60.0)
-        add(outline(sx, -25.0, -22.0, 0.0, 6.5, 0.32, 0.16, 6, 0.02), ORANGE, 70.0)
-        for y0 in (-50.8, -6.3):
-            add(outline(sx, y0, y0 + 3.6, 0.3, 7.2, 0.7, 0.075, 4, 0.03), DARK, 70.0)
+        add(outline(sx, -50.8, -47.2, 0.3, 7.2, 0.7, 0.075, 4, 0.03), DARK, 70.0)
+    add(outline(1, -7.3, -3.7, 0.3, 7.2, 0.7, 0.075, 4, 0.03), DARK, 70.0)
 
     wing = loft([wing_section(x) for x in (5.5, 8.0, 13.0, 18.0, 23.0, 28.0, 33.0, 38.0)])
     winglet_secs = [sym_section(le, te, t, (37.85, z)) for z, le, te, t in
@@ -613,7 +701,7 @@ def build_plane():
             add(bm, col, ang)
 
     fin_secs = []
-    for z in (11.0, 13.0, 16.0, 19.0, 21.6, 22.6):
+    for z in (12.2, 13.0, 16.0, 19.0, 21.6, 22.6):
         k = (z - 12.5) / 9.5
         le = 14.0 + (z - 12.5) * (10.5 / 9.5)
         te = 30.5 + (z - 12.5) * (1.0 / 9.5)
@@ -633,7 +721,7 @@ def build_plane():
             add(ellipsoid((0.06, ln, 0.2), m, 12, 4), CREAM, 60.0)
 
     stab_secs = []
-    for x in (3.5, 6.0, 10.0, 13.6, 14.6):
+    for x in (6.0, 10.0, 13.6, 14.6):
         f = (x - 3.5) / 11.1
         le = 20.5 + 5.0 * f
         te = 29.4 - 0.4 * f

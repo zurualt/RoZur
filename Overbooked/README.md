@@ -31,6 +31,7 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Coger / soltar | Clic | R2 |
 | Lanzar | Clic derecho | L2 |
 | Usar extintor, llave o agua | F (mantener) | X |
+| Tocar la bocina del carrito | F (con el carrito) | X |
 | Interactuar (servir, coger comida, botones, puertas) | E | — |
 | Sentarse en un asiento libre | G | Y |
 | Abrir / cerrar altillos | T | B |
@@ -51,7 +52,8 @@ Montado en Blender con la misma lógica de colocación que usa el juego (`herram
 | Pasajeros | `src/server/Pasajeros.luau` | Pedidos 🍔 ☕ 💧 con paciencia, miedo y satisfacción (cada bandeja lleva 3 hamburguesas); salen volando si no llevan cinturón |
 | Carga | `src/server/Carga.luau` | Daños por golpes, cajas frágiles, entregas aéreas desde la rampa y el cocodrilo |
 | Peligros | `src/server/Peligros.luau` | Turbulencias, pájaros que incendian un motor, fuego que se extiende, agujeros que succionan, caída libre, tormenta y fallo de motor |
-| Agarrar | `src/server/Agarre.luau` + `src/client/Agarre.luau` | Física con propiedad de red para quien sostiene; se puede coger a pasajeros y lanzarlos por la puerta |
+| Agarrar | `src/server/Agarre.luau` + `src/client/Agarre.luau` | Física con propiedad de red para quien sostiene; se puede coger a pasajeros y lanzarlos por la puerta. Lo pequeño va en la mano derecha (empuñado, en la palma o colgando, según `Manos.estilo`); lo grande, con las dos manos delante |
+| Manos | `src/client/Manos.luau` | Dedos con huesos: relajados, se abren y cierran al coger, aprietan lo que llevas, se abren al alcanzar algo y el índice señala al pulsar botones. También los de los demás jugadores |
 | Personajes | `src/server/Personajes.luau` + `src/client/Cuerpo.luau` | Tripulante como StarterCharacter, color por jugador, ragdoll, caídas del avión, viento en las alas |
 | Cámara | `src/client/Camara.luau` | Primera persona con brazos visibles, balanceo al andar, inclinación con el avión y sacudidas |
 | Mundo | `src/client/Mundo.luau` | El avión no se mueve: nubes, campos y pista se mueven a su alrededor en cada cliente |
@@ -72,8 +74,9 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | Sonido | `src/server/Sonidos.luau` + `src/client/Sonido.luau` | Efectos con posición, bucles (motores, viento, alarma, lluvia, fuego) y música por fase |
 | Tutorial | `src/client/Tutorial.luau` | Lista de pasos para los dos primeros vuelos |
 | Isla | `src/server/Isla.luau` + `mapa/Isla.model.json` | Fase de náufragos tras estrellarse: piezas de radio, leña, hoguera, bengala, hidroavión, cangrejos y cocos. La isla vive en ServerStorage y se pone alrededor del avión al estrellarse. En Studio, el atributo `PruebaIsla = true` en Workspace salta directo a la isla |
+| Roturas | `src/server/Roturas.luau` + `src/client/Roturas.luau` + `src/shared/PiezasRoturas.luau` | El avión se rompe en pedazos de verdad: con el casco a 65 se parte la punta de un ala, a 40 se va la deriva, a 20 se vuela el techo de la fila 7 (salen maletas, un váter y un pollo de goma) y con un motor en llamas el capó aletea y sale volando. Con el casco a 0 el avión se parte en dos a cámara lenta (la cola y la bodega se alejan, un pasajero saluda desde su asiento) y en la isla la cola queda caída. Al romperse algo, el casco se cambia por las piezas sueltas; todo vuelve a su sitio al volver al lobby o al embarcar. En Studio: atributo `PruebaRotura` en Workspace (`Ala`, `AlaIzq`, `AlaDer`, `Capo`, `CapoIzq`, `CapoDer`, `Deriva`, `Techo`, `Partido`, `Todo`, `Reparar`) |
 | Indicaciones | `src/client/Indicaciones.luau` | Todos los ProximityPrompt usan estilo propio: etiqueta de papel dibujada con la tecla, la acción, el objeto y una barra si hay que mantener; en móvil se toca la etiqueta. Al usar algo, la mano derecha se estira hacia delante (`Camara.alcanzar`) |
-| Efectos | `src/server/Rafagas.luau` + `src/client/Rafagas.luau` + `src/shared/VFX.luau` | Ráfagas dibujadas que el servidor lanza con `Rafagas.lanzar(tipo, posición, escala, color)` por `Remotos.Efecto`: Explosion, ExplosionPequena, Humo, Chispas, Polvo, Arena, Estrellas, Confeti, Salpicadura, Escombros, Astillas, Cristales, Monedas, Hojas, Bengala, Vapor, Plumas y Onda |
+| Efectos | `src/server/Rafagas.luau` + `src/client/Rafagas.luau` + `src/shared/VFX.luau` | Ráfagas dibujadas que el servidor lanza con `Rafagas.lanzar(tipo, posición, escala, color)` por `Remotos.Efecto`: Explosion, ExplosionPequena, Humo, Chispas, Polvo, Arena, Estrellas, Confeti, Salpicadura, Escombros, Astillas, Cristales, Monedas, Hojas, Bengala, Vapor, Plumas y Onda, más Hongo (explosión grande con seta), Bonk, Ay, Martillazo, Bocina, Corazones, Enfado y Sudor. Muchas sacan una onomatopeya dibujada (¡BONK!, ¡CATAPLÁN!, ¡CRAC!, ¡PÍO!…) con aplastar y estirar. `Efectos.luau` añade las bromas: emociones encima de los pasajeros, estrellas de mareo en el ragdoll, silbato y «¡ADIÓOOS!» al caerse del avión, «pausa dramática» en sepia justo antes de estrellarse, sello con frase al estrellarse o aterrizar, aplausos al aterrizar, zoom dramático (pájaros, mascarillas, cocodrilo suelto; cada 30 s como mucho), rayas de velocidad en lo que vuela y vapor en el café |
 
 ### Cómo se relaciona todo
 
@@ -99,8 +102,9 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | `arte/kit_interior/` | Kit del interior del avión: paneles con ventanas, techo con altillos y sus puertas, cocina, baño, mamparas, cabina del piloto, pared de bodega, puertas, torreta en dos piezas, bolso, mascarilla y trozos de cajas |
 | `arte/kit_aeropuerto/` | Kit del aeropuerto: terminal, puertas de embarque del lobby (`PuertaSala1-3`), mostradores, bancos, quioscos, marco del tablero, torre de control, hangar, carro, tractor, escalerilla, árboles, arbustos, vallas, conos, luces de pista y manga de viento |
 | `arte/interfaz/` | Interfaz dibujada en Blender (`interfaz_gen.py`): 13 paneles 9-slice (papel, pizarra, billete, etiqueta, notas, botón, barras, burbuja, mira, sello) y una hoja de 59 iconos de 128 px. `herramientas/subir_imagenes.py` sube solo lo que cambia y genera `src/shared/ImagenesGui.luau` |
-| `arte/vfx/` | 23 sprites de efectos dibujados en Blender (`vfx_gen.py`, usa las primitivas de `arte/interfaz/interfaz_gen.py`): humo, llama, chispa, estrella, polvo, gota, corona de salpicadura, confeti, moneda, hoja, pluma, escombro, astilla, cristal, destello, explosión, onda, vapor y línea. Se suben con `python herramientas/subir_imagenes.py arte/vfx arte/vfx/ids.json src/shared/ImagenesVfx.luau` |
+| `arte/vfx/` | 35 sprites de efectos dibujados en Blender (`vfx_gen.py`, usa las primitivas de `arte/interfaz/interfaz_gen.py`): humo, llama (flipbook 2x2), chispa, estrella, polvo, gota, corona de salpicadura, confeti, moneda, hoja, pluma, escombro, astilla, cristal, destello, explosión, hongo, onda, vapor, línea, pinchos y nube de cómic, espiral, corazón, vena de enfado, exclamación, interrogación, mancha, brillito, rayas de velocidad y marco de sello. Se suben con `python herramientas/subir_imagenes.py arte/vfx arte/vfx/ids.json src/shared/ImagenesVfx.luau` |
 | `arte/kit_isla/` | Kit de la isla en Blender (`kit_isla_gen.py`): terreno, palmeras, rocas, arbustos, hoguera, tronco, coco, cangrejo, piezas de radio, estación de radio, bengala, hidroavión, restos del ala y del motor, cajón, SOS y muelle |
+| `arte/roturas/` | Piezas que se rompen (`roturas_gen.py`): corta el casco de `avion_gen.py` en base, puntas de ala, cola y deriva con bordes rasgados, más capó, motor por dentro, agujero del techo, trozo de techo, pollo de goma y pasajero saludando. Si cambia `AvionExterior`, hay que regenerarlas y volver a subirlas (`subir_modelos.py arte/roturas/ids_subida.json …` y luego `roturas_gen.py -- --solo-luau`) |
 | `arte/ids_roblox.json` | IDs de los modelos subidos a Roblox |
 | `herramientas/` | Scripts: mapa, subida de modelos e imágenes y generación de `src/shared/Visuales.luau` |
 
@@ -111,7 +115,7 @@ Todos los números del juego están en `src/shared/Config.luau`.
 | Experiencia (universo) | `10774639088` |
 | Lugar principal | `70554923634533` |
 | Grupo dueño | `783757619` |
-| Tripulante v2 | `87418247604950` |
+| Tripulante v3 (con dedos) | `124975432706541` |
 | Resto de modelos (66: avión, pasajeros, cocodrilo, objetos, kit del interior y kit del aeropuerto) | `arte/ids_roblox.json` |
 
 ## Flujo de trabajo por API

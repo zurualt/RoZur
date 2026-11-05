@@ -494,5 +494,109 @@
   "bucle": false,
   "volumen": 0.8,
   "descripcion": "Coco que cae y da un coscorrón hueco (ElevenLabs)."
+ },
+ {
+  "nombre": "SilbatoCaida",
+  "archivo": "SilbatoCaida.ogg",
+  "duracion": 2.0,
+  "bucle": false,
+  "volumen": 0.75,
+  "descripcion": "Silbato de émbolo que baja: alguien se cae del avión (ElevenLabs)."
+ },
+ {
+  "nombre": "Bonk",
+  "archivo": "Bonk.ogg",
+  "duracion": 0.8,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Coscorrón de dibujo animado con muelle (ElevenLabs)."
+ },
+ {
+  "nombre": "BoomCartoon",
+  "archivo": "BoomCartoon.ogg",
+  "duracion": 2.48,
+  "bucle": false,
+  "volumen": 0.9,
+  "descripcion": "Explosión de dibujos animados con puf y cachitos cayendo (ElevenLabs)."
+ },
+ {
+  "nombre": "RascarDisco",
+  "archivo": "RascarDisco.ogg",
+  "duracion": 0.8,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Aguja que raya el disco: congelado antes de estrellarse (ElevenLabs)."
+ },
+ {
+  "nombre": "Sello",
+  "archivo": "Sello.ogg",
+  "duracion": 0.6,
+  "bucle": false,
+  "volumen": 0.9,
+  "descripcion": "Sello de goma golpeando el papel (ElevenLabs)."
+ },
+ {
+  "nombre": "Aplausos",
+  "archivo": "Aplausos.ogg",
+  "duracion": 3.48,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Pasajeros aplaudiendo al aterrizar (ElevenLabs)."
+ },
+ {
+  "nombre": "Bocina",
+  "archivo": "Bocina.ogg",
+  "duracion": 0.88,
+  "bucle": false,
+  "volumen": 0.75,
+  "descripcion": "Bocina de payaso del carrito, doble (ElevenLabs)."
+ },
+ {
+  "nombre": "Dramatico",
+  "archivo": "Dramatico.ogg",
+  "duracion": 2.48,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Golpe orquestal dramático de tres notas (ElevenLabs)."
+ },
+ {
+  "nombre": "Pop",
+  "archivo": "Pop.ogg",
+  "duracion": 0.48,
+  "bucle": false,
+  "volumen": 0.5,
+  "descripcion": "Pop de burbuja para las reacciones de los pasajeros (ElevenLabs)."
+ },
+ {
+  "nombre": "Mareo",
+  "archivo": "Mareo.ogg",
+  "duracion": 2.0,
+  "bucle": false,
+  "volumen": 0.45,
+  "descripcion": "Pajaritos y estrellitas dando vueltas tras un golpe (ElevenLabs)."
+ },
+ {
+  "nombre": "RasgarPapel",
+  "archivo": "RasgarPapel.ogg",
+  "duracion": 0.8,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Papel rasgado de golpe para la intro (ElevenLabs)."
+ },
+ {
+  "nombre": "ChapaRasgada",
+  "archivo": "ChapaRasgada.ogg",
+  "duracion": 1.5,
+  "bucle": false,
+  "volumen": 0.9,
+  "descripcion": "Chapa del fuselaje rasgándose, metal chirriando (ElevenLabs)."
+ },
+ {
+  "nombre": "PolloGoma",
+  "archivo": "PolloGoma.ogg",
+  "duracion": 0.8,
+  "bucle": false,
+  "volumen": 0.8,
+  "descripcion": "Pollo de goma que chilla (ElevenLabs)."
  }
 ]

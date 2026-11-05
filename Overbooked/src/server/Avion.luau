@@ -1,4 +1,5 @@
 --!strict
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -15,6 +16,7 @@ local Rafagas = require(script.Parent.Rafagas)
 local Remotos = ReplicatedStorage:WaitForChild("Remotos")
 local RemotoPiloto = Remotos:WaitForChild("Piloto") :: UnreliableRemoteEvent
 local RemotoAviso = Remotos:WaitForChild("Aviso") :: RemoteEvent
+local RemotoPulsar = Remotos:WaitForChild("Pulsar") :: RemoteEvent
 
 local V = Config.VUELO
 
@@ -517,23 +519,39 @@ local function publicar()
 	atributo("Piloto", if piloto then piloto.UserId else 0)
 end
 
-local function boton(nombre: string, accion: string, objeto: string, duracion: number, f: (Player, ProximityPrompt) -> ())
+local botones: { [BasePart]: (Player, BasePart) -> () } = {}
+local pulsaciones: { [Player]: number } = {}
+
+local function boton(nombre: string, accion: string, objeto: string, duracion: number, f: (Player, BasePart) -> ())
 	local parte = avion:FindFirstChild(nombre, true)
 	if not parte or not parte:IsA("BasePart") then
 		return
 	end
-	local aviso = Instance.new("ProximityPrompt")
-	aviso.ActionText = accion
-	aviso.ObjectText = objeto
-	aviso.HoldDuration = duracion
-	aviso.MaxActivationDistance = 7
-	aviso.RequiresLineOfSight = false
-	aviso.KeyboardKeyCode = Enum.KeyCode.E
-	aviso.Parent = parte
-	aviso.Triggered:Connect(function(jugador)
-		Sonidos.emitir("Boton", parte.Position, 0.1)
-		f(jugador, aviso)
-	end)
+	parte:SetAttribute("Accion", accion)
+	parte:SetAttribute("Objeto", objeto)
+	parte:SetAttribute("Duracion", duracion)
+	CollectionService:AddTag(parte, "BotonMano")
+	botones[parte] = f
+end
+
+local function pulsar(jugador: Player, parte: any)
+	if typeof(parte) ~= "Instance" or not parte:IsA("BasePart") then
+		return
+	end
+	local f = botones[parte]
+	local personaje = jugador.Character
+	local raiz = personaje and personaje:FindFirstChild("HumanoidRootPart")
+	local humanoide = personaje and personaje:FindFirstChildOfClass("Humanoid")
+	local ahora = os.clock()
+	if not f or not raiz or not raiz:IsA("BasePart") or not humanoide or humanoide.Health <= 0 or (pulsaciones[jugador] or 0) > ahora then
+		return
+	end
+	if (raiz.Position - parte.Position).Magnitude > 11 then
+		return
+	end
+	pulsaciones[jugador] = ahora + 0.35
+	Sonidos.emitir("Boton", parte.Position, 0.1)
+	f(jugador, parte)
 end
 
 local function enfriado(clave: string, segundos: number): boolean
@@ -546,18 +564,18 @@ local function enfriado(clave: string, segundos: number): boolean
 end
 
 local function prepararControles()
-	boton("BotonAutopiloto", "Activar", "Piloto automático", 0, function(_, aviso)
+	boton("BotonAutopiloto", "Activar", "Piloto automático", 0, function(_, parte)
 		if estado.fase == "Aproximacion" then
 			RemotoAviso:FireAllClients("En aproximación el aterrizaje es manual", "peligro")
 			return
 		end
 		estado.autopiloto = not estado.autopiloto
-		aviso.ActionText = if estado.autopiloto then "Desactivar" else "Activar"
+		parte:SetAttribute("Accion", if estado.autopiloto then "Desactivar" else "Activar")
 		RemotoAviso:FireAllClients(if estado.autopiloto then "Piloto automático activado" else "Piloto automático desactivado", "info")
 	end)
-	boton("BotonCinturones", "Cambiar", "Señal de cinturones", 0, function(_, aviso)
+	boton("BotonCinturones", "Cambiar", "Señal de cinturones", 0, function(_, parte)
 		estado.cinturones = not estado.cinturones
-		aviso.ActionText = if estado.cinturones then "Apagar" else "Encender"
+		parte:SetAttribute("Accion", if estado.cinturones then "Apagar" else "Encender")
 		RemotoAviso:FireAllClients(if estado.cinturones then "Abróchense los cinturones" else "Señal de cinturones apagada", "info")
 	end)
 	boton("BotonExtintorMotor", "Disparar", "Extintor de motores", 0, function()
@@ -647,6 +665,10 @@ function Avion.iniciar()
 	colocarRampa()
 	prepararMotores()
 	prepararControles()
+	RemotoPulsar.OnServerEvent:Connect(pulsar)
+	Players.PlayerRemoving:Connect(function(jugador)
+		pulsaciones[jugador] = nil
+	end)
 
 	asientoPiloto:GetPropertyChangedSignal("Occupant"):Connect(function()
 		local ocupante = asientoPiloto.Occupant

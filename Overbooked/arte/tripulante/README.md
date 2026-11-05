@@ -1,4 +1,4 @@
-# Tripulante v2
+# Tripulante v3
 
 Personaje jugable de la tripulación. Estilo indie: cuerpo cápsula delgado, ojos esféricos y boca que se abre al hablar por voz. Diseño propio de la aerolínea.
 
@@ -6,6 +6,14 @@ Personaje jugable de la tripulación. Estilo indie: cuerpo cápsula delgado, ojo
 ![Vistas frontal, 3/4, lateral y trasera](renders/turnaround.png)
 ![Boca cerrada, hablando y gritando](renders/boca_voz.png)
 ![Prueba de brazos en posturas extremas](renders/brazos_prueba.png)
+![Dedos de frente: abierta, relajada, agarrando una barra, puño y señalando](renders/manos_prueba.png)
+![Las mismas posturas desde el lado de la palma](renders/manos_prueba_palma.png)
+
+## Cambios de la v3
+
+- Huesos en los dedos de las dos manos para agarrar cosas con la mano. Por mano: pulgar, índice, medio y meñique, con dos huesos cada uno (`DerPulgar1`, `DerPulgar2`, `DerIndice1`… y lo mismo con `Izq`). El `1` es hijo de `LeftHand`/`RightHand` y el `2` hijo del `1`.
+- Pesos por longitud a lo largo de cada dedo: la raíz que queda dentro de la palma sigue a la mano y el resto se reparte entre los dos huesos con una transición corta. Como mucho 3 huesos por vértice.
+- Mismas mallas y triángulos que la v2.
 
 ## Cambios de la v2
 
@@ -27,8 +35,8 @@ Personaje jugable de la tripulación. Estilo indie: cuerpo cápsula delgado, ojo
 ## Especificaciones
 
 - **Altura:** 4,67 studs con los auriculares.
-- **Esqueleto:** R15 con huesos, jerarquía oficial de Roblox: `Root → HumanoidRootNode → LowerTorso → …`. Root en el origen y LowerTorso en el mismo punto que HumanoidRootNode, como pide la especificación. Además, dos huesos extra hijos de `Head` para la boca: `BocaSup` y `BocaInf`.
-- **Mallas:** 15 objetos con los nombres oficiales (`Head_Geo`, `UpperTorso_Geo`, …), todos con pesos. Como mucho 2 huesos por vértice (el límite es 4).
+- **Esqueleto:** R15 con huesos, jerarquía oficial de Roblox: `Root → HumanoidRootNode → LowerTorso → …`. Root en el origen y LowerTorso en el mismo punto que HumanoidRootNode, como pide la especificación. Además, dos huesos extra hijos de `Head` para la boca (`BocaSup` y `BocaInf`) y 16 en los dedos (36 huesos en total).
+- **Mallas:** 15 objetos con los nombres oficiales (`Head_Geo`, `UpperTorso_Geo`, …), todos con pesos. Como mucho 3 huesos por vértice (el límite es 4).
 - **Pose:** brazos abajo (pose I).
 - **Triángulos:** 7.856 en total, dentro de los límites oficiales de Roblox para cuerpos de avatar:
 
@@ -40,6 +48,12 @@ Personaje jugable de la tripulación. Estilo indie: cuerpo cápsula delgado, ojo
 | Cada pierna | 704 | 1.248 |
 
 El cuerpo que queda tapado por el chaleco está borrado, así que no gasta triángulos.
+
+## Dedos en el juego
+
+`src/client/Manos.luau` gira los huesos de los dedos con `Bone.Transform` en cada `PreSimulation`, como la boca. Cada dedo se dobla sobre el eje perpendicular a su dirección y a la normal de la palma, y el índice y el meñique se separan hacia delante y hacia atrás. Las posturas son 7 ángulos en grados (índice 1 y 2, medio y meñique 1 y 2, pulgar 1 y 2, separación) y son los mismos números que `POSES_MANO` de `tripulante_gen.py`: comprobado en Studio que la punta de cada dedo cae en el mismo sitio que en Blender.
+
+Roblox borra al importar los huesos que no tienen ningún vértice, así que el punto de agarre no es un hueso: está a `(-0.117, 0.03, -0.03)` de `DerMedio1` en el espacio de `RightHand` (el `AGARRE` del generador, donde está la barra dorada de los renders).
 
 ## Color del jugador
 
@@ -63,7 +77,7 @@ En Blender, el color se cambia en el nodo `PlayerColor` del material.
 
 ## En Roblox
 
-Subido con la API de assets al grupo del juego: modelo `87418247604950`. Si alguna vez hay que importarlo a mano en Studio:
+Subido con la API de assets al grupo del juego: modelo `124975432706541` (la v2 era `87418247604950`). Si alguna vez hay que importarlo a mano en Studio:
 
 
 1. Abre el importador 3D y elige `tripulante.fbx`.
@@ -77,7 +91,7 @@ Subido con la API de assets al grupo del juego: modelo `87418247604950`. Si algu
 blender -b -P tripulante_gen.py -- --render .
 ```
 
-Sin `--render` solo genera el `.blend`, el `.fbx` y la paleta, en unos segundos. Con `--render` también hace las imágenes (≈ 3 min en CPU).
+Sin `--render` solo genera el `.blend`, el `.fbx` y la paleta, en unos segundos. Con `--render` también hace las imágenes (≈ 1,5 min en CPU) y con `--manos` solo las dos de los dedos. La carpeta de salida tiene que ir como ruta absoluta: con `.` Blender no encuentra dónde guardar la paleta.
 
 ## Pendiente de probar
 

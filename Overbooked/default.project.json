@@ -20,7 +20,9 @@
         "Tienda": { "$className": "RemoteEvent" },
         "Resultados": { "$className": "RemoteEvent" },
         "Disparar": { "$className": "RemoteEvent" },
-        "Efecto": { "$className": "UnreliableRemoteEvent" }
+        "Efecto": { "$className": "UnreliableRemoteEvent" },
+        "Ajustes": { "$className": "RemoteEvent" },
+        "Pulsar": { "$className": "RemoteEvent" }
       },
       "Estado": {
         "$className": "Folder"

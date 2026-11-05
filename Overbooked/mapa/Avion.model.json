@@ -15126,20 +15126,20 @@
       "Size": [
        11.6,
        8,
-       10.5
+       10.2
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          0,
          104,
-         -57.25
+         -57.4
         ],
         "orientation": [
          [
-          1.0,
+          -1.0,
           0.0,
-          0.0
+          1.2246467991473532e-16
          ],
          [
           0.0,
@@ -15147,9 +15147,9 @@
           0.0
          ],
          [
+          -1.2246467991473532e-16,
           0.0,
-          0.0,
-          1.0
+          -1.0
          ]
         ]
        }
@@ -15169,7 +15169,8 @@
       "CanQuery": false
      },
      "attributes": {
-      "Visual": "CabinaPiloto"
+      "Visual": "CabinaForro",
+      "Base": 100.0
      },
      "children": [
       {
@@ -15179,14 +15180,14 @@
         "Size": [
          0.3,
          8,
-         10.5
+         10.2
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            -5.65,
            104,
-           -57.25
+           -57.4
           ],
           "orientation": [
            [
@@ -15227,14 +15228,14 @@
         "Size": [
          0.3,
          8,
-         10.5
+         10.2
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            5.65,
            104,
-           -57.25
+           -57.4
           ],
           "orientation": [
            [
@@ -15275,14 +15276,14 @@
         "Size": [
          11.6,
          0.3,
-         10.5
+         10.2
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            0,
            108.15,
-           -57.25
+           -57.4
           ],
           "orientation": [
            [
@@ -15417,16 +15418,16 @@
        "className": "Part",
        "properties": {
         "Size": [
-         0.4,
-         4,
-         0.4
+         0.36,
+         3.78,
+         0.31
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            0,
-           105.5,
-           -62.2
+           105.61,
+           -62.045
           ],
           "orientation": [
            [
@@ -15512,6 +15513,206 @@
      }
     },
     {
+     "name": "CristalCabina",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.04,
+       1.6,
+       2.1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -5.48,
+         105.2,
+         -60.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5607843137254902,
+       0.8274509803921568,
+       0.9568627450980393
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "Transparency": 0.5,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "CristalCabina",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.04,
+       1.4,
+       1.5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -5.48,
+         105.25,
+         -58.15
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5607843137254902,
+       0.8274509803921568,
+       0.9568627450980393
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "Transparency": 0.5,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "CristalCabina",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.04,
+       1.6,
+       2.1
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         5.48,
+         105.2,
+         -60.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5607843137254902,
+       0.8274509803921568,
+       0.9568627450980393
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "Transparency": 0.5,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "CristalCabina",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.04,
+       1.4,
+       1.5
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         5.48,
+         105.25,
+         -58.15
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.5607843137254902,
+       0.8274509803921568,
+       0.9568627450980393
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "Transparency": 0.5,
+      "CanQuery": false
+     }
+    },
+    {
      "name": "AsientoPiloto",
      "className": "Seat",
      "properties": {
@@ -15569,14 +15770,14 @@
        "properties": {
         "Size": [
          2.2,
-         3.2,
+         3.0,
          0.5
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            -2.6,
-           103.0,
+           103.1,
            -56.4
           ],
           "orientation": [
@@ -15609,55 +15810,6 @@
         "BottomSurface": "Smooth",
         "CanCollide": true,
         "CastShadow": true
-       }
-      },
-      {
-       "name": "Raya",
-       "className": "Part",
-       "properties": {
-        "Size": [
-         0.5,
-         3.0,
-         0.52
-        ],
-        "CFrame": {
-         "CFrame": {
-          "position": [
-           -2.6,
-           103.0,
-           -56.4
-          ],
-          "orientation": [
-           [
-            1.0,
-            0.0,
-            0.0
-           ],
-           [
-            0.0,
-            1.0,
-            0.0
-           ],
-           [
-            0.0,
-            0.0,
-            1.0
-           ]
-          ]
-         }
-        },
-        "Anchored": true,
-        "Color": [
-         0.12156862745098039,
-         0.6509803921568628,
-         0.6274509803921569
-        ],
-        "Material": "Fabric",
-        "TopSurface": "Smooth",
-        "BottomSurface": "Smooth",
-        "CanCollide": false,
-        "CastShadow": true,
-        "CanQuery": false
        }
       }
      ]
@@ -15720,14 +15872,14 @@
        "properties": {
         "Size": [
          2.2,
-         3.2,
+         3.0,
          0.5
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            2.6,
-           103.0,
+           103.1,
            -56.4
           ],
           "orientation": [
@@ -15761,55 +15913,6 @@
         "CanCollide": true,
         "CastShadow": true
        }
-      },
-      {
-       "name": "Raya",
-       "className": "Part",
-       "properties": {
-        "Size": [
-         0.5,
-         3.0,
-         0.52
-        ],
-        "CFrame": {
-         "CFrame": {
-          "position": [
-           2.6,
-           103.0,
-           -56.4
-          ],
-          "orientation": [
-           [
-            1.0,
-            0.0,
-            0.0
-           ],
-           [
-            0.0,
-            1.0,
-            0.0
-           ],
-           [
-            0.0,
-            0.0,
-            1.0
-           ]
-          ]
-         }
-        },
-        "Anchored": true,
-        "Color": [
-         0.12156862745098039,
-         0.6509803921568628,
-         0.6274509803921569
-        ],
-        "Material": "Fabric",
-        "TopSurface": "Smooth",
-        "BottomSurface": "Smooth",
-        "CanCollide": false,
-        "CastShadow": true,
-        "CanQuery": false
-       }
       }
      ]
     },
@@ -15818,16 +15921,16 @@
      "className": "Part",
      "properties": {
       "Size": [
-       10.5,
-       2.8,
-       2
+       10.9,
+       4.149,
+       1.873
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          0,
-         102.8,
-         -61.2
+         102.0745,
+         -61.2436
         ],
         "orientation": [
          [
@@ -15850,35 +15953,136 @@
       },
       "Anchored": true,
       "Color": [
-       0.20392156862745098,
-       0.2196078431372549,
-       0.24705882352941178
+       1.0,
+       1.0,
+       1.0
       ],
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
      },
      "attributes": {
-      "Visual": "Cuadro"
-     }
+      "Visual": "CabinaCuadro",
+      "Base": 100.0
+     },
+     "children": [
+      {
+       "name": "CuadroBajo",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         10.9,
+         2.75,
+         1.17
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           0,
+           101.375,
+           -61.585
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.20392156862745098,
+         0.2196078431372549,
+         0.24705882352941178
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      },
+      {
+       "name": "CuadroAlto",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         10.9,
+         0.8,
+         1.37
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           0,
+           103.15,
+           -61.485
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.20392156862745098,
+         0.2196078431372549,
+         0.24705882352941178
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      }
+     ]
     },
     {
      "name": "Columna",
      "className": "Part",
      "properties": {
       "Size": [
-       0.35,
-       0.35,
-       1.8
+       0.3,
+       0.3,
+       1.2
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          -2.6,
-         102.6,
-         -59.6
+         102.2,
+         -60.1668
         ],
         "orientation": [
          [
@@ -15912,7 +16116,8 @@
       "CastShadow": true
      },
      "attributes": {
-      "Visual": "Volante"
+      "Visual": "CabinaVolante",
+      "Base": 101.9319
      },
      "children": [
       {
@@ -15920,16 +16125,16 @@
        "className": "Part",
        "properties": {
         "Size": [
-         1.5,
+         1.36,
          0.3,
-         0.3
+         0.26
         ],
         "CFrame": {
          "CFrame": {
           "position": [
            -2.6,
-           103.0,
-           -58.8
+           102.05,
+           -59.41
           ],
           "orientation": [
            [
@@ -15970,22 +16175,22 @@
      "className": "Part",
      "properties": {
       "Size": [
-       1.2,
-       1.3,
-       2.0
+       1.8,
+       1.688,
+       2.88
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          0,
-         100.65,
-         -59.0
+         100.844,
+         -59.4999
         ],
         "orientation": [
          [
-          1.0,
+          -1.0,
           0.0,
-          0.0
+          1.2246467991473532e-16
          ],
          [
           0.0,
@@ -15993,44 +16198,97 @@
           0.0
          ],
          [
+          -1.2246467991473532e-16,
           0.0,
-          0.0,
-          1.0
+          -1.0
          ]
         ]
        }
       },
       "Anchored": true,
       "Color": [
-       0.20392156862745098,
-       0.2196078431372549,
-       0.24705882352941178
+       1.0,
+       1.0,
+       1.0
       ],
       "Material": "SmoothPlastic",
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
-      "CanCollide": true,
-      "CastShadow": true
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
      },
      "attributes": {
-      "Visual": "Gases"
-     }
+      "Visual": "CabinaGases",
+      "Base": 100.0
+     },
+     "children": [
+      {
+       "name": "Pedestal",
+       "className": "Part",
+       "properties": {
+        "Size": [
+         1.6,
+         1.24,
+         2.2
+        ],
+        "CFrame": {
+         "CFrame": {
+          "position": [
+           0,
+           100.62,
+           -59.3
+          ],
+          "orientation": [
+           [
+            1.0,
+            0.0,
+            0.0
+           ],
+           [
+            0.0,
+            1.0,
+            0.0
+           ],
+           [
+            0.0,
+            0.0,
+            1.0
+           ]
+          ]
+         }
+        },
+        "Anchored": true,
+        "Color": [
+         0.20392156862745098,
+         0.2196078431372549,
+         0.24705882352941178
+        ],
+        "Material": "SmoothPlastic",
+        "TopSurface": "Smooth",
+        "BottomSurface": "Smooth",
+        "CanCollide": true,
+        "CastShadow": true
+       }
+      }
+     ]
     },
     {
      "name": "Palanca",
      "className": "Part",
      "properties": {
       "Size": [
-       0.13,
-       0.42,
-       0.17
+       0.165,
+       0.502,
+       0.125
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         -0.15,
-         101.141,
-         -59.159
+         -0.17,
+         101.8523,
+         -59.8812
         ],
         "orientation": [
          [
@@ -16065,7 +16323,7 @@
       "CanQuery": false
      },
      "attributes": {
-      "Visual": "PalancaGases",
+      "Visual": "CabinaPalanca",
       "Movil": true
      }
     },
@@ -16074,16 +16332,16 @@
      "className": "Part",
      "properties": {
       "Size": [
-       0.13,
-       0.42,
-       0.17
+       0.165,
+       0.502,
+       0.125
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         0.15,
-         101.141,
-         -59.159
+         0.17,
+         101.8523,
+         -59.8812
         ],
         "orientation": [
          [
@@ -16118,7 +16376,7 @@
       "CanQuery": false
      },
      "attributes": {
-      "Visual": "PalancaGases",
+      "Visual": "CabinaPalanca",
       "Movil": true
      }
     },
@@ -16128,31 +16386,31 @@
      "properties": {
       "Size": [
        0.4,
-       0.9,
-       0.9
+       0.2,
+       0.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         -4.0,
-         104.85,
-         -61.0
+         -2.3,
+         103.4331,
+         -60.3097
         ],
         "orientation": [
          [
-          6.123233995736766e-17,
-          -1.0,
-          0.0
-         ],
-         [
           1.0,
-          6.123233995736766e-17,
+          0.0,
           0.0
          ],
          [
           0.0,
+          0.24253562503633289,
+          -0.9701425001453319
+         ],
+         [
           0.0,
-          1.0
+          0.9701425001453319,
+          0.24253562503633289
          ]
         ]
        }
@@ -16167,11 +16425,11 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": true,
-      "CastShadow": true,
-      "Shape": "Cylinder"
+      "CastShadow": true
      },
      "attributes": {
-      "Visual": "Boton"
+      "Visual": "BotonExtintor",
+      "Movil": true
      }
     },
     {
@@ -16180,31 +16438,31 @@
      "properties": {
       "Size": [
        0.4,
-       0.9,
-       0.9
+       0.2,
+       0.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         -2.0,
-         104.85,
-         -61.0
+         -1.15,
+         103.4331,
+         -60.3097
         ],
         "orientation": [
          [
-          6.123233995736766e-17,
-          -1.0,
-          0.0
-         ],
-         [
           1.0,
-          6.123233995736766e-17,
+          0.0,
           0.0
          ],
          [
           0.0,
+          0.24253562503633289,
+          -0.9701425001453319
+         ],
+         [
           0.0,
-          1.0
+          0.9701425001453319,
+          0.24253562503633289
          ]
         ]
        }
@@ -16219,11 +16477,11 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": true,
-      "CastShadow": true,
-      "Shape": "Cylinder"
+      "CastShadow": true
      },
      "attributes": {
-      "Visual": "Boton"
+      "Visual": "BotonAuto",
+      "Movil": true
      }
     },
     {
@@ -16232,31 +16490,31 @@
      "properties": {
       "Size": [
        0.4,
-       0.9,
-       0.9
+       0.2,
+       0.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          0.0,
-         104.85,
-         -61.0
+         103.4331,
+         -60.3097
         ],
         "orientation": [
          [
-          6.123233995736766e-17,
-          -1.0,
-          0.0
-         ],
-         [
           1.0,
-          6.123233995736766e-17,
+          0.0,
           0.0
          ],
          [
           0.0,
+          0.24253562503633289,
+          -0.9701425001453319
+         ],
+         [
           0.0,
-          1.0
+          0.9701425001453319,
+          0.24253562503633289
          ]
         ]
        }
@@ -16271,11 +16529,11 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": true,
-      "CastShadow": true,
-      "Shape": "Cylinder"
+      "CastShadow": true
      },
      "attributes": {
-      "Visual": "Boton"
+      "Visual": "BotonMotor",
+      "Movil": true
      }
     },
     {
@@ -16284,31 +16542,31 @@
      "properties": {
       "Size": [
        0.4,
-       0.9,
-       0.9
+       0.2,
+       0.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         2.0,
-         104.85,
-         -61.0
+         1.15,
+         103.4331,
+         -60.3097
         ],
         "orientation": [
          [
-          6.123233995736766e-17,
-          -1.0,
-          0.0
-         ],
-         [
           1.0,
-          6.123233995736766e-17,
+          0.0,
           0.0
          ],
          [
           0.0,
+          0.24253562503633289,
+          -0.9701425001453319
+         ],
+         [
           0.0,
-          1.0
+          0.9701425001453319,
+          0.24253562503633289
          ]
         ]
        }
@@ -16323,11 +16581,11 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": true,
-      "CastShadow": true,
-      "Shape": "Cylinder"
+      "CastShadow": true
      },
      "attributes": {
-      "Visual": "Boton"
+      "Visual": "BotonCinturon",
+      "Movil": true
      }
     },
     {
@@ -16336,31 +16594,31 @@
      "properties": {
       "Size": [
        0.4,
-       0.9,
-       0.9
+       0.2,
+       0.4
       ],
       "CFrame": {
        "CFrame": {
         "position": [
-         4.0,
-         104.85,
-         -61.0
+         2.3,
+         103.4331,
+         -60.3097
         ],
         "orientation": [
          [
-          6.123233995736766e-17,
-          -1.0,
-          0.0
-         ],
-         [
           1.0,
-          6.123233995736766e-17,
+          0.0,
           0.0
          ],
          [
           0.0,
+          0.24253562503633289,
+          -0.9701425001453319
+         ],
+         [
           0.0,
-          1.0
+          0.9701425001453319,
+          0.24253562503633289
          ]
         ]
        }
@@ -16375,462 +16633,12 @@
       "TopSurface": "Smooth",
       "BottomSurface": "Smooth",
       "CanCollide": true,
-      "CastShadow": true,
-      "Shape": "Cylinder"
+      "CastShadow": true
      },
      "attributes": {
-      "Visual": "Boton"
+      "Visual": "BotonRampa",
+      "Movil": true
      }
-    },
-    {
-     "name": "Etiqueta",
-     "className": "Part",
-     "properties": {
-      "Size": [
-       1.5,
-       0.45,
-       0.05
-      ],
-      "CFrame": {
-       "CFrame": {
-        "position": [
-         -4.0,
-         105.75,
-         -61.0
-        ],
-        "orientation": [
-         [
-          1.0,
-          0.0,
-          0.0
-         ],
-         [
-          0.0,
-          1.0,
-          0.0
-         ],
-         [
-          0.0,
-          0.0,
-          1.0
-         ]
-        ]
-       }
-      },
-      "Anchored": true,
-      "Color": [
-       0.10588235294117647,
-       0.10588235294117647,
-       0.12941176470588237
-      ],
-      "Material": "SmoothPlastic",
-      "TopSurface": "Smooth",
-      "BottomSurface": "Smooth",
-      "CanCollide": false,
-      "CastShadow": true,
-      "CanQuery": false
-     },
-     "children": [
-      {
-       "name": "Cartel",
-       "className": "SurfaceGui",
-       "properties": {
-        "Face": "Back",
-        "SizingMode": "PixelsPerStud",
-        "PixelsPerStud": 40,
-        "LightInfluence": 1
-       },
-       "children": [
-        {
-         "name": "Texto",
-         "className": "TextLabel",
-         "properties": {
-          "Text": "EXTINTOR",
-          "TextScaled": true,
-          "BackgroundTransparency": 1,
-          "Size": {
-           "UDim2": [
-            [
-             1,
-             0
-            ],
-            [
-             1,
-             0
-            ]
-           ]
-          },
-          "Font": "FredokaOne",
-          "TextColor3": [
-           0.8509803921568627,
-           0.26666666666666666,
-           0.22745098039215686
-          ]
-         }
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "name": "Etiqueta",
-     "className": "Part",
-     "properties": {
-      "Size": [
-       1.5,
-       0.45,
-       0.05
-      ],
-      "CFrame": {
-       "CFrame": {
-        "position": [
-         -2.0,
-         105.75,
-         -61.0
-        ],
-        "orientation": [
-         [
-          1.0,
-          0.0,
-          0.0
-         ],
-         [
-          0.0,
-          1.0,
-          0.0
-         ],
-         [
-          0.0,
-          0.0,
-          1.0
-         ]
-        ]
-       }
-      },
-      "Anchored": true,
-      "Color": [
-       0.10588235294117647,
-       0.10588235294117647,
-       0.12941176470588237
-      ],
-      "Material": "SmoothPlastic",
-      "TopSurface": "Smooth",
-      "BottomSurface": "Smooth",
-      "CanCollide": false,
-      "CastShadow": true,
-      "CanQuery": false
-     },
-     "children": [
-      {
-       "name": "Cartel",
-       "className": "SurfaceGui",
-       "properties": {
-        "Face": "Back",
-        "SizingMode": "PixelsPerStud",
-        "PixelsPerStud": 40,
-        "LightInfluence": 1
-       },
-       "children": [
-        {
-         "name": "Texto",
-         "className": "TextLabel",
-         "properties": {
-          "Text": "AUTO",
-          "TextScaled": true,
-          "BackgroundTransparency": 1,
-          "Size": {
-           "UDim2": [
-            [
-             1,
-             0
-            ],
-            [
-             1,
-             0
-            ]
-           ]
-          },
-          "Font": "FredokaOne",
-          "TextColor3": [
-           0.2901960784313726,
-           0.7215686274509804,
-           0.9411764705882353
-          ]
-         }
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "name": "Etiqueta",
-     "className": "Part",
-     "properties": {
-      "Size": [
-       1.5,
-       0.45,
-       0.05
-      ],
-      "CFrame": {
-       "CFrame": {
-        "position": [
-         0.0,
-         105.75,
-         -61.0
-        ],
-        "orientation": [
-         [
-          1.0,
-          0.0,
-          0.0
-         ],
-         [
-          0.0,
-          1.0,
-          0.0
-         ],
-         [
-          0.0,
-          0.0,
-          1.0
-         ]
-        ]
-       }
-      },
-      "Anchored": true,
-      "Color": [
-       0.10588235294117647,
-       0.10588235294117647,
-       0.12941176470588237
-      ],
-      "Material": "SmoothPlastic",
-      "TopSurface": "Smooth",
-      "BottomSurface": "Smooth",
-      "CanCollide": false,
-      "CastShadow": true,
-      "CanQuery": false
-     },
-     "children": [
-      {
-       "name": "Cartel",
-       "className": "SurfaceGui",
-       "properties": {
-        "Face": "Back",
-        "SizingMode": "PixelsPerStud",
-        "PixelsPerStud": 40,
-        "LightInfluence": 1
-       },
-       "children": [
-        {
-         "name": "Texto",
-         "className": "TextLabel",
-         "properties": {
-          "Text": "MOTOR",
-          "TextScaled": true,
-          "BackgroundTransparency": 1,
-          "Size": {
-           "UDim2": [
-            [
-             1,
-             0
-            ],
-            [
-             1,
-             0
-            ]
-           ]
-          },
-          "Font": "FredokaOne",
-          "TextColor3": [
-           0.9607843137254902,
-           0.803921568627451,
-           0.23921568627450981
-          ]
-         }
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "name": "Etiqueta",
-     "className": "Part",
-     "properties": {
-      "Size": [
-       1.5,
-       0.45,
-       0.05
-      ],
-      "CFrame": {
-       "CFrame": {
-        "position": [
-         2.0,
-         105.75,
-         -61.0
-        ],
-        "orientation": [
-         [
-          1.0,
-          0.0,
-          0.0
-         ],
-         [
-          0.0,
-          1.0,
-          0.0
-         ],
-         [
-          0.0,
-          0.0,
-          1.0
-         ]
-        ]
-       }
-      },
-      "Anchored": true,
-      "Color": [
-       0.10588235294117647,
-       0.10588235294117647,
-       0.12941176470588237
-      ],
-      "Material": "SmoothPlastic",
-      "TopSurface": "Smooth",
-      "BottomSurface": "Smooth",
-      "CanCollide": false,
-      "CastShadow": true,
-      "CanQuery": false
-     },
-     "children": [
-      {
-       "name": "Cartel",
-       "className": "SurfaceGui",
-       "properties": {
-        "Face": "Back",
-        "SizingMode": "PixelsPerStud",
-        "PixelsPerStud": 40,
-        "LightInfluence": 1
-       },
-       "children": [
-        {
-         "name": "Texto",
-         "className": "TextLabel",
-         "properties": {
-          "Text": "CINTUR.",
-          "TextScaled": true,
-          "BackgroundTransparency": 1,
-          "Size": {
-           "UDim2": [
-            [
-             1,
-             0
-            ],
-            [
-             1,
-             0
-            ]
-           ]
-          },
-          "Font": "FredokaOne",
-          "TextColor3": [
-           0.9490196078431372,
-           0.4823529411764706,
-           0.16862745098039217
-          ]
-         }
-        }
-       ]
-      }
-     ]
-    },
-    {
-     "name": "Etiqueta",
-     "className": "Part",
-     "properties": {
-      "Size": [
-       1.5,
-       0.45,
-       0.05
-      ],
-      "CFrame": {
-       "CFrame": {
-        "position": [
-         4.0,
-         105.75,
-         -61.0
-        ],
-        "orientation": [
-         [
-          1.0,
-          0.0,
-          0.0
-         ],
-         [
-          0.0,
-          1.0,
-          0.0
-         ],
-         [
-          0.0,
-          0.0,
-          1.0
-         ]
-        ]
-       }
-      },
-      "Anchored": true,
-      "Color": [
-       0.10588235294117647,
-       0.10588235294117647,
-       0.12941176470588237
-      ],
-      "Material": "SmoothPlastic",
-      "TopSurface": "Smooth",
-      "BottomSurface": "Smooth",
-      "CanCollide": false,
-      "CastShadow": true,
-      "CanQuery": false
-     },
-     "children": [
-      {
-       "name": "Cartel",
-       "className": "SurfaceGui",
-       "properties": {
-        "Face": "Back",
-        "SizingMode": "PixelsPerStud",
-        "PixelsPerStud": 40,
-        "LightInfluence": 1
-       },
-       "children": [
-        {
-         "name": "Texto",
-         "className": "TextLabel",
-         "properties": {
-          "Text": "RAMPA",
-          "TextScaled": true,
-          "BackgroundTransparency": 1,
-          "Size": {
-           "UDim2": [
-            [
-             1,
-             0
-            ],
-            [
-             1,
-             0
-            ]
-           ]
-          },
-          "Font": "FredokaOne",
-          "TextColor3": [
-           0.12156862745098039,
-           0.6509803921568628,
-           0.6274509803921569
-          ]
-         }
-        }
-       ]
-      }
-     ]
     }
    ]
   },
@@ -18382,96 +18190,6 @@
       "Visual": "PuertaAla",
       "Movil": true
      }
-    },
-    {
-     "name": "CartelSalida",
-     "className": "Part",
-     "properties": {
-      "Size": [
-       0.1,
-       0.8,
-       2.2
-      ],
-      "CFrame": {
-       "CFrame": {
-        "position": [
-         6.6,
-         107.2,
-         -5.5
-        ],
-        "orientation": [
-         [
-          1.0,
-          0.0,
-          0.0
-         ],
-         [
-          0.0,
-          1.0,
-          0.0
-         ],
-         [
-          0.0,
-          0.0,
-          1.0
-         ]
-        ]
-       }
-      },
-      "Anchored": true,
-      "Color": [
-       0.12156862745098039,
-       0.6509803921568628,
-       0.3137254901960784
-      ],
-      "Material": "Neon",
-      "TopSurface": "Smooth",
-      "BottomSurface": "Smooth",
-      "CanCollide": false,
-      "CastShadow": true,
-      "CanQuery": false
-     },
-     "children": [
-      {
-       "name": "Cartel",
-       "className": "SurfaceGui",
-       "properties": {
-        "Face": "Left",
-        "SizingMode": "PixelsPerStud",
-        "PixelsPerStud": 40,
-        "LightInfluence": 1
-       },
-       "children": [
-        {
-         "name": "Texto",
-         "className": "TextLabel",
-         "properties": {
-          "Text": "SALIDA",
-          "TextScaled": true,
-          "BackgroundTransparency": 1,
-          "Size": {
-           "UDim2": [
-            [
-             1,
-             0
-            ],
-            [
-             1,
-             0
-            ]
-           ]
-          },
-          "Font": "FredokaOne",
-          "TextColor3": [
-           1.0,
-           1.0,
-           1.0
-          ]
-         }
-        }
-       ]
-      }
-     ]
     }
    ]
   },
@@ -18525,6 +18243,202 @@
       "BottomSurface": "Smooth",
       "CanCollide": true,
       "CastShadow": true
+     }
+    },
+    {
+     "name": "CornisaBodega",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.9,
+       0.6,
+       22
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -6.95,
+         109.85,
+         11
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.788235294117647,
+       0.7607843137254902,
+       0.7098039215686275
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "ZocaloBodega",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.5,
+       0.45,
+       22
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         -6.85,
+         100.22,
+         11
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.49019607843137253,
+       0.5215686274509804,
+       0.5607843137254902
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "CornisaBodega",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.9,
+       0.6,
+       22
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         6.95,
+         109.85,
+         11
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.788235294117647,
+       0.7607843137254902,
+       0.7098039215686275
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "ZocaloBodega",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.5,
+       0.45,
+       22
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         6.85,
+         100.22,
+         11
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.49019607843137253,
+       0.5215686274509804,
+       0.5607843137254902
+      ],
+      "Material": "Metal",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": true,
+      "CanQuery": false
      }
     },
     {
@@ -20582,14 +20496,14 @@
       "Size": [
        3.4116,
        0.4,
-       22.6
+       22.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          7.8068,
          101.7663,
-         -36.7
+         -36.775
         ],
         "orientation": [
          [
@@ -20634,7 +20548,7 @@
       "Size": [
        3.4116,
        0.4,
-       14.2
+       13.9
       ],
       "CFrame": {
        "CFrame": {
@@ -20686,14 +20600,14 @@
       "Size": [
        3.4116,
        0.4,
-       21.6
+       21.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          7.8068,
          101.7663,
-         7.2
+         7.275
         ],
         "orientation": [
          [
@@ -20738,14 +20652,14 @@
       "Size": [
        3.4116,
        0.4,
-       22.6
+       22.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          -7.8068,
          101.7663,
-         -36.7
+         -36.775
         ],
         "orientation": [
          [
@@ -20790,14 +20704,14 @@
       "Size": [
        3.4116,
        0.4,
-       39.6
+       39.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          -7.8068,
          101.7663,
-         -1.8
+         -1.725
         ],
         "orientation": [
          [
@@ -20842,14 +20756,14 @@
       "Size": [
        3.4116,
        0.4,
-       22.6
+       22.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          8.45,
          105.0,
-         -36.7
+         -36.775
         ],
         "orientation": [
          [
@@ -20894,7 +20808,7 @@
       "Size": [
        3.4116,
        0.4,
-       14.2
+       13.9
       ],
       "CFrame": {
        "CFrame": {
@@ -20946,14 +20860,14 @@
       "Size": [
        3.4116,
        0.4,
-       21.6
+       21.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          8.45,
          105.0,
-         7.2
+         7.275
         ],
         "orientation": [
          [
@@ -20998,14 +20912,14 @@
       "Size": [
        3.4116,
        0.4,
-       22.6
+       22.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          -8.45,
          105.0,
-         -36.7
+         -36.775
         ],
         "orientation": [
          [
@@ -21050,14 +20964,14 @@
       "Size": [
        3.4116,
        0.4,
-       39.6
+       39.45
       ],
       "CFrame": {
        "CFrame": {
         "position": [
          -8.45,
          105.0,
-         -1.8
+         -1.725
         ],
         "orientation": [
          [

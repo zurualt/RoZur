@@ -21,33 +21,47 @@ end
 
 function VFX.fuego(padre: Instance, escala: number): { ParticleEmitter }
 	local llama = emisor(padre, "Llama", "Llama")
-	llama.Color = ColorSequence.new({
-		ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-		ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 214, 170)),
-		ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 130, 90)),
-	})
-	llama.LightEmission = 0.35
+	llama.FlipbookLayout = Enum.ParticleFlipbookLayout.Grid2x2
+	llama.FlipbookMode = Enum.ParticleFlipbookMode.Loop
+	llama.FlipbookFramerate = NumberRange.new(9, 13)
+	llama.FlipbookStartRandom = true
+	llama.Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(255, 200, 170))
+	llama.LightEmission = 0.15
 	llama.Size = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 1.7 * escala),
-		NumberSequenceKeypoint.new(1, 0.3 * escala),
+		NumberSequenceKeypoint.new(0, 0.5 * escala),
+		NumberSequenceKeypoint.new(0.18, 1.9 * escala),
+		NumberSequenceKeypoint.new(0.7, 1.4 * escala),
+		NumberSequenceKeypoint.new(1, 0.2 * escala),
+	})
+	llama.Squash = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, -0.5),
+		NumberSequenceKeypoint.new(0.25, 0.35),
+		NumberSequenceKeypoint.new(0.6, -0.1),
+		NumberSequenceKeypoint.new(1, 0.4),
 	})
 	llama.Transparency = NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0),
-		NumberSequenceKeypoint.new(0.7, 0.1),
+		NumberSequenceKeypoint.new(0.8, 0),
 		NumberSequenceKeypoint.new(1, 1),
 	})
-	llama.Rotation = NumberRange.new(-12, 12)
-	llama.RotSpeed = NumberRange.new(-30, 30)
+	llama.Rotation = NumberRange.new(-8, 8)
+	llama.RotSpeed = NumberRange.new(-20, 20)
 	llama.Lifetime = NumberRange.new(0.45, 0.8)
-	llama.Rate = 34
+	llama.Rate = 26
 	llama.Speed = NumberRange.new(3 * escala, 6 * escala)
-	llama.SpreadAngle = Vector2.new(16, 16)
+	llama.SpreadAngle = Vector2.new(14, 14)
 	llama.Acceleration = Vector3.new(0, 6, 0)
 	local humo = emisor(padre, "Humo", "Humo1", true)
 	humo.Color = ColorSequence.new(Color3.fromRGB(120, 116, 112), Color3.fromRGB(60, 58, 56))
 	humo.Size = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 1.2 * escala),
+		NumberSequenceKeypoint.new(0, 0.6 * escala),
+		NumberSequenceKeypoint.new(0.2, 2.6 * escala),
 		NumberSequenceKeypoint.new(1, 4.2 * escala),
+	})
+	humo.Squash = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.5),
+		NumberSequenceKeypoint.new(0.25, -0.25),
+		NumberSequenceKeypoint.new(1, 0),
 	})
 	humo.Transparency = NumberSequence.new({
 		NumberSequenceKeypoint.new(0, 0.15),

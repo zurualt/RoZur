@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Manos = require(script.Parent.Manos)
 local Piloto = require(script.Parent.Piloto)
 local Sonido = require(script.Parent.Sonido)
 
@@ -89,6 +90,7 @@ local function empezar(objeto: Instance)
 	end
 	sostenido, raiz = objeto, r
 	local tipo = tipoDe(objeto)
+	local enMano = Manos.estilo(tipo).modo ~= "dos"
 	distancia = if GRANDES[tipo] then 5.2 else 3.4
 	local masa = r.AssemblyMass
 	local a = Instance.new("Attachment")
@@ -99,18 +101,19 @@ local function empezar(objeto: Instance)
 	p.Attachment0 = a
 	p.MaxForce = math.max(2000, masa * 900)
 	p.MaxVelocity = if GRANDES[tipo] then 28 else 60
-	p.Responsiveness = math.clamp(160 / math.max(masa, 1), 8, 45)
+	p.Responsiveness = if enMano then 200 else math.clamp(160 / math.max(masa, 1), 8, 45)
 	p.Position = r.Position
 	p.Parent = r
 	local o = Instance.new("AlignOrientation")
 	o.Mode = Enum.OrientationAlignmentMode.OneAttachment
 	o.Attachment0 = a
 	o.MaxTorque = math.max(2000, masa * 900)
-	o.Responsiveness = 22
+	o.Responsiveness = if enMano then 200 else 22
 	o.CFrame = r.CFrame
 	o.Parent = r
 	adjunto, posicion, orientacion = a, p, o
 	confirmarAntes = os.clock() + 1
+	Manos.agarrar()
 end
 
 local function soltar(lanzar: boolean)
@@ -210,7 +213,7 @@ function Agarre.iniciar()
 		limpiar()
 	end)
 
-	RunService.PreSimulation:Connect(function()
+	RunService.PreSimulation:Connect(function(dt)
 		local camara = Workspace.CurrentCamera
 		local resultado = if not sostenido then rayo() else nil
 		apuntado = if resultado then agarrable(resultado.Instance) else nil
@@ -236,11 +239,17 @@ function Agarre.iniciar()
 		local cf = camara.CFrame
 		local p = posicion
 		local o = orientacion
+		local tipo = tipoDe(objeto)
+		local estilo = Manos.estilo(tipo)
+		local mano, punto = Manos.punto(personaje)
+		local cuerpo = personaje.PrimaryPart
+		local destino = if estilo.modo ~= "dos" and mano and punto and cuerpo then Manos.marco(estilo, mano.CFrame, punto, cuerpo.CFrame) * Manos.desfase(estilo, r.Size) else nil
 		if p then
-			p.Position = cf.Position + cf.LookVector * distancia - cf.UpVector * 0.7
+			p.Position = if destino and cuerpo then destino.Position + cuerpo.AssemblyLinearVelocity * dt else cf.Position + cf.LookVector * distancia - cf.UpVector * 0.7
 		end
-		if o then
-			local tipo = tipoDe(objeto)
+		if o and destino then
+			o.CFrame = destino.Rotation
+		elseif o then
 			if tipo == "Extintor" or tipo == "Llave" or tipo == "Piolet" then
 				o.CFrame = cf.Rotation
 			else

@@ -32,6 +32,7 @@ local Cabina = {}
 local avion = Workspace:WaitForChild("Avion") :: Model
 local altillos: { Altillo } = {}
 local asientos: { [Seat]: ProximityPrompt } = {}
+local INTERIOR = 6.5
 local mascarillas: Folder? = nil
 local piezas: { BasePart } = {}
 local rng = Random.new()
@@ -118,7 +119,11 @@ local function prepararAsiento(asiento: Seat)
 	aviso.Triggered:Connect(function(jugador)
 		local personaje = jugador.Character
 		local humanoide = personaje and personaje:FindFirstChildOfClass("Humanoid")
-		if not humanoide or humanoide.SeatPart or humanoide.Health <= 0 or Personajes.enRagdoll(jugador) or Pasajeros.ocupado(asiento) then
+		local raiz = personaje and personaje:FindFirstChild("HumanoidRootPart")
+		if not humanoide or not raiz or not raiz:IsA("BasePart") or humanoide.SeatPart or humanoide.Health <= 0 or Personajes.enRagdoll(jugador) or Pasajeros.ocupado(asiento) then
+			return
+		end
+		if math.abs(avion:GetPivot():PointToObjectSpace(raiz.Position).X) > INTERIOR then
 			return
 		end
 		Agarre.soltar(jugador)

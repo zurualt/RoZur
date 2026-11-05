@@ -25,6 +25,7 @@ local Peligros = require(script.Parent.Peligros)
 local Personajes = require(script.Parent.Personajes)
 local Piratas = require(script.Parent.Piratas)
 local Rafagas = require(script.Parent.Rafagas)
+local Roturas = require(script.Parent.Roturas)
 local Tienda = require(script.Parent.Tienda)
 local Vehiculos = require(script.Parent.Vehiculos)
 
@@ -149,7 +150,7 @@ local function prepararSalas()
 		cabecera.BorderSizePixel = 0
 		cabecera.Parent = fondo
 		etiqueta(cabecera, UDim2.fromScale(0.05, 0.12), UDim2.fromScale(0.5, 0.76), OSCURO, Enum.TextXAlignment.Left).Text = `PUERTA {n}`
-		etiqueta(cabecera, UDim2.fromScale(0.5, 0.22), UDim2.fromScale(0.45, 0.56), OSCURO, Enum.TextXAlignment.Right).Text = "SALIDA"
+		etiqueta(cabecera, UDim2.fromScale(0.5, 0.22), UDim2.fromScale(0.45, 0.56), OSCURO, Enum.TextXAlignment.Right).Text = "SALIDAS"
 		local plazas = {}
 		for i = 1, Config.LOBBY.MAX do
 			local plaza = Instance.new("Frame")
@@ -424,6 +425,7 @@ local function limpiar()
 end
 
 local function naufragio(contrato: Contratos.Contrato, motivo: string)
+	Roturas.esperar()
 	Peligros.detener()
 	Piratas.reiniciar()
 	Workspace.Gravity = Config.GRAVEDAD

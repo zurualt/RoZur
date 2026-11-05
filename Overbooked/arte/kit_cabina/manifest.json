@@ -1,0 +1,102 @@
+[
+  {
+    "nombre": "CabinaForro",
+    "archivo": "CabinaForro.fbx",
+    "tamano": [
+      11.6,
+      8.0,
+      10.2
+    ],
+    "triangulos": 5880
+  },
+  {
+    "nombre": "CabinaVolante",
+    "archivo": "CabinaVolante.fbx",
+    "tamano": [
+      1.504,
+      0.858,
+      1.966
+    ],
+    "triangulos": 1542
+  },
+  {
+    "nombre": "CabinaGases",
+    "archivo": "CabinaGases.fbx",
+    "tamano": [
+      1.8,
+      1.688,
+      2.88
+    ],
+    "triangulos": 2060
+  },
+  {
+    "nombre": "CabinaPalanca",
+    "archivo": "CabinaPalanca.fbx",
+    "tamano": [
+      0.165,
+      0.502,
+      0.125
+    ],
+    "triangulos": 202
+  },
+  {
+    "nombre": "BotonExtintor",
+    "archivo": "BotonExtintor.fbx",
+    "tamano": [
+      0.4,
+      0.207,
+      0.4
+    ],
+    "triangulos": 320
+  },
+  {
+    "nombre": "BotonAuto",
+    "archivo": "BotonAuto.fbx",
+    "tamano": [
+      0.4,
+      0.203,
+      0.4
+    ],
+    "triangulos": 313
+  },
+  {
+    "nombre": "BotonMotor",
+    "archivo": "BotonMotor.fbx",
+    "tamano": [
+      0.4,
+      0.215,
+      0.4
+    ],
+    "triangulos": 364
+  },
+  {
+    "nombre": "BotonCinturon",
+    "archivo": "BotonCinturon.fbx",
+    "tamano": [
+      0.4,
+      0.215,
+      0.4
+    ],
+    "triangulos": 330
+  },
+  {
+    "nombre": "BotonRampa",
+    "archivo": "BotonRampa.fbx",
+    "tamano": [
+      0.4,
+      0.203,
+      0.4
+    ],
+    "triangulos": 303
+  },
+  {
+    "nombre": "CabinaCuadro",
+    "archivo": "CabinaCuadro.fbx",
+    "tamano": [
+      10.9,
+      4.149,
+      1.873
+    ],
+    "triangulos": 9240
+  }
+]

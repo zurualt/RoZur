@@ -1,5 +1,6 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
@@ -215,7 +216,7 @@ local function crear(indice: number): Pasajero
 	end)
 	modelo.Parent = carpeta
 	local visual = P.VISUALES[rng:NextInteger(1, #P.VISUALES)]
-	if Activos.tiene(visual) then
+	Activos.cuando(visual, function()
 		cabeza.Transparency = 1
 		piernas.Transparency = 1
 		for _, d in modelo:GetChildren() do
@@ -223,8 +224,8 @@ local function crear(indice: number): Pasajero
 				d.Transparency = 1
 			end
 		end
-		Activos.vestirDinamico(cuerpo, visual, P.ESCALA_VISUAL)
-	end
+	end)
+	Activos.vestirDinamico(cuerpo, visual, P.ESCALA_VISUAL)
 	return p
 end
 
@@ -505,6 +506,14 @@ function Pasajeros.iniciar()
 	task.spawn(function()
 		while true do
 			task.wait(1)
+			local pidiendo = 0
+			for modelo in lista do
+				local pedido = modelo:GetAttribute("Pedido")
+				if typeof(pedido) == "string" and pedido ~= "" then
+					pidiendo += 1
+				end
+			end
+			local maximoPedidos = P.PEDIDOS_BASE + P.PEDIDOS_POR_JUGADOR * #Players:GetPlayers()
 			for modelo, p in lista do
 				if not modelo.Parent then
 					lista[modelo] = nil
@@ -526,11 +535,12 @@ function Pasajeros.iniciar()
 				if p.asiento then
 					local pedido = modelo:GetAttribute("Pedido")
 					if pedido == "" then
-						if rng:NextNumber() < P.PEDIDO_PROB * (0.8 + riesgo * 0.2) * (if condicion == "Hambre" then 2.2 elseif condicion == "VIP" then 1.3 else 1) then
+						if pidiendo < maximoPedidos and rng:NextNumber() < P.PEDIDO_PROB * (0.8 + riesgo * 0.2) * (if condicion == "Hambre" then 2.2 elseif condicion == "VIP" then 1.3 else 1) then
 							modelo:SetAttribute("Pedido", Config.COMIDA[rng:NextInteger(1, #Config.COMIDA)])
 							local maximo = math.floor((P.PACIENCIA + 6 * Mejoras.nivel("Cocina")) * (if condicion == "VIP" then 0.7 else 1))
 							modelo:SetAttribute("PacienciaMax", maximo)
 							modelo:SetAttribute("Paciencia", maximo)
+							pidiendo += 1
 						end
 					else
 						local paciencia = modelo:GetAttribute("Paciencia")

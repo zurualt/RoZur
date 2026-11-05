@@ -1,6 +1,7 @@
 import json
 import math
 import os
+import random
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SALIDA = os.path.join(RAIZ, "mapa")
@@ -193,37 +194,42 @@ def asientos():
 
 def cabina():
     p = []
-    p.append(marca("CabinaPiloto", (11.6, 8, 10.5), (0, 104, -57.25), "CabinaPiloto", hijos=[
-        part("ParedCabinaIzq", (G, 8, 10.5), (-5.65, 104, -57.25), CREMA),
-        part("ParedCabinaDer", (G, 8, 10.5), (5.65, 104, -57.25), CREMA),
-        part("TechoCabina", (11.6, G, 10.5), (0, 108 + G / 2, -57.25), TECHO),
+    giro = rot(0, 180, 0)
+    p.append(marca("CabinaPiloto", (11.6, 8, 10.2), (0, 104, -57.4), "CabinaForro", r=giro, base=SUELO_Y, hijos=[
+        part("ParedCabinaIzq", (G, 8, 10.2), (-5.65, 104, -57.4), CREMA),
+        part("ParedCabinaDer", (G, 8, 10.2), (5.65, 104, -57.4), CREMA),
+        part("TechoCabina", (11.6, G, 10.2), (0, 108 + G / 2, -57.4), TECHO),
         part("ParabrisasBajo", (11, 3.5, G), (0, SUELO_Y + 1.75, -62.35), CREMA),
         part("ParabrisasAlto", (11, 0.5, G), (0, 107.75, -62.35), CREMA),
-        part("Parteluz", (0.4, 4, 0.4), (0, 105.5, -62.2), GRIS),
+        part("Parteluz", (0.36, 3.78, 0.31), (0, 105.61, -62.045), GRIS),
     ]))
     p.append(part("Parabrisas", (11, 4, 0.2), (0, 105.5, -62.35), CRISTAL, "Glass", transp=0.55))
+    for sx in (-1, 1):
+        for alto, ancho, y, z in ((1.6, 2.1, 105.2, -60.4), (1.4, 1.5, 105.25, -58.15)):
+            p.append(part("CristalCabina", (0.04, alto, ancho), (sx * 5.48, y, z), CRISTAL, "Glass", transp=0.5, colision=False))
     for nombre, x in (("AsientoPiloto", -2.6), ("AsientoCopiloto", 2.6)):
         p.append(part(nombre, (2.2, 1.2, 2.2), (x, 101.0, -57.5), GRIS, "Fabric", clase="Seat",
                       atributos={"Visual": "AsientoPiloto", "Base": SUELO_Y},
-                      hijos=[part("Respaldo", (2.2, 3.2, 0.5), (x, 103.0, -56.4), GRIS, "Fabric"),
-                             part("Raya", (0.5, 3.0, 0.52), (x, 103.0, -56.4), TURQUESA, "Fabric", colision=False)]))
-    p.append(part("Cuadro", (10.5, 2.8, 2), (0, 102.8, -61.2), GRIS, r=rot(0, 180, 0), atributos={"Visual": "Cuadro"}))
-    p.append(part("Columna", (0.35, 0.35, 1.8), (-2.6, 102.6, -59.6), "1B1B21", r=rot(0, 180, 0), atributos={"Visual": "Volante"},
-                  hijos=[part("Volante", (1.5, 0.3, 0.3), (-2.6, 103.0, -58.8), "1B1B21")]))
-    p.append(part("Gases", (1.2, 1.3, 2.0), (0, 100.65, -59.0), GRIS, atributos={"Visual": "Gases"}))
-    for x in (-0.15, 0.15):
-        p.append(part("Palanca", (0.13, 0.42, 0.17), (x, 101.141, -59.159), NARANJA, colision=False, r=rot(-24, 0, 0),
-                      atributos={"Visual": "PalancaGases", "Movil": True}))
-    botones = [("BotonExtintorMotor", -4.0, "D9443A"), ("BotonAutopiloto", -2.0, "4AB8F0"),
-               ("BotonMotores", 0.0, "F5CD3D"), ("BotonCinturones", 2.0, "F27B2B"), ("BotonRampa", 4.0, "1FA6A0")]
-    for nombre, x, c in botones:
-        p.append(part(nombre, (0.4, 0.9, 0.9), (x, 104.85, -61.0), c, "SmoothPlastic", forma="Cylinder",
-                      r=rot(0, 0, 90), atributos={"Visual": "Boton"}))
-    etiquetas = {"BotonExtintorMotor": "EXTINTOR", "BotonAutopiloto": "AUTO", "BotonMotores": "MOTOR",
-                 "BotonCinturones": "CINTUR.", "BotonRampa": "RAMPA"}
-    for nombre, x, c in botones:
-        p.append(part("Etiqueta", (1.5, 0.45, 0.05), (x, 105.75, -61.0), "1B1B21", colision=False,
-                      hijos=[cartel(etiquetas[nombre], "Back", c)]))
+                      hijos=[part("Respaldo", (2.2, 3.0, 0.5), (x, 103.1, -56.4), GRIS, "Fabric")]))
+    p.append(marca("Cuadro", (10.9, 4.149, 1.873), (0, SUELO_Y + 2.0745, -61.2436), "CabinaCuadro", r=giro, base=SUELO_Y, hijos=[
+        part("CuadroBajo", (10.9, 2.75, 1.17), (0, 101.375, -61.585), GRIS),
+        part("CuadroAlto", (10.9, 0.8, 1.37), (0, 103.15, -61.485), GRIS),
+    ]))
+    p.append(part("Columna", (0.3, 0.3, 1.2), (-2.6, 102.2, -60.1668), "1B1B21", r=giro,
+                  atributos={"Visual": "CabinaVolante", "Base": 101.9319},
+                  hijos=[part("Volante", (1.36, 0.3, 0.26), (-2.6, 102.05, -59.41), "1B1B21")]))
+    p.append(marca("Gases", (1.8, 1.688, 2.88), (0, SUELO_Y + 0.844, -59.4999), "CabinaGases", r=giro, base=SUELO_Y, hijos=[
+        part("Pedestal", (1.6, 1.24, 2.2), (0, 100.62, -59.3), GRIS),
+    ]))
+    for x in (-0.17, 0.17):
+        p.append(part("Palanca", (0.165, 0.502, 0.125), (x, 101.8523, -59.8812), NARANJA, colision=False, r=rot(-24, 0, 0),
+                      atributos={"Visual": "CabinaPalanca", "Movil": True}))
+    botones = [("BotonExtintorMotor", "BotonExtintor", -2.3, "D9443A"), ("BotonAutopiloto", "BotonAuto", -1.15, "4AB8F0"),
+               ("BotonMotores", "BotonMotor", 0.0, "F5CD3D"), ("BotonCinturones", "BotonCinturon", 1.15, "F27B2B"),
+               ("BotonRampa", "BotonRampa", 2.3, "1FA6A0")]
+    for nombre, visual, x, c in botones:
+        p.append(part(nombre, (0.4, 0.2, 0.4), (x, 103.4331, -60.3097), c, "SmoothPlastic", r=rot(math.degrees(math.atan(4)), 0, 0),
+                      atributos={"Visual": visual, "Movil": True}))
     return carpeta("Cabina", p)
 
 
@@ -267,14 +273,15 @@ def bano_y_puertas():
     for nombre, sx, z in (("PuertaAlaIzq", -1, FILAS[FILA_SALIDA]), ("PuertaAlaDer", 1, FILAS[FILA_SALIDA]), ("PuertaSalida", 1, -5.5)):
         p.append(part(nombre, (3.4, 6.5, G), (sx * MURO, 103.25, z), NARANJA, r=rot(0, 90 * sx, 0),
                       atributos={"Abierta": False, "Puerta": True, "Visual": "PuertaAla", "Movil": True}))
-    p.append(part("CartelSalida", (0.1, 0.8, 2.2), (6.6, 107.2, -5.5), "1FA650", "Neon", colision=False,
-                  hijos=[cartel("SALIDA", "Left", "FFFFFF")]))
     return carpeta("Puertas", p)
 
 
 def bodega():
     p = []
     p.append(part("SueloBodega", (INTERIOR * 2, 0.1, 22), (0, SUELO_Y + 0.05, 11), BODEGA, "DiamondPlate"))
+    for sx in (-1, 1):
+        p.append(part("CornisaBodega", (0.9, 0.6, 22), (sx * 6.95, TECHO_Y - 0.15, 11), "C9C2B5", colision=False))
+        p.append(part("ZocaloBodega", (0.5, 0.45, 22), (sx * 6.85, SUELO_Y + 0.22, 11), BODEGA, "Metal", colision=False))
     for sx in (-1, 1):
         for y in (103.35, 106.2):
             p.append(part("Estante", (2.2, 0.35, 18), (sx * 5.6, y, 11), MADERA, "Wood"))
@@ -329,8 +336,8 @@ def exterior():
 def casco():
     p = []
     radio, cy, z0, z1 = 8.45, 105.0, -48.0, 18.0
-    huecos = {1: [(-25.4, -21.6)], -1: [(-25.4, -21.6)]}
-    huecos_der = [(-7.4, -3.6)]
+    huecos = {1: [(-25.55, -21.45)], -1: [(-25.55, -21.45)]}
+    huecos_der = [(-7.55, -3.45)]
     n = 16
     ancho = 2 * radio * math.tan(math.pi / n) + 0.05
     for k in range(-1, 10):
@@ -523,51 +530,588 @@ def punto(tipo, x, y, z):
     return part("Spot", (1, 1, 1), (x, y, z), "FFFFFF", transp=1, colision=False, sombra=False, atributos={"Spot": tipo})
 
 
+ISLA_CELDA = 4
+ISLA_X0, ISLA_Z0 = -296, -360
+ISLA_NX, ISLA_NZ = 140, 132
+ISLA_Y0 = 64
+MAR = 89.0
+FONDO = 71.0
+SUELO_AVION = 90.2
+OCEANO = 2048
+ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+MATERIALES_ISLA = ["Sand", "Salt", "Grass", "LeafyGrass", "Ground", "Rock", "Slate"]
+AVION_RECT = (-40.0, 40.0, -68.0, 36.0)
+CIMA = (-78.0, -158.0)
+ESTANQUE = (-28.0, -196.0)
+LAGUNA = (-168.0, -50.0)
+CAMPAMENTO = (146.0, -74.0)
+SURCO = ((0.0, 128.0), (0.0, 40.0))
+COSTA = [(95, 66), (55, 76), (15, 80), (-25, 78), (-65, 72), (-100, 70), (-130, 82), (-158, 86), (-178, 68), (-174, 42),
+         (-196, 18), (-214, -18), (-222, -60), (-214, -100), (-204, -140), (-196, -185), (-172, -228), (-136, -262),
+         (-88, -286), (-36, -296), (14, -290), (60, -270), (102, -240), (134, -200), (156, -156), (170, -112),
+         (176, -70), (172, -28), (160, 12), (138, 44), (118, 60)]
+ACANTILADOS = [(-92, -290, 80), (-20, -305, 70), (42, -285, 55), (-196, -196, 48), (122, -226, 40)]
+SENDAS = [
+    [(-8, -74), (-20, -98), (-36, -120), (-52, -138), (-66, -150)],
+    [(-36, -120), (-30, -150), (-27, -178)],
+    [(132, -92), (98, -122), (50, -146), (0, -160), (-60, -160)],
+    [(44, -46), (78, -60), (116, -72)],
+]
+COLINAS = [(CIMA[0], CIMA[1], 29.0, 42.0, 12.0), (-150, -210, 13.0, 34.0, 0.0), (98, -176, 7.0, 28.0, 0.0), (-30, -252, 8.0, 40.0, 0.0)]
+ROCAS_TERRENO = [(-166, 72, 11, 4.5), (-150, 90, 7, 2.5), (-184, 50, 8, 3.5), (150, -168, 9, 5.0), (-104, -122, 9, 6.0),
+                 (-118, -200, 8, 5.0), (162, 30, 7, 3.0), (-206, -110, 8, 4.0), (60, -262, 9, 4.0)]
+TAM_ISLA = {
+    "RocaGrande": (14.408, 9.411, 11.625), "RocaPequena": (5.202, 3.005, 4.322), "ArbustoTropical": (5.03, 2.99, 5.055),
+    "Hoguera": (5.88, 3.066, 5.845), "EstacionRadio": (6.059, 3.75, 2.381), "RestosAla": (27.074, 3.707, 9.6),
+    "RestosMotor": (5.706, 5.699, 6.327), "Cajon": (3.477, 3.0, 3.477), "SenalSOS": (22.961, 0.55, 8.852), "Muelle": (7.79, 3.3, 30.64),
+    "Palmera1": (11.53, 24.729, 12.093), "Palmera2": (11.576, 20.141, 11.924), "Palmera3": (13.386, 28.699, 12.798),
+    "PalmeraInclinada": (10.785, 20.806, 16.331), "PalmeraJoven": (8.934, 9.473, 8.193), "Platanera": (9.432, 7.089, 9.408),
+    "Helecho": (4.618, 1.588, 4.657), "HojasGrandes": (6.83, 2.974, 6.77), "Flores": (2.321, 2.12, 2.459), "Hierba": (1.818, 1.618, 1.993),
+    "MaderaDeriva": (9.217, 1.595, 2.614), "Conchas": (2.645, 0.543, 2.191), "Charca": (10.027, 1.15, 7.84), "RocaMedia": (7.99, 4.418, 5.012),
+    "Acantilado": (13.012, 15.5, 11.539), "RocasPlanas": (9.748, 1.07, 6.698), "AsientoRoto": (3.093, 2.966, 4.93),
+    "MaletaAbierta": (3.2, 1.245, 5.473), "MaletaCerrada": (2.44, 1.072, 3.61), "TrozoFuselaje": (9.342, 6.647, 7.563),
+    "CajaAbierta": (3.96, 2.766, 2.812), "CajaBengala": (2.4, 2.505, 2.657), "Bote": (10.9, 2.382, 7.518), "Cascada": (12.557, 15.533, 9.266),
+    "Mirador": (12.65, 9.57, 15.712), "Cartel": (5.434, 6.28, 0.959), "Refugio": (9.771, 5.157, 7.147), "PilaLena": (4.318, 2.42, 2.754),
+}
+INCLINADA_BASE = 7.53
+
+
+def ss(a, b, x):
+    t = min(1.0, max(0.0, (x - a) / (b - a)))
+    return t * t * (3 - 2 * t)
+
+
+def mezcla(a, b, t):
+    return a + (b - a) * t
+
+
+def _hash(ix, iz, semilla):
+    n = (ix * 374761393 + iz * 668265263 + semilla * 1442695041) & 0xFFFFFFFF
+    n = ((n ^ (n >> 13)) * 1274126177) & 0xFFFFFFFF
+    return ((n ^ (n >> 16)) & 0xFFFF) / 65535.0
+
+
+def ruido(x, z, escala, semilla):
+    fx, fz = x / escala, z / escala
+    ix, iz = math.floor(fx), math.floor(fz)
+    tx, tz = fx - ix, fz - iz
+    tx, tz = tx * tx * (3 - 2 * tx), tz * tz * (3 - 2 * tz)
+    a, b = _hash(ix, iz, semilla), _hash(ix + 1, iz, semilla)
+    c, d = _hash(ix, iz + 1, semilla), _hash(ix + 1, iz + 1, semilla)
+    ab = a + (b - a) * tx
+    return (ab + (c + (d - c) * tx - ab) * tz) * 2 - 1
+
+
+def fbm(x, z, escala, semilla, octavas=3):
+    s, amp, tot = 0.0, 1.0, 0.0
+    for o in range(octavas):
+        s += amp * ruido(x, z, escala, semilla + o * 17)
+        tot += amp
+        amp *= 0.5
+        escala *= 0.5
+    return s / tot
+
+
+def catmull_2d(puntos, pasos):
+    n = len(puntos)
+    out = []
+    for i in range(n):
+        p0, p1, p2, p3 = puntos[i - 1], puntos[i], puntos[(i + 1) % n], puntos[(i + 2) % n]
+        for k in range(pasos):
+            t = k / pasos
+            t2, t3 = t * t, t * t * t
+            out.append(tuple(0.5 * (2 * p1[j] + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2
+                                    + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3) for j in (0, 1)))
+    return out
+
+
+def dist_seg(px, pz, ax, az, bx, bz):
+    dx, dz = bx - ax, bz - az
+    t = max(0.0, min(1.0, ((px - ax) * dx + (pz - az) * dz) / (dx * dx + dz * dz)))
+    return math.hypot(ax + dx * t - px, az + dz * t - pz), t
+
+
+def dist_linea(px, pz, linea):
+    return min(dist_seg(px, pz, *a, *b)[0] for a, b in zip(linea, linea[1:]))
+
+
+def dist_costa(px, pz, segs):
+    dmin = 1e18
+    dentro = False
+    for ax, az, bx, bz in segs:
+        if (az > pz) != (bz > pz) and px < ax + (pz - az) * (bx - ax) / (bz - az):
+            dentro = not dentro
+        dx, dz = bx - ax, bz - az
+        t = ((px - ax) * dx + (pz - az) * dz) / (dx * dx + dz * dz)
+        t = 0.0 if t < 0 else 1.0 if t > 1 else t
+        ex, ez = ax + dx * t - px, az + dz * t - pz
+        d = ex * ex + ez * ez
+        if d < dmin:
+            dmin = d
+    d = math.sqrt(dmin)
+    return d if dentro else -d
+
+
+def dist_rect(x, z, r):
+    dx = max(r[0] - x, 0.0, x - r[1])
+    dz = max(r[2] - z, 0.0, z - r[3])
+    return math.hypot(dx, dz)
+
+
+def acantilado(x, z):
+    return max(ss(r, r * 0.45, math.hypot(x - cx, z - cz)) for cx, cz, r in ACANTILADOS)
+
+
+def ancho_playa(x, z, c):
+    return max(16.0, min(56.0, 36.0 + 16.0 * fbm(x, z, 110, 5))) * (1 - c)
+
+
+class Terreno:
+    def __init__(self):
+        pts = catmull_2d(COSTA, 5)
+        segs = [(a[0], a[1], b[0], b[1]) for a, b in zip(pts, pts[1:] + pts[:1])]
+        n = ISLA_NX * ISLA_NZ
+        self.s = [0.0] * n
+        self.h = [0.0] * n
+        self.m = [0] * n
+        self.w = [0] * n
+        self.niveles = [MAR]
+        for iz in range(ISLA_NZ):
+            for ix in range(ISLA_NX):
+                x, z = self.centro(ix, iz)
+                s = dist_costa(x, z, segs) + 7.0 * fbm(x, z, 70, 3)
+                self.s[iz * ISLA_NX + ix] = s
+        nivel_estanque = self.nivel(99.0)
+        nivel_arroyo = self.nivel(111.2)
+        for iz in range(ISLA_NZ):
+            for ix in range(ISLA_NX):
+                i = iz * ISLA_NX + ix
+                x, z = self.centro(ix, iz)
+                h, m, w = self.columna(x, z, self.s[i], nivel_estanque, nivel_arroyo)
+                self.h[i], self.m[i], self.w[i] = h, m, w
+        self.rocas_por_pendiente()
+
+    def nivel(self, y):
+        self.niveles.append(y)
+        return len(self.niveles) - 1
+
+    def centro(self, ix, iz):
+        return ISLA_X0 + (ix + 0.5) * ISLA_CELDA, ISLA_Z0 + (iz + 0.5) * ISLA_CELDA
+
+    def columna(self, x, z, s, nivel_estanque, nivel_arroyo):
+        c = acantilado(x, z)
+        W = ancho_playa(x, z, c)
+        mat = "Sand"
+        agua = 0
+        if s < 0:
+            d = -s
+            h = MAR + 0.25 - (0.3 + 3.2 * ss(0, 40, d) + 14.6 * ss(30, 92, d))
+        else:
+            if s < W:
+                hb = MAR + 0.25 + 0.9 * (s / max(W, 1)) + 1.85 * ss(0.55 * W, W, s)
+                hb += 1.1 * ss(0.5 * W, 0.85 * W, s) * (1 - ss(0.85 * W, 1.15 * W, s)) * (0.6 + 0.5 * fbm(x, z, 24, 9))
+            else:
+                hb = 92.0 + 3.0 * ss(W, W + 30, s) + 1.8 * fbm(x, z, 46, 7) * ss(W, W + 22, s)
+            hc = MAR + 12 * ss(0, 9, s) + 4 * ss(9, 40, s) + 1.5 * fbm(x, z, 30, 13)
+            h = mezcla(hb, max(hb, hc), c)
+            interior = ss(W - 2, W + 10, s)
+            for cx, cz, A, sig, meseta in COLINAS:
+                r = max(0.0, math.hypot(x - cx, z - cz) - meseta)
+                h += A * math.exp(-r * r / (2 * sig * sig)) * max(interior, c)
+            if s > W + 3 or (c > 0.5 and s > 6):
+                mat = "LeafyGrass" if fbm(x, z, 38, 21) > 0.18 else "Grass"
+        e = math.hypot((x - LAGUNA[0]) / 44.0, (z - LAGUNA[1]) / 31.0)
+        canal, _ = dist_seg(x, z, LAGUNA[0], LAGUNA[1], -236.0, -60.0)
+        hondo = max(1 - ss(0.5, 1.08, e), 1 - ss(5.0, 10.0, canal))
+        if hondo > 0:
+            fondo = 86.2 + 2.0 * ss(0, 0.6, e) + 0.6 * fbm(x, z, 12, 31)
+            h = mezcla(h, min(h, fondo), hondo)
+            if math.hypot(x + 160, z + 44) < 9:
+                h = max(h, 89.9 - 0.12 * math.hypot(x + 160, z + 44) ** 1.4)
+            if mat in ("Grass", "LeafyGrass") and hondo > 0.3:
+                mat = "Sand"
+        for cx, cz, r, alto in ROCAS_TERRENO:
+            dd = math.hypot(x - cx, z - cz) / r
+            if dd < 1.25:
+                cima = MAR + 0.5 + alto * (1 - min(dd, 1.0) ** 2) ** 0.7 + 1.2 * fbm(x, z, 6, 41)
+                if dd < 1.0 and cima > h:
+                    h = max(h, cima)
+                    mat = "Rock"
+        ex, ez = ESTANQUE
+        dx, dz = CIMA[0] - ex, CIMA[1] - ez
+        L = math.hypot(dx, dz)
+        ux, uz = dx / L, dz / L
+        t = (x - ex) * ux + (z - ez) * uz
+        q = abs(-(x - ex) * uz + (z - ez) * ux)
+        r_est = math.hypot(x - ex, z - ez)
+        if q < 16 and 11 < t < 36:
+            muro = 99.0 + 13.2 * ss(12.5, 15.5, t) * (1 - ss(11, 16, q))
+            if muro > h:
+                h = muro
+            if t < 17 and q < 13:
+                mat = "Rock"
+        if q < 3.2 and 15.5 < t < 34:
+            h = min(h, 110.2 + 0.03 * (t - 16))
+            mat = "Rock"
+            agua = nivel_arroyo
+        if r_est < 17:
+            fondo = 96.0 + 3.6 * ss(8, 15, r_est)
+            h = min(h, fondo) if r_est < 14 else mezcla(min(h, fondo), h, ss(14, 17, r_est))
+            if r_est < 14:
+                agua = nivel_estanque
+            mat = "Rock" if 11 < r_est < 16 else ("Sand" if r_est <= 11 else mat)
+        if s > -4:
+            for linea in SENDAS:
+                d = dist_linea(x, z, linea)
+                if d < 6:
+                    h -= 0.35 * (1 - ss(2, 6, d))
+                    if d < 3.4 and mat in ("Grass", "LeafyGrass"):
+                        mat = "Ground"
+        cx, cz = CAMPAMENTO
+        dc = math.hypot(x - cx, z - cz)
+        if dc < 24:
+            h = mezcla(h, 90.9, 1 - ss(12, 24, dc))
+            if dc < 15:
+                mat = "Sand"
+        sx, sz = CIMA
+        dcima = math.hypot(x - sx, z - sz)
+        if dcima < 16:
+            h = mezcla(h, 121.0, 1 - ss(10, 16, dcima))
+        da = dist_rect(x, z, AVION_RECT) + 8 * fbm(x, z, 30, 63) * ss(0, 8, dist_rect(x, z, AVION_RECT))
+        if da < 26:
+            h = mezcla(h, SUELO_AVION, 1 - ss(0, 26, da))
+        claro = math.hypot(x / 62.0, (z + 12) / (78.0 if z > -12 else 70.0)) + 0.2 * fbm(x, z, 34, 61) + 0.08 * fbm(x, z, 11, 67)
+        if claro < 1.0 and mat not in ("Rock", "Ground"):
+            mat = "Sand"
+        (ax, az), (bx, bz) = SURCO
+        ds, ts = dist_seg(x, z, ax, az, bx, bz)
+        if ds < 13:
+            fin = ss(0.0, 0.12, ts) * ss(0.0, 0.08, 1 - ts)
+            surco = (-1.5 * (1 - ss(3.5, 6.5, ds)) + 1.0 * ss(4.5, 7.0, ds) * (1 - ss(9.0, 13.0, ds))) * (0.4 + 0.6 * fin)
+            h += surco * (1.0 if z < 84 else 0.6)
+            if ds < 9.5 and h > MAR - 0.2:
+                mat = "Ground"
+        if mat == "Sand" and -2.5 < s < 3.0 + 1.5 * fbm(x, z, 20, 51) and agua == 0 and hondo < 0.4:
+            mat = "Salt"
+        if hondo > 0.3 and abs(h - MAR) < 0.7:
+            mat = "Salt"
+        if mat == "Sand" and h < MAR - 7:
+            mat = "Slate"
+        return max(h, FONDO), MATERIALES_ISLA.index(mat), agua
+
+    def rocas_por_pendiente(self):
+        roca = MATERIALES_ISLA.index("Rock")
+        nuevos = list(self.m)
+        for iz in range(1, ISLA_NZ - 1):
+            for ix in range(1, ISLA_NX - 1):
+                i = iz * ISLA_NX + ix
+                if self.h[i] < MAR + 1.5:
+                    continue
+                g = max(abs(self.h[i + 1] - self.h[i - 1]), abs(self.h[i + ISLA_NX] - self.h[i - ISLA_NX])) / (2 * ISLA_CELDA)
+                if g > 0.85:
+                    nuevos[i] = roca
+        self.m = nuevos
+
+    def indice(self, x, z):
+        fx = (x - ISLA_X0) / ISLA_CELDA - 0.5
+        fz = (z - ISLA_Z0) / ISLA_CELDA - 0.5
+        ix = max(0, min(ISLA_NX - 2, int(math.floor(fx))))
+        iz = max(0, min(ISLA_NZ - 2, int(math.floor(fz))))
+        return ix, iz, min(1.0, max(0.0, fx - ix)), min(1.0, max(0.0, fz - iz))
+
+    def interp(self, campo, x, z):
+        ix, iz, tx, tz = self.indice(x, z)
+        i = iz * ISLA_NX + ix
+        a, b, c, d = campo[i], campo[i + 1], campo[i + ISLA_NX], campo[i + ISLA_NX + 1]
+        return mezcla(mezcla(a, b, tx), mezcla(c, d, tx), tz)
+
+    def altura(self, x, z):
+        return self.interp(self.h, x, z)
+
+    def costa(self, x, z):
+        return self.interp(self.s, x, z)
+
+    def suelo(self, x, z, r=0.0):
+        if r <= 0:
+            return self.altura(x, z)
+        return min([self.altura(x, z)] + [self.altura(x + r * math.cos(a), z + r * math.sin(a)) for a in (0.0, 1.57, 3.14, 4.71)])
+
+    def material(self, x, z):
+        ix, iz, tx, tz = self.indice(x, z)
+        return MATERIALES_ISLA[self.m[(iz + round(tz)) * ISLA_NX + ix + round(tx)]]
+
+    def mojado(self, x, z):
+        ix, iz, tx, tz = self.indice(x, z)
+        return self.w[(iz + round(tz)) * ISLA_NX + ix + round(tx)] != 0 or self.altura(x, z) < MAR + 0.35
+
+    def hacia_mar(self, x, z):
+        gx = self.costa(x + 3, z) - self.costa(x - 3, z)
+        gz = self.costa(x, z + 3) - self.costa(x, z - 3)
+        n = math.hypot(gx, gz) or 1.0
+        return -gx / n, -gz / n
+
+    def codificar(self):
+        out = []
+        for i in range(ISLA_NX * ISLA_NZ):
+            v = max(0, min(4095, int(round((self.h[i] - ISLA_Y0) * 32))))
+            out.append(ALFABETO[v >> 6] + ALFABETO[v & 63] + ALFABETO[self.m[i]] + ALFABETO[self.w[i]])
+        return "".join(out)
+
+
+def giro_hacia(dx, dz):
+    return math.degrees(math.atan2(-dx, -dz))
+
+
+class Dispersor:
+    def __init__(self, t, semilla=7):
+        self.t = t
+        self.rnd = random.Random(semilla)
+        self.ocupado = []
+        self.lista = []
+        self.cuenta = {}
+        self.palmeras = []
+
+    def libre(self, x, z, r):
+        if dist_rect(x, z, AVION_RECT) < 6 + r:
+            return False
+        for linea in SENDAS:
+            if dist_linea(x, z, linea) < 3.6 + r * 0.6:
+                return False
+        if dist_seg(x, z, *SURCO[0], *SURCO[1])[0] < 8 + r * 0.5:
+            return False
+        if math.hypot(x - CAMPAMENTO[0], z - CAMPAMENTO[1]) < 16 + r:
+            return False
+        if math.hypot(x - CIMA[0], z - CIMA[1]) < 12 + r:
+            return False
+        if 150 < x < 230 and abs(z + 74) < 8 + r:
+            return False
+        for ox, oz, orr in self.ocupado:
+            if (x - ox) ** 2 + (z - oz) ** 2 < (r + orr) ** 2:
+                return False
+        return True
+
+    def poner(self, visual, x, z, giro, escala=1.0, nombre=None, hundir=0.15, radio=None, colision=False, atributos=None,
+              hijos=None, base=None):
+        tam = [v * escala for v in TAM_ISLA[visual]]
+        if radio is not None:
+            self.ocupado.append((x, z, radio))
+        y = base if base is not None else self.t.suelo(x, z, min(tam[0], tam[2]) * 0.3) - hundir * escala
+        self.lista.append(deco(nombre or visual, visual, tuple(tam), x, y, z, giro % 360, "FFFFFF", colision=colision,
+                              hijos=hijos, atributos=atributos, transp=1))
+        self.cuenta[visual] = self.cuenta.get(visual, 0) + 1
+        return y, tam
+
+    def palmera(self, visual, x, z, giro, escala, cocos=False):
+        y = self.t.suelo(x, z, 1.0) - 0.4 * escala
+        if visual == "PalmeraInclinada":
+            fx, fz = -math.sin(math.radians(giro)), -math.cos(math.radians(giro))
+            off = INCLINADA_BASE * escala
+            self.poner(visual, x + fx * off, z + fz * off, giro, escala, "PalmeraInclinada", base=y)
+            self.ocupado.append((x, z, 2.2 * escala))
+            self.ocupado.append((x + fx * off * 1.6, z + fz * off * 1.6, 3.0 * escala))
+        else:
+            self.poner(visual, x, z, giro, escala, "Palmera", radio=2.2 * escala, base=y)
+        alto = 6.0 * escala
+        self.lista.append(part("TroncoPalmera", (alto, 1.5 * escala, 1.5 * escala), (x, y + alto / 2, z),
+                               "9C6B3E", "Wood", forma="Cylinder", r=rot(0, 0, 90), transp=1, sombra=False))
+        if cocos:
+            for k in range(2):
+                a = self.rnd.uniform(0, 6.28)
+                cx, cz = x + 2.6 * math.cos(a), z + 2.6 * math.sin(a)
+                if not self.t.mojado(cx, cz):
+                    self.lista.append(punto("coco", cx, self.t.suelo(cx, cz) + 0.8, cz))
+
+    def roca(self, visual, x, z, giro, escala, hundir=0.5):
+        radio = max(TAM_ISLA[visual][0], TAM_ISLA[visual][2]) * 0.45 * escala
+        y, tam = self.poner(visual, x, z, giro, escala, hundir=hundir, radio=radio)
+        if tam[1] > 2.5:
+            d = min(tam[0], tam[2]) * 0.8
+            self.lista.append(part("ColisionRoca", (d, d, d), (x, y + tam[1] * 0.35, z), "FFFFFF", forma="Ball", transp=1,
+                                   sombra=False))
+
+    def poisson(self, n, minimo, filtro, rango=(ISLA_X0 + 8, ISLA_X0 + ISLA_NX * ISLA_CELDA - 8, ISLA_Z0 + 8, ISLA_Z0 + ISLA_NZ * ISLA_CELDA - 8)):
+        celda = minimo / math.sqrt(2)
+        rejilla = {}
+        out = []
+        for _ in range(n):
+            x = self.rnd.uniform(rango[0], rango[1])
+            z = self.rnd.uniform(rango[2], rango[3])
+            gx, gz = int(x // celda), int(z // celda)
+            cerca = False
+            for ax in range(gx - 2, gx + 3):
+                for az in range(gz - 2, gz + 3):
+                    p = rejilla.get((ax, az))
+                    if p and (p[0] - x) ** 2 + (p[1] - z) ** 2 < minimo * minimo:
+                        cerca = True
+            if cerca or not filtro(x, z):
+                continue
+            rejilla[(gx, gz)] = (x, z)
+            out.append((x, z))
+        return out
+
+
 def isla():
-    cx, base, cz = -140.0, 90.2, -40.0
+    t = Terreno()
+    D = Dispersor(t)
+    rnd = D.rnd
     p = []
-    p.append(part("Agua", (2400, 0.4, 2400), (cx, 89.0, cz), "2FB3C4", "Glass", transp=0.3, colision=False, sombra=False))
-    p.append(part("FondoMar", (2400, 1, 2400), (cx, 86.1, cz), "D9B877", "Sand"))
-    p.append(part("ArenaPaso", (1.8, 500, 500), (cx, 87.7, cz), "D9B877", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
-    p.append(part("Arena", (2, 450, 450), (cx, 89.2, cz), "F2D9A0", "Sand", forma="Cylinder", r=rot(0, 0, 90), transp=1))
-    p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart", r=rot(0, 180, 0)))
-    p.append(part("CubiertaMuelle", (30, 0.6, 8), (108, 89.9, -70), "6E4A2B", "WoodPlanks", transp=1))
-    d = [deco("Terreno", "IslaTerreno", (520, 8.1, 520), cx, base - 8.1, cz, 0, "F2D9A0", colision=False, transp=1)]
-    d.append(deco("Hoguera", "Hoguera", (6, 3, 6), -250, base, 0, 0, "6E4A2B", atributos={"Zona": "Hoguera"}))
-    d.append(deco("EstacionRadio", "EstacionRadio", (6, 4, 4), 58, base, -10, 90, "9C6B3E", atributos={"Zona": "Radio"}))
-    d.append(deco("Muelle", "Muelle", (8, 3, 30), 108, 87.2, -70, 90, "6E4A2B", colision=False))
-    d.append(deco("Sos", "SenalSOS", (24, 0.6, 9), -80, base, -210, 8, "9AA0A6", colision=False))
-    d.append(deco("RestosAla", "RestosAla", (26, 3, 10), -72, base, 72, 25, "FFF4E0"))
-    d.append(deco("RestosMotor", "RestosMotor", (6, 6, 6), 54, base - 1, 60, 40, "9AA0A6"))
-    cajones = ((70, 40), (-200, 120), (-300, -60), (20, -150))
-    for i, (x, z) in enumerate(cajones):
-        d.append(deco("Cajon", "Cajon", (3, 3, 3), x, base, z, i * 37, "9C6B3E"))
-    palmas = ((-60, -120), (-120, -150), (-200, -170), (-280, -120), (-320, -20), (-300, 80), (-230, 140), (-150, 160),
-              (-60, 150), (60, 120), (75, -90), (-180, 40), (-20, -200), (-250, -200), (-90, 20), (-330, 150))
-    for i, (x, z) in enumerate(palmas):
-        alto = 22 if i % 2 == 0 else 18
-        ancho = 12 if i % 2 == 0 else 10
-        d.append(deco("Palmera", f"Palmera{1 + i % 2}", (ancho, alto, ancho), x, base, z, (i * 53) % 360, "6DBE45", colision=False))
-        d.append(part("TroncoPalmera", (alto * 0.62, 1.6, 1.6), (x, base + alto * 0.31, z), "9C6B3E", "Wood", forma="Cylinder",
-                      r=rot(0, 0, 90), transp=1))
-        d.append(punto("coco", x + 2.2, base + 0.8, z + 1.6))
-        d.append(punto("coco", x - 1.8, base + 0.8, z - 2.0))
-    for x, z, g in ((-330, -110, 20), (-60, -232, 70), (-262, 150, 140), (40, -40, 200)):
-        d.append(deco("Roca", "RocaGrande", (14, 9, 12), x, base - 0.6, z, g, "9AA0A6"))
-    for i, (x, z) in enumerate(((-100, -60), (-220, -40), (-170, -230), (10, 100), (-280, 30), (-40, 60), (30, -120), (-350, 50))):
-        d.append(deco("Piedra", "RocaPequena", (5, 3, 4), x, base - 0.3, z, i * 61, "9AA0A6"))
-    for i, (x, z) in enumerate(((-70, -100), (-210, -150), (-300, -100), (-310, 100), (-160, 140), (50, 100), (-10, -180),
-                                (-200, 60), (-120, -10), (-260, 120), (70, -60), (-340, 0))):
-        d.append(deco("Arbusto", "ArbustoTropical", (5, 4, 5), x, base, z, i * 47, "6DBE45", colision=False))
-    for x, z in ((72, 44), (-200, 125), (-296, -56), (22, -146), (-325, -100), (-55, -222)):
-        d.append(punto("radio", x, base + 1.4, z))
-    for x, z in ((-118, -144), (-276, -114), (-148, 154), (58, 114), (-18, -194), (-226, 134), (-176, 46)):
-        d.append(punto("tronco", x, base + 1, z))
-    for x, z in ((80, -120), (-30, -250), (-330, 60), (-280, -200), (40, 150), (-120, 180)):
-        d.append(punto("cangrejo", x, base + 0.6, z))
-    d.append(punto("bengala", 64, base + 1, -24))
-    d.append(part("PuntoRescate", (1, 1, 1), (150, 89.2, -46), "FFFFFF", transp=1, colision=False, sombra=False,
-                  atributos={"Zona": "Rescate"}))
+    datos = {"name": "Terreno", "className": "StringValue", "properties": {"Value": t.codificar()},
+             "attributes": {"X0": float(ISLA_X0), "Z0": float(ISLA_Z0), "Y0": float(ISLA_Y0), "Celda": float(ISLA_CELDA),
+                            "NX": float(ISLA_NX), "NZ": float(ISLA_NZ), "Mar": MAR, "Fondo": FONDO,
+                            "Materiales": ",".join(MATERIALES_ISLA), "Niveles": ",".join(str(v) for v in t.niveles),
+                            "Oceano": float(OCEANO)}}
+    p.append(datos)
+    ocx, ocz = ISLA_X0 + ISLA_NX * ISLA_CELDA / 2, ISLA_Z0 + ISLA_NZ * ISLA_CELDA / 2
+    lejos = []
+    for i in range(-2, 3):
+        for k in range(-2, 3):
+            if i or k:
+                lejos.append(part("MarLejano", (OCEANO, 1, OCEANO), (ocx + i * OCEANO, MAR - 0.6, ocz + k * OCEANO), "17809A",
+                                  colision=False, sombra=False))
+    p.append(carpeta("MarLejano", lejos))
+    p.append(part("RampaSuelo", (12, 2.6, 5.2), (0, 91.3, 31.4), "8A8F96", "DiamondPlate", clase="WedgePart", r=rot(0, 180, 0), transp=1))
+    p.append(part("CubiertaMuelle", (62, 0.6, 8), (190, 89.9, -74), "6E4A2B", "WoodPlanks", transp=1))
+    d = D.lista
+
+    sx, sz = CIMA
+    yc = t.suelo(sx, sz)
+    D.ocupado.append((sx, sz, 10))
+    gm = giro_hacia(12, 8)
+    fx, fz = -math.sin(math.radians(gm)), -math.cos(math.radians(gm))
+    D.poner("Mirador", sx, sz, gm, base=yc - 0.1)
+    d.append(part("SueloMirador", (12.6, 1.4, 12.6), (sx, yc + 0.6, sz), "9C6B3E", "WoodPlanks", r=rot(0, gm, 0), transp=1))
+    d.append(part("EscalonMirador", (3.4, 1.4, 2.4), (sx + fx * 7.2, yc + 0.6, sz + fz * 7.2), "9C6B3E", "WoodPlanks", clase="WedgePart",
+                  r=rot(0, gm, 0), transp=1, sombra=False))
+    d.append(deco("EstacionRadio", "EstacionRadio", (6, 4, 4), sx, yc + 1.3, sz, giro_hacia(12, 8), "9C6B3E", atributos={"Zona": "Radio"}))
+    cx, cz = CAMPAMENTO
+    d.append(deco("Hoguera", "Hoguera", (6, 3, 6), cx + 2, t.suelo(cx + 2, cz + 2) - 0.1, cz + 2, 0, "6E4A2B", atributos={"Zona": "Hoguera"}))
+    D.ocupado.append((cx + 2, cz + 2, 5))
+    D.poner("Refugio", cx - 10, cz - 12, giro_hacia(12, 14), radio=6)
+    D.poner("Cartel", cx - 12, cz + 9, giro_hacia(-1, 0.3), radio=1.5)
+    D.poner("SenalSOS", 108, 24, 15, hundir=0.05, radio=12)
+    for i, x in enumerate((175, 205)):
+        D.poner("Muelle", x, -74, 90, base=87.2)
+    d.append(part("PuntoRescate", (1, 1, 1), (238, 89.2, -74), "FFFFFF", transp=1, colision=False, sombra=False, atributos={"Zona": "Rescate"}))
+
+    D.poner("RestosAla", 30, 106, 20, hundir=0.5, radio=10)
+    D.poner("RestosMotor", -24, 62, 40, hundir=0.6, radio=4, atributos={"Fuego": 1.6})
+    D.poner("TrozoFuselaje", -62, 50, -32, hundir=0.5, radio=6, colision=True, atributos={"Fuego": 1.2})
+    for x, z, g in ((12, 46, 30), (-14, 54, 200), (22, 84, 110), (-8, 98, 300), (42, 60, 75)):
+        D.poner("AsientoRoto", x, z, g, hundir=0.2, radio=1.8)
+    for x, z, g, v in ((26, 52, 10, "MaletaAbierta"), (-30, 80, 140, "MaletaAbierta"), (54, 44, 250, "MaletaAbierta"),
+                       (8, 66, 60, "MaletaCerrada"), (-20, 40, 95, "MaletaCerrada"), (36, 72, 180, "MaletaCerrada"),
+                       (-44, 64, 20, "MaletaCerrada"), (64, 30, 300, "MaletaCerrada")):
+        D.poner(v, x, z, g, hundir=0.1, radio=2)
+    D.ocupado.append((14, 34, 2))
+    radios = [(16, 34), (-22, 72), (-56, 40), (-146, 50), (-12, -184), (128, 30)]
+    for i, (x, z) in enumerate(radios):
+        g = rnd.uniform(0, 360)
+        y, tam = D.poner("CajaAbierta", x, z, g, hundir=0.1, radio=3)
+        d.append(part("TapaCaja", (2.8, 1.6, 2.3), (x, y + 0.8, z), "C98B4E", "Wood", r=rot(0, g, 0), transp=1, sombra=False))
+        d.append(punto("radio", x, y + 2.6, z))
+    D.poner("Bote", -152, 60, 120, hundir=0.4, radio=7, colision=True)
+    bx, bz = -52, 2
+    gb = giro_hacia(1, -0.4)
+    fx, fz = -math.sin(math.radians(gb)), -math.cos(math.radians(gb))
+    y, _ = D.poner("CajaBengala", bx, bz, gb, hundir=0.05, radio=2)
+    d.append(part("TapaCaja", (2.3, 0.9, 1.5), (bx + fx * 0.22, y + 0.45, bz + fz * 0.22), "F27B2B", r=rot(0, gb, 0), transp=1, sombra=False))
+    d.append(punto("bengala", bx + fx * 0.22, y + 1.8, bz + fz * 0.22))
+
+    ex, ez = ESTANQUE
+    ux, uz = CIMA[0] - ex, CIMA[1] - ez
+    L = math.hypot(ux, uz)
+    ux, uz = ux / L, uz / L
+    D.poner("Cascada", ex + ux * 10.8, ez + uz * 10.8, giro_hacia(-ux, -uz), 0.85, base=98.6, radio=5)
+    D.ocupado.append((ex, ez, 15))
+
+    for linea in SENDAS[:2]:
+        a, b = linea[0], linea[1]
+        D.poner("Cartel", a[0] + 4, a[1] - 2, giro_hacia(b[0] - a[0], b[1] - a[1]) + 90, radio=1.5)
+    for x, z, g in ((-170, 62, 30), (-186, 46, 100), (-160, 82, 200), (-200, -118, 60)):
+        D.poner("Charca", x, z, g, hundir=0.35, radio=5)
+
+    for x, z in ((-58, -66), (52, -92), (-112, -84), (88, -138), (-24, -230), (-122, -152), (18, -120)):
+        g = rnd.uniform(0, 360)
+        D.poner("PilaLena", x + 3.5 * math.cos(math.radians(g)), z + 3.5 * math.sin(math.radians(g)), g, radio=3)
+        d.append(punto("tronco", x, t.suelo(x, z) + 1, z))
+        D.ocupado.append((x, z, 4.0))
+    for x, z in ((60, 70), (-92, 74), (-190, 8), (152, -20), (130, -196), (-200, -126), (-120, 82), (166, -112)):
+        d.append(punto("cangrejo", x, t.suelo(x, z) + 0.6, z))
+
+    def zona(x, z):
+        s = t.costa(x, z)
+        c = acantilado(x, z)
+        W = ancho_playa(x, z, c)
+        return s, W, c
+
+    for x, z in D.poisson(9000, 12, lambda x, z: (lambda s, W, c: c < 0.4 and W - 12 < s < W + 3 and not t.mojado(x, z))(*zona(x, z)) and D.libre(x, z, 2.5)):
+        if rnd.random() < 0.8:
+            mx, mz = t.hacia_mar(x, z)
+            D.palmera("PalmeraInclinada", x, z, giro_hacia(mx, mz) + rnd.uniform(-30, 30), rnd.uniform(0.8, 1.15))
+
+    grandes = (("Palmera1", 0.18), ("Palmera2", 0.17), ("Palmera3", 0.1), ("Platanera", 0.22), ("HojasGrandes", 0.15), ("PalmeraJoven", 0.18))
+
+    def elegir(opciones):
+        r = rnd.random() * sum(w for _, w in opciones)
+        for nombre, w in opciones:
+            r -= w
+            if r <= 0:
+                return nombre
+        return opciones[-1][0]
+
+    def selva(x, z):
+        s, W, c = zona(x, z)
+        return s > W + 5 and t.material(x, z) in ("Grass", "LeafyGrass") and not t.mojado(x, z) and fbm(x, z, 55, 77) > -0.2
+
+    arboles = []
+    for x, z in D.poisson(16000, 11, lambda x, z: selva(x, z) and D.libre(x, z, 2.5)):
+        if rnd.random() > 0.3 + 0.7 * ss(-0.25, 0.3, fbm(x, z, 48, 79)):
+            continue
+        v = elegir(grandes)
+        e = rnd.uniform(0.85, 1.15) * {"Platanera": 1.35, "HojasGrandes": 1.6}.get(v, 1.0)
+        arboles.append((x, z))
+        if v.startswith("Palmera"):
+            D.palmera(v, x, z, rnd.uniform(0, 360), e, cocos=v != "PalmeraJoven" and rnd.random() < 0.5)
+        else:
+            D.poner(v, x, z, rnd.uniform(0, 360), e, radio=2.0 * e, hundir=0.2)
+    rejilla = {}
+    for x, z in arboles:
+        rejilla.setdefault((int(x // 16), int(z // 16)), []).append((x, z))
+
+    def junto_arbol(x, z, r):
+        gx, gz = int(x // 16), int(z // 16)
+        return any((x - ax) ** 2 + (z - az) ** 2 < r * r for i in (-1, 0, 1) for k in (-1, 0, 1) for ax, az in rejilla.get((gx + i, gz + k), ()))
+
+    pequenas = (("Helecho", 0.34), ("ArbustoTropical", 0.26), ("Flores", 0.16), ("HojasGrandes", 0.16), ("Hierba", 0.08))
+    escalas = {"Helecho": (1.5, 2.2), "ArbustoTropical": (1.0, 1.4), "Flores": (1.8, 2.6), "HojasGrandes": (0.9, 1.4), "Hierba": (1.2, 1.7)}
+
+    def maleza(x, z):
+        s, W, c = zona(x, z)
+        if s < W - 4 or t.mojado(x, z) or t.material(x, z) == "Rock":
+            return False
+        borde = s < W + 9
+        return (borde or junto_arbol(x, z, 9.5) or fbm(x, z, 30, 91) > 0.3) and D.libre(x, z, 2.6)
+    for x, z in D.poisson(30000, 6.0, maleza):
+        v = elegir(pequenas)
+        a, b = escalas[v]
+        e = rnd.uniform(a, b)
+        D.poner(v, x, z, rnd.uniform(0, 360), e, radio=1.2 * e, hundir=0.12)
+    for x, z in D.poisson(9000, 6, lambda x, z: (lambda s, W, c: W - 16 < s < W - 2 and c < 0.5 and not t.mojado(x, z))(*zona(x, z)) and D.libre(x, z, 0.8)):
+        if rnd.random() < 0.55:
+            D.poner("Hierba", x, z, rnd.uniform(0, 360), rnd.uniform(1.1, 1.7), radio=0.6, hundir=0.1)
+    for x, z in D.poisson(4000, 16, lambda x, z: (lambda s, W, c: -3 < s < 14 and c < 0.5 and t.altura(x, z) > MAR - 0.6)(*zona(x, z)) and D.libre(x, z, 1.0)):
+        D.poner("Conchas", x, z, rnd.uniform(0, 360), rnd.uniform(1.0, 1.5), radio=1.0, hundir=0.05)
+    for x, z in D.poisson(3000, 42, lambda x, z: (lambda s, W, c: 5 < s < W - 6 and c < 0.4 and not t.mojado(x, z))(*zona(x, z)) and D.libre(x, z, 4)):
+        D.poner("MaderaDeriva", x, z, rnd.uniform(0, 360), rnd.uniform(0.8, 1.2), radio=3.5, hundir=0.25)
+    for x, z in D.poisson(4000, 20, lambda x, z: (lambda s, W, c: c > 0.45 and -16 < s < -3)(*zona(x, z)) and D.libre(x, z, 4)):
+        D.roca("Acantilado", x, z, rnd.uniform(0, 360), rnd.uniform(0.7, 1.3), hundir=1.5)
+    for x, z in D.poisson(6000, 14, lambda x, z: (lambda s, W, c: (c > 0.3 and -4 < s < 30) or t.material(x, z) == "Rock")(*zona(x, z)) and D.libre(x, z, 3)):
+        v = elegir((("RocaGrande", 0.25), ("RocaMedia", 0.4), ("RocaPequena", 0.35)))
+        D.roca(v, x, z, rnd.uniform(0, 360), rnd.uniform(0.6, 1.1) if v == "RocaGrande" else rnd.uniform(0.7, 1.3))
+    for x, z in D.poisson(3000, 34, lambda x, z: (lambda s, W, c: -6 < s < 8 and c < 0.4)(*zona(x, z)) and D.libre(x, z, 4)):
+        D.roca(elegir((("RocasPlanas", 0.6), ("RocaPequena", 0.4))), x, z, rnd.uniform(0, 360), rnd.uniform(0.8, 1.2), hundir=0.4)
+
+    print("ISLA", sum(D.cuenta.values()), "props", sorted(D.cuenta.items()))
     p.append(carpeta("Decorado", d))
     return {"className": "Model", "children": p}
 

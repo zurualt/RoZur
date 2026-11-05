@@ -230,7 +230,7 @@ local function construir()
 		end
 	end
 
-	local indicacion = Gui.texto(raiz, "H controles · M música", UDim2.fromOffset(220, 24), UDim2.new(1, -14, 1, -10), Gui.PAPEL, false, 20)
+	local indicacion = Gui.texto(raiz, "H controles · M música · O ajustes", UDim2.fromOffset(320, 24), UDim2.new(1, -14, 1, -10), Gui.PAPEL, false, 20)
 	indicacion.AnchorPoint = Vector2.new(1, 1)
 	indicacion.TextXAlignment = Enum.TextXAlignment.Right
 	Gui.trazado(indicacion)

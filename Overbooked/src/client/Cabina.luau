@@ -126,6 +126,7 @@ function Cabina.iniciar()
 	local canones = exterior:WaitForChild("Canones", 10)
 	local torreta = exterior:WaitForChild("Torreta", 10)
 	local giro = if canones and canones:IsA("BasePart") then movil(canones) else nil
+	local giroAsiento = if canones and canones:IsA("BasePart") and torreta and torreta:IsA("BasePart") then movil(torreta, torreta.CFrame:Inverse() * CFrame.new(canones.Position)) else nil
 	local cab, ala, gas, mira = 0, 0, 0, 0
 	local V = Config.VUELO
 	RunService.RenderStepped:Connect(function(dt: number)
@@ -165,6 +166,9 @@ function Cabina.iniciar()
 			local delta = (objetivo - mira + math.pi) % (2 * math.pi) - math.pi
 			mira += delta * math.min(1, dt * 10)
 			mover(giro, mira, CFrame.Angles(0, mira, 0))
+			if giroAsiento then
+				mover(giroAsiento, mira, CFrame.Angles(0, mira, 0))
+			end
 		end
 	end)
 end

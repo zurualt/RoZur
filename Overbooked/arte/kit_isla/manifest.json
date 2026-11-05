@@ -10,26 +10,6 @@
     "triangulos": 2858
   },
   {
-    "nombre": "Palmera1",
-    "archivo": "Palmera1.fbx",
-    "tamano": [
-      12.36,
-      21.907,
-      12.184
-    ],
-    "triangulos": 1400
-  },
-  {
-    "nombre": "Palmera2",
-    "archivo": "Palmera2.fbx",
-    "tamano": [
-      9.954,
-      17.732,
-      10.287
-    ],
-    "triangulos": 1308
-  },
-  {
     "nombre": "RocaGrande",
     "archivo": "RocaGrande.fbx",
     "tamano": [
@@ -208,5 +188,285 @@
       0.4
     ],
     "triangulos": 110
+  },
+  {
+    "nombre": "Palmera1",
+    "archivo": "Palmera1.fbx",
+    "tamano": [
+      11.53,
+      24.729,
+      12.093
+    ],
+    "triangulos": 1822
+  },
+  {
+    "nombre": "Palmera2",
+    "archivo": "Palmera2.fbx",
+    "tamano": [
+      11.576,
+      20.141,
+      11.924
+    ],
+    "triangulos": 1698
+  },
+  {
+    "nombre": "Palmera3",
+    "archivo": "Palmera3.fbx",
+    "tamano": [
+      13.386,
+      28.699,
+      12.798
+    ],
+    "triangulos": 1894
+  },
+  {
+    "nombre": "PalmeraInclinada",
+    "archivo": "PalmeraInclinada.fbx",
+    "tamano": [
+      10.785,
+      20.806,
+      16.331
+    ],
+    "triangulos": 1870
+  },
+  {
+    "nombre": "PalmeraJoven",
+    "archivo": "PalmeraJoven.fbx",
+    "tamano": [
+      8.934,
+      9.473,
+      8.193
+    ],
+    "triangulos": 1972
+  },
+  {
+    "nombre": "Platanera",
+    "archivo": "Platanera.fbx",
+    "tamano": [
+      9.432,
+      7.089,
+      9.408
+    ],
+    "triangulos": 1084
+  },
+  {
+    "nombre": "Helecho",
+    "archivo": "Helecho.fbx",
+    "tamano": [
+      4.618,
+      1.588,
+      4.657
+    ],
+    "triangulos": 776
+  },
+  {
+    "nombre": "HojasGrandes",
+    "archivo": "HojasGrandes.fbx",
+    "tamano": [
+      6.83,
+      2.974,
+      6.77
+    ],
+    "triangulos": 660
+  },
+  {
+    "nombre": "Flores",
+    "archivo": "Flores.fbx",
+    "tamano": [
+      2.321,
+      2.12,
+      2.459
+    ],
+    "triangulos": 816
+  },
+  {
+    "nombre": "Hierba",
+    "archivo": "Hierba.fbx",
+    "tamano": [
+      1.818,
+      1.618,
+      1.993
+    ],
+    "triangulos": 312
+  },
+  {
+    "nombre": "MaderaDeriva",
+    "archivo": "MaderaDeriva.fbx",
+    "tamano": [
+      9.217,
+      1.595,
+      2.614
+    ],
+    "triangulos": 408
+  },
+  {
+    "nombre": "Conchas",
+    "archivo": "Conchas.fbx",
+    "tamano": [
+      2.645,
+      0.543,
+      2.191
+    ],
+    "triangulos": 434
+  },
+  {
+    "nombre": "Charca",
+    "archivo": "Charca.fbx",
+    "tamano": [
+      10.027,
+      1.15,
+      7.84
+    ],
+    "triangulos": 360
+  },
+  {
+    "nombre": "RocaMedia",
+    "archivo": "RocaMedia.fbx",
+    "tamano": [
+      7.99,
+      4.418,
+      5.012
+    ],
+    "triangulos": 120
+  },
+  {
+    "nombre": "Acantilado",
+    "archivo": "Acantilado.fbx",
+    "tamano": [
+      13.012,
+      15.5,
+      11.539
+    ],
+    "triangulos": 504
+  },
+  {
+    "nombre": "RocasPlanas",
+    "archivo": "RocasPlanas.fbx",
+    "tamano": [
+      9.748,
+      1.07,
+      6.698
+    ],
+    "triangulos": 264
+  },
+  {
+    "nombre": "AsientoRoto",
+    "archivo": "AsientoRoto.fbx",
+    "tamano": [
+      3.093,
+      2.966,
+      4.93
+    ],
+    "triangulos": 578
+  },
+  {
+    "nombre": "MaletaAbierta",
+    "archivo": "MaletaAbierta.fbx",
+    "tamano": [
+      3.2,
+      1.245,
+      5.473
+    ],
+    "triangulos": 602
+  },
+  {
+    "nombre": "MaletaCerrada",
+    "archivo": "MaletaCerrada.fbx",
+    "tamano": [
+      2.44,
+      1.072,
+      3.61
+    ],
+    "triangulos": 340
+  },
+  {
+    "nombre": "TrozoFuselaje",
+    "archivo": "TrozoFuselaje.fbx",
+    "tamano": [
+      9.342,
+      6.647,
+      7.563
+    ],
+    "triangulos": 364
+  },
+  {
+    "nombre": "CajaAbierta",
+    "archivo": "CajaAbierta.fbx",
+    "tamano": [
+      3.96,
+      2.766,
+      2.812
+    ],
+    "triangulos": 474
+  },
+  {
+    "nombre": "CajaBengala",
+    "archivo": "CajaBengala.fbx",
+    "tamano": [
+      2.4,
+      2.505,
+      2.657
+    ],
+    "triangulos": 216
+  },
+  {
+    "nombre": "Bote",
+    "archivo": "Bote.fbx",
+    "tamano": [
+      10.9,
+      2.382,
+      7.518
+    ],
+    "triangulos": 394
+  },
+  {
+    "nombre": "Cascada",
+    "archivo": "Cascada.fbx",
+    "tamano": [
+      12.557,
+      15.533,
+      9.266
+    ],
+    "triangulos": 1324
+  },
+  {
+    "nombre": "Mirador",
+    "archivo": "Mirador.fbx",
+    "tamano": [
+      12.65,
+      9.57,
+      15.712
+    ],
+    "triangulos": 1350
+  },
+  {
+    "nombre": "Cartel",
+    "archivo": "Cartel.fbx",
+    "tamano": [
+      5.434,
+      6.28,
+      0.959
+    ],
+    "triangulos": 394
+  },
+  {
+    "nombre": "Refugio",
+    "archivo": "Refugio.fbx",
+    "tamano": [
+      9.771,
+      5.157,
+      7.147
+    ],
+    "triangulos": 1190
+  },
+  {
+    "nombre": "PilaLena",
+    "archivo": "PilaLena.fbx",
+    "tamano": [
+      4.318,
+      2.42,
+      2.754
+    ],
+    "triangulos": 517
   }
 ]

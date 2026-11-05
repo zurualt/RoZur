@@ -30,7 +30,7 @@ local pasos: { Paso } = {
 
 local function vuelos(): number
 	local stats = jugador:FindFirstChild("leaderstats")
-	local v = stats and stats:FindFirstChild("Vuelos")
+	local v = stats and stats:FindFirstChild("Flights")
 	return if v and v:IsA("IntValue") then v.Value else -1
 end
 

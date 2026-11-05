@@ -2,6 +2,7 @@
 local InsertService = game:GetService("InsertService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Cielo = require(ReplicatedStorage.Shared.Cielo)
 local Config = require(ReplicatedStorage.Shared.Config)
 local Visuales = require(ReplicatedStorage.Shared.Visuales)
 
@@ -10,6 +11,7 @@ local Activos = {}
 local plantillas: { [string]: Model } = {}
 local pendientes: { [string]: { (Model) -> () } } = {}
 local fallidos: { [string]: boolean } = {}
+local extras: { [string]: Visuales.Caja } = {}
 
 local ESQUINAS = {
 	Vector3.new(1, 1, 1),
@@ -83,9 +85,37 @@ local function cargar(nombre: string, id: number)
 	end
 end
 
+local function cargarCielo(carpeta: Folder, nombre: string, id: number)
+	cargar(nombre, id)
+	local plantilla = plantillas[nombre]
+	local parte = plantilla and plantilla:FindFirstChildWhichIsA("MeshPart", true)
+	if not parte then
+		return
+	end
+	local copia = parte:Clone()
+	copia:PivotTo(Config.ROTACION_FBX)
+	copia.Anchored = true
+	copia.Name = nombre
+	copia.Parent = carpeta
+end
+
 function Activos.iniciar()
 	for nombre, id in Visuales.IDS do
 		task.spawn(cargar, nombre, id)
+	end
+	local carpeta = Instance.new("Folder")
+	carpeta.Name = Cielo.CARPETA
+	carpeta.Parent = ReplicatedStorage
+	for nombre, id in Cielo.IDS do
+		task.spawn(cargarCielo, carpeta, nombre, id)
+	end
+	local intro = Instance.new("Folder")
+	intro.Name = "ModelosIntro"
+	intro.Parent = ReplicatedStorage
+	for _, nombre in { "Maleta1", "Maleta2", "Maleta3", "Bolso" } do
+		Activos.clonar(nombre, function(visual)
+			visual.Parent = intro
+		end)
 	end
 end
 
@@ -95,7 +125,7 @@ function Activos.cuando(nombre: string, f: (Model) -> ())
 		task.spawn(f, plantilla)
 		return
 	end
-	if not Visuales.IDS[nombre] or fallidos[nombre] then
+	if not (Visuales.IDS[nombre] or extras[nombre]) or fallidos[nombre] then
 		return
 	end
 	local cola = pendientes[nombre] or {}
@@ -121,7 +151,7 @@ end
 
 local function colocar(visual: Model, base: CFrame, nombre: string, escala: number?)
 	visual:PivotTo(base * Config.ROTACION_FBX)
-	local esperada = Visuales.CAJAS[nombre]
+	local esperada = Visuales.CAJAS[nombre] or extras[nombre]
 	if not esperada then
 		return
 	end
@@ -247,6 +277,20 @@ function Activos.vestirAvion(avion: Model)
 			end
 		end
 		avion:SetAttribute("CascoCargado", true)
+	end)
+end
+
+function Activos.registrar(nombre: string, id: number, caja: Visuales.Caja)
+	extras[nombre] = caja
+	task.spawn(cargar, nombre, id)
+end
+
+function Activos.clonar(nombre: string, f: (Model) -> ())
+	Activos.cuando(nombre, function(plantilla)
+		local visual = plantilla:Clone()
+		colocar(visual, CFrame.identity, nombre)
+		anclar(visual)
+		f(visual)
 	end)
 end
 

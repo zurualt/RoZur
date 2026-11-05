@@ -12,7 +12,7 @@ Unidades: studs. Ejes de Roblox: X a la derecha, Y arriba, Z hacia atrás. El mo
 | Cocina | -52 a -44 | encimeras en x 4–7 y -7–-4 | — |
 | Pasajeros (8 filas, 2+2 asientos) | -44 a -8 | asientos x ±3,5 y ±5,7 | — |
 | Filas | centro z = -41,5 + 4,5·i (i = 0…7) | — | — |
-| Salidas sobre las alas | -25 a -22 | paredes | 100–106,5 |
+| Salidas sobre las alas | -25,55 a -21,45 (hueco del casco 4,1 × 6,8; salida trasera derecha -7,55 a -3,45) | paredes | 100–106,8 |
 | Baño (izquierda) y puerta de salida (derecha) | -8 a 0 | — | — |
 | Mampara cabina/bodega (puerta x ±2,5) | 0 | — | — |
 | Bodega | 0 a 22 | ±7 | 100–110 |

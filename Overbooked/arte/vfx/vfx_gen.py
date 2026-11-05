@@ -15,6 +15,7 @@ SPRITES = []
 
 
 def sprite(nombre, tam=128):
+    tam = tam if isinstance(tam, tuple) else (tam, tam)
     def deco(f):
         SPRITES.append((nombre, tam, f))
         return f
@@ -42,11 +43,16 @@ def ribete(pts, ancho, fondo, frente, semilla, cerrado=False):
     trazo(pts, ancho, frente, cerrado=cerrado, semilla=semilla + 1, var=0.15, amp=0.5, afilar=False)
 
 
-def humo(cx, cy, r, n, semilla, aplanar, tinta=GRIS):
-    forma = bulto(cx, cy, r, n, semilla, aplanar)
-    pieza(forma, BLANCO, r * 0.09, tinta=tinta, semilla=semilla, desfase=(0, 0),
-          rayas={"sep": r * 0.1, "ancho": r * 0.025, "color": SOMBRA, "zona": lambda q: (q[0] - cx) - (q[1] - cy) > r * 0.55})
-    trazo(elipse(cx - r * 0.25, cy + r * 0.18, r * 0.32, r * 0.24, 16, 0, 100, 210), r * 0.05, SOMBRA, semilla=semilla + 7)
+def encoger(pts, c, k, dx=0.0, dy=0.0):
+    return [(c[0] + (x - c[0]) * k + dx, c[1] + (y - c[1]) * k + dy) for x, y in pts]
+
+
+def humo(cx, cy, r, n, semilla, aplanar, tinta=TINTA):
+    forma = bulto(cx, cy, r, n, semilla, aplanar, 0.3)
+    relleno([temblar(forma, r * 0.015, semilla + 3)], SOMBRA)
+    relleno([temblar(encoger(forma, (cx, cy), 0.8, -r * 0.1, r * 0.1), r * 0.015, semilla + 4)], BLANCO)
+    trazo(elipse(cx - r * 0.42, cy + r * 0.3, r * 0.16, r * 0.11, 16, -30), r * 0.07, BLANCO, cerrado=True, semilla=semilla + 7)
+    trazo(forma, r * 0.12, tinta, cerrado=True, semilla=semilla, var=0.25)
 
 
 @sprite("Humo1", 256)
@@ -66,17 +72,28 @@ def s_humo3():
 
 @sprite("Polvo", 256)
 def s_polvo():
-    humo(128, 138, 96, 8, 41, 0.66, GRIS_CLARO)
-    for k, y in enumerate((52, 38)):
-        trazo([(70 + k * 20, y), (186 - k * 20, y)], 6.0, GRIS_CLARO, semilla=44 + k)
+    humo(128, 138, 96, 8, 41, 0.66, GRIS)
+    for k, y in enumerate((52, 34)):
+        trazo([(70 + k * 20, y), (186 - k * 20, y)], 9.0, GRIS, semilla=44 + k)
 
 
-@sprite("Llama")
+def llama(fase, semilla):
+    o = [math.sin(fase + k * 1.9) for k in range(6)]
+    fuera = suave([(128, 14), (178, 24), (208, 60), (214, 104), (202, 142), (190 + 10 * o[0], 188 + 8 * o[1]), (166, 146), (128 + 14 * o[2], 240 - 6 * o[3]), (92, 152),
+                   (62 + 10 * o[4], 182 + 8 * o[5]), (50, 132), (46, 88), (60, 46), (88, 22)], True, 6)
+    pieza(fuera, "FF8A2B", 10.0, semilla=semilla, desfase=(0, 0))
+    dentro = suave([(128, 30), (160, 40), (176, 74), (170, 112), (150, 134 + 8 * o[1]), (128 + 10 * o[3], 176 + 6 * o[0]), (104, 136), (86, 106), (82, 70), (98, 40)], True, 6)
+    pieza(dentro, "FFE36E", 6.0, tinta="E0602A", semilla=semilla + 1, desfase=(0, 0))
+    relleno([temblar(elipse(128, 64, 22, 26, 24), 1.2, semilla + 2)], "FFF8D6")
+    trazo([(176, 92), (184, 120)], 7.0, BLANCO, semilla=semilla + 3, var=0.2)
+
+
+@sprite("Llama", 512)
 def s_llama():
-    fuera = suave([(64, 124), (84, 92), (100, 66), (100, 40), (86, 16), (64, 8), (42, 16), (28, 40), (30, 66), (44, 84), (52, 70), (58, 96)], True, 6)
-    pieza(fuera, "FFAE3A", 6.0, semilla=51, desfase=(0, 0))
-    dentro = suave([(64, 80), (78, 60), (82, 38), (72, 22), (56, 22), (46, 36), (48, 54), (58, 62)], True, 6)
-    pieza(dentro, "FFF1A8", 4.0, tinta="F08A2E", semilla=52, desfase=(0, 0))
+    for k in range(4):
+        LIENZO["ox"], LIENZO["oy"] = (k % 2) * 256, (1 - k // 2) * 256
+        llama(k * math.pi / 2, 51 + k * 7)
+    LIENZO["ox"], LIENZO["oy"] = 0.0, 0.0
 
 
 @sprite("Chispa")
@@ -176,9 +193,105 @@ def pinchos(cx, cy, r, n, semilla, hondo):
 
 @sprite("Explosion", 256)
 def s_explosion():
-    pieza(pinchos(128, 128, 118, 11, 171, 0.66), NARANJA, 10.0, semilla=171, desfase=(0, 0))
-    pieza(pinchos(128, 130, 84, 9, 172, 0.68), AMARILLO, 7.0, tinta="E0702A", semilla=172, desfase=(0, 0))
-    relleno([temblar(bulto(130, 132, 46, 6, 173, 1.0, 0.15), 1.2, 174)], "FFF4C2")
+    pieza(pinchos(128, 128, 116, 11, 171, 0.64), "F2552B", 11.0, semilla=171, desfase=(0, 0))
+    pieza(pinchos(128, 130, 84, 9, 172, 0.66), "FFB02E", 8.0, semilla=172, desfase=(0, 0))
+    pieza(bulto(130, 132, 50, 6, 173, 1.0, 0.2), "FFF1A8", 6.0, semilla=174, desfase=(0, 0))
+    trazo(elipse(112, 150, 16, 10, 16, -30), 6.0, BLANCO, cerrado=True, semilla=175)
+
+
+@sprite("Hongo", 256)
+def s_hongo():
+    base = bulto(128, 40, 96, 7, 301, 0.26, 0.3)
+    pieza(base, "C9BFB2", 8.0, semilla=301, desfase=(0, 0))
+    tallo = suave([(104, 36), (112, 80), (106, 128), (150, 128), (144, 80), (152, 36)], True, 6)
+    pieza(tallo, "F7CF7A", 8.0, semilla=302, desfase=(0, 0), rayas={"sep": 8, "ancho": 2.2, "color": "E0A848", "zona": lambda q: q[0] > 136})
+    pieza(bulto(128, 112, 52, 6, 303, 0.3, 0.3), "FFB347", 7.0, semilla=303, desfase=(0, 0))
+    copa = bulto(128, 178, 98, 9, 304, 0.6, 0.28)
+    relleno([temblar(copa, 1.4, 305)], "E8762E")
+    relleno([temblar(encoger(copa, (128, 178), 0.82, -8, 9), 1.4, 306)], "FFB347")
+    relleno([temblar(bulto(104, 196, 26, 5, 307, 0.6, 0.25), 1.0, 308)], "FFE08A")
+    trazo(copa, 9.0, TINTA, cerrado=True, semilla=304, var=0.25)
+
+
+@sprite("Pinchos", 256)
+def s_pinchos():
+    pieza(pinchos(128, 128, 120, 13, 311, 0.7), BLANCO, 10.0, semilla=311, desfase=(0, 0), sombra=(7, -8, 0.45))
+    trazo(pinchos(128, 128, 92, 13, 311, 0.7), 3.0, SOMBRA, cerrado=True, semilla=312, var=0.2)
+
+
+@sprite("Nube", 256)
+def s_nube():
+    pieza(bulto(128, 132, 112, 8, 321, 0.72, 0.26), BLANCO, 10.0, semilla=321, desfase=(0, 0), sombra=(7, -8, 0.45))
+
+
+@sprite("Espiral")
+def s_espiral():
+    pts = [(64 + (4 + 52 * t) * math.cos(t * 6 * math.pi), 64 + (4 + 52 * t) * math.sin(t * 6 * math.pi)) for t in [k / 120 for k in range(121)]]
+    ribete(pts, 9.0, TINTA, BLANCO, 331)
+
+
+@sprite("Corazon")
+def s_corazon():
+    pts = [(64 + 3.4 * 16 * math.sin(t) ** 3, 58 + 3.4 * (13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t))) for t in [2 * math.pi * k / 96 for k in range(96)]]
+    pieza(pts, "F2556B", 7.0, semilla=341, desfase=(0, 0), rayas={"sep": 8, "ancho": 2.0, "color": "C93A50", "zona": lambda q: q[0] > 74 and q[1] < 56})
+    trazo(elipse(42, 82, 13, 9, 16, 40, 100, 230), 6.0, BLANCO, semilla=342)
+
+
+@sprite("Vena")
+def s_vena():
+    for k, (sx, sy) in enumerate(((1, 1), (-1, 1), (-1, -1), (1, -1))):
+        a = math.degrees(math.atan2(-sy, -sx))
+        ribete(elipse(64 + sx * 42, 64 + sy * 42, 36, 36, 24, 0, a - 50, a + 50), 15.0, TINTA, "E8433A", 351 + k)
+
+
+@sprite("Exclamacion")
+def s_exclamacion():
+    pieza(suave([(44, 120), (84, 120), (74, 46), (54, 46)], True, 4), BLANCO, 7.0, semilla=361, desfase=(0, 0))
+    pieza(elipse(64, 20, 15, 15, 24), BLANCO, 7.0, semilla=362, desfase=(0, 0))
+
+
+@sprite("Interrogacion")
+def s_interrogacion():
+    ribete(suave([(32, 90), (48, 114), (78, 116), (96, 96), (86, 72), (64, 60), (64, 44)], False, 8), 24.0, TINTA, BLANCO, 371)
+    pieza(elipse(64, 18, 12, 12, 24), BLANCO, 6.0, semilla=372, desfase=(0, 0))
+
+
+@sprite("Mancha", 256)
+def s_mancha():
+    pieza(bulto(128, 124, 80, 9, 381, 0.9, 0.36), BLANCO, 8.0, semilla=381, desfase=(0, 0), rayas={"sep": 9, "ancho": 2.2, "color": SOMBRA, "zona": lambda q: q[0] > 150 and q[1] < 110})
+    rnd = random.Random(382)
+    for k in range(7):
+        a = 2 * math.pi * k / 7 + rnd.uniform(-0.3, 0.3)
+        d = rnd.uniform(100, 116)
+        r = rnd.uniform(7, 14)
+        pieza(elipse(128 + d * math.cos(a), 124 + d * math.sin(a) * 0.9, r, r, 16), BLANCO, 5.0, semilla=383 + k, desfase=(0, 0))
+    trazo(elipse(104, 146, 18, 11, 16, 20, 110, 220), 6.0, BLANCO, semilla=390)
+
+
+@sprite("Brillito")
+def s_brillito():
+    pieza(estrella(64, 64, 60, 13, 4, 90), BLANCO, 6.0, semilla=391, desfase=(0, 0))
+    puntos(64, 64, 6, BLANCO)
+
+
+@sprite("Rayas")
+def s_rayas():
+    for k, (y, x0, x1) in enumerate(((30, 30, 120), (64, 8, 120), (98, 40, 120))):
+        ribete([(x0, y), (x1, y)], 8.0, TINTA, BLANCO, 401 + k)
+
+
+@sprite("Tampon", (512, 256))
+def s_tampon():
+    rnd = random.Random(411)
+    for k, (caja, ancho) in enumerate(((rrect(18, 18, 494, 238, 26), 15.0), (rrect(40, 40, 472, 216, 14), 6.0))):
+        q = remuestrear(caja, 3.0, True)
+        i = 0
+        while i < len(q) - 2:
+            tramo_largo = rnd.randint(14, 40)
+            tramo = q[i:i + tramo_largo + 1]
+            if len(tramo) > 2:
+                trazo(tramo, ancho * rnd.uniform(0.85, 1.1), BLANCO, semilla=412 + i + k * 1000, var=0.3, afilar=False)
+            i += tramo_largo + rnd.choice((0, 0, 1, 2))
 
 
 @sprite("Destello", 256)
@@ -215,7 +328,7 @@ def main():
     for nombre, tam, f in SPRITES:
         if solo and nombre not in solo:
             continue
-        escena(tam, tam)
+        escena(*tam)
         f()
         guardar(nombre)
     print("SPRITES", len(SPRITES))

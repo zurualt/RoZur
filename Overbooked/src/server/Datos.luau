@@ -1,5 +1,6 @@
 --!strict
 local DataStoreService = game:GetService("DataStoreService")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -12,6 +13,7 @@ type Perfil = {
 	Gorros: { [string]: boolean },
 	Gorro: string,
 	Mejoras: { [string]: number },
+	Ajustes: { [string]: any },
 }
 
 local Datos = {}
@@ -75,6 +77,29 @@ local function leerMejoras(v: any): { [string]: number }
 	return r
 end
 
+local function leerAjustes(v: any): { [string]: any }
+	local r: { [string]: any } = {}
+	if typeof(v) ~= "table" then
+		return r
+	end
+	local function numeroEn(clave: string, minimo: number, maximo: number)
+		local n = v[clave]
+		if typeof(n) == "number" and n == n then
+			r[clave] = math.clamp(n, minimo, maximo)
+		end
+	end
+	numeroEn("Fov", 60, 100)
+	numeroEn("Musica", 0, 1)
+	numeroEn("Efectos", 0, 1)
+	if typeof(v.Tercera) == "boolean" then
+		r.Tercera = v.Tercera
+	end
+	if typeof(v.Idioma) == "string" and string.match(v.Idioma, "^%a%a$") then
+		r.Idioma = v.Idioma
+	end
+	return r
+end
+
 local function valor(carpeta: Instance, nombre: string, v: number)
 	local existente = carpeta:FindFirstChild(nombre)
 	if existente and existente:IsA("IntValue") then
@@ -96,8 +121,8 @@ local function marcador(jugador: Player, perfil: Perfil)
 		carpeta = nueva
 	end
 	if carpeta then
-		valor(carpeta, "Dinero", perfil.Dinero)
-		valor(carpeta, "Vuelos", perfil.Vuelos)
+		valor(carpeta, "Cash", perfil.Dinero)
+		valor(carpeta, "Flights", perfil.Vuelos)
 	end
 end
 
@@ -144,7 +169,7 @@ local function leerTienda(perfil: Perfil, t: { [string]: any })
 end
 
 local function cargar(jugador: Player)
-	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0, Gorros = {}, Gorro = "", Mejoras = {} }
+	local perfil: Perfil = { Dinero = 0, Vuelos = 0, Mejor = 0, Gorros = {}, Gorro = "", Mejoras = {}, Ajustes = {} }
 	local tienda = almacen
 	if tienda then
 		local clave = "j_" .. jugador.UserId
@@ -186,6 +211,7 @@ local function cargar(jugador: Player)
 				perfil.Dinero = numero(t, "Dinero")
 				perfil.Vuelos = numero(t, "Vuelos")
 				perfil.Mejor = numero(t, "Mejor")
+				perfil.Ajustes = leerAjustes(t.Ajustes)
 				leerTienda(perfil, t)
 				for intentoTienda = 1, 4 do
 					local okT, datosTienda = pcall(function()
@@ -208,6 +234,7 @@ local function cargar(jugador: Player)
 	if jugador.Parent then
 		perfiles[jugador] = perfil
 		marcador(jugador, perfil)
+		jugador:SetAttribute("Ajustes", HttpService:JSONEncode(perfil.Ajustes))
 	end
 end
 
@@ -223,6 +250,7 @@ local function guardar(jugador: Player, liberar: boolean)
 	local copia = table.clone(perfil)
 	copia.Gorros = table.clone(perfil.Gorros)
 	copia.Mejoras = table.clone(perfil.Mejoras)
+	copia.Ajustes = table.clone(perfil.Ajustes)
 	local escrito = false
 	for intento = 1, 4 do
 		local ok = pcall(function()
@@ -236,6 +264,7 @@ local function guardar(jugador: Player, liberar: boolean)
 				t.Dinero = copia.Dinero
 				t.Vuelos = copia.Vuelos
 				t.Mejor = copia.Mejor
+				t.Ajustes = copia.Ajustes
 				t.Gorros = nil
 				t.Gorro = nil
 				t.Mejoras = nil
@@ -354,6 +383,18 @@ function Datos.iniciar()
 	else
 		warn("[Overbooked] DataStore no disponible; el dinero no se guardará")
 	end
+	local esperaAjustes: { [Player]: number } = {}
+	local RemotoAjustes = ReplicatedStorage:WaitForChild("Remotos"):WaitForChild("Ajustes") :: RemoteEvent
+	RemotoAjustes.OnServerEvent:Connect(function(jugador, datos)
+		local perfil = perfiles[jugador]
+		local ahora = os.clock()
+		if not perfil or (esperaAjustes[jugador] or 0) > ahora then
+			return
+		end
+		esperaAjustes[jugador] = ahora + 0.5
+		perfil.Ajustes = leerAjustes(datos)
+		jugador:SetAttribute("Ajustes", HttpService:JSONEncode(perfil.Ajustes))
+	end)
 	for _, jugador in Players:GetPlayers() do
 		task.spawn(cargar, jugador)
 	end
@@ -362,6 +403,7 @@ function Datos.iniciar()
 		liberados[jugador] = true
 		guardar(jugador, true)
 		perfiles[jugador] = nil
+		esperaAjustes[jugador] = nil
 		cargados[jugador] = nil
 		tiendaCargada[jugador] = nil
 		liberados[jugador] = nil

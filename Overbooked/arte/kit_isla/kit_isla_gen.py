@@ -26,6 +26,8 @@ PAL = [
     ("cream", "FFF4E0"), ("orange", "F27B2B"), ("teal", "1FA6A0"), ("black", "1B1B21"),
     ("yellow", "F6C445"), ("white", "F7F7F2"), ("metal", "A9B0B8"), ("glass", "8FD3F4"),
     ("dteal", "157F7B"), ("pink", "F29BB2"), ("lgrass", "8DC85C"), ("wsand", "C9A866"),
+    ("hpink", "E8457A"), ("purple", "9B6BD6"), ("bleach", "DCD2BF"), ("lrock", "C4C8CC"),
+    ("straw", "E8CC7E"), ("vdleaf", "2C6E3A"), ("foam", "E9FBFF"), ("lsea", "7FDCE0"),
 ]
 IDX = {n: i for i, (n, _) in enumerate(PAL)}
 
@@ -466,7 +468,8 @@ def finalize(p):
                 mx[i] = max(mx[i], v.co[i])
         prims.append((bm, roles, ang))
     raw = mx - mn
-    sc = [p.size[i] / raw[i] for i in range(3)]
+    size = p.size or tuple(raw)
+    sc = [size[i] / raw[i] for i in range(3)]
     T = Matrix.Diagonal((sc[0], sc[1], sc[2], 1.0)) @ Matrix.Translation(-Vector(((mn.x + mx.x) / 2, (mn.y + mx.y) / 2, mn.z)))
     verts, faces, uvs, nrms = [], [], [], []
     for bm, roles, ang in prims:
@@ -871,38 +874,6 @@ def p_terreno():
     return p
 
 
-def palmera(nombre, tam, alto, semilla, frondas=8, budget=1600):
-    p = Prop(nombre, tam, budget)
-    rnd = random.Random(semilla)
-    ctrl = [(0, 0, 0), (0.9, 0.2, alto * 0.3), (0.6, 0.1, alto * 0.62), (-0.2, 0.0, alto * 0.86), (-0.5, 0.0, alto)]
-    p.add(tube(ctrl, lambda u: 0.62 - 0.28 * u, 8, 3, caps=False), lambda c, n: "dwood" if int(c.z / 1.1) % 2 else "trunk", 60)
-    path = catmull([Vector(c) for c in ctrl], 6)
-    for k in range(1, 6):
-        q = path[int(len(path) * k / 6.5)]
-        ring(p, (q.x, q.y, q.z), 0.66 - 0.28 * k / 6.5, 0.09, 8, "dwood", n=3)
-    cima = Vector(ctrl[-1])
-    p.add(ellipsoid((0.75, 0.75, 0.6), Matrix.Translation(cima), 8, 5), "dwood")
-    for k in range(frondas):
-        a = 2 * math.pi * k / frondas + rnd.uniform(-0.15, 0.15)
-        largo = (12.0 if nombre == "Palmera1" else 10.0) * 0.54 * rnd.uniform(0.9, 1.0)
-        sube = rnd.uniform(0.8, 1.8)
-        spine = []
-        anchos = []
-        for i in range(11):
-            t = i / 10
-            r = largo * t
-            z = cima.z + 0.3 + sube * t - (sube + 4.2) * t * t
-            spine.append(Vector((cima.x + r * math.cos(a), cima.y + r * math.sin(a), z)))
-            w = 1.35 * math.sin(math.pi * min(1.0, t * 1.08)) ** 0.7 + 0.05
-            anchos.append(w * (1.0 if i % 2 == 0 else 0.62))
-        p.add(hoja(spine, anchos, 0.4, 0.05), lambda c, n: "leaf" if n.z > 0 else "dleaf", 70)
-        p.add(tube([spine[0], spine[4], spine[8]], lambda u: 0.07, 3, 1, caps=False), "dleaf")
-    for k in range(3):
-        a = 2 * math.pi * k / 3 + 0.5
-        p.add(ellipsoid((0.5, 0.5, 0.56), Matrix.Translation(cima + Vector((0.62 * math.cos(a), 0.62 * math.sin(a), -0.55))), 7, 5), "coco")
-    return p
-
-
 def p_roca_grande():
     p = Prop("RocaGrande", (14.408, 11.625, 9.411), 1200)
     p.add(roca((5.5, 5.2, 6.2), (0.8, 0.0, 2.2), 21, 3), rol_roca(9.0, True), 18)
@@ -1239,7 +1210,666 @@ def p_muelle():
     return p
 
 
-BUILDERS = [p_terreno, lambda: palmera("Palmera1", (12.36, 12.184, 21.907), 21.2, 91), lambda: palmera("Palmera2", (9.954, 10.287, 17.732), 17.0, 92, 7),
+def ring_en(p, c, t, R, rt, seg, role, n=3):
+    prof = [(R + rt * math.cos(2 * math.pi * k / n + math.pi / n), rt * math.sin(2 * math.pi * k / n + math.pi / n)) for k in range(n)]
+    p.add(lathe(prof, seg, Matrix.Translation(Vector(c)) @ frame_from_normal(t), closed=True), role)
+
+
+def fronda(cima, a, largo, ang0, ang1, ancho, n=11, rasgado=0.35, caida=0.55):
+    spine, anchos = [], []
+    pos = Vector(cima)
+    ds = largo / (n - 1)
+    for i in range(n):
+        t = i / (n - 1)
+        spine.append(pos.copy())
+        e = math.radians(ang0 + (ang1 - ang0) * t ** 1.3)
+        pos = pos + Vector((math.cos(e) * math.cos(a), math.cos(e) * math.sin(a), math.sin(e))) * ds
+        w = ancho * math.sin(math.pi * min(1.0, 0.05 + t * 0.97)) ** 0.55 + 0.04
+        anchos.append(w * (1.0 if i % 2 == 0 else rasgado))
+    return hoja(spine, anchos, caida, 0.05)
+
+
+def palma(nombre, troncos, semilla, largo, n_inf=8, n_sup=5, cocos=3, seca=True, budget=2000, grosor=(0.62, 0.34), nf=11):
+    p = Prop(nombre, None, budget)
+    rnd = random.Random(semilla)
+    for ti, ctrl in enumerate(troncos):
+        ctrl = [Vector(c) for c in ctrl]
+        r0, r1 = grosor if ti == 0 else (grosor[0] * 0.75, grosor[1] * 0.8)
+        p.add(tube(ctrl, lambda u, r0=r0, r1=r1: r1 + (r0 - r1) * (1 - u) ** 1.2 + 0.22 * r0 * max(0.0, 1 - u * 9) ** 2, 8, 3, caps=False),
+              lambda c, n: "dwood" if int(c.z / 1.05) % 2 else "trunk", 60)
+        path = catmull(ctrl, 8)
+        for k in range(1, 5):
+            i = int(len(path) * k / 5.4)
+            tg = (path[min(i + 1, len(path) - 1)] - path[i - 1]).normalized()
+            ring_en(p, path[i], tg, r1 + (r0 - r1) * (1 - k / 5.4) ** 1.2 + 0.03, 0.08, 6, "dwood")
+        cima = ctrl[-1]
+        esc = 1.0 if ti == 0 else 0.75
+        L = largo * esc
+        p.add(ellipsoid((r1 * 1.8, r1 * 1.8, r1 * 1.4), Matrix.Translation(cima), 7, 4), "dwood")
+        capas = ((n_inf, L, 18, -72, 1.3, "leaf", 0.0), (n_sup, L * 0.82, 50, -40, 1.12, "lgrass", 0.5), (2, L * 0.45, 82, 60, 0.4, "lgrass", 0.25))
+        for capa, (n, Lc, a0, a1, w, col, fase) in enumerate(capas):
+            for k in range(n if ti == 0 or capa < 2 else 0):
+                a = 2 * math.pi * (k + fase) / n + rnd.uniform(-0.2, 0.2)
+                p.add(fronda(cima + Vector((0, 0, 0.12 * capa)), a, Lc * rnd.uniform(0.86, 1.06), a0 + rnd.uniform(-8, 8), a1 + rnd.uniform(-10, 10),
+                             w * (0.85 + 0.15 * esc), nf if capa < 2 else 6),
+                      lambda c, nn, col=col: col if nn.z > 0 else "dleaf", 70)
+        if seca and ti == 0:
+            a = rnd.uniform(0, 2 * math.pi)
+            p.add(fronda(cima + Vector((0, 0, -0.3)), a, L * 0.5, -55, -86, 0.85, 8, 0.5, 0.3), lambda c, nn: "trunk" if nn.z > 0 else "dwood", 70)
+        for k in range(cocos if ti == 0 else 0):
+            a = 2 * math.pi * k / cocos + 0.4
+            p.add(ellipsoid((0.46, 0.46, 0.5), Matrix.Translation(cima + Vector((0.62 * math.cos(a), 0.62 * math.sin(a), -0.62 - 0.1 * k))), 6, 4), "coco")
+    return p
+
+
+def p_palmera1():
+    return palma("Palmera1", [[(0, 0, 0), (0.9, 0.2, 6.5), (0.6, 0.1, 13.2), (-0.2, 0.0, 18.4), (-0.5, 0.0, 21.0)]], 91, 7.6, 9, 6, 3)
+
+
+def p_palmera2():
+    return palma("Palmera2", [[(0, 0, 0), (-0.8, 0.5, 5.0), (-1.1, 0.4, 10.2), (-0.4, 0.1, 14.6), (0.4, -0.2, 17.0)]], 92, 6.8, 8, 5, 4, grosor=(0.56, 0.3))
+
+
+def p_palmera3():
+    return palma("Palmera3", [[(0, 0, 0), (1.4, 0.4, 8.0), (1.3, 0.3, 16.0), (-0.4, 0.0, 22.0), (-1.1, 0.0, 25.2)]], 93, 8.0, 9, 6, 5, grosor=(0.66, 0.34))
+
+
+def p_palmera_inclinada():
+    return palma("PalmeraInclinada", [[(0, 0, 0), (0, -2.0, 3.0), (0, -5.4, 7.2), (0, -8.2, 11.6), (0, -9.6, 15.2), (0, -10.0, 17.0)]], 94, 7.2, 9, 6, 3)
+
+
+def p_palmera_joven():
+    return palma("PalmeraJoven", [[(0, 0, 0), (0.3, 0.1, 2.8), (0.2, 0.0, 5.8), (0.0, 0.0, 7.0)], [(0.4, 0.3, 0), (1.5, 1.1, 2.2), (2.3, 1.6, 4.2)]],
+                 95, 4.6, 6, 4, 0, False, 2000, (0.4, 0.26), 9)
+
+
+def p_platanera():
+    p = Prop("Platanera", None, 1100)
+    rnd = random.Random(301)
+    p.add(lathe([(0.0, 0.0), (0.55, 0.0), (0.5, 1.5), (0.38, 4.5), (0.3, 6.2), (0.22, 6.6), (0.0, 6.7)], 8), lambda c, n: "dleaf" if int(c.z / 0.9) % 2 else "lgrass", 40)
+    p.add(lathe([(0.0, 0.0), (0.3, 0.0), (0.24, 1.6), (0.15, 2.6), (0.0, 2.7)], 6, Matrix.Translation((0.9, 0.5, 0))), "lgrass", 40)
+    for k in range(8):
+        a = 2 * math.pi * k / 8 + rnd.uniform(-0.2, 0.2)
+        z0 = 5.8 + 0.12 * k
+        L = rnd.uniform(3.6, 4.5)
+        sube = rnd.uniform(2.0, 3.0)
+        spine, anchos = [], []
+        for i in range(11):
+            t = i / 10
+            r = 0.3 + L * t
+            spine.append(Vector((r * math.cos(a), r * math.sin(a), z0 + sube * t - (sube + 1.4) * t * t)))
+            w = 0.95 * math.sin(math.pi * min(1.0, 0.08 + t * 0.95)) ** 0.5
+            anchos.append(0.05 if (i == 0 or (k % 2 == 0 and i in (4, 7)) or (k % 3 == 1 and i == 6)) else w)
+        p.add(hoja(spine, anchos, 0.16, 0.04), lambda c, nn, col=("leaf" if k % 2 else "lgrass"): col if nn.z > 0 else "dleaf", 60)
+        p.add(tube([spine[0], spine[5], spine[10]], lambda u: 0.05, 3, 1, caps=False), "dleaf")
+    p.add(palo((0.25, 0.0, 5.9), (0.95, 0.25, 4.3), 0.07, 5), "dleaf")
+    for k in range(9):
+        a = 2 * math.pi * k / 3 + (k // 3) * 0.6
+        c = Vector((0.75 + 0.06 * (k // 3), 0.2, 5.4 - 0.32 * (k // 3))) + Vector((0.22 * math.cos(a), 0.22 * math.sin(a), 0))
+        p.add(ellipsoid((0.1, 0.1, 0.32), Matrix.Translation(c) @ Matrix.Rotation(0.5, 4, Vector((math.sin(a), -math.cos(a), 0))), 5, 3), "yellow" if k < 6 else "lgrass")
+    p.add(ellipsoid((0.22, 0.22, 0.38), Matrix.Translation((1.0, 0.27, 4.1)), 6, 4), "purple")
+    return p
+
+
+def p_helecho():
+    p = Prop("Helecho", None, 800)
+    rnd = random.Random(311)
+    for k in range(9):
+        a = 2 * math.pi * k / 9 + rnd.uniform(-0.15, 0.15)
+        alto = k % 3 == 0
+        p.add(fronda(Vector((0.1 * math.cos(a), 0.1 * math.sin(a), 0.05)), a, rnd.uniform(2.6, 3.2) * (0.8 if alto else 1.0), 72 if alto else 58, -10 if alto else -42,
+                     0.55, 10, 0.16, 0.3), lambda c, nn, col=("lgrass" if k % 3 == 0 else "leaf"): col if nn.z > 0 else "vdleaf", 70)
+    for k in range(2):
+        a = 2 * math.pi * k / 2 + 0.7
+        pts = [(0.15 * math.cos(a), 0.15 * math.sin(a), 0.1), (0.3 * math.cos(a), 0.3 * math.sin(a), 0.8), (0.5 * math.cos(a), 0.5 * math.sin(a), 1.1),
+               (0.66 * math.cos(a), 0.66 * math.sin(a), 0.95), (0.54 * math.cos(a), 0.54 * math.sin(a), 0.8)]
+        p.add(tube(pts, lambda u: 0.07 - 0.02 * u, 4, 2, caps=False), "lgrass")
+    return p
+
+
+def p_hojas_grandes():
+    p = Prop("HojasGrandes", None, 800)
+    rnd = random.Random(321)
+    for k in range(6):
+        a = 2 * math.pi * k / 6 + rnd.uniform(-0.3, 0.3)
+        alto = 1.4 + 0.42 * ((k * 3) % 6) + rnd.uniform(-0.2, 0.2)
+        tope = Vector((0.9 * math.cos(a), 0.9 * math.sin(a), alto))
+        p.add(palo((0.15 * math.cos(a), 0.15 * math.sin(a), 0.0), tope, 0.09, 5, 0.06), "dleaf")
+        L = rnd.uniform(2.3, 2.9)
+        spine, anchos = [], []
+        for i in range(9):
+            t = -0.2 + 1.2 * i / 8
+            r = L * t
+            spine.append(tope + Vector((r * math.cos(a), r * math.sin(a), 0.25 * t - 1.25 * max(t, 0) ** 2 - (0.25 if t < 0 else 0))))
+            anchos.append(0.03 + 1.2 * (1 - max(t, 0)) ** 0.75 * min(1.0, (t + 0.2) * 2.6))
+        col = ("leaf", "vdleaf", "lgrass")[k % 3]
+        p.add(hoja(spine, anchos, 0.2, 0.04), lambda c, nn, col=col: col if nn.z > 0 else "dleaf", 70)
+        p.add(tube([s + Vector((0, 0, 0.035)) for s in spine[2:8]], lambda u: 0.035, 3, 1, caps=False), "lgrass" if col != "lgrass" else "leaf")
+    return p
+
+
+def flor(centro, normal, r, nped=5, giro=0.0):
+    bm = bmesh.new()
+    nn = nped * 3
+    for capa, dz in ((0, 0.0), (1, -0.04 * r)):
+        c = bm.verts.new((0, 0, -0.28 * r + dz))
+        anillo = []
+        for j in range(nn):
+            ang = giro + 2 * math.pi * j / nn
+            lob = abs(math.cos(nped * ang / 2))
+            rad = r * (0.5 + 0.5 * lob)
+            anillo.append(bm.verts.new((rad * math.cos(ang), rad * math.sin(ang), 0.12 * r * lob + dz)))
+        for j in range(nn):
+            f = (c, anillo[j], anillo[(j + 1) % nn])
+            bm.faces.new(f if capa == 0 else f[::-1])
+    return xf(bm, Matrix.Translation(Vector(centro)) @ frame_from_normal(normal))
+
+
+def p_flores():
+    p = Prop("Flores", None, 1000)
+    rnd = random.Random(331)
+    for k in range(15):
+        a = 2 * math.pi * k / 15 * 2.3
+        el = rnd.uniform(0.2, 1.2)
+        d = Vector((math.cos(a) * math.cos(el), math.sin(a) * math.cos(el), math.sin(el)))
+        base = Vector((0, 0, 0.9)) + d * 0.5
+        spine = [base + d * (1.1 * i / 4) + Vector((0, 0, -0.25 * (i / 4) ** 2)) for i in range(5)]
+        p.add(hoja(spine, [0.04, 0.3, 0.36, 0.26, 0.02], 0.2, 0.03), lambda c, nn, col=("leaf" if k % 2 else "dleaf"): col if nn.z > 0 else "vdleaf", 70)
+    p.add(ellipsoid((1.05, 1.05, 0.85), Matrix.Translation((0, 0, 0.85)), 7, 4), "dleaf")
+    cols = ["hpink", "hpink", "red", "yellow", "hpink", "orange", "red"]
+    for k in range(7):
+        a = 2 * math.pi * k / 7 + rnd.uniform(-0.2, 0.2)
+        el = rnd.uniform(0.35, 1.2)
+        d = Vector((math.cos(a) * math.cos(el), math.sin(a) * math.cos(el), math.sin(el)))
+        c = Vector((0, 0, 0.85)) + Vector((d.x * 1.15, d.y * 1.15, d.z * 0.95))
+        p.add(flor(c, d, 0.42, 5, rnd.uniform(0, 1)), cols[k], 30)
+        p.add(palo(c - d * 0.08, c + d * 0.32, 0.03, 4), "yellow")
+    return p
+
+
+def p_hierba():
+    p = Prop("Hierba", None, 340)
+    rnd = random.Random(341)
+    for k in range(13):
+        a = 2 * math.pi * k / 13 + rnd.uniform(-0.2, 0.2)
+        inc = rnd.uniform(0.25, 0.85)
+        L = rnd.uniform(0.9, 1.6)
+        base = Vector((0.18 * math.cos(a), 0.18 * math.sin(a), 0.0))
+        spine = [base + Vector((math.cos(a) * L * inc * t * t, math.sin(a) * L * inc * t * t, L * t)) for t in (0.0, 0.34, 0.68, 1.0)]
+        col = "straw" if k % 4 == 0 else ("lgrass" if k % 2 else "leaf")
+        p.add(hoja(spine, [0.1, 0.075, 0.045, 0.006], 0.05, 0.02), lambda c, nn, col=col: col, 70)
+    return p
+
+
+def p_madera_deriva():
+    p = Prop("MaderaDeriva", None, 520)
+    p.add(tube([(-4.2, 0.2, 0.55), (-1.5, -0.1, 0.62), (1.2, 0.15, 0.6), (4.0, -0.3, 0.42)], lambda u: 0.6 - 0.32 * u, 7, 3, caps=True, cap_rings=1),
+          lambda c, n: "bleach" if n.z > -0.3 else "lrock", 40)
+    for a0, a1, r in (((1.0, 0.1, 0.8), (2.5, 1.3, 1.25), 0.16), ((-1.0, 0.0, 0.9), (-1.9, -1.2, 1.5), 0.14), ((2.6, -0.2, 0.62), (3.4, -1.1, 0.95), 0.1)):
+        p.add(palo(a0, a1, r, 5, r * 0.55), "bleach")
+    for k in range(5):
+        a = 2 * math.pi * k / 5
+        p.add(tube([(-4.1, 0.2, 0.55), (-4.6, 0.2 + 0.5 * math.cos(a), 0.55 + 0.5 * math.sin(a)), (-4.9, 0.2 + 0.95 * math.cos(a), max(0.05, 0.55 + 0.9 * math.sin(a)))],
+                   lambda u: 0.13 - 0.08 * u, 4, 2, caps=False), "bleach")
+    for x in (-2.4, 0.4, 2.2):
+        p.add(ellipsoid((0.16, 0.12, 0.05), Matrix.Translation((x, 0.0, 0.62 + 0.55 - 0.32 * (x + 4.2) / 8.2)), 5, 3), "trunk")
+    return p
+
+
+def p_conchas():
+    p = Prop("Conchas", None, 450)
+    rnd = random.Random(351)
+    for (x, y, r0, r1, g, col) in ((-0.6, 0.4, 0.75, 0.3, 10, "orange"), (0.85, -0.5, 0.55, 0.22, 50, "hpink")):
+        p.add(prism(estrella_pts(x, y, r0, r1, 5, g), 0.14, None, 0.05, 1, 0.0), lambda c, n, col=col: col if n.z > 0.3 else "red", 40)
+        for k in range(5):
+            a = math.radians(g + 72 * k)
+            p.add(ellipsoid((0.05, 0.05, 0.03), Matrix.Translation((x + r0 * 0.5 * math.cos(a), y + r0 * 0.5 * math.sin(a), 0.15)), 4, 2), "cream")
+    for (x, y, g, col) in ((0.6, 0.7, 30, "pink"), (-0.9, -0.6, 200, "cream")):
+        bm = ellipsoid((0.45, 0.4, 0.16), Matrix.Translation((x, y, 0.0)) @ Matrix.Rotation(math.radians(g), 4, "Z"), 10, 3)
+        p.add(bm, lambda c, n, x=x, y=y, col=col: col if int((math.atan2(c.y - y, c.x - x) + math.pi) * 2.2) % 2 else "white", 30)
+    p.add(lathe([(0.0, 0.0), (0.22, 0.12), (0.2, 0.45), (0.12, 0.65), (0.0, 0.8)], 7, M((0.1, -0.1, 0.15), (85, 0, 40))), lambda c, n: "cream" if n.z > -0.2 else "hpink", 40)
+    for k in range(4):
+        p.add(blob((0.14, 0.11, 0.08), (rnd.uniform(-1.2, 1.2), rnd.uniform(-1.2, 1.2), 0.03), 1, 0.2, 360 + k), "lrock")
+    return p
+
+
+def p_charca():
+    p = Prop("Charca", None, 1100)
+    rnd = random.Random(361)
+    agua = [(1.25 * x, y) for x, y in mancha(0, 0, 2.6, 361, 10, 0.18)]
+    p.add(decal(agua, None, 0.5), "lsea")
+    p.add(decal([(1.25 * x * 0.7, y * 0.7) for x, y in mancha(0, 0, 2.6, 361, 10, 0.18)], None, 0.505), "sea")
+    for k in range(12):
+        a = 2 * math.pi * k / 12 + rnd.uniform(-0.12, 0.12)
+        R = 3.2 + rnd.uniform(-0.3, 0.3)
+        r = rnd.uniform(0.7, 1.15)
+        p.add(roca((r * 1.2, r, r * rnd.uniform(0.7, 1.0)), (1.25 * R * math.cos(a), R * math.sin(a), 0.0), 370 + k, 1, 0.2), rol_roca(1.0, k % 3 == 0), 18)
+    p.add(decal(estrella_pts(0.8, 0.4, 0.5, 0.2, 5, 15), None, 0.52), "orange")
+    p.add(decal(estrella_pts(-1.1, -0.5, 0.36, 0.14, 5, 50), None, 0.52), "purple")
+    for k in range(3):
+        a = 2 * math.pi * k / 3 + 1.0
+        b = Vector((1.6 * math.cos(a), 1.2 * math.sin(a), 0.2))
+        p.add(hoja([b, b + Vector((0.1, 0.05, 0.5)), b + Vector((-0.05, 0.1, 0.95))], [0.12, 0.1, 0.02], 0.0, 0.02), "vdleaf")
+    return p
+
+
+def p_roca_media():
+    p = Prop("RocaMedia", None, 700)
+    p.add(roca((3.0, 2.6, 3.2), (0.4, 0.0, 1.0), 381, 2, 0.24), rol_roca(4.5, True), 18)
+    p.add(roca((1.7, 1.5, 1.7), (-2.4, 0.9, 0.2), 382, 1, 0.22), rol_roca(4.5), 18)
+    p.add(roca((1.1, 1.0, 0.9), (2.7, -1.6, 0.0), 383, 1, 0.22), rol_roca(4.5), 18)
+    return p
+
+
+def rol_estratos(alto, musgo=True):
+    def f(c, n):
+        if n.z < -0.35 or c.z < 1.6:
+            return "drock"
+        if musgo and n.z > 0.62 and c.z > alto * 0.55:
+            return "leaf"
+        if n.z > 0.55:
+            return "lrock"
+        return "rock" if int(c.z / 2.6) % 2 else "drock"
+    return f
+
+
+def p_acantilado():
+    p = Prop("Acantilado", None, 1500)
+    for k, (r, loc, sub) in enumerate((((6.2, 5.0, 4.0), (0.0, 0.0, 1.4), 2), ((4.8, 4.0, 3.6), (0.6, 0.4, 5.8), 2), ((3.9, 3.4, 3.4), (-0.3, 0.2, 9.8), 2),
+                                       ((3.0, 2.6, 2.0), (0.2, -0.1, 13.2), 2), ((2.4, 2.0, 1.8), (4.2, -2.4, 0.6), 1), ((1.6, 1.4, 1.3), (-4.6, 1.8, 0.3), 1))):
+        p.add(roca(r, loc, 401 + k, sub, 0.3), rol_estratos(15.0), 12)
+    rnd = random.Random(409)
+    for k in range(6):
+        a = 2 * math.pi * k / 6 + 0.3
+        b = Vector((0.2 + 1.1 * math.cos(a), -0.1 + 1.0 * math.sin(a), 14.6))
+        p.add(hoja([b, b + Vector((0.5 * math.cos(a), 0.5 * math.sin(a), 0.8)), b + Vector((1.1 * math.cos(a), 1.1 * math.sin(a), 0.9)), b + Vector((1.5 * math.cos(a), 1.5 * math.sin(a), 0.6))],
+                   [0.15, 0.3, 0.26, 0.02], 0.2, 0.03), "lgrass" if k % 2 else "leaf")
+    return p
+
+
+def p_rocas_planas():
+    p = Prop("RocasPlanas", None, 650)
+    rnd = random.Random(391)
+    for k, (x, y, rx, ry, h) in enumerate(((0, 0, 3.2, 2.4, 1.1), (-3.2, 1.6, 1.8, 1.4, 0.8), (3.3, -1.2, 1.6, 1.5, 0.7), (1.2, 2.6, 1.2, 1.0, 0.5), (-2.0, -2.4, 1.3, 1.0, 0.55))):
+        p.add(roca((rx, ry, h), (x, y, 0.0), 391 + k, 1 if k else 2, 0.18), lambda c, n: "drock" if c.z < 0.25 else ("lrock" if n.z > 0.75 else "rock"), 25)
+    for k in range(7):
+        a = rnd.uniform(0, 2 * math.pi)
+        p.add(ellipsoid((0.09, 0.09, 0.07), Matrix.Translation((2.0 * math.cos(a), 1.6 * math.sin(a), 0.95 - 0.1 * k)), 4, 2), "white")
+    for k in range(3):
+        b = Vector((rnd.uniform(-3, 3), rnd.uniform(-2.5, 2.5), 0.1))
+        p.add(hoja([b, b + Vector((0.2, 0.0, 0.5)), b + Vector((0.4, 0.1, 0.8))], [0.15, 0.1, 0.02], 0.0, 0.02), "vdleaf")
+    return p
+
+
+def p_asiento_roto():
+    p = Prop("AsientoRoto", None, 800)
+    T = Matrix.Rotation(math.radians(-68), 4, "X") @ Matrix.Rotation(math.radians(14), 4, "Y")
+    p.add(xf(bb(-1.15, 1.15, -1.0, 1.0, 1.0, 1.55, 0.18, 2), T), "teal")
+    p.add(xf(bb(-1.15, 1.15, 0.85, 1.35, 1.4, 4.0, 0.18, 2), T), "teal")
+    p.add(xf(bb(-0.95, 0.95, 0.8, 1.38, 3.45, 4.0, 0.12, 1), T), "orange")
+    for s in (-1, 1):
+        p.add(xf(bb(1.2 * s - 0.15, 1.2 * s + 0.15, -0.6, 0.9, 1.9, 2.15, 0.06, 1), T), "black")
+        p.add(xf(bar((1.0 * s, -0.6, 1.0), (1.0 * s, -0.8, 0.0), 0.16, 0.16), T), "metal")
+        p.add(xf(bar((1.0 * s, 0.7, 1.0), (1.0 * s, 0.9, 0.0), 0.16, 0.16), T), "metal")
+        p.add(xf(bar((1.0 * s, -0.85, 0.08), (1.0 * s, 0.95, 0.08), 0.18, 0.12), T), "metal")
+    p.add(xf(blob((0.55, 0.45, 0.3), (0.3, -0.2, 1.58), 1, 0.25, 395), T), "yellow")
+    p.add(xf(decal(mancha(0.3, -0.2, 0.62, 396, 8, 0.3), None, 1.552), T), "dteal")
+    p.add(xf(tube([(-0.6, -0.9, 1.5), (-0.7, -1.4, 0.9), (-0.4, -1.8, 0.2)], lambda u: 0.08, 4, 2, caps=False), T), "black")
+    p.add(xf(bb(-0.55, -0.15, -1.95, -1.65, 0.0, 0.35, 0.04, 1), T), "metal")
+    p.add(xf(tube([(0.1, 1.2, 3.2), (0.35, 0.6, 3.5), (0.6, 0.1, 3.3)], lambda u: 0.09, 5, 2, caps=False), T), "metal")
+    return p
+
+
+def p_maleta_abierta():
+    p = Prop("MaletaAbierta", None, 800)
+    p.add(bb(-1.6, 1.6, -1.1, 1.1, 0.0, 0.6, 0.14, 2), "teal")
+    p.add(bb(-1.45, 1.45, -0.95, 0.95, 0.6, 0.62), "dteal")
+    tapa = Matrix.Translation((0, 1.1, 0.6)) @ Matrix.Rotation(math.radians(165), 4, "X") @ Matrix.Translation((0, -1.1, -0.6))
+    p.add(xf(bb(-1.6, 1.6, -1.1, 1.1, 0.6, 1.0, 0.14, 2), tapa), "teal")
+    p.add(xf(bb(-1.45, 1.45, -0.95, 0.95, 0.58, 0.6), tapa), "dteal")
+    for k, (x, col) in enumerate(((-0.8, "pink"), (0.15, "yellow"), (0.95, "white"))):
+        p.add(bb(x - 0.45, x + 0.45, -0.75, 0.6, 0.6, 0.92 - 0.05 * k, 0.08, 1), col)
+        p.add(decal(rect(x - 0.42, x + 0.42, -0.1, 0.0), None, 0.925 - 0.05 * k), "red" if col != "red" else "white")
+    camisa = [(-0.5, -0.4), (0.3, -0.6), (0.9, -0.2), (1.4, -1.6), (0.6, -2.1), (-0.3, -1.8), (-0.6, -1.2)]
+    p.add(prism(camisa, 0.06, M((0.1, -0.2, 0.66), (8, 0, 0))), "orange")
+    for (x, y) in ((0.3, -1.2), (0.8, -1.6), (-0.1, -0.8), (0.9, -0.7)):
+        p.add(decal(circ(x, y, 0.13, 6), M((0.1, -0.2, 0.66), (8, 0, 0)), 0.035), "yellow")
+    pato = Vector((-0.9, -1.75, 0.0))
+    p.add(ellipsoid((0.38, 0.3, 0.26), Matrix.Translation(pato + Vector((0, 0, 0.26))), 8, 5), "yellow")
+    p.add(ellipsoid((0.2, 0.2, 0.2), Matrix.Translation(pato + Vector((0.22, 0, 0.62))), 7, 5), "yellow")
+    p.add(ellipsoid((0.12, 0.07, 0.05), Matrix.Translation(pato + Vector((0.44, 0, 0.6))), 5, 3), "orange")
+    for s in (-1, 1):
+        p.add(ellipsoid((0.04, 0.04, 0.04), Matrix.Translation(pato + Vector((0.32, 0.12 * s, 0.7))), 4, 3), "black")
+    p.add(bar((-0.5, -1.12, 0.3), (0.5, -1.12, 0.3), 0.14, 0.1), "black")
+    return p
+
+
+def p_maleta_cerrada():
+    p = Prop("MaletaCerrada", None, 600)
+    p.add(bb(-1.2, 1.2, -1.6, 1.6, 0.0, 1.05, 0.2, 2), "red")
+    for x in (-0.6, 0.0, 0.6):
+        p.add(decal(rect(x - 0.06, x + 0.06, -1.42, 1.42), None, 1.052), "orange")
+    p.add(bb(-1.22, 1.22, -1.62, 1.62, 0.5, 0.56), "black")
+    p.add(bar((-0.45, 1.62, 0.52), (0.45, 1.62, 0.52), 0.14, 0.12), "black")
+    for s in (-1, 1):
+        p.add(bar((0.45 * s, 1.6, 0.52), (0.45 * s, 1.75, 0.52), 0.12, 0.12), "black")
+        p.add(cyl(0.16, 0.14, (0.85 * s, -1.65, 0.16), (90, 0, 0), seg=8), "black")
+    logo(p, Matrix.Translation((0.35, 0.5, 1.06)), 0.42, step=0.004)
+    p.add(decal(rrect(-0.6, -0.8, 0.7, 0.45, 0.08, 1), None, 1.056), "yellow")
+    p.add(decal(rrect(-0.6, -0.8, 0.5, 0.12, 0.04, 1), None, 1.06), "teal")
+    p.add(bb(0.3, 0.95, 1.75, 1.82, 0.0, 0.42, 0.02, 1), "orange")
+    p.add(tube([(0.3, 1.66, 0.52), (0.45, 1.78, 0.44), (0.6, 1.8, 0.4)], lambda u: 0.02, 3, 1, caps=False), "white")
+    return p
+
+
+def p_trozo_fuselaje():
+    p = Prop("TrozoFuselaje", None, 1400)
+    rnd = random.Random(401)
+    R, n_a, giro = 3.6, 14, 22.0
+    a0, a1 = math.radians(-25 + giro), math.radians(205 + giro)
+
+    def librea(c, n):
+        phi = (math.degrees(math.atan2(c.z - 2.6, c.y)) - giro) % 360
+        if 125 < phi < 138:
+            return "orange"
+        if 100 < phi <= 125:
+            return "teal"
+        return "cream"
+    for capa, (rr, inv) in enumerate(((R, False), (R - 0.22, True))):
+        bm = bmesh.new()
+        rnd2 = random.Random(402)
+        bordes = [(-4.2 + rnd2.uniform(-0.7, 0.7), 4.2 + rnd2.uniform(-0.7, 0.7)) for _ in range(n_a + 1)]
+        vs = []
+        for j in range(n_a + 1):
+            a = a0 + (a1 - a0) * j / n_a
+            x0, x1 = bordes[j]
+            vs.append([bm.verts.new((x0 + (x1 - x0) * i / 4, rr * math.cos(a), rr * math.sin(a) + 2.6)) for i in range(5)])
+        for j in range(n_a):
+            for i in range(4):
+                f = (vs[j][i], vs[j][i + 1], vs[j + 1][i + 1], vs[j + 1][i])
+                bm.faces.new(f[::-1] if inv else f)
+        p.add(bm, librea if capa == 0 else (lambda c, n: "dteal" if n.z < 0.3 else "black"), 25)
+    for k in range(4):
+        a = math.radians(152 + giro)
+        p.add(decal(rrect(0, 0, 0.8, 1.05, 0.3, 2), frame((-2.6 + 1.75 * k, (R + 0.02) * math.cos(a), (R + 0.02) * math.sin(a) + 2.6), (1, 0, 0), (0, -math.sin(a), math.cos(a))), 0.0), "glass")
+    for k in range(5):
+        p.add(blob((rnd.uniform(0.6, 1.0), rnd.uniform(0.5, 0.8), 0.4), (rnd.uniform(-4, 4), rnd.uniform(-3.6, 3.6), 0.0), 1, 0.25, 410 + k), "dsand")
+    return p
+
+
+def p_caja_abierta():
+    p = Prop("CajaAbierta", None, 800)
+    W, D, H = 1.5, 1.25, 2.2
+    p.add(bb(-W, W, -D, D, 0.0, 0.18), "dwood")
+    for s in (-1, 1):
+        p.add(bb(-W, W, s * D - 0.09, s * D + 0.09, 0.0, H, 0.03, 1), "trunk")
+        p.add(bb(s * W - 0.09, s * W + 0.09, -D, D, 0.0, H, 0.03, 1), "trunk")
+        for z in (0.7, 1.45):
+            p.add(decal(rect(-W + 0.05, W - 0.05, z - 0.03, z + 0.03), fr((0, s * (D + 0.092), 0), "-y" if s < 0 else "+y"), 0.0), "dwood")
+    for x in (-W, W):
+        for y in (-D, D):
+            p.add(bb(x - 0.13, x + 0.13, y - 0.13, y + 0.13, 0.0, H + 0.05), "dwood")
+    p.add(ellipsoid((W * 0.98, D * 0.98, 0.5), Matrix.Translation((0, 0, 1.2)), 9, 4), "straw")
+    rnd = random.Random(421)
+    for k in range(7):
+        a = rnd.uniform(0, 2 * math.pi)
+        c = Vector((0.9 * W * math.cos(a), 0.9 * D * math.sin(a), 1.55))
+        p.add(bar(c, c + Vector((0.5 * math.cos(a + 0.4), 0.5 * math.sin(a + 0.4), 0.35)), 0.05, 0.03), "straw")
+    tapa = Matrix.Translation((W + 0.55, 0.0, 0.0)) @ Matrix.Rotation(math.radians(-20), 4, "Y")
+    p.add(xf(bb(-0.09, 0.09, -D - 0.1, D + 0.1, 0.0, 2.9, 0.03, 1), tapa), "trunk")
+    for z in (0.5, 1.45, 2.4):
+        p.add(xf(bb(0.09, 0.16, -D, D, z - 0.12, z + 0.12), tapa), "dwood")
+    for k in range(2):
+        p.add(decal([(-0.2 + 0.5 * k, 0.7), (0.0 + 0.5 * k, 1.05), (0.2 + 0.5 * k, 0.7), (0.07 + 0.5 * k, 0.7), (0.07 + 0.5 * k, 0.35), (-0.07 + 0.5 * k, 0.35), (-0.07 + 0.5 * k, 0.7)],
+                      fr((-0.5, -(D + 0.095), 0), "-y"), 0.0), "black")
+    p.add(decal(rect(-1.25, -0.55, 1.6, 1.85), fr((0, -(D + 0.095), 0), "-y"), 0.0), "red")
+    return p
+
+
+def p_caja_bengala():
+    p = Prop("CajaBengala", None, 700)
+    W, D, H = 1.2, 0.8, 0.9
+    p.add(rr_loft(2 * W, 2 * D, 0.2, 2, [(0.0, 0.0), (0.0, H)], None, True, False), "orange")
+    p.add(decal(rrect(0, 0, 2 * W - 0.2, 2 * D - 0.2, 0.15, 2), None, H - 0.02), "black")
+    p.add(decal(pill(0, 0, 1.5, 0.2), None, H - 0.015), "dwood")
+    p.add(decal(rect(-W + 0.1, W - 0.1, -0.06, 0.06), fr((0, -D - 0.005, 0), "-y"), 0.3), "white")
+    bisagra = Matrix.Translation((0, D, H)) @ Matrix.Rotation(math.radians(-105), 4, "X")
+    p.add(xf(rr_loft(2 * W, 2 * D, 0.2, 2, [(0.0, 0.0), (0.0, 0.35)], Matrix.Translation((0, -D, 0))), bisagra), "orange")
+    p.add(xf(xf(decal(rrect(0, D, 2 * W - 0.24, 2 * D - 0.24, 0.15, 2), None, 0.01), Matrix.Rotation(math.pi, 4, "X")), bisagra), "cream")
+    cruz = [(-0.12, -0.42), (0.12, -0.42), (0.12, -0.12), (0.42, -0.12), (0.42, 0.12), (0.12, 0.12), (0.12, 0.42), (-0.12, 0.42), (-0.12, 0.12), (-0.42, 0.12), (-0.42, -0.12), (-0.12, -0.12)]
+    p.add(xf(xf(decal([(x, y + D) for x, y in cruz], None, 0.02), Matrix.Rotation(math.pi, 4, "X")), bisagra), "red")
+    for s in (-1, 1):
+        p.add(bb(s * 0.7 - 0.12, s * 0.7 + 0.12, -D - 0.1, -D, 0.45, 0.75, 0.03, 1), "black")
+    p.add(bar((-0.45, -D - 0.12, 0.55), (0.45, -D - 0.12, 0.55), 0.1, 0.1), "black")
+    return p
+
+
+def p_bote():
+    p = Prop("Bote", None, 1500)
+    rnd = random.Random(431)
+    L, B, H = 5.4, 1.9, 1.5
+    secciones = 9
+    perfil = 7
+    for capa, (esc, inv) in enumerate(((1.0, False), (0.9, True))):
+        bm = bmesh.new()
+        filas = []
+        for i in range(secciones):
+            t = -1 + 2 * i / (secciones - 1)
+            ancho = B * (1 - abs(t) ** 2.4) ** 0.5 * esc + 0.05
+            sube = 0.35 * t * t
+            fila = []
+            for j in range(perfil):
+                u = -1 + 2 * j / (perfil - 1)
+                ang = u * math.pi / 2
+                fila.append(bm.verts.new((L * t, ancho * math.sin(ang), (H + sube) - (H * esc) * math.cos(ang) * (1 - 0.6 * abs(t) ** 3) + (1 - esc) * 0.5)))
+            filas.append(fila)
+        for i in range(secciones - 1):
+            for j in range(perfil - 1):
+                f = (filas[i][j], filas[i + 1][j], filas[i + 1][j + 1], filas[i][j + 1])
+                bm.faces.new(f[::-1] if inv else f)
+        if capa == 0:
+            p.add(bm, lambda c, n: "teal" if c.z > H - 0.25 else ("red" if c.z < 0.35 else "white"), 35)
+        else:
+            p.add(bm, "trunk", 35)
+    for x in (-1.8, 1.6):
+        p.add(bb(x - 0.3, x + 0.3, -1.65, 1.65, 0.85, 1.0), "dwood")
+    p.add(bb(-L - 0.05, L + 0.05, -0.08, 0.08, 1.25, 1.75), "dwood")
+    agujero = [(x * 0.9, y * 0.6) for x, y in mancha(0, 0, 0.6, 433, 8, 0.4)]
+    T = Matrix.Rotation(math.radians(24), 4, "X")
+    p.parts = [(girar(bm, T), girado(rol, T), ang) for bm, rol, ang in p.parts]
+    p.add(decal(agujero, frame((0.8, -1.75, 0.95), (1, 0, 0), (0, 0.42, 0.9)), 0.0), "black")
+    remo = Matrix.Translation((0.5, -3.6, 0.12)) @ Matrix.Rotation(math.radians(18), 4, "Z")
+    p.add(xf(cyl(0.08, 4.4, (-2.2, 0, 0), (0, 90, 0), seg=6), remo), "trunk")
+    p.add(xf(bb(2.2, 3.4, -0.32, 0.32, -0.05, 0.05, 0.02, 1), remo), "orange")
+    ring(p, (-3.0, 2.4, 0.22), 0.62, 0.2, 10, lambda c, n: "white" if int((math.atan2(c.y - 2.4, c.x + 3.0) + math.pi) / (math.pi / 2)) % 2 else "orange", (12, 0, 0), 4)
+    return p
+
+
+def girar(bm, T):
+    bmesh.ops.transform(bm, matrix=T, verts=bm.verts)
+    return bm
+
+
+def girado(rol, T):
+    if not callable(rol):
+        return rol
+    Ti = T.inverted()
+    R = Ti.to_3x3()
+    return lambda c, n: rol(Ti @ c, R @ n)
+
+
+def p_cascada():
+    p = Prop("Cascada", None, 1400)
+    nx, ny = 12, 14
+    rnd = random.Random(441)
+    rayas = [rnd.random() for _ in range(nx)]
+    for capa in (0, 1):
+        bm = bmesh.new()
+        filas = []
+        for j in range(ny + 1):
+            t = j / ny
+            z = 15.0 - 14.4 * t + (0.25 * math.sin(j * 1.7) if 0 < j < ny else 0.0)
+            w = 3.6 * (1 - 0.16 * math.sin(math.pi * t)) + 0.8 * t * t
+            fila = []
+            for i in range(nx + 1):
+                u = -1 + 2 * i / nx
+                borde = 0.35 * (1 - t) * math.sin(u * 9.0) if j == 0 else 0.0
+                y = 0.8 - 1.4 * math.sin(min(1.0, t * 3.0) * math.pi / 2) * 0.5 - 1.6 * t * t + 0.16 * math.sin(u * 9.0 + t * 4.0) - 0.35 * (1 - u * u) + capa * 0.2
+                fila.append(bm.verts.new((u * w, y, z + borde)))
+            filas.append(fila)
+        for j in range(ny):
+            for i in range(nx):
+                f = (filas[j][i], filas[j][i + 1], filas[j + 1][i + 1], filas[j + 1][i])
+                bm.faces.new(f[::-1] if capa else f)
+
+        def agua(c, n, w=4.4):
+            i = min(nx - 1, max(0, int((c.x / w + 1) / 2 * nx)))
+            if c.z < 1.8 or c.z > 14.4:
+                return "foam"
+            r = rayas[i]
+            if r > 0.78:
+                return "foam"
+            return "lsea" if r > 0.3 else "sea"
+        p.add(bm, agua if capa == 0 else "sea", 40)
+    for k in range(10):
+        a = math.pi * (k / 9)
+        c = Vector((4.3 * math.cos(a) * 0.95, -1.9 - 1.6 * math.sin(a), 0.45))
+        p.add(ellipsoid((rnd.uniform(0.7, 1.1), rnd.uniform(0.6, 0.9), rnd.uniform(0.4, 0.65)), Matrix.Translation(c), 7, 4), "foam")
+    p.add(arc_strip(0, -1.7, 3.6, 5.2, 180, 360, 14, None, 0.62), "foam")
+    p.add(arc_strip(0, -1.7, 5.9, 6.5, 195, 345, 12, None, 0.61), "white")
+    for k in range(5):
+        c = Vector((rnd.uniform(-2.6, 2.6), -2.4 + rnd.uniform(-0.6, 0.6), 1.4 + rnd.uniform(0, 1.4)))
+        p.add(ellipsoid((0.55, 0.55, 0.45), Matrix.Translation(c), 6, 4), "white")
+    return p
+
+
+def p_mirador():
+    p = Prop("Mirador", None, 2400)
+    S = 6.0
+    p.add(bb(-S, S, -S, S, 1.0, 1.3, 0.04, 1), "trunk")
+    for k in range(12):
+        x = -S + 1.0 * k + 0.5
+        p.add(decal(rect(x + 0.44, x + 0.5, -S + 0.05, S - 0.05), None, 1.302), "dwood")
+    for x in (-S + 0.4, 0.0, S - 0.4):
+        for y in (-S + 0.4, 0.0, S - 0.4):
+            p.add(cyl(0.26, 1.0, (x, y, 0.0), seg=6), "dwood")
+    for s in (-1, 1):
+        p.add(bb(-S, S, s * S - 0.15, s * S + 0.15, 0.7, 1.0), "dwood")
+        p.add(bb(s * S - 0.15, s * S + 0.15, -S, S, 0.7, 1.0), "dwood")
+    postes = [(-S + 0.2, y) for y in (-S + 0.2, -2.0, 2.0, S - 0.2)] + [(S - 0.2, y) for y in (-S + 0.2, -2.0, 2.0, S - 0.2)] + [(x, S - 0.2) for x in (-2.0, 2.0)]
+    for x, y in postes:
+        p.add(bb(x - 0.13, x + 0.13, y - 0.13, y + 0.13, 1.3, 2.55, 0.03, 1), "trunk")
+    for a, b in (((-S + 0.2, -S + 0.2), (-S + 0.2, S - 0.2)), ((S - 0.2, -S + 0.2), (S - 0.2, S - 0.2)), ((-S + 0.2, S - 0.2), (S - 0.2, S - 0.2))):
+        p.add(bar((a[0], a[1], 2.5), (b[0], b[1], 2.5), 0.2, 0.14), "dsand")
+        p.add(tube([(a[0], a[1], 1.95), ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, 1.75), (b[0], b[1], 1.95)], lambda u: 0.05, 4, 3, caps=False), "straw")
+    for k in range(2):
+        p.add(bb(-1.6, 1.6, -S - 0.9 * (k + 1), -S - 0.9 * k, 0.0, 0.85 - 0.42 * k, 0.03, 1), "trunk" if k else "dwood")
+    p.add(cyl(0.11, 9.3, (4.0, S + 0.9, 0.0), seg=6), "dwood")
+    p.add(ellipsoid((0.22, 0.22, 0.22), Matrix.Translation((4.0, S + 0.9, 9.35)), 6, 4), "yellow")
+    for k in range(5):
+        a = 2 * math.pi * k / 5
+        p.add(roca((0.5, 0.45, 0.4), (4.0 + 0.6 * math.cos(a), S + 0.9 + 0.6 * math.sin(a), 0.0), 450 + k, 1, 0.2), rol_roca(0.6), 18)
+    bandera = [(4.05, 9.0), (6.4, 8.7), (6.0, 8.2), (6.5, 7.6), (4.05, 7.5)]
+    gallo = [(4.05, 8.75), (5.3, 8.55), (5.2, 8.3), (4.05, 8.35)]
+    for s in (1, -1):
+        m = fr((0, S + 0.9 - 0.012 * s, 0), "-y" if s > 0 else "+y")
+        p.add(decal([(x * s, y) for x, y in bandera], m, 0.0), "orange")
+        p.add(decal([(x * s, y) for x, y in gallo], m, 0.004), "teal")
+    tri = Vector((-4.2, -4.0, 1.3))
+    for k in range(3):
+        a = 2 * math.pi * k / 3
+        p.add(palo(tri + Vector((0.55 * math.cos(a), 0.55 * math.sin(a), 0.0)), tri + Vector((0, 0, 1.4)), 0.05, 4), "black")
+    cuerpo = Matrix.Translation(tri + Vector((0, 0, 1.55))) @ Matrix.Rotation(math.radians(70), 4, "X") @ Matrix.Rotation(math.radians(-25), 4, "Y")
+    p.add(xf(lathe([(0.0, -0.9), (0.14, -0.9), (0.14, 0.2), (0.2, 0.25), (0.2, 0.9), (0.0, 0.9)], 8), cuerpo), lambda c, n: "metal" if c.z < tri.z + 1.5 else "yellow", 40)
+    ring(p, (S - 0.2, 0.0, 2.0), 0.5, 0.15, 10, lambda c, n: "white" if int((math.atan2(c.z - 2.0, c.y) + math.pi) / (math.pi / 2)) % 2 else "orange", (0, 90, 0), 4)
+    return p
+
+
+def p_cartel():
+    p = Prop("Cartel", None, 900)
+    p.add(bb(-0.15, 0.15, -0.15, 0.15, 0.0, 5.6, 0.03, 1), "trunk")
+    p.add(ellipsoid((0.28, 0.28, 0.12), Matrix.Translation((0, 0, 5.62)), 6, 3), "dwood")
+    tablas = ((4.8, 1, 8, "teal", "radio"), (3.95, -1, -12, "orange", "fuego"), (3.1, 1, -6, "cream", "avion"))
+    for z, s, g, col, icono in tablas:
+        T = Matrix.Translation((0, 0, z)) @ Matrix.Rotation(math.radians(g), 4, "Z")
+        flecha = [(0.2 * s, -0.32), (2.2 * s, -0.32), (2.75 * s, 0.0), (2.2 * s, 0.32), (0.2 * s, 0.32)]
+        p.add(xf(prism(flecha, 0.12, Matrix.Rotation(math.radians(90), 4, "X"), 0.03, 1), T), col)
+        for lado in (-1, 1):
+            m = T @ (fr((0, -0.065, 0), "-y") if lado < 0 else fr((0, 0.065, 0), "+y"))
+            cx = 1.35 * s * (1 if lado < 0 else -1)
+            if icono == "radio":
+                p.add(xf(decal(rrect(cx, -0.04, 0.6, 0.36, 0.06, 1), None, 0.002), m), "cream")
+                p.add(xf(decal(rect(cx + 0.12, cx + 0.16, 0.14, 0.3), None, 0.004), m), "cream")
+                p.add(xf(decal(circ(cx - 0.12, -0.04, 0.09, 6), None, 0.004), m), "teal")
+            elif icono == "fuego":
+                llama = [(cx - 0.22, -0.2), (cx + 0.22, -0.2), (cx + 0.26, 0.02), (cx + 0.08, 0.28), (cx + 0.04, 0.06), (cx - 0.06, 0.24), (cx - 0.26, 0.02)]
+                p.add(xf(decal(llama, None, 0.002), m), "yellow")
+                p.add(xf(decal([(cx - 0.1, -0.16), (cx + 0.1, -0.16), (cx + 0.08, 0.02), (cx - 0.08, 0.02)], None, 0.004), m), "red")
+            else:
+                p.add(xf(decal(rect(cx - 0.32, cx + 0.32, -0.04, 0.04), None, 0.002), m), "teal")
+                p.add(xf(decal(rect(cx - 0.05, cx + 0.05, -0.24, 0.24), None, 0.004), m), "teal")
+                p.add(xf(decal(rect(cx - 0.3, cx - 0.22, -0.12, 0.12), None, 0.004), m), "teal")
+    ave = Vector((0.0, 0.0, 5.9))
+    p.add(ellipsoid((0.32, 0.22, 0.22), Matrix.Translation(ave), 7, 5), "white")
+    p.add(ellipsoid((0.16, 0.16, 0.16), Matrix.Translation(ave + Vector((0.28, 0, 0.22))), 6, 4), "white")
+    p.add(ellipsoid((0.12, 0.05, 0.04), Matrix.Translation(ave + Vector((0.48, 0, 0.2))), 5, 3), "orange")
+    for s in (-1, 1):
+        p.add(ellipsoid((0.25, 0.04, 0.12), Matrix.Translation(ave + Vector((-0.05, 0.2 * s, 0.05))), 5, 3), "metal")
+        p.add(ellipsoid((0.03, 0.03, 0.03), Matrix.Translation(ave + Vector((0.38, 0.09 * s, 0.3))), 4, 2), "black")
+    return p
+
+
+def p_refugio():
+    p = Prop("Refugio", None, 1900)
+    rnd = random.Random(461)
+    Lx, A, H = 4.2, 3.4, 4.6
+    for x in (-Lx, Lx):
+        for s in (-1, 1):
+            p.add(palo((x, s * A, 0.0), (x, -0.25 * s, H + 0.4), 0.14, 5), "trunk")
+    p.add(palo((-Lx - 0.6, 0, H), (Lx + 0.6, 0, H), 0.13, 5), "dwood")
+    for s in (-1, 1):
+        for fila in range(2):
+            for k in range(6):
+                x = -Lx + 0.2 + (2 * Lx - 0.4) * (k + 0.5 * fila) / 5.5
+                arriba = Vector((x, -0.05 * s, H + 0.15 - fila * 1.9))
+                abajo = Vector((x + rnd.uniform(-0.3, 0.3), s * A * (0.55 + 0.45 * fila) * 1.05, max(0.25, H - (fila + 1) * 2.3)))
+                spine = [arriba.lerp(abajo, t) + Vector((0, 0, 0.35 * math.sin(math.pi * t))) for t in (0.0, 0.25, 0.5, 0.75, 1.0)]
+                p.add(hoja(spine, [0.15, 0.75, 0.85, 0.65, 0.05], 0.15, 0.05), lambda c, nn, col=("leaf" if (k + fila) % 2 else "dleaf"): col, 60)
+    manta = [(-2.9, 0.0), (-0.4, 0.0), (-0.3, 3.3), (-0.9, 4.4), (-2.0, 2.2)]
+    p.add(prism(manta, 0.06, frame((-Lx - 0.15, 0, 0), (0, 1, 0), (0, 0, 1))), "orange")
+    p.add(prism([(-2.75, 0.5), (-0.5, 0.5), (-0.5, 0.75), (-2.65, 0.75)], 0.08, frame((-Lx - 0.15, 0, 0), (0, 1, 0), (0, 0, 1))), "teal")
+    p.add(bb(-2.5, -0.5, -0.9, 0.9, 0.0, 0.5, 0.15, 2), "teal")
+    p.add(bb(-2.4, -0.6, 0.5, 0.95, 0.4, 1.6, 0.12, 1), "teal")
+    p.add(ellipsoid((0.45, 0.45, 0.48), Matrix.Translation((0.6, 0.4, 0.48)), 7, 5), "coco")
+    p.add(bb(1.2, 2.6, 0.2, 1.4, 0.0, 1.0, 0.05, 1), "trunk")
+    p.add(cyl(0.5, 0.04, (1.9, 0.8, 1.0), seg=8), "cream")
+    p.add(tube([(-Lx, -0.4, H - 0.6), (-Lx + 0.1, -0.6, H - 1.6)], lambda u: 0.03, 3, 1, caps=False), "straw")
+    p.add(rr_loft(0.9, 0.35, 0.12, 1, [(0.0, 0.0), (0.0, 1.1)], Matrix.Translation((-Lx + 0.1, -0.6, H - 2.7))), "orange")
+    return p
+
+
+def p_pila_lena():
+    p = Prop("PilaLena", None, 900)
+    prof = [(0.0, -1.1), (0.3, -1.1), (0.42, -1.05), (0.42, 1.05), (0.3, 1.1), (0.0, 1.1)]
+    filas = ((3, 0.42), (2, 1.18), (1, 1.94))
+    for n, z in filas:
+        for k in range(n):
+            y = (k - (n - 1) / 2) * 0.86
+            p.add(lathe(prof, 8, M((-0.6, y, z), (0, 90, 4 * (k - 1)))), lambda c, nn: "dsand" if abs(nn.x) > 0.85 else ("trunk" if int((math.atan2(c.z, c.y) + math.pi) * 1.6) % 2 else "dwood"), 35)
+    p.add(lathe([(0.0, 0.0), (0.85, 0.0), (0.7, 0.15), (0.65, 0.95), (0.0, 0.95)], 9, Matrix.Translation((1.75, 0.2, 0.0))), lambda c, nn: "dsand" if nn.z > 0.8 else "dwood", 40)
+    p.add(decal(circ(1.75, 0.2, 0.4, 9), None, 0.952), "trunk")
+    hacha = Matrix.Translation((1.8, 0.2, 0.95)) @ Matrix.Rotation(math.radians(-28), 4, "Y")
+    p.add(xf(bar((0, 0, 0.0), (0, 0, 1.7), 0.12, 0.12), hacha @ Matrix.Translation((0.25, 0, -0.2))), "trunk")
+    p.add(xf(prism([(-0.05, -0.25), (0.55, -0.4), (0.6, 0.4), (-0.05, 0.25)], 0.1, Matrix.Rotation(math.radians(90), 4, "X")), hacha @ Matrix.Translation((-0.2, 0, -0.1))), lambda c, nn: "metal" if c.x < 1.95 else "lrock", 30)
+    for k in range(4):
+        p.add(bar((1.0 + 0.3 * k, -0.9 - 0.15 * k, 0.04), (1.3 + 0.3 * k, -0.6 - 0.1 * k, 0.08), 0.18, 0.06), "straw")
+    return p
+
+
+BUILDERS = [p_terreno, p_palmera1, p_palmera2, p_palmera3, p_palmera_inclinada, p_palmera_joven, p_platanera, p_helecho,
+            p_hojas_grandes, p_flores, p_hierba, p_madera_deriva, p_conchas, p_charca, p_roca_media, p_acantilado, p_rocas_planas,
+            p_asiento_roto, p_maleta_abierta, p_maleta_cerrada, p_trozo_fuselaje, p_caja_abierta, p_caja_bengala, p_bote, p_cascada,
+            p_mirador, p_cartel, p_refugio, p_pila_lena,
             p_roca_grande, p_roca_pequena, p_arbusto, p_hoguera, p_tronco, p_coco, p_cangrejo, p_antena, p_bateria, p_radio,
             p_estacion, p_bengala, p_hidroavion, p_restos_ala, p_restos_motor, p_cajon, p_sos, p_muelle]
 
@@ -1259,7 +1889,9 @@ def sheet_terreno(st):
 SHEETS = [("isla_kit.png", lambda st: sheet_catalog(st, [["Coco", "Bengala", "RadioAntena", "RadioBateria", "RadioCaja", "Tronco", "Cangrejo", "RocaPequena", "ArbustoTropical"], ["Cajon", "Hoguera", "EstacionRadio", "RestosMotor", "SenalSOS"], ["Palmera2", "Palmera1", "RocaGrande", "RestosAla", "Muelle"]], 1.6)),
           ("isla_hidro.png", lambda st: sheet_catalog(st, [["Hidroavion"]], 2.0)),
           ("isla_terreno.png", sheet_terreno),
-          ("isla_piezas.png", lambda st: sheet_catalog(st, [["Coco", "Bengala", "RadioAntena", "RadioBateria", "RadioCaja"], ["Tronco", "Cangrejo", "RocaPequena", "ArbustoTropical"], ["Cajon", "Hoguera", "EstacionRadio", "RestosMotor"]], 0.8))]
+          ("isla_piezas.png", lambda st: sheet_catalog(st, [["Coco", "Bengala", "RadioAntena", "RadioBateria", "RadioCaja"], ["Tronco", "Cangrejo", "RocaPequena", "ArbustoTropical"], ["Cajon", "Hoguera", "EstacionRadio", "RestosMotor"]], 0.8)),
+          ("isla_vegetacion.png", lambda st: sheet_catalog(st, [["Hierba", "Conchas", "Helecho", "Flores", "HojasGrandes", "Charca"], ["PalmeraJoven", "Platanera", "MaderaDeriva", "RocaMedia", "RocasPlanas"], ["Palmera2", "Palmera1", "Palmera3", "PalmeraInclinada", "Acantilado"]], 1.2)),
+          ("isla_restos.png", lambda st: sheet_catalog(st, [["MaletaCerrada", "MaletaAbierta", "AsientoRoto", "CajaBengala", "CajaAbierta", "PilaLena"], ["Cartel", "Bote", "TrozoFuselaje", "Cascada"], ["Refugio", "Mirador"]], 1.2))]
 
 
 def render_sheets(objs, which, threads, outdir):

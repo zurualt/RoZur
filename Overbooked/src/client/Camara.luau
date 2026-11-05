@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
+local Manos = require(script.Parent.Manos)
 
 local Camara = {}
 
@@ -17,12 +18,19 @@ local inclinacion = 0
 local cabeceo = 0
 local fovExtra = 0
 local terceraPersona = false
+local fovBase = 80
 local aplicado = CFrame.identity
-local articulaciones: { [Model]: { hombros: { Motor6D }, codos: { Motor6D } } } = setmetatable({}, { __mode = "k" }) :: any
-local HOMBROS = { "RightUpperArm", "LeftUpperArm" }
-local CODOS = { "RightLowerArm", "LeftLowerArm" }
-local GIRO_HOMBRO = CFrame.Angles(math.rad(78), 0, 0)
-local GIRO_CODO = CFrame.Angles(math.rad(18), 0, 0)
+type Brazos = { motores: { [string]: Motor6D }, inclinacion: number }
+local articulaciones: { [Model]: Brazos } = setmetatable({}, { __mode = "k" }) :: any
+local MOTORES = { "RightShoulder", "LeftShoulder", "RightElbow", "LeftElbow", "RightWrist" }
+local POSE_BRAZO: { [string]: { number } } = {
+	puno = { 68, 27, 0, 12 },
+	vaso = { 68, 27, 0, 12 },
+	palma = { 55, 55, -90, 12 },
+	colgar = { 45, 15, 0, 6 },
+	dos = { 78, 18, 0, 10 },
+}
+local LEVANTE_PROPIO = math.rad(12)
 local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(55), 0, 0)
 local alcanceHasta = 0
 local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(45), 0, 0)
@@ -35,7 +43,19 @@ function Camara.impulsoFov(cantidad: number)
 	fovExtra = math.max(fovExtra, cantidad)
 end
 
-function Camara.terceraPersona(activa: boolean)
+function Camara.fov(valor: number)
+	fovBase = math.clamp(valor, 60, 100)
+end
+
+function Camara.esTerceraPersona(): boolean
+	return terceraPersona
+end
+
+local forzada = false
+local preferida = false
+
+local function aplicarModo()
+	local activa = forzada or preferida
 	terceraPersona = activa
 	if activa then
 		jugador.CameraMode = Enum.CameraMode.Classic
@@ -46,6 +66,16 @@ function Camara.terceraPersona(activa: boolean)
 		jugador.CameraMaxZoomDistance = 0.5
 		jugador.CameraMode = Enum.CameraMode.LockFirstPerson
 	end
+end
+
+function Camara.terceraPersona(activa: boolean)
+	forzada = activa
+	aplicarModo()
+end
+
+function Camara.preferirTercera(activa: boolean)
+	preferida = activa
+	aplicarModo()
 end
 
 local function ruido(t: number, semilla: number): number
@@ -61,19 +91,33 @@ local function brazos(personaje: Model)
 	end
 end
 
-local function motores(personaje: Model, nombres: { string }): { Motor6D }
-	local lista: { Motor6D } = {}
-	for _, nombre in nombres do
-		local parte = personaje:FindFirstChild(nombre)
-		if parte then
-			for _, m in parte:GetChildren() do
-				if m:IsA("Motor6D") then
-					table.insert(lista, m)
-				end
-			end
-		end
+local function girar(m: Motor6D?, giro: CFrame)
+	if m then
+		local rot = m.C0.Rotation
+		m.Transform = rot:Inverse() * giro * rot
 	end
-	return lista
+end
+
+local function elevacion(marco: CFrame, v: Vector3): number
+	local l = marco:VectorToObjectSpace(v)
+	return math.atan2(l.Y, -l.Z)
+end
+
+local function apuntarAlObjeto(personaje: Model, datos: Brazos, estilo: Manos.Estilo)
+	local valor = personaje:FindFirstChild("Sostenido")
+	local objeto = if valor and valor:IsA("ObjectValue") then valor.Value else nil
+	local raiz = if objeto and objeto:IsA("Model") then objeto.PrimaryPart elseif objeto and objeto:IsA("BasePart") then objeto else nil
+	local torso = personaje:FindFirstChild("UpperTorso")
+	local hombro = datos.motores.RightShoulder
+	local mano, punto = Manos.punto(personaje)
+	if not (raiz and torso and torso:IsA("BasePart") and hombro and mano) then
+		return
+	end
+	local actual = punto or mano.Position
+	local objetivo = (raiz.CFrame * Manos.desfase(estilo, raiz.Size):Inverse()).Position
+	local origen = (torso.CFrame * hombro.C0).Position
+	local desvio = elevacion(torso.CFrame, objetivo - origen) - elevacion(torso.CFrame, actual - origen)
+	datos.inclinacion = math.clamp(datos.inclinacion + desvio * 0.5, -0.8, 1.2)
 end
 
 local function poseSosteniendo(personaje: Model)
@@ -81,42 +125,72 @@ local function poseSosteniendo(personaje: Model)
 		return
 	end
 	local sosteniendo = personaje:GetAttribute("Sosteniendo")
-	local lleva = typeof(sosteniendo) == "string" and sosteniendo ~= ""
-	if not lleva and (personaje ~= jugador.Character or terceraPersona) then
+	local tipo = if typeof(sosteniendo) == "string" then sosteniendo else ""
+	local propio = personaje == jugador.Character and not terceraPersona
+	if tipo == "" and not propio then
 		return
 	end
 	local datos = articulaciones[personaje]
 	if not datos then
-		datos = { hombros = motores(personaje, HOMBROS), codos = motores(personaje, CODOS) }
+		local lista: { [string]: Motor6D } = {}
+		for _, nombre in MOTORES do
+			local m = personaje:FindFirstChild(nombre, true)
+			if m and m:IsA("Motor6D") then
+				lista[nombre] = m
+			end
+		end
+		if not lista.RightShoulder then
+			return
+		end
+		datos = { motores = lista, inclinacion = 0 }
 		articulaciones[personaje] = datos
 	end
-	local hombro = if lleva then GIRO_HOMBRO else GIRO_HOMBRO_REPOSO
-	local codo = if lleva then GIRO_CODO else GIRO_CODO_REPOSO
-	local propio = personaje == jugador.Character and not terceraPersona
+	local m = datos.motores
 	local inclinacionVista = if propio then math.clamp(math.asin(math.clamp(Workspace.CurrentCamera.CFrame.LookVector.Y, -1, 1)), -0.8, 1.2) else 0
-	if propio then
-		hombro = CFrame.Angles(inclinacionVista, 0, 0) * hombro
+	local reposo = CFrame.Angles(inclinacionVista, 0, 0) * GIRO_HOMBRO_REPOSO
+	if tipo ~= "" then
+		local estilo = Manos.estilo(tipo)
+		if personaje ~= jugador.Character then
+			apuntarAlObjeto(personaje, datos, estilo)
+			inclinacionVista = datos.inclinacion
+		elseif propio and estilo.modo ~= "dos" then
+			inclinacionVista += LEVANTE_PROPIO
+		end
+		local p = POSE_BRAZO[estilo.modo]
+		local dentro = math.rad(p[4])
+		local subir = CFrame.Angles(inclinacionVista + math.rad(p[1]), 0, 0)
+		local codo = CFrame.Angles(math.rad(p[2]), 0, 0)
+		girar(m.RightShoulder, CFrame.Angles(0, dentro, 0) * subir)
+		girar(m.RightElbow, codo)
+		if p[3] ~= 0 then
+			girar(m.RightWrist, CFrame.Angles(0, math.rad(p[3]), 0))
+		end
+		if estilo.modo == "dos" then
+			girar(m.LeftShoulder, CFrame.Angles(0, -dentro, 0) * subir)
+			girar(m.LeftElbow, codo)
+		elseif propio then
+			girar(m.LeftShoulder, reposo)
+			girar(m.LeftElbow, GIRO_CODO_REPOSO)
+		end
+		return
 	end
-	local alcance = if propio and not lleva then math.clamp((alcanceHasta - os.clock()) / 0.45, 0, 1) else 0
-	local hombroAlcance = CFrame.Angles(inclinacionVista + math.rad(90) * math.sin(alcance * math.pi), 0, 0)
-	for _, m in datos.hombros do
-		local rot = m.C0.Rotation
-		m.Transform = rot:Inverse() * (if alcance > 0 and m.Name == "RightShoulder" then hombroAlcance else hombro) * rot
-	end
-	for _, m in datos.codos do
-		local rot = m.C0.Rotation
-		m.Transform = rot:Inverse() * (if alcance > 0 and m.Name == "RightElbow" then CFrame.Angles(math.rad(45) * (1 - math.sin(alcance * math.pi)), 0, 0) else codo) * rot
-	end
+	local alcance = math.clamp((alcanceHasta - os.clock()) / 0.45, 0, 1)
+	local estirar = math.sin(alcance * math.pi)
+	girar(m.RightShoulder, if alcance > 0 then CFrame.Angles(inclinacionVista + math.rad(90) * estirar, 0, 0) else reposo)
+	girar(m.RightElbow, if alcance > 0 then CFrame.Angles(math.rad(45) * (1 - estirar), 0, 0) else GIRO_CODO_REPOSO)
+	girar(m.LeftShoulder, reposo)
+	girar(m.LeftElbow, GIRO_CODO_REPOSO)
 end
 
 function Camara.alcanzar()
+	Manos.abrir()
 	alcanceHasta = os.clock() + 0.45
 end
 
 function Camara.iniciar()
 	Camara.terceraPersona(false)
 	local camara = Workspace.CurrentCamera
-	camara.FieldOfView = 80
+	camara.FieldOfView = fovBase
 
 	RunService.PreSimulation:Connect(function()
 		local foco = camara.CFrame.Position
@@ -165,7 +239,7 @@ function Camara.iniciar()
 		cam.CFrame = cam.CFrame * total
 		aplicado = total
 		fovExtra = math.max(0, fovExtra - dt * 18)
-		cam.FieldOfView = 80 + fovExtra
+		cam.FieldOfView = fovBase + fovExtra
 		if personaje and not terceraPersona then
 			brazos(personaje)
 		end

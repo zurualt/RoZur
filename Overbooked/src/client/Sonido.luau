@@ -26,13 +26,25 @@ local fuegos: { [Instance]: Sound } = {}
 local recientes: { [string]: number } = {}
 local musicaActiva = true
 
+local bases: { [string]: number } = {}
+local factores: { [string]: number } = {}
+
 local function grupo(nombre: string, volumen: number): SoundGroup
 	local g = Instance.new("SoundGroup")
 	g.Name = nombre
-	g.Volume = volumen
+	g.Volume = volumen * (factores[nombre] or 1)
 	g.Parent = SoundService
 	grupos[nombre] = g
+	bases[nombre] = volumen
 	return g
+end
+
+function Sonido.volumen(nombre: string, factor: number)
+	factores[nombre] = math.clamp(factor, 0, 1)
+	local g = grupos[nombre]
+	if g then
+		g.Volume = (bases[nombre] or 1) * factores[nombre]
+	end
 end
 
 local function asset(nombre: string): string?

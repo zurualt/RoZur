@@ -134,8 +134,8 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 			return o.Parent == nil, true
 		end
 		Pasajeros.golpear(modelo, fuerza, dir, if tipo == "Cafe" then "Quemado" elseif tipo == "Agua" then "Mojado" else "Golpe", Avion.estado.cinturones)
-		Sonidos.emitir(if fuerza > 45 then "GolpeFuerte" else "Golpe", donde)
-		Rafagas.lanzar("Estrellas", donde, math.clamp(fuerza / 40, 0.6, 1.6))
+		Sonidos.emitir(if fuerza > 45 then "Bonk" else "Golpe", donde)
+		Rafagas.lanzar("Bonk", donde, math.clamp(fuerza / 40, 0.6, 1.6))
 		if LIQUIDOS[tipo] then
 			local pos = o.Position
 			Agarre.soltarObjeto(o)
@@ -148,8 +148,8 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	local cocodrilo = golpeado:FindFirstAncestorWhichIsA("Model")
 	if cocodrilo and CollectionService:HasTag(cocodrilo, "Cocodrilo") then
 		if fuerza > 18 and Carga.aturdir(3.5) then
-			Sonidos.emitir("GolpeMetal", o.Position)
-			Rafagas.lanzar("Estrellas", o.Position, 1.4)
+			Sonidos.emitir("Bonk", o.Position)
+			Rafagas.lanzar("Bonk", o.Position, 1.4)
 			if lanzador then
 				RemotoAviso:FireClient(lanzador, "¡Cocodrilo aturdido!", "bien")
 			end
@@ -160,8 +160,8 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 	local jugador = jugadorDe(golpeado)
 	if jugador and not (jugador == lanzador and l and ahora - l.hora < 0.8) and fuerza > 40 then
 		Personajes.ragdoll(jugador, 1.1, dir * math.min(fuerza, 80) * 0.5 + Vector3.new(0, 18, 0))
-		Sonidos.emitir("GolpeFuerte", o.Position)
-		Rafagas.lanzar("Estrellas", o.Position, 1.2)
+		Sonidos.emitir("Bonk", o.Position)
+		Rafagas.lanzar("Bonk", o.Position, 1.2)
 		RemotoAviso:FireClient(jugador, if lanzador and lanzador ~= jugador then `¡{lanzador.DisplayName} te ha dado!` else "¡Cuidado con lo que vuela!", "peligro")
 		return false, true
 	end

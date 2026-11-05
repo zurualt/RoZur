@@ -1,0 +1,132 @@
+[
+  {
+    "nombre": "NubeCumulo1",
+    "archivo": "NubeCumulo1.fbx",
+    "tamano": [
+      260.0,
+      134.033,
+      137.046
+    ],
+    "triangulos": 2954
+  },
+  {
+    "nombre": "NubeCumulo2",
+    "archivo": "NubeCumulo2.fbx",
+    "tamano": [
+      300.0,
+      118.584,
+      144.977
+    ],
+    "triangulos": 2954
+  },
+  {
+    "nombre": "NubeCumulo3",
+    "archivo": "NubeCumulo3.fbx",
+    "tamano": [
+      220.0,
+      164.411,
+      150.763
+    ],
+    "triangulos": 2954
+  },
+  {
+    "nombre": "NubeTorre",
+    "archivo": "NubeTorre.fbx",
+    "tamano": [
+      230.0,
+      305.005,
+      140.356
+    ],
+    "triangulos": 3742
+  },
+  {
+    "nombre": "NubePequena1",
+    "archivo": "NubePequena1.fbx",
+    "tamano": [
+      70.0,
+      37.693,
+      48.231
+    ],
+    "triangulos": 788
+  },
+  {
+    "nombre": "NubePequena2",
+    "archivo": "NubePequena2.fbx",
+    "tamano": [
+      55.0,
+      30.902,
+      31.981
+    ],
+    "triangulos": 788
+  },
+  {
+    "nombre": "NubeManto1",
+    "archivo": "NubeManto1.fbx",
+    "tamano": [
+      900.0,
+      47.701,
+      629.157
+    ],
+    "triangulos": 2560
+  },
+  {
+    "nombre": "NubeManto2",
+    "archivo": "NubeManto2.fbx",
+    "tamano": [
+      760.0,
+      48.452,
+      627.048
+    ],
+    "triangulos": 2560
+  },
+  {
+    "nombre": "SueloCampos1",
+    "archivo": "SueloCampos1.fbx",
+    "tamano": [
+      2048.0,
+      2.0,
+      2048.0
+    ],
+    "triangulos": 12
+  },
+  {
+    "nombre": "SueloCampos2",
+    "archivo": "SueloCampos2.fbx",
+    "tamano": [
+      2048.0,
+      2.0,
+      2048.0
+    ],
+    "triangulos": 12
+  },
+  {
+    "nombre": "Arboleda1",
+    "archivo": "Arboleda1.fbx",
+    "tamano": [
+      36.217,
+      15.431,
+      23.931
+    ],
+    "triangulos": 936
+  },
+  {
+    "nombre": "Arboleda2",
+    "archivo": "Arboleda2.fbx",
+    "tamano": [
+      32.599,
+      15.629,
+      29.191
+    ],
+    "triangulos": 536
+  },
+  {
+    "nombre": "Pueblo",
+    "archivo": "Pueblo.fbx",
+    "tamano": [
+      66.777,
+      21.0,
+      56.795
+    ],
+    "triangulos": 1010
+  }
+]

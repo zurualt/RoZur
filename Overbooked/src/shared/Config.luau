@@ -10,7 +10,7 @@ export type DefObjeto = {
 
 local Config = {}
 
-Config.ASSET_TRIPULANTE = 87418247604950
+Config.ASSET_TRIPULANTE = 124975432706541
 Config.ALTURA_TRIPULANTE = 4.67
 Config.ROTACION_FBX = CFrame.Angles(math.pi / 2, 0, 0)
 
@@ -272,7 +272,7 @@ Config.OBJETOS = {
 } :: { [string]: DefObjeto }
 
 Config.ISLA = {
-	CENTRO = Vector3.new(-140, 90.2, -40),
+	CENTRO = Vector3.new(-25, 90.2, -105),
 	DURACION = 300,
 	RESCATE = 22,
 	ENTREGA = 6,
@@ -320,8 +320,10 @@ Config.PASAJEROS = {
 		Color3.fromRGB(217, 68, 58),
 		Color3.fromRGB(52, 56, 63),
 	},
-	PEDIDO_PROB = 0.045,
-	PACIENCIA = 45,
+	PEDIDO_PROB = 0.025,
+	PACIENCIA = 70,
+	PEDIDOS_BASE = 1,
+	PEDIDOS_POR_JUGADOR = 2,
 	SUBIDA_SERVIR = 0.35,
 	BAJADA_ESPERA = 0.3,
 	MIEDO_DECAE = 0.03,

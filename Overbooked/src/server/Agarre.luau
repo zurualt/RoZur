@@ -44,10 +44,20 @@ function Agarre.agarrable(instancia: Instance): Instance?
 	return nil
 end
 
-local function marcarPersonaje(jugador: Player, tipo: string)
+local function marcarPersonaje(jugador: Player, tipo: string, objeto: Instance?)
 	local personaje = jugador.Character
 	if personaje then
 		personaje:SetAttribute("Sosteniendo", tipo)
+		local valor = personaje:FindFirstChild("Sostenido")
+		if not valor then
+			local nuevo = Instance.new("ObjectValue")
+			nuevo.Name = "Sostenido"
+			nuevo.Parent = personaje
+			valor = nuevo
+		end
+		if valor and valor:IsA("ObjectValue") then
+			valor.Value = objeto
+		end
 	end
 end
 
@@ -133,7 +143,7 @@ local function tomar(jugador: Player, objeto: Instance): boolean
 	objeto:SetAttribute("Portador", jugador.UserId)
 	grupo(objeto, "Sostenido")
 	local tipo = objeto:GetAttribute("Tipo")
-	marcarPersonaje(jugador, if typeof(tipo) == "string" then tipo else objeto.Name)
+	marcarPersonaje(jugador, if typeof(tipo) == "string" then tipo else objeto.Name, objeto)
 	propiedad(raiz, jugador)
 	return true
 end

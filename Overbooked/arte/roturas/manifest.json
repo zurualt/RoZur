@@ -1,0 +1,274 @@
+[
+  {
+    "nombre": "RotBase",
+    "archivo": "RotBase.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -27.495,
+      90.0,
+      -66.0
+    ],
+    "bbox_max": [
+      27.495,
+      113.75,
+      -7.9
+    ],
+    "triangulos": 6433
+  },
+  {
+    "nombre": "RotPuntaIzq",
+    "archivo": "RotPuntaIzq.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -38.08,
+      98.285,
+      -27.15
+    ],
+    "bbox_max": [
+      -26.548,
+      101.8,
+      -18.95
+    ],
+    "triangulos": 200
+  },
+  {
+    "nombre": "RotPuntaDer",
+    "archivo": "RotPuntaDer.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      26.548,
+      98.285,
+      -27.15
+    ],
+    "bbox_max": [
+      38.08,
+      101.8,
+      -18.95
+    ],
+    "triangulos": 200
+  },
+  {
+    "nombre": "RotCola",
+    "archivo": "RotCola.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -14.6,
+      96.25,
+      -8.9
+    ],
+    "bbox_max": [
+      14.6,
+      114.738,
+      31.3
+    ],
+    "triangulos": 3025
+  },
+  {
+    "nombre": "RotDeriva",
+    "archivo": "RotDeriva.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -0.689,
+      113.934,
+      15.989
+    ],
+    "bbox_max": [
+      0.689,
+      122.6,
+      31.458
+    ],
+    "triangulos": 686
+  },
+  {
+    "nombre": "RotBordeAlaIzq",
+    "archivo": "RotBordeAlaIzq.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -28.569,
+      97.365,
+      -27.15
+    ],
+    "bbox_max": [
+      -26.528,
+      99.25,
+      -18.95
+    ],
+    "triangulos": 272
+  },
+  {
+    "nombre": "RotBordeAlaDer",
+    "archivo": "RotBordeAlaDer.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      26.528,
+      97.365,
+      -27.15
+    ],
+    "bbox_max": [
+      28.569,
+      99.25,
+      -18.95
+    ],
+    "triangulos": 272
+  },
+  {
+    "nombre": "RotBordeDeriva",
+    "archivo": "RotBordeDeriva.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -0.933,
+      113.914,
+      15.989
+    ],
+    "bbox_max": [
+      0.933,
+      115.766,
+      30.689
+    ],
+    "triangulos": 276
+  },
+  {
+    "nombre": "RotBordeCola",
+    "archivo": "RotBordeCola.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -9.085,
+      96.19,
+      -10.155
+    ],
+    "bbox_max": [
+      9.172,
+      114.096,
+      -6.6
+    ],
+    "triangulos": 1060
+  },
+  {
+    "nombre": "RotTechoRoto",
+    "archivo": "RotTechoRoto.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -5.496,
+      111.999,
+      -17.21
+    ],
+    "bbox_max": [
+      5.381,
+      115.131,
+      -11.818
+    ],
+    "triangulos": 456
+  },
+  {
+    "nombre": "RotBordeTecho",
+    "archivo": "RotBordeTecho.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -6.7,
+      106.6,
+      -16.788
+    ],
+    "bbox_max": [
+      6.7,
+      110.147,
+      -12.015
+    ],
+    "triangulos": 428
+  },
+  {
+    "nombre": "RotTapaTecho",
+    "archivo": "RotTapaTecho.fbx",
+    "espacio": "avion",
+    "bbox_min": [
+      -5.29,
+      109.76,
+      -16.801
+    ],
+    "bbox_max": [
+      5.29,
+      113.75,
+      -12.271
+    ],
+    "triangulos": 648
+  },
+  {
+    "nombre": "RotCapo",
+    "archivo": "RotCapo.fbx",
+    "espacio": "local",
+    "bbox_min": [
+      -2.151,
+      1.095,
+      -2.5
+    ],
+    "bbox_max": [
+      2.151,
+      2.31,
+      2.3
+    ],
+    "triangulos": 672
+  },
+  {
+    "nombre": "RotMotorExpuesto",
+    "archivo": "RotMotorExpuesto.fbx",
+    "espacio": "local",
+    "bbox_min": [
+      -1.896,
+      1.287,
+      -2.3
+    ],
+    "bbox_max": [
+      1.814,
+      2.889,
+      2.1
+    ],
+    "triangulos": 1350
+  },
+  {
+    "nombre": "RotPolloGoma",
+    "archivo": "RotPolloGoma.fbx",
+    "espacio": "local",
+    "bbox_min": [
+      -0.728,
+      -1.888,
+      -3.936
+    ],
+    "bbox_max": [
+      0.728,
+      1.344,
+      2.552
+    ],
+    "triangulos": 1466
+  },
+  {
+    "nombre": "RotAsientoSaludo",
+    "archivo": "RotAsientoSaludo.fbx",
+    "espacio": "local",
+    "bbox_min": [
+      -1.2,
+      -1.6,
+      -1.58
+    ],
+    "bbox_max": [
+      1.2,
+      3.69,
+      1.205
+    ],
+    "triangulos": 2718
+  },
+  {
+    "nombre": "RotBrazosSaludo",
+    "archivo": "RotBrazosSaludo.fbx",
+    "espacio": "local",
+    "bbox_min": [
+      -1.392,
+      1.748,
+      -0.171
+    ],
+    "bbox_max": [
+      1.392,
+      3.924,
+      0.127
+    ],
+    "triangulos": 384
+  }
+]
