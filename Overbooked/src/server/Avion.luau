@@ -8,6 +8,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 local VFX = require(ReplicatedStorage.Shared.VFX)
+local Contratos = require(ReplicatedStorage.Shared.Contratos)
 local Estadisticas = require(script.Parent.Estadisticas)
 local Mejoras = require(script.Parent.Mejoras)
 local Sonidos = require(script.Parent.Sonidos)
@@ -97,6 +98,7 @@ local terminado = false
 local forzado = false
 local pausado = false
 local pausaHasta = 0
+local pruebaDestino = false
 
 local function atributo(nombre: string, valor: any)
 	if ultimoAtributo[nombre] ~= valor then
@@ -308,6 +310,9 @@ function Avion.embarque(total: number)
 	estado.total = total
 	estado.cinturones = true
 	Avion.reparar()
+	if not pruebaDestino then
+		avion:SetAttribute("PruebaBioma", nil)
+	end
 end
 
 function Avion.despegar()
@@ -398,10 +403,29 @@ local function tocarSuelo()
 	end
 end
 
+local function saltarAproximacion()
+	pruebaDestino = false
+	estado.fase = "Vuelo"
+	estado.enTierra = false
+	tren(false)
+	estado.altitud = 1800
+	estado.vertical = 0
+	estado.cabeceo = 0
+	estado.alabeo = 0
+	estado.velocidad = 480
+	estado.gases = 0.55
+	estado.autopiloto = false
+	estado.distancia = math.max(0, estado.total - V.APROXIMACION - 60)
+end
+
 local function simular(dt: number)
 	local fase = estado.fase
 	if fase ~= "Despegue" and fase ~= "Vuelo" and fase ~= "Aproximacion" and fase ~= "Frenando" then
 		return
+	end
+	if pruebaDestino and fase ~= "Frenando" then
+		saltarAproximacion()
+		fase = estado.fase
 	end
 	if pausaHasta > 0 then
 		if os.clock() < pausaHasta then
@@ -720,6 +744,21 @@ function Avion.iniciar()
 			publicar()
 		end
 	end)
+	if RunService:IsStudio() then
+		Workspace:GetAttributeChangedSignal("PruebaDestino"):Connect(function()
+			local v = Workspace:GetAttribute("PruebaDestino")
+			if typeof(v) ~= "string" or v == "" then
+				return
+			end
+			Workspace:SetAttribute("PruebaDestino", nil)
+			if not table.find(Contratos.BIOMAS, v) then
+				warn(`[Overbooked] PruebaDestino desconocido: {v}`)
+				return
+			end
+			avion:SetAttribute("PruebaBioma", v)
+			pruebaDestino = true
+		end)
+	end
 	Avion.prepararTierra()
 end
 

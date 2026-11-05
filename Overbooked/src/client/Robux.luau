@@ -10,6 +10,7 @@ local Workspace = game:GetService("Workspace")
 local Config = require(ReplicatedStorage.Shared.Config)
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local ImagenesRobux = require(ReplicatedStorage.Shared.ImagenesRobux)
+local BarraSuperior = require(script.Parent.BarraSuperior)
 local Camara = require(script.Parent.Camara)
 local Sonido = require(script.Parent.Sonido)
 
@@ -46,7 +47,7 @@ local botonPase: ImageButton
 local textoPase: TextLabel
 local mirando: TextLabel
 local listaCaidos: Frame
-local botonCaos: ImageButton
+local caosDisponible = false
 local panelCaos: ImageLabel
 local filasCaos: { [string]: { boton: ImageButton, precio: TextLabel } } = {}
 local cartel: Frame
@@ -238,23 +239,24 @@ end
 
 local function pintarCaos()
 	local enVuelo = Estado:GetAttribute("Fase") == "Vuelo"
-	local alguna = false
+	local guardadas = 0
 	for _, e in R.CAOS do
 		local f = filasCaos[e.nombre]
 		local n = Robux.fichas(e.nombre)
-		if n > 0 then
-			alguna = true
-		end
+		guardadas += n
 		if f then
 			f.boton.Visible = e.producto ~= 0 or n > 0
 			f.precio.Text = if n > 0 then `LANZAR (x{n})` else Robux.precio(e.nombre)
 			f.boton.ImageColor3 = if n > 0 then Gui.NARANJA else Gui.VERDE
 		end
 	end
-	botonCaos.Visible = enVuelo and (hayCaos() or alguna)
-	if not botonCaos.Visible then
+	caosDisponible = enVuelo and (hayCaos() or guardadas > 0)
+	if not caosDisponible then
 		panelCaos.Visible = false
 	end
+	BarraSuperior.mostrar("Desastres", caosDisponible)
+	BarraSuperior.insignia("Desastres", if guardadas > 0 then tostring(guardadas) else nil)
+	BarraSuperior.activo("Desastres", panelCaos.Visible)
 end
 
 local function pintar()
@@ -355,13 +357,11 @@ local function construir()
 	listaCaidos.Parent = raiz
 	Gui.lista(listaCaidos, 8)
 
-	local tactil = Gui.tactil()
-	botonCaos = boton(raiz, "DESASTRES (J)", if tactil then UDim2.fromOffset(210, 80) else UDim2.fromOffset(170, 50), if tactil then UDim2.new(1, -14, 0, 286) else UDim2.new(0, 14, 1, -74), Gui.ROJO, function()
+	BarraSuperior.agregar("Desastres", "Desastres", "Desastres (J)", 5, function()
 		panelCaos.Visible = not panelCaos.Visible
 		pintarCaos()
 	end)
-	botonCaos.AnchorPoint = if tactil then Vector2.new(1, 0) else Vector2.new(0, 1)
-	botonCaos.Visible = false
+	BarraSuperior.mostrar("Desastres", false)
 
 	panelCaos = Gui.panel(raiz, "Papel", UDim2.fromOffset(560, 540), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
 	panelCaos.Visible = false
@@ -378,6 +378,7 @@ local function construir()
 	nota.TextXAlignment = Enum.TextXAlignment.Left
 	local cerrar = boton(panelCaos, "X", UDim2.fromOffset(50, 50), UDim2.new(1, -18, 0, 14), Gui.ROJO, function()
 		panelCaos.Visible = false
+		pintarCaos()
 	end)
 	cerrar.AnchorPoint = Vector2.new(1, 0)
 	local filas = Instance.new("Frame")
@@ -507,7 +508,7 @@ function Robux.iniciar()
 	end)
 	RunService:BindToRenderStep("OverbookedEspectador", Enum.RenderPriority.Camera.Value, seguir)
 	ContextActionService:BindActionAtPriority("Desastres", function(_, estado)
-		if estado ~= Enum.UserInputState.Begin or not botonCaos.Visible then
+		if estado ~= Enum.UserInputState.Begin or not caosDisponible then
 			return Enum.ContextActionResult.Pass
 		end
 		panelCaos.Visible = not panelCaos.Visible

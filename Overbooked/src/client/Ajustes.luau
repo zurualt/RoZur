@@ -12,7 +12,6 @@ local Gui = require(ReplicatedStorage.Shared.Gui)
 local Camara = require(script.Parent.Camara)
 local Guia = require(script.Parent.Guia)
 local Interfaz = require(script.Parent.Interfaz)
-local Piloto = require(script.Parent.Piloto)
 local Sonido = require(script.Parent.Sonido)
 
 local RemotoAjustes = ReplicatedStorage:WaitForChild("Remotos"):WaitForChild("Ajustes") :: RemoteEvent
@@ -310,20 +309,7 @@ local function construir()
 	ajustarEscala()
 	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustarEscala)
 
-	local abrir = if GRANDE
-		then boton(raiz, "AJUSTES (O)", UDim2.fromOffset(210, 80), UDim2.new(1, -14, 0, 196), Gui.PAPEL, Ajustes.alternar)
-		else boton(raiz, "AJUSTES (O)", UDim2.fromOffset(170, 50), UDim2.new(0, 14, 1, -14), Gui.PAPEL, Ajustes.alternar)
-	abrir.AnchorPoint = if GRANDE then Vector2.new(1, 0) else Vector2.new(0, 1)
-	local playerGui = jugador:WaitForChild("PlayerGui")
-	task.spawn(function()
-		while gui.Parent do
-			local intro = playerGui:FindFirstChild("Intro")
-			abrir.Visible = not (intro and intro:IsA("ScreenGui") and intro.Enabled) and (GRANDE or not Piloto.activo())
-			task.wait(0.4)
-		end
-	end)
-
-	panel = Gui.panel(raiz, "Papel", UDim2.fromOffset(640, 608), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
+	panel =Gui.panel(raiz, "Papel", UDim2.fromOffset(640, 608), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
 	panel.Visible = false
 	panel.ZIndex = 2
 	aparicion = Instance.new("UIScale")

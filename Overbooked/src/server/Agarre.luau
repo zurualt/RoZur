@@ -17,6 +17,7 @@ local RemotoSostener = Remotos:WaitForChild("Sostener") :: RemoteEvent
 local Agarre = {}
 
 local sostenidos: { [Player]: Instance } = {}
+local ayudantes: { [Player]: Instance } = {}
 local portadores: { [Instance]: Player } = {}
 local devoluciones: { [Instance]: number } = {}
 local esperas: { [Player]: number } = {}
@@ -88,7 +89,24 @@ function Agarre.delServidor(parte: BasePart): boolean
 	return ok and dueno == nil and not devoluciones[parte]
 end
 
+local function contarAyuda(objeto: Instance)
+	local n = 0
+	for _, o in ayudantes do
+		if o == objeto then
+			n += 1
+		end
+	end
+	objeto:SetAttribute("Ayudantes", n)
+end
+
 local function soltarInterno(jugador: Player, velocidad: Vector3?)
+	local ayudado = ayudantes[jugador]
+	if ayudado then
+		ayudantes[jugador] = nil
+		marcarPersonaje(jugador, "")
+		contarAyuda(ayudado)
+		return
+	end
 	local objeto = sostenidos[jugador]
 	if not objeto then
 		return
@@ -96,10 +114,18 @@ local function soltarInterno(jugador: Player, velocidad: Vector3?)
 	sostenidos[jugador] = nil
 	portadores[objeto] = nil
 	marcarPersonaje(jugador, "")
+	for otro, o in ayudantes do
+		if o == objeto then
+			ayudantes[otro] = nil
+			marcarPersonaje(otro, "")
+			RemotoSostener:FireClient(otro, nil)
+		end
+	end
 	if not objeto.Parent then
 		return
 	end
 	objeto:SetAttribute("Portador", 0)
+	objeto:SetAttribute("Ayudantes", 0)
 	local raiz = Agarre.raiz(objeto)
 	if not raiz then
 		return
@@ -121,8 +147,20 @@ local function soltarInterno(jugador: Player, velocidad: Vector3?)
 end
 
 local function tomar(jugador: Player, objeto: Instance): boolean
-	if portadores[objeto] or not Personajes.vivo(jugador) or Personajes.enRagdoll(jugador) then
+	if not Personajes.vivo(jugador) or Personajes.enRagdoll(jugador) then
 		return false
+	end
+	local dueno = portadores[objeto]
+	if dueno then
+		if dueno == jugador or objeto:GetAttribute("Pesado") ~= true then
+			return false
+		end
+		soltarInterno(jugador)
+		ayudantes[jugador] = objeto
+		local tipo = objeto:GetAttribute("Tipo")
+		marcarPersonaje(jugador, if typeof(tipo) == "string" then tipo else objeto.Name, objeto)
+		contarAyuda(objeto)
+		return true
 	end
 	for _, f in permisos do
 		if not f(jugador, objeto) then
@@ -155,7 +193,7 @@ function Agarre.forzar(jugador: Player, objeto: Instance)
 end
 
 function Agarre.soltar(jugador: Player)
-	if sostenidos[jugador] then
+	if sostenidos[jugador] or ayudantes[jugador] then
 		soltarInterno(jugador)
 		RemotoSostener:FireClient(jugador, nil)
 	end
@@ -170,6 +208,9 @@ end
 
 function Agarre.soltarTodo()
 	for jugador in sostenidos do
+		Agarre.soltar(jugador)
+	end
+	for jugador in ayudantes do
 		Agarre.soltar(jugador)
 	end
 end
@@ -289,6 +330,13 @@ function Agarre.iniciar()
 			local raiz = Agarre.raiz(objeto)
 			local raizJugador = Personajes.raiz(jugador)
 			if not objeto.Parent or not raiz or not raizJugador or not Personajes.vivo(jugador) or Personajes.enRagdoll(jugador) or (raiz.Position - raizJugador.Position).Magnitude > Config.AGARRE.DISTANCIA_MAX then
+				Agarre.soltar(jugador)
+			end
+		end
+		for jugador, objeto in ayudantes do
+			local raiz = Agarre.raiz(objeto)
+			local raizJugador = Personajes.raiz(jugador)
+			if not objeto.Parent or not raiz or not raizJugador or not Personajes.vivo(jugador) or Personajes.enRagdoll(jugador) or (raiz.Position - raizJugador.Position).Magnitude > Config.CARGA_ESPECIAL.PIANO_AYUDA + raiz.Size.Magnitude / 2 then
 				Agarre.soltar(jugador)
 			end
 		end

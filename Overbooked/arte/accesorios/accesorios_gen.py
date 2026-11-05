@@ -37,25 +37,33 @@ for _i, (_n, _h) in enumerate(EXTRA):
     K["PAL"][32 + _i] = (_n, _h)
     K["IDX"][_n] = 32 + _i
 
-# Pivotes de las MeshParts del tripulante v5 (centro de su caja), medidos en Studio. Coordenadas de Blender:
+# Pivotes de las MeshParts del tripulante v6 (centro de su caja), medidos en Studio. Coordenadas de Blender:
 # Z arriba, cara hacia -Y. En Roblox: X = -x, Y = z, Z = y.
-PIVOTES = {"Head": Vector((0.0, -0.076, 4.173)), "UpperTorso": Vector((0.0, -0.025, 3.088)), "LowerTorso": Vector((0.0, -0.008, 2.345))}
-# Ojos saltones de Ojos.luau: CENTRO y NORMAL respecto a HumanoidRootPart, que en reposo esta en z 3,18.
+PIVOTES = {"Head": Vector((0.0, -0.048, 2.845)), "UpperTorso": Vector((0.0, -0.027, 1.757)), "LowerTorso": Vector((0.0, -0.007, 1.005))}
+# Ojos saltones de Ojos.luau: CENTRO y NORMAL respecto a HumanoidRootPart, que en reposo esta en z 1,95.
 # El ojo de la derecha del personaje (x negativa en Blender) es un 12 % mas grande y el otro un 8 % mas pequeno.
-OJO_Z = 3.18 + 1.143
+OJO_Z = 1.95 + 1.059
 GAFAS = 0.27
-# Los disenos de los gorros se hicieron sobre la cabeza de la v3/v4 (borde en zb, radio ~0,74). Se encogen,
-# se suben a la cupula de la cabeza de alubia y se echan 8 grados hacia atras: por delante el borde queda
-# por encima de z 4,80 (Y 0,62 en la cabeza, las cejas estan en 0,50).
-INCLINACION = math.radians(-8)
-S_GORRO = 0.8
-FRENTE_MIN = 4.80
-# Las mochilas se disenaron sobre la espalda de la v4 (y 0,78 a z 2,83); en la v5 van a z 3,04 y algo mas pequenas.
-YB4, ZC4, S_ESPALDA, Z_ESPALDA, Z_CORREA = 0.78, 2.83, 0.75, 3.02, 2.88
+# Los disenos de los gorros se hicieron sobre la cabeza de la v3/v4 (borde en zb, elipse de radios rx, ry).
+# En la bola de la v6 se estiran por separado en X e Y hasta rodear la cupula a la altura Z_GORRO y se echan
+# 5 grados hacia atras: por delante el borde queda por encima de z 3,52 (las cejas llegan a 3,47 al gritar).
+INCLINACION = math.radians(-5)
+FRENTE_MIN = 3.52
+Z_GORRO = 3.56
+# Las mochilas se disenaron sobre la espalda de la v4 (y 0,78 a z 2,83); en la v6 van a z 1,70.
+YB4, ZC4, S_ESPALDA, Z_ESPALDA, Z_CORREA = 0.78, 2.83, 0.8, 1.70, 1.62
+# Centro de la bola de la cabeza (para rodearla con rayos).
+CENTRO_CABEZA = Vector((0.0, 0.0, 3.03))
 
 
 def ojo(sx):
-    return Vector((sx * 0.232, -0.444, OJO_Z)), Vector((sx * 0.179, -0.98, 0.08)).normalized()
+    return Vector((sx * 0.336, -0.890, OJO_Z)), Vector((sx * 0.166, -0.986, -0.028)).normalized()
+
+
+def lado_cabeza(az, z, off):
+    """Punto de la piel de la cabeza en el azimut az (grados desde +X; -90 = frente) a la altura z, separado off."""
+    d = Vector((math.cos(math.radians(az)), math.sin(math.radians(az)), 0.0))
+    return hacia(CUERPO["cabeza"], Vector((0.0, 0.0, z)), d) + d * off
 
 
 CUERPO = {}
@@ -97,7 +105,7 @@ def hacia(bvh, centro, d):
     return loc if loc is not None else centro
 
 
-def cabeza_dir(th, al, off, centro=Vector((0.0, 0.0, 4.55))):
+def cabeza_dir(th, al, off, centro=CENTRO_CABEZA):
     """Punto de la cabeza (con la diadema) en la direccion (th desde arriba, al azimut desde +X; -90 = frente)."""
     d = Vector((math.sin(th) * math.cos(al), math.sin(th) * math.sin(al), math.cos(th)))
     return hacia(CUERPO["cabeza"], centro, d) + d * off
@@ -110,16 +118,20 @@ def medida_cabeza(z):
     return ancho, fondo
 
 
-def gorro(zb, rx, ry, s=S_GORRO):
-    """Lleva un gorro disenado con el borde en (0, 0, zb) y radios interiores rx, ry a la cupula de la v5."""
-    a, b = rx * s - 0.02, ry * s - 0.02
+def gorro(zb, rx, ry):
+    """Lleva un gorro disenado con el borde en (0, 0, zb) y radios interiores rx, ry a la cupula de la v6."""
+    ah = medida_cabeza(Z_GORRO)[0]
+    bh = max(medida_cabeza(Z_GORRO)[1], medida_cabeza(Z_GORRO - 0.08)[1])
+    sx, sy = (ah + 0.045) / rx, (bh + 0.045) / ry
+    sz = 0.5 * (sx + sy)
+    a, b = rx * sx - 0.02, ry * sy - 0.02
     d = b * math.sin(-INCLINACION)
     zc = FRENTE_MIN - d
-    while zc < 5.2:
+    while zc < 4.2:
         if medida_cabeza(zc)[0] <= a and medida_cabeza(zc)[1] <= b and medida_cabeza(zc - d)[1] <= b * math.cos(INCLINACION):
             break
         zc += 0.005
-    return Matrix.Translation((0, 0, zc)) @ Matrix.Rotation(INCLINACION, 4, "X") @ Matrix.Diagonal((s, s, s, 1.0)) @ Matrix.Translation((0, 0, -zb))
+    return Matrix.Translation((0, 0, zc)) @ Matrix.Rotation(INCLINACION, 4, "X") @ Matrix.Diagonal((sx, sy, sz, 1.0)) @ Matrix.Translation((0, 0, -zb))
 
 
 def mover(desde, hasta, s):
@@ -229,7 +241,7 @@ def p_chistera():
     p.add(lathe([(0.0, 0.03), (0.205, 0.03), (0.222, 0.47), (0.0, 0.47)], 16, m, sy=0.88), "black", 40)
     p.add(lathe([(0.212, 0.04), (0.222, 0.15)], 16, m, sy=0.88, cap0=False, cap1=False), "red", 40)
     p.add(decal(rrect(0, 0.095, 0.07, 0.07, 0.012, 1), m @ Matrix.Translation((0, -0.88 * 0.218, 0)) @ Matrix.Rotation(math.radians(90), 4, "X"), 0.012), "gold")
-    encajar(p, mover((0.12, 0.0, 4.60), (0.09, 0.03, 5.04), 0.85))
+    encajar(p, mover((0.12, 0.0, 4.60), (0.14, 0.02, 3.93), 1.0))
     return p
 
 
@@ -256,13 +268,13 @@ def p_gorro_pez():
     yz = frame((0, 0, 0), (0, 1, 0), (0, 0, 1))
     p.add(prism([(0.70, zc + 0.02), (1.14, zc + 0.36), (1.02, zc + 0.02), (1.14, zc - 0.30)], 0.06, yz, bev=0.012), "flame", 35)
     p.add(prism([(-0.25, zc + 0.28), (0.32, zc + 0.30), (0.05, zc + 0.55)], 0.05, yz, bev=0.01), "flame", 35)
-    encajar(p, mover((0, 0, 4.56), (0, 0, 4.99), 0.78))
+    encajar(p, mover((0, 0, 4.56), (0, 0, 3.86), 1.0))
     return p
 
 
 def p_gorro_platano():
     p = item("GorroPlatano", "Head", 2000)
-    centro = Vector((0.0, 0.0, 4.55))
+    centro = CENTRO_CABEZA
 
     def fin_para(al, z_fin):
         th = 0.05
@@ -270,7 +282,7 @@ def p_gorro_platano():
             th += 0.01
         return th
     R, C = 8, 6
-    for al_deg, z_fin in ((-135, 4.86), (-45, 4.86), (45, 4.48), (135, 4.48)):
+    for al_deg, z_fin in ((-135, 3.56), (-45, 3.56), (45, 3.12), (135, 3.12)):
         al0 = math.radians(al_deg)
         fin = fin_para(al0, z_fin)
         for t0, t1, color in ((0.0, 0.86, "banana"), (0.86, 1.0, "brown")):
@@ -298,12 +310,12 @@ def p_gorro_platano():
 
 def p_auriculares2():
     p = item("Auriculares2", "Head", 900)
-    s = 0.9
-    yc, zc = -0.06, 4.21
+    s = 1.15
+    yc, zc = 0.0, 2.98
     tau = math.radians(10)
     for sx in (-1, 1):
         u = Vector((sx * math.cos(tau), 0, math.sin(tau)))
-        org = Vector((sx * 0.58, yc, zc))
+        org = Vector((sx * 0.99, yc, zc))
         m = frame(org, (0, 1, 0), u.cross(Vector((0, 1, 0)))) @ Matrix.Diagonal((s, s, s, 1.0))
         p.add(lathe([(0.0, 0.215), (0.245, 0.215), (0.245, 0.0), (0.355, 0.0), (0.38, 0.05), (0.38, 0.115)], 12, m, cap0=False, cap1=False, a0=0.0), "rubber", 50)
         p.add(lathe([(0.38, 0.115), (0.40, 0.135), (0.40, 0.27)], 12, m, cap0=False, cap1=False, a0=0.0), "orange", 50)
@@ -428,7 +440,8 @@ def p_gafas_estrella():
         p.add(plate(estrella(0.345, 0.283), [circ(0, 0, GAFAS + 0.016, 20)], 0.006, m, 0.05), "yellow", 35)
         xl = (m.to_3x3() @ Vector((1, 0, 0))).normalized()
         a = e + n * 0.27 + xl * (sx * 0.34) + Vector((0, 0, 0.03))
-        patilla = [a, Vector((sx * 0.62, -0.52, OJO_Z + 0.02)), Vector((sx * 0.72, -0.30, OJO_Z - 0.04)), Vector((sx * 0.72, -0.12, OJO_Z - 0.08))]
+        az = (lambda g, sx=sx: g if sx > 0 else 180.0 - g)
+        patilla = [a, lado_cabeza(az(-58), OJO_Z + 0.02, 0.04), lado_cabeza(az(-32), OJO_Z - 0.04, 0.035), lado_cabeza(az(-8), OJO_Z - 0.08, 0.035)]
         p.add(tube(patilla, lambda u: 0.024, k=6, steps=3, up=(0, 0, 1)), "pink", 60)
     return p
 
@@ -442,8 +455,8 @@ def p_monoculo():
     xl = (m.to_3x3() @ Vector((1, 0, 0))).normalized()
     yl = (m.to_3x3() @ Vector((0, 1, 0))).normalized()
     a = e + n * 0.27 + xl * 0.22 - yl * 0.21
-    s, _ = superficie(0.30, 3.16)
-    pts = [a, Vector((0.68, -0.56, 3.96)), Vector((0.64, -0.48, 3.62)), Vector((0.46, -0.44, 3.36)), s + Vector((0, -0.035, 0))]
+    s, _ = superficie(0.28, 1.95)
+    pts = [a, lado_cabeza(-58, OJO_Z - 0.38, 0.05), lado_cabeza(-66, 2.45, 0.05), lado_cabeza(-70, 2.3, 0.06), s + Vector((0, -0.035, 0))]
     p.add(tube(pts, lambda u: 0.013, k=4, steps=4, up=(1, 0, 0)), "gold", 60)
     p.add(ellipsoid((0.045, 0.028, 0.065), Matrix.Translation(s + Vector((0, -0.035, 0))), 6, 4), "gold", 60)
     return p
@@ -452,7 +465,7 @@ def p_monoculo():
 def p_antifaz():
     p = item("Antifaz", "Head", 1400)
     zc = OJO_Z + 0.03
-    centro = Vector((0.0, -0.076, 0.0))
+    centro = Vector((0.0, -0.048, 0.0))
     ext, inn = [], []
     C = 19
     for i in range(C):
@@ -471,7 +484,7 @@ def p_antifaz():
         ext.append(fe)
         inn.append(fi)
     p.add(lamina(ext, inn), "black", 50)
-    zb = 4.46
+    zb = OJO_Z + 0.14
     cinta = []
     for g in range(-28, 209, 12):
         al = math.radians(g)
@@ -497,7 +510,7 @@ def p_gafas_buceo():
         m = Matrix.Translation(e + n * 0.16) @ frame_from_normal(n)
         p.add(lathe([(GAFAS, 0.0), (GAFAS + 0.07, 0.0), (GAFAS + 0.07, 0.07), (GAFAS + 0.04, 0.12), (GAFAS, 0.12)], 24, m, closed=True), "teal", 35)
         p.add(lathe([(GAFAS - 0.004, 0.115), (GAFAS + 0.045, 0.115), (GAFAS + 0.045, 0.13), (GAFAS - 0.004, 0.13)], 24, m, closed=True), "lteal", 35)
-    zb = 4.47
+    zb = OJO_Z + 0.15
     cinta = []
     for g in range(-30, 211, 12):
         al = math.radians(g)
@@ -511,7 +524,8 @@ def p_gafas_buceo():
         a = e + n * 0.22 + xl * (sx * (GAFAS + 0.06))
         b = cinta[0 if sx > 0 else -1]
         p.add(tube([a, a.lerp(b, 0.5) + Vector((sx * 0.06, 0, 0.02)), b], lambda u: (0.06, 0.02), k=4, steps=3, up=(0, 0, 1), phase=0.5), "dark", 60)
-    tubo = [Vector((0.80, -0.22, 4.06)), Vector((0.82, -0.08, 4.30)), Vector((0.78, 0.02, 4.62)), Vector((0.66, 0.10, 4.92)), Vector((0.52, 0.15, 5.06))]
+    tubo = [lado_cabeza(-16, OJO_Z - 0.26, 0.1), lado_cabeza(-6, OJO_Z, 0.1), lado_cabeza(6, OJO_Z + 0.32, 0.1), lado_cabeza(16, OJO_Z + 0.6, 0.1)]
+    tubo.append(tubo[-1] + Vector((-0.12, 0.05, 0.16)))
     p.add(tube(tubo, lambda u: 0.05, k=8, steps=3, up=(1, 0, 0)), "banana", 50)
     t = (tubo[-1] - tubo[-2]).normalized()
     p.add(cyl(0.068, 0.09, m=Matrix.Translation(tubo[-1]) @ frame_from_normal(t), seg=10, center=True), "flame", 40)
@@ -601,7 +615,7 @@ def p_alas_avion():
 
 def p_flotador_pato():
     p = item("FlotadorPato", "LowerTorso", 2000)
-    z, r = 2.18, 0.15
+    z, r = 1.06, 0.14
     aro = anillo_cuerpo(z, 0.03 + r, 28)
     centro = Vector((0, 0, z))
 
@@ -649,7 +663,7 @@ def p_llave_gigante():
 NUEVOS = [p_casco_vikingo, p_chistera, p_gorro_pez, p_gorro_platano, p_casco_bombero, p_gorro_cocodrilo, p_nido,
           p_auriculares2, p_gafas_estrella, p_monoculo, p_antifaz, p_gafas_buceo,
           p_mochila_paracaidas, p_jetpack, p_alas_avion, p_flotador_pato, p_llave_gigante]
-# Gorros del kit antiguo: (zb, radio interior x, radio interior y) del borde, para encajarlos en la v5.
+# Gorros del kit antiguo: (zb, radio interior x, radio interior y) del borde, para encajarlos en la v6.
 VIEJOS = {"p_gorra_piloto": (4.30, 0.742, 0.534), "p_gorro_helice": (4.35, 0.725, 0.522), "p_gorro_chef": (4.33, 0.716, 0.53),
           "p_sombrero_vaquero": (4.28, 0.745, 0.544), "p_gorro_cono": (4.42, 0.60, 0.60), "p_corona": (4.40, 0.66, 0.53),
           "p_gorro_pato": (4.35, 0.705, 0.508)}
@@ -739,7 +753,7 @@ def miniatura(scene, ob, nombre, parte, mw):
     pts = [o.matrix_world @ Vector(c) for c in o.bound_box]
     if nombre in CARA:
         tripulante("Fantasma", {"Head", "Ojos_normal"})
-        pts += [Vector((sx * 0.6, -0.6, z)) for sx in (-1, 1) for z in (3.9, 4.9)]
+        pts += [Vector((sx * 0.95, -0.9, z)) for sx in (-1, 1) for z in (2.45, 3.6)]
     K["camera_fit"]([], el, az, 50, 0.86, 0.86, pts=pts)
     K["render_to"](os.path.join(MINI, nombre + ".png"))
     K["clear_temp"]()
@@ -764,9 +778,9 @@ def hoja_prueba(scene, objs, datos, nombre_hoja, colores):
         el, az = (8, 150) if parte == "UpperTorso" else ((10, 30) if parte == "LowerTorso" else ((4, 12) if nombre in CARA else (8, 24)))
         pts = [o.matrix_world @ Vector(c) for c in o.bound_box]
         if parte == "Head":
-            pts += [Vector((sx * 0.75, sy * 0.6, z)) for sx in (-1, 1) for sy in (-1, 1) for z in (3.6, 5.1)]
+            pts += [Vector((sx * 1.0, sy * 0.95, z)) for sx in (-1, 1) for sy in (-1, 1) for z in (2.3, 4.2)]
         else:
-            pts += [Vector((sx * 0.8, sy * 0.5, z)) for sx in (-1, 1) for sy in (-1, 1) for z in (1.6, 5.1)]
+            pts += [Vector((sx * 0.9, sy * 0.6, z)) for sx in (-1, 1) for sy in (-1, 1) for z in (0.6, 3.95)]
         cam = K["camera_fit"]([], el, az, 50, 0.86, 0.82, pts=pts)
         K["label"](cam, nombre, 400, 450, px=22)
         K["render_to"](rutas[i])

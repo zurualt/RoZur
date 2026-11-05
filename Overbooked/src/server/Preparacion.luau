@@ -429,6 +429,14 @@ local function actualizar()
 	elseif paso == "Descargar" and meta then
 		d[meta] = { icono = "Maleta", texto = `Metedlas en la bodega ({fuera})`, destino = true }
 	end
+	if paso ~= "Tareas" then
+		for _, e in Carga.especiales() do
+			if not Carga.aBordo(e.Position) then
+				local piano = e:GetAttribute("Tipo") == "Piano"
+				d[e] = { icono = if piano then "Fragil" else "Fuego", texto = if piano then "Piano: ¡entre dos!" else "Bombona: ¡sin lanzar!", destino = false }
+			end
+		end
+	end
 	aplicarMarcas(d)
 end
 
@@ -612,6 +620,9 @@ function Preparacion.jugar(contrato: Contratos.Contrato): boolean
 	abrirPuerta()
 	ponerFlechas()
 	aviso("¡Puerta abierta! Uno al volante del tractor y los demás, ¡al carro! Seguid las flechas hasta el avión", "bien")
+	if #Carga.especiales() > 0 then
+		task.delay(6, aviso, "La carga especial espera junto a la rampa del avión: el piano se lleva entre dos y las bombonas, ¡sin lanzarlas!", "info")
+	end
 	local finConducir = os.clock() + P.CONDUCIR
 	while activa and not llegado() and os.clock() < finConducir do
 		poner("Cuenta", math.max(0, math.ceil(finConducir - os.clock())))

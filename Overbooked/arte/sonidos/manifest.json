@@ -702,5 +702,45 @@
   "bucle": true,
   "volumen": 0.8,
   "descripcion": "Cascada de la isla cayendo en la poza: rugido de agua continuo con salpicaduras (ElevenLabs)."
+ },
+ {
+  "nombre": "AlarmaCabina",
+  "archivo": "AlarmaCabina.ogg",
+  "duracion": 2.25,
+  "bucle": true,
+  "volumen": 0.3,
+  "descripcion": "Bucle de sirena cartoon de emergencia en la cabina de pasajeros (ElevenLabs)."
+ },
+ {
+  "nombre": "Piano1",
+  "archivo": "Piano1.ogg",
+  "duracion": 1.48,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Acorde de piano de cola aporreado al chocar (ElevenLabs)."
+ },
+ {
+  "nombre": "Piano2",
+  "archivo": "Piano2.ogg",
+  "duracion": 1.28,
+  "bucle": false,
+  "volumen": 0.6,
+  "descripcion": "Teclas graves de piano aplastadas, plonk de dibujos (ElevenLabs)."
+ },
+ {
+  "nombre": "Piano3",
+  "archivo": "Piano3.ogg",
+  "duracion": 1.28,
+  "bucle": false,
+  "volumen": 0.55,
+  "descripcion": "Notas agudas de piano que caen rodando, alguien pisa las teclas (ElevenLabs)."
+ },
+ {
+  "nombre": "Siseo",
+  "archivo": "Siseo.ogg",
+  "duracion": 2.48,
+  "bucle": false,
+  "volumen": 0.7,
+  "descripcion": "Bombona de gas que se escapa: siseo que acaba en silbido de cohete (ElevenLabs)."
  }
 ]

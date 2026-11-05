@@ -228,5 +228,25 @@
       0.8
     ],
     "triangulos": 190
+  },
+  {
+    "nombre": "Piano",
+    "archivo": "Piano.fbx",
+    "tamano": [
+      3.52,
+      2.97,
+      4.68
+    ],
+    "triangulos": 4378
+  },
+  {
+    "nombre": "Bombona",
+    "archivo": "Bombona.fbx",
+    "tamano": [
+      0.824,
+      1.98,
+      0.944
+    ],
+    "triangulos": 1236
   }
 ]

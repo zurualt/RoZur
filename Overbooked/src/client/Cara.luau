@@ -22,6 +22,9 @@ type Rostro = {
 	cejas: Muelle,
 	ojos: Muelle,
 	mejillas: Muelle,
+	lengua: Muelle,
+	flop: Muelle,
+	gritoDesde: number?,
 	nariz: Vector3,
 	narizV: Vector3,
 	posAntes: Vector3?,
@@ -47,6 +50,9 @@ type Rostro = {
 local Cara = {}
 
 local ALCANCE = 120
+local GRITO_NIVEL = 0.75
+local GRITO_TIEMPO = 0.4
+local LENGUA_FUERA = 0.4
 local NOMBRES = { "BocaSup", "BocaInf", "Lengua", "CejaIzq", "CejaDer", "MejillaIzq", "MejillaDer", "Nariz" }
 local CLAVES = { "boca", "cejas", "giro", "lengua", "lado", "mejillas", "ojos", "alto", "pupila", "temblor", "mareo" }
 local NEUTRO: Gesto = { boca = 0, cejas = 0, giro = 0, lengua = 0, lado = 0, mejillas = 0, ojos = 1, alto = 1, pupila = 1, temblor = 0, mareo = 0 }
@@ -120,6 +126,9 @@ local function crear(jugador: Player, personaje: Model): Rostro?
 		cejas = { x = 0, v = 0 },
 		ojos = { x = 1, v = 0 },
 		mejillas = { x = 0, v = 0 },
+		lengua = { x = 0, v = 0 },
+		flop = { x = 0, v = 0 },
+		gritoDesde = nil,
 		nariz = Vector3.zero,
 		narizV = Vector3.zero,
 		posAntes = nil,
@@ -240,18 +249,30 @@ local function animar(r: Rostro, ahora: number, dt: number, susto: boolean)
 	local cejaIdle = if ahora < r.cejaHasta then 1 else 0
 	r.parpadeo += ((if ahora < r.parpadeoHasta then 1 else 0) - r.parpadeo) * (1 - math.exp(-45 * dt))
 
-	muelle(r.boca, math.max(a.boca, voz ^ 0.75 * 1.05) + tic * 0.08 + blep * 0.12, 380, 16, dt)
-	muelle(r.cejas, a.cejas + voz * 0.7, 300, 10, dt)
-	muelle(r.ojos, a.ojos + voz * 0.12, 260, 9, dt)
-	muelle(r.mejillas, a.mejillas + voz * 0.6, 200, 9, dt)
+	if voz > GRITO_NIVEL then
+		r.gritoDesde = r.gritoDesde or ahora
+	else
+		r.gritoDesde = nil
+	end
+	local desde = r.gritoDesde
+	local gritando = nombre == "Grito" or (desde ~= nil and ahora - desde > GRITO_TIEMPO)
+	muelle(r.flop, if gritando then 1 else 0, 120, 10, dt)
+	local flop = math.clamp(r.flop.x, 0, 1.2)
+	local f1 = math.min(flop, 1)
+
+	muelle(r.boca, math.max(a.boca, voz ^ 0.75 * 1.05, flop * 1.15) + tic * 0.08 + blep * 0.12, 380, 16, dt)
+	muelle(r.cejas, a.cejas + voz * 0.7 + flop * 0.5, 300, 10, dt)
+	muelle(r.ojos, a.ojos + voz * 0.12 + flop * 0.3, 260, 9, dt)
+	muelle(r.mejillas, a.mejillas + voz * 0.6 + flop * 1.1, 200, 9, dt)
 	local k = math.clamp(r.boca.x, -0.05, 1.35)
+	muelle(r.lengua, (0.07 * math.max(0, k) + 0.14 * a.lengua + 0.12 * blep) * (1 - f1) + LENGUA_FUERA * flop, 260, 11, dt)
 
 	local m = r.mirada
 	m.escala = r.ojos.x
 	m.alto = math.max(0.06, a.alto * (1 - r.parpadeo))
-	m.pupila = a.pupila
+	m.pupila = a.pupila * (1 - 0.3 * f1)
 	m.mareo = a.mareo
-	m.temblor = a.temblor
+	m.temblor = math.max(a.temblor, 0.5 * f1)
 
 	local cabeza = r.cabeza
 	if cabeza.LocalTransparencyModifier > 0.5 or not r.huesos.BocaSup then
@@ -262,12 +283,13 @@ local function animar(r: Rostro, ahora: number, dt: number, susto: boolean)
 	local lateral = tic * 0.03 * r.ticLado + a.mareo * math.sin(t * 2.3) * 0.035
 	poner(h.BocaSup, CFrame.new(lateral * s, 0.065 * k * s, 0))
 	poner(h.BocaInf, CFrame.new((lateral * 1.3 - a.lado * 0.04) * s, -0.25 * k * s, -0.06 * k * s))
-	local fuera = math.max(0, 0.07 * k + 0.14 * a.lengua + 0.12 * blep)
-	local meneo = math.sin(t * 14) * 0.35 * math.clamp(k, 0, 1) + math.sin(t * 9) * 0.3 * a.lengua
+	local meneo = (math.sin(t * 14) * 0.3 * math.clamp(k, 0, 1) + math.sin(t * 9) * 0.3 * a.lengua) * (1 - f1)
+	local aleteo = flop * (math.sin(t * 23) * 0.55 + math.sin(t * 11.3) * 0.25)
+	local caida = (0.35 - math.sin(t * 11) * 0.25) * a.lengua * (1 - f1) + flop * (0.45 + math.sin(t * 17) * 0.18)
 	poner(
 		h.Lengua,
-		CFrame.new(-a.lado * 0.03 * s, -0.03 * a.lengua * s, -fuera * s)
-			* CFrame.Angles(-0.35 * a.lengua + math.sin(t * 11) * 0.25 * a.lengua, a.lado * 0.44 + meneo, 0)
+		CFrame.fromEulerAnglesYXZ(-caida, a.lado * 0.44 + meneo + aleteo, flop * math.sin(t * 19 + 1) * 0.35)
+			* CFrame.new(-a.lado * 0.03 * s, -0.03 * a.lengua * s, -r.lengua.x * s)
 	)
 	local temblor = math.sin(t * 43) * 0.006 * a.temblor
 	for _, ceja in { "CejaIzq", "CejaDer" } do

@@ -31,6 +31,9 @@ type Bulto = {
 	previa: Vector3,
 	gracia: number,
 	contrabando: boolean,
+	tipo: string,
+	mecha: number,
+	humo: number,
 }
 
 local Carga = {}
@@ -47,7 +50,15 @@ local jaula: BasePart? = nil
 local golpes: { [Player]: number } = {}
 local rng = Random.new()
 
-local UMBRALES = { Maleta = 55, Caja = 42, CajaFragil = 24, Jaula = 38 }
+local CE = Config.CARGA_ESPECIAL
+local UMBRALES = { Maleta = 55, Caja = 42, CajaFragil = 24, Jaula = 38, Piano = CE.PIANO_UMBRAL, Bombona = CE.BOMBONA_UMBRAL }
+local ESPECIALES = { Piano = true, Bombona = true }
+local NOTAS = { "Piano1", "Piano2", "Piano3" }
+local PISTA_Y = 90.2
+local plonks: { [BasePart]: number } = {}
+local atropellos: { [Player]: number } = {}
+local avisoSiseo = 0
+local avisoBum = 0
 local MALETAS = { "Maleta1", "Maleta2", "Maleta3" }
 local COLORES_MALETA = { Color3.fromRGB(242, 123, 43), Color3.fromRGB(31, 166, 160), Color3.fromRGB(217, 68, 58) }
 local COLUMNAS = { -3.2, 0, 3.2 }
@@ -161,7 +172,14 @@ local function registrar(parte: BasePart, tipo: string, valor: number, entrega: 
 		previa = Vector3.zero,
 		gracia = os.clock() + 2,
 		contrabando = contrabando,
+		tipo = tipo,
+		mecha = 0,
+		humo = 0,
 	}
+	if tipo == "Piano" then
+		parte:SetAttribute("Pesado", true)
+		parte.CustomPhysicalProperties = PhysicalProperties.new(Config.OBJETOS.Piano.densidad, CE.PIANO_ROCE, 0.1, 100, 1)
+	end
 	if entrega then
 		local marca = Instance.new("Highlight")
 		marca.FillTransparency = 1
@@ -169,6 +187,14 @@ local function registrar(parte: BasePart, tipo: string, valor: number, entrega: 
 		marca.DepthMode = Enum.HighlightDepthMode.Occluded
 		marca.Parent = parte
 	end
+end
+
+local function enRampa(tipo: string, k: number): CFrame
+	local alto = Config.OBJETOS[tipo].tamano.Y
+	if tipo == "Piano" then
+		return CFrame.new(10.5, PISTA_Y + alto / 2 + 0.1, 31) * CFrame.Angles(0, math.pi / 2, 0)
+	end
+	return CFrame.new(-9 - (k // 3) * 1.4, PISTA_Y + alto / 2 + 0.1, 29.5 + (k % 3) * 1.4)
 end
 
 local function enBodega(alto: number): CFrame
@@ -198,6 +224,7 @@ function Carga.cargar(contrato: Contratos.Contrato)
 	table.sort(lista, function(a, b)
 		return (ORDEN[a.tipo] or 0) < (ORDEN[b.tipo] or 0)
 	end)
+	local especiales: { [string]: number } = {}
 	for _, c in lista do
 		for _ = 1, c.cantidad do
 			local alto = Config.OBJETOS[c.tipo].tamano.Y
@@ -205,6 +232,10 @@ function Carga.cargar(contrato: Contratos.Contrato)
 			local enCarro = Vehiculos.carro()
 			if c.tipo == "Jaula" then
 				cf = enBodega(alto)
+			elseif ESPECIALES[c.tipo] then
+				local k = especiales[c.tipo] or 0
+				especiales[c.tipo] = k + 1
+				cf = enRampa(c.tipo, k)
 			elseif c.tipo == "Maleta" and enCarro then
 				local k = enEspera
 				enEspera += 1
@@ -261,6 +292,7 @@ function Carga.limpiar()
 	end
 	carpeta:ClearAllChildren()
 	table.clear(bultos)
+	table.clear(plonks)
 	cocodrilo = nil
 	jaula = nil
 	cuenta.entregado = 0
@@ -274,6 +306,16 @@ function Carga.maletas(): { BasePart }
 	local lista: { BasePart } = {}
 	for parte in bultos do
 		if parte.Parent and parte:GetAttribute("Tipo") == "Maleta" then
+			table.insert(lista, parte)
+		end
+	end
+	return lista
+end
+
+function Carga.especiales(): { BasePart }
+	local lista: { BasePart } = {}
+	for parte, b in bultos do
+		if parte.Parent and ESPECIALES[b.tipo] then
 			table.insert(lista, parte)
 		end
 	end
@@ -396,13 +438,154 @@ local function aplicarDano(parte: BasePart, b: Bulto, dano: number)
 		parte:SetAttribute("Rota", true)
 		cuenta.rotas += 1
 		parte.Color = parte.Color:Lerp(Color3.new(0.2, 0.2, 0.2), 0.5)
+		if tipo == "Piano" then
+			Rafagas.lanzar("Astillas", parte.Position, 1.6)
+			Sonidos.emitir(NOTAS[rng:NextInteger(1, #NOTAS)], parte.Position)
+			RemotoAviso:FireAllClients("¡Piano destrozado! Ya no vale nada", "peligro")
+		end
+	end
+end
+
+local function plonk(parte: BasePart)
+	local ahora = os.clock()
+	if (plonks[parte] or 0) > ahora then
+		return
+	end
+	plonks[parte] = ahora + 0.35
+	Sonidos.emitir(NOTAS[rng:NextInteger(1, #NOTAS)], parte.Position, 0.2)
+	Rafagas.lanzar("Onda", parte.Position + Vector3.new(0, parte.Size.Y / 2, 0), 0.7, Color3.fromRGB(240, 183, 58))
+end
+
+local function encender(parte: BasePart, b: Bulto, mecha: number)
+	if b.mecha > 0 then
+		return
+	end
+	b.mecha = os.clock() + mecha
+	parte:SetAttribute("Silbando", true)
+	if not Agarre.portador(parte) then
+		servidor(parte)
+	end
+	parte.AssemblyAngularVelocity = Vector3.new(rng:NextNumber(-6, 6), rng:NextNumber(-6, 6), rng:NextNumber(-6, 6))
+	Sonidos.emitir("Siseo", parte.Position, 0.1)
+	Rafagas.lanzar("Vapor", parte.Position + parte.CFrame.UpVector, 0.8)
+	local ahora = os.clock()
+	if ahora > avisoSiseo then
+		avisoSiseo = ahora + 6
+		RemotoAviso:FireAllClients("¡Una bombona de gas se ha soltado! ¡Apartaos!", "peligro")
+	end
+end
+
+local function explotar(parte: BasePart)
+	local centro = parte.Position
+	bultos[parte] = nil
+	cuenta.rotas += 1
+	Agarre.soltarObjeto(parte)
+	parte:Destroy()
+	Rafagas.lanzar("Explosion", centro, 1.1)
+	Rafagas.lanzar("Humo", centro, 1)
+	Sonidos.emitir("BoomCartoon", centro, 0.1)
+	Pasajeros.asustar(0.5, centro, 18)
+	local fase = Avion.fase()
+	if Carga.aBordo(centro) and (fase == "Despegue" or fase == "Vuelo" or fase == "Aproximacion") then
+		Avion.danar(CE.DANO_CASCO)
+	end
+	for _, jugador in Players:GetPlayers() do
+		local raiz = Personajes.raiz(jugador)
+		if raiz then
+			local d = raiz.Position - centro
+			if d.Magnitude < CE.RADIO then
+				local f = 1 - d.Magnitude / CE.RADIO
+				local plano = d * Vector3.new(1, 0, 1)
+				Personajes.ragdoll(jugador, 1.4 + f, (if plano.Magnitude > 0.1 then plano.Unit else Vector3.xAxis) * (30 + 35 * f) + Vector3.new(0, 24 + 20 * f, 0))
+				Rafagas.lanzar("Ay", raiz.Position + Vector3.new(0, 1.5, 0))
+			end
+		end
+	end
+	local alcance = CE.RADIO * 0.8
+	for otra, ob in bultos do
+		local delta = otra.Position - centro
+		if not otra.Parent or delta.Magnitude >= alcance then
+			continue
+		end
+		if ob.tipo == "Bombona" then
+			encender(otra, ob, rng:NextNumber(0.4, 0.9))
+		elseif not Agarre.portador(otra) then
+			local f = 1 - delta.Magnitude / alcance
+			otra.AssemblyLinearVelocity += (if delta.Magnitude > 0.1 then delta.Unit else Vector3.yAxis) * 25 * f + Vector3.new(0, 15 * f, 0)
+			ob.gracia = os.clock() + 0.3
+			aplicarDano(otra, ob, CE.DANO_CARGA * f)
+		end
+	end
+	local ahora = os.clock()
+	if ahora > avisoBum then
+		avisoBum = ahora + 5
+		RemotoAviso:FireAllClients("¡BUM! Ha reventado una bombona de gas", "peligro")
+	end
+end
+
+local function vigilarBombona(parte: BasePart, b: Bulto, cambio: number, ahora: number)
+	local llevada = Agarre.portador(parte) ~= nil
+	if b.mecha == 0 then
+		if not llevada and ahora > b.gracia and cambio > b.umbral then
+			encender(parte, b, CE.MECHA)
+		end
+		return
+	end
+	if ahora >= b.mecha then
+		explotar(parte)
+		return
+	end
+	local arriba = parte.CFrame.UpVector
+	if ahora >= b.humo then
+		b.humo = ahora + 0.25
+		Rafagas.lanzar("Vapor", parte.Position + arriba * parte.Size.Y / 2, 0.5)
+	end
+	if not llevada then
+		servidor(parte)
+		parte.AssemblyLinearVelocity = parte.AssemblyLinearVelocity:Lerp(arriba * CE.EMPUJE, 0.5)
+		parte.AssemblyAngularVelocity = arriba * 12 + Vector3.new(0, 9, 0)
+	end
+end
+
+local function vigilarPiano(parte: BasePart, cambio: number, ahora: number, paso: number)
+	local portador = Agarre.portador(parte)
+	if cambio > (if portador then CE.PIANO_PLONK * 2 else CE.PIANO_PLONK) then
+		plonk(parte)
+	end
+	local libre = not portador and Agarre.delServidor(parte)
+	local cf, medio = parte.CFrame, parte.Size / 2
+	local vel = parte.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+	for _, jugador in Players:GetPlayers() do
+		local raiz = Personajes.raiz(jugador)
+		if not raiz then
+			continue
+		end
+		local l = cf:PointToObjectSpace(raiz.Position)
+		if math.abs(l.X) < medio.X + 0.5 and math.abs(l.Z) < medio.Z + 0.5 and l.Y > medio.Y - 0.5 and l.Y < medio.Y + 4 and raiz.AssemblyLinearVelocity.Y < -8 then
+			plonk(parte)
+		end
+		if libre and vel.Magnitude > CE.PIANO_ATROPELLO and math.abs(l.X) < medio.X + 1.3 and math.abs(l.Z) < medio.Z + 1.3 and l.Y < medio.Y and (raiz.Position - parte.Position):Dot(vel) > 0 and (atropellos[jugador] or 0) < ahora then
+			atropellos[jugador] = ahora + 2
+			Personajes.ragdoll(jugador, 2, vel.Unit * 45 + Vector3.new(0, 28, 0))
+			Rafagas.lanzar("Bonk", raiz.Position + Vector3.new(0, 1.5, 0))
+			plonk(parte)
+			RemotoAviso:FireClient(jugador, "¡Te ha atropellado el piano!", "peligro")
+		end
+	end
+	local e = Avion.estado
+	if libre and not e.enTierra then
+		parte.AssemblyLinearVelocity += Vector3.new(math.sin(math.rad(e.alabeo)), 0, math.sin(math.rad(e.cabeceo))) * CE.INCLINACION * paso
 	end
 end
 
 function Carga.quemar(posicion: Vector3, radio: number, cantidad: number)
 	for parte, b in bultos do
 		if parte.Parent and (parte.Position - posicion).Magnitude < radio + parte.Size.Magnitude / 2 then
-			aplicarDano(parte, b, cantidad)
+			if b.tipo == "Bombona" then
+				encender(parte, b, CE.MECHA)
+			else
+				aplicarDano(parte, b, cantidad)
+			end
 		end
 	end
 end
@@ -485,7 +668,15 @@ end
 local function caida(parte: BasePart, b: Bulto?)
 	if b then
 		bultos[parte] = nil
-		if b.entrega and Avion.zonaEntrega() then
+		if b.tipo == "Bombona" and b.mecha > 0 then
+			cuenta.rotas += 1
+			RemotoAviso:FireAllClients("¡Bombona fuera del avión! Por los pelos", "bien")
+		elseif b.tipo == "Piano" then
+			cuenta.perdido += b.valor + CE.PIANO_MULTA
+			Sonidos.emitir("Dramatico")
+			Sonidos.emitir(NOTAS[rng:NextInteger(1, #NOTAS)], parte.Position)
+			RemotoAviso:FireAllClients("¡El piano se ha caído del avión! La multa va a ser enorme", "peligro")
+		elseif b.entrega and Avion.zonaEntrega() then
 			cuenta.entregado += b.valor
 			Rafagas.lanzar("Confeti", parte.Position)
 			RemotoAviso:FireAllClients(`¡Entrega aérea completada! +{b.valor}`, "bien")
@@ -651,11 +842,15 @@ function Carga.iniciar()
 		RemotoAviso:FireClient(jugador, "¡Está furioso! Dale de comer o atúrdelo antes de cogerlo", "peligro")
 		return false
 	end)
-	Agarre.alSoltar(function(soltador, objeto, raiz)
+	Agarre.alSoltar(function(soltador, objeto, raiz, velocidad)
 		local b = bultos[raiz]
 		if b then
 			b.previa = raiz.AssemblyLinearVelocity
 			b.gracia = os.clock() + 0.5
+			if b.tipo == "Bombona" and velocidad and velocidad.Magnitude > CE.BOMBONA_LANZADA then
+				encender(raiz, b, CE.MECHA)
+				raiz.AssemblyLinearVelocity = velocidad
+			end
 		end
 		local c = cocodrilo
 		local j = jaula
@@ -666,7 +861,58 @@ function Carga.iniciar()
 	end)
 	Players.PlayerRemoving:Connect(function(jugador)
 		golpes[jugador] = nil
+		atropellos[jugador] = nil
 	end)
+	if RunService:IsStudio() then
+		Workspace:GetAttributeChangedSignal("PruebaPiano"):Connect(function()
+			local v = Workspace:GetAttribute("PruebaPiano")
+			if v == nil then
+				return
+			end
+			Workspace:SetAttribute("PruebaPiano", nil)
+			if v == "Sacudida" then
+				local lado = if rng:NextNumber() < 0.5 then -1 else 1
+				for parte, b in bultos do
+					if b.tipo == "Piano" and not Agarre.portador(parte) then
+						servidor(parte)
+						parte.AssemblyLinearVelocity += Vector3.new(lado * 34, 6, rng:NextNumber(-6, 6))
+					end
+				end
+				return
+			end
+			if v == "Rampa" then
+				crearBulto("Piano", enRampa("Piano", 0), 700, false, 2)
+				for k = 0, 2 do
+					crearBulto("Bombona", enRampa("Bombona", k), 60, false, 2)
+				end
+				return
+			end
+			local z = zona.Position.Z
+			crearBulto("Piano", CFrame.new(0, Config.SUELO_Y + 5, z) * CFrame.Angles(0, math.pi / 2, 0), 700, false, 2)
+			for k = -1, 1 do
+				crearBulto("Bombona", CFrame.new(k * 2.2, Config.SUELO_Y + 2, z - 5.5), 60, false, 2)
+			end
+		end)
+		Workspace:GetAttributeChangedSignal("PruebaBombona"):Connect(function()
+			if Workspace:GetAttribute("PruebaBombona") == nil then
+				return
+			end
+			Workspace:SetAttribute("PruebaBombona", nil)
+			for parte, b in bultos do
+				if b.tipo == "Bombona" and b.mecha == 0 and parte.Parent then
+					encender(parte, b, CE.MECHA)
+					return
+				end
+			end
+			local parte = crearBulto("Bombona", CFrame.new(0, Config.SUELO_Y + 1.2, zona.Position.Z - 4), 60, false, 2)
+			task.delay(0.6, function()
+				local b = bultos[parte]
+				if b then
+					encender(parte, b, CE.MECHA)
+				end
+			end)
+		end)
+	end
 	local acumulado = 0
 	RunService.Heartbeat:Connect(function(dt)
 		acumulado += dt
@@ -686,8 +932,18 @@ function Carga.iniciar()
 				continue
 			end
 			local v = parte.AssemblyLinearVelocity
-			local cambio = (v - b.previa).Magnitude
+			local delta = v - b.previa
+			if ESPECIALES[b.tipo] then
+				delta -= Objetos.tomarEmpuje(parte)
+			end
+			local cambio = delta.Magnitude
 			b.previa = v
+			if b.tipo == "Bombona" then
+				vigilarBombona(parte, b, cambio, ahora)
+				continue
+			elseif b.tipo == "Piano" then
+				vigilarPiano(parte, cambio, ahora, paso)
+			end
 			if ahora > b.gracia and cambio > b.umbral and not Agarre.portador(parte) then
 				aplicarDano(parte, b, (cambio - b.umbral) * (if b.umbral < 30 then 2.2 else 1.1))
 			end

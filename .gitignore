@@ -2,3 +2,4 @@ node_modules/
 render/
 __pycache__/
 *.pyc
+Overbooked/marketing/*.mp4

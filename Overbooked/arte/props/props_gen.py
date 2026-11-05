@@ -871,12 +871,182 @@ def p_boton():
     return p
 
 
+def contorno_dentro(pts, ins):
+    n = len(pts)
+    out = []
+    for i in range(n):
+        a, b, c = pts[i - 1], pts[i], pts[(i + 1) % n]
+        n1 = Vector((b[1] - a[1], -(b[0] - a[0]))).normalized()
+        n2 = Vector((c[1] - b[1], -(c[0] - b[0]))).normalized()
+        mi = n1 + n2
+        mi = mi.normalized() if mi.length > 1e-6 else n1
+        k = max(mi.dot(n1), 0.35)
+        out.append((b[0] - mi.x * ins / k, b[1] - mi.y * ins / k))
+    return out
+
+
+def loft_contorno(pts, prof, m=None, cap0=True, cap1=True):
+    if area2(pts) < 0:
+        pts = pts[::-1]
+    bm = bmesh.new()
+    rings = [[bm.verts.new((x, y, z)) for x, y in contorno_dentro(pts, ins)] for ins, z in prof]
+    N = len(pts)
+    for a, b in zip(rings, rings[1:]):
+        for j in range(N):
+            j2 = (j + 1) % N
+            bm.faces.new((a[j], a[j2], b[j2], b[j]))
+    if cap0:
+        bm.faces.new(list(reversed(rings[0])))
+    if cap1:
+        bm.faces.new(rings[-1])
+    return xf(bm, m)
+
+
+def recortar_y(pts, y0):
+    out = []
+    n = len(pts)
+    for i in range(n):
+        p, q = pts[i], pts[(i + 1) % n]
+        if p[1] >= y0:
+            out.append(p)
+        if (p[1] >= y0) != (q[1] >= y0):
+            t = (y0 - p[1]) / (q[1] - p[1])
+            out.append((p[0] + (q[0] - p[0]) * t, y0))
+    return out
+
+
+PIANO_CURVA = [(1.7, -0.75), (1.62, -0.35), (1.27, 0.15), (0.78, 0.62), (0.44, 1.2), (0.3, 1.78), (-0.05, 2.22), (-0.7, 2.38),
+               (-1.32, 2.22), (-1.64, 1.78), (-1.7, 1.0)]
+
+
+def contorno_piano():
+    r = 0.16
+    pts = [(1.7 - r + r * math.cos(math.radians(a)), -1.45 + r + r * math.sin(math.radians(a))) for a in (-90, -60, -30, 0)]
+    pts += [(q.x, q.y) for q in catmull([Vector(c) for c in PIANO_CURVA], 3)]
+    pts += [(-1.7, -0.2)]
+    pts += [(-1.7 + r + r * math.cos(math.radians(a)), -1.45 + r + r * math.sin(math.radians(a))) for a in (180, 210, 240, 270)]
+    return pts
+
+
+def y_cola(pts, x):
+    ys = []
+    n = len(pts)
+    for i in range(n):
+        p, q = pts[i], pts[(i + 1) % n]
+        if (p[0] - x) * (q[0] - x) <= 0 and p[0] != q[0]:
+            t = (x - p[0]) / (q[0] - p[0])
+            ys.append(p[1] + (q[1] - p[1]) * t)
+    return max(ys)
+
+
+def p_piano():
+    p = Prop("Piano", (3.52, 4.68, 2.97), 4600)
+    out = contorno_piano()
+    p.add(loft_contorno(out, [(0.08, 0.95), (0.0, 1.04), (0.0, 1.12), (0.0, 1.17), (0.0, 1.87), (0.035, 1.95), (0.1, 1.95), (0.135, 1.9), (0.135, 1.76)], cap0=True),
+          lambda c, n: "gold" if (n.z > 0.9 and c.z < 1.85) or (abs(n.z) < 0.3 and 1.12 < c.z < 1.17) else "black")
+    for k in range(9):
+        x = -1.42 + k * 0.3
+        y1 = y_cola(out, x) - 0.24
+        if y1 > -0.5:
+            p.add(lathe([(0.014, -0.9), (0.014, y1)], 5, M((x, 0, 1.805), (-90, 0, 0)), cap0=False, cap1=False), "white", 80)
+    for x, y in ((-1.1, -0.7), (0.9, -0.7), (-0.2, 1.4)):
+        p.add(cyl(0.07, 0.06, (x, y, 1.76), seg=8), "dwood")
+    p.add(bb(-1.6, 1.6, -1.38, -0.95, 1.7, 2.0, 0.025), "black")
+    bisagra = Vector((-1.73, 0.0, 1.95))
+    ml = Matrix.Translation(bisagra) @ Matrix.Rotation(math.radians(-16), 4, "Y") @ Matrix.Translation(-bisagra)
+    tapa = recortar_y(contorno_dentro(out, -0.03), -0.72)
+    p.add(loft_contorno(tapa, [(0.0, 1.955), (0.0, 1.995), (0.03, 2.025)], ml), lambda c, n: "dark" if n.z < -0.5 else "black")
+    p.add(bar((1.05, 0.0, 1.74), ml @ Vector((1.05, 0.0, 1.98)), 0.07, 0.07, 0.02, caps=True), "dark")
+    p.add(bb(-1.5, 1.5, -2.14, -1.4, 1.08, 1.36, 0.03), "black")
+    for sx in (-1, 1):
+        xs = sorted((sx * 1.5, sx * 1.72))
+        p.add(bb(xs[0], xs[1], -2.2, -1.38, 1.04, 1.62, 0.05, 2), "black")
+    nb = 14
+    w = 3.0 / nb
+    for i in range(nb):
+        x0 = -1.5 + i * w + 0.012
+        p.add(bb(x0, x0 + w - 0.024, -2.1, -1.52, 1.36, 1.46, 0.012), "white", 60)
+    for o in (0, 7):
+        for i in (0, 1, 3, 4, 5):
+            xc = -1.5 + (o + i + 1) * w
+            p.add(bb(xc - 0.065, xc + 0.065, -1.84, -1.5, 1.46, 1.57, 0.018), "black", 60)
+    p.add(bb(-1.5, 1.5, -1.52, -1.4, 1.36, 1.66, 0.025), "black")
+    p.add(rbox((0.46, 0.08, 0.07), (0, -1.535, 1.56), 0.02, 1), "gold")
+    md = M((0, -1.12, 1.98), (-12, 0, 0))
+    p.add(rbox((1.7, 0.07, 0.58), (0, 0, 0.29), 0.025, 1, m=md), "black")
+    p.add(rbox((1.0, 0.03, 0.44), (0, -0.085, 0.31), 0.0, m=md), "cream")
+    for x, z, s in ((-0.32, 0.22, 1), (-0.1, 0.36, -1), (0.12, 0.27, 1), (0.32, 0.41, -1)):
+        p.add(xf(ellipsoid((0.045, 0.02, 0.034), M((x, -0.13, z), (0, 20 * s, 0)), 6, 4), md), "black", 70)
+        p.add(bar(md @ Vector((x + 0.038, -0.15, z)), md @ Vector((x + 0.038, -0.15, z + 0.16)), 0.016, 0.012, 0.0, up=md.to_3x3() @ Vector((0, -1, 0))), "black")
+
+    def pata(x, y):
+        p.add(lathe([(0.13, 0.36), (0.17, 0.4), (0.17, 0.48), (0.115, 0.57), (0.13, 0.7), (0.19, 0.84), (0.22, 0.94), (0.22, 1.12)], 12, M((x, y, 0)), cap1=False), "black")
+        p.add(bb(x - 0.15, x + 0.15, y - 0.09, y + 0.09, 0.3, 0.34, 0.012), "gold")
+        for sx in (-1, 1):
+            xs = sorted((x + sx * 0.12, x + sx * 0.15))
+            p.add(bb(xs[0], xs[1], y - 0.08, y + 0.08, 0.13, 0.31, 0.01), "gold")
+        p.add(cyl(0.15, 0.12, (x, y, 0.15), (0, 90, 0), seg=12, center=True, bev=0.025), "black")
+        p.add(cyl(0.055, 0.4, (x, y, 0.15), (0, 90, 0), seg=8, center=True), "gold")
+    for x, y in ((-1.28, -1.08), (1.28, -1.08), (-0.55, 1.72)):
+        pata(x, y)
+    for sx in (-1, 1):
+        p.add(bar((sx * 0.14, -1.0, 0.5), (sx * 0.14, -1.0, 1.08), 0.07, 0.07, 0.02, caps=False), "black")
+    p.add(rbox((0.5, 0.22, 0.13), (0, -1.0, 0.46), 0.04, 1), "black")
+    for x in (-0.13, 0.0, 0.13):
+        p.add(bar((x, -1.08, 0.43), (x, -1.32, 0.42), 0.06, 0.035, 0.012), "gold")
+    tag = [(x * 1.4, y * 1.4) for x, y in ((-0.13, -0.22), (0.13, -0.22), (0.13, 0.12), (0.05, 0.2), (-0.05, 0.2), (-0.13, 0.12))]
+    mt = M((1.6, -2.1, 0.72), (90, 0, 8))
+    p.add(prism(tag, 0.03, mt, bev=0.01), "orange")
+    p.add(prism(rect(-0.13, 0.13, -0.12, 0.03), 0.06, mt, z0=0.035), "cream")
+    for k in range(2):
+        p.add(prism(rect(-0.1, 0.1 - 0.07 * k, -0.04 - 0.05 * k, -0.02 - 0.05 * k), 0.07, mt, z0=0.088), "black")
+    p.add(tube([(1.6, -2.06, 1.1), (1.62, -2.12, 1.04), (1.6, -2.11, 0.99)], lambda u: 0.014, k=5, steps=2, caps=False), "black", 80)
+    return p
+
+
+def p_bombona():
+    p = Prop("Bombona", (0.824, 0.944, 1.98), 1300)
+    seg = 16
+    a0 = math.pi / seg
+    prof = [(0.0, 0.1), (0.2, 0.105), (0.33, 0.14), (0.4, 0.21), (0.42, 0.32), (0.42, 0.9), (0.42, 1.12), (0.42, 1.3), (0.4, 1.4),
+            (0.35, 1.5), (0.26, 1.58), (0.14, 1.63), (0.1, 1.64)]
+
+    def cuerpo(c, n):
+        return "white" if 0.9 < c.z < 1.12 and abs(n.z) < 0.5 else "red"
+    p.add(lathe(prof, seg, cap1=False, a0=a0), cuerpo)
+    p.add(lathe([(0.31, 0.0), (0.37, 0.0), (0.38, 0.03), (0.38, 0.15), (0.36, 0.17), (0.31, 0.17)], seg, closed=True, a0=a0), "dark")
+    p.add(cyl(0.1, 0.2, (0, 0, 1.6), seg=10), "gold")
+    p.add(rbox((0.16, 0.16, 0.14), (0, 0, 1.78), 0.035, 1), "gold")
+    p.add(cyl(0.05, 0.16, (0.06, 0, 1.76), rot=(0, 90, 0), seg=8), "gold")
+    p.add(cyl(0.065, 0.05, (0.22, 0, 1.76), rot=(0, 90, 0), seg=8, bev=0.012), "gold")
+    p.add(cyl(0.03, 0.12, (0, 0, 1.84), seg=6), "metal")
+    p.add(lathe([(0.09, -0.025), (0.15, -0.03), (0.165, 0.0), (0.15, 0.03), (0.09, 0.025)], 12, M((0, 0, 1.95)), closed=True), "dark")
+    for k in range(2):
+        a = math.radians(45 + 90 * k)
+        p.add(bar((0.105 * math.cos(a), 0.105 * math.sin(a), 1.95), (-0.105 * math.cos(a), -0.105 * math.sin(a), 1.95), 0.03, 0.025, 0.008), "dark")
+    p.add(lathe([(0.27, -0.06), (0.31, -0.07), (0.33, 0.0), (0.31, 0.07), (0.27, 0.06)], seg, M((0, 0, 1.72)), closed=True, a0=a0), "metal")
+    for k in range(3):
+        a = math.radians(90 + 120 * k)
+        b0 = Vector((0.27 * math.cos(a), 0.27 * math.sin(a), 1.48))
+        b1 = Vector((0.29 * math.cos(a), 0.29 * math.sin(a), 1.7))
+        p.add(bar(b0, b1, 0.06, 0.05, 0.015, up=(math.cos(a), math.sin(a), 0)), "metal")
+    ap = 0.42 * math.cos(math.pi / seg)
+    md = M((0, -ap, 0.6), (90, 0, 0))
+    rombo = [(0.0, -0.17), (0.17, 0.0), (0.0, 0.17), (-0.17, 0.0)]
+    p.add(prism(rombo, 0.1, md, bev=0.012, z0=-0.04), "white")
+    llama = [(0.0, -0.11), (0.07, -0.08), (0.09, -0.02), (0.07, 0.04), (0.03, 0.12), (0.025, 0.05), (0.0, 0.08), (-0.035, 0.02),
+             (-0.05, 0.08), (-0.08, 0.0), (-0.075, -0.07)]
+    p.add(prism(llama, 0.06, md @ M((0, 0, 0.06)), z0=0.0), "orange")
+    return p
+
+
 BUILDERS = [
     p_asiento, p_bandeja, p_hamburguesa, p_cafe, p_agua, p_extintor, p_llave, p_caja, p_caja_fragil,
     lambda: p_maleta("Maleta1", "orange", "cream"),
     lambda: p_maleta("Maleta2", "teal", "orange"),
     lambda: p_maleta("Maleta3", "red", "cream"),
     p_jaula, p_cuadro, p_volante, p_gases, p_palanca_gases, p_asiento_piloto, p_carrito, p_cafetera, p_nevera, p_inodoro, p_boton,
+    p_piano, p_bombona,
 ]
 
 
@@ -990,6 +1160,8 @@ SHEETS = [
     ("props_1.png", [["Caja", "Nevera", "CajaFragil", "Inodoro"], ["Asiento", "AsientoPiloto", "Carrito", ("Jaula", -80)]], 1.0, 0.34),
     ("props_2.png", [["Volante", "Gases", "Boton", "Extintor", "Cafetera"], [("Cuadro", -6)]], 0.7, 0.19),
     ("props_3.png", [["Bandeja", "Hamburguesa", "Cafe", "Agua"], ["Maleta1", "Maleta2", "Maleta3", "Llave"]], 0.42, 0.105),
+    ("props_4.png", [["Piano", ("Piano", 150), ("Bombona", -30)]], 0.7, 0.2),
+    ("props_5.png", [[("Bombona", -30), ("Bombona", 160)]], 0.25, 0.08),
 ]
 
 
@@ -1157,8 +1329,12 @@ def main():
             export_fbx(ob)
         dim = ob.dimensions
         manifest.append({"nombre": p.name, "archivo": p.name + ".fbx", "tamano": [round(dim.x, 3), round(dim.z, 3), round(dim.y, 3)], "triangulos": tris})
-    if not only and not arg("--no-export"):
-        with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as fh:
+    if not arg("--no-export"):
+        ruta = os.path.join(OUT, "manifest.json")
+        if only and os.path.exists(ruta):
+            with open(ruta, encoding="utf-8") as fh:
+                manifest = [e for e in json.load(fh) if e["nombre"] not in objs] + manifest
+        with open(ruta, "w", encoding="utf-8") as fh:
             json.dump(manifest, fh, ensure_ascii=False, indent=2)
     print("ALL BUDGETS OK" if ok else "SOME PROPS OVER BUDGET")
     if arg("--no-render"):

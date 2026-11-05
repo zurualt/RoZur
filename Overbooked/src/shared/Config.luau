@@ -10,8 +10,8 @@ export type DefObjeto = {
 
 local Config = {}
 
-Config.ASSET_TRIPULANTE = 79935936187714
-Config.ALTURA_TRIPULANTE = 5.08
+Config.ASSET_TRIPULANTE = 93486408235562
+Config.ALTURA_TRIPULANTE = 3.93
 Config.ROTACION_FBX = CFrame.Angles(math.pi / 2, 0, 0)
 
 
@@ -295,6 +295,22 @@ Config.OBJETOS = {
 		visual = "Biberon",
 		nombre = "biberón",
 	},
+	Piano = {
+		tamano = Vector3.new(3.52, 2.97, 4.68),
+		color = Color3.fromRGB(27, 27, 33),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 1.4,
+		visual = "Piano",
+		nombre = "piano de cola",
+	},
+	Bombona = {
+		tamano = Vector3.new(0.82, 1.98, 0.94),
+		color = Color3.fromRGB(217, 68, 58),
+		material = Enum.Material.SmoothPlastic,
+		densidad = 0.8,
+		visual = "Bombona",
+		nombre = "bombona de gas",
+	},
 } :: { [string]: DefObjeto }
 
 Config.ISLA = {
@@ -439,6 +455,34 @@ Config.ROBUX = {
 		{ nombre = "CaidaLibre", producto = 3728527840, precio = 29, titulo = "Caída libre", descripcion = "Gravedad cero durante unos segundos" },
 		{ nombre = "Piratas", producto = 3728527851, precio = 49, titulo = "Piratas del aire", descripcion = "Llegan los piratas a abordar el avión" },
 	} :: { ProductoCaos },
+}
+
+Config.CARGA_ESPECIAL = {
+	PIANO_UMBRAL = 45,
+	PIANO_ROCE = 0.05,
+	PIANO_SOLO = 0.3,
+	PIANO_VELOCIDAD_SOLO = 5,
+	PIANO_AYUDA = 10,
+	PIANO_MULTA = 500,
+	PIANO_PLONK = 9,
+	PIANO_ATROPELLO = 11,
+	INCLINACION = 45,
+	BOMBONA_UMBRAL = 30,
+	BOMBONA_LANZADA = 40,
+	MECHA = 2.4,
+	EMPUJE = 26,
+	RADIO = 9,
+	DANO_CASCO = 3,
+	DANO_CARGA = 35,
+}
+
+Config.PANTALLAS = {
+	DISTANCIA = 45,
+	RADAR_ANTELACION = 24,
+	RADAR_AVISO = 12,
+	MONITOR_HZ = 10,
+	MONITOR_FIGURAS = 30,
+	MONITOR_CAMBIO = 9,
 }
 
 return Config

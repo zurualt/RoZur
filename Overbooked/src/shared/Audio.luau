@@ -5,6 +5,7 @@ local Audio = {}
 
 Audio.IDS = {
 	Alarma = 95290286772506,
+	AlarmaCabina = 117465412205721,
 	Altillo = 122109400045329,
 	AmbienteCabina = 120149418412391,
 	AmbienteIsla = 110433182162070,
@@ -68,6 +69,9 @@ Audio.IDS = {
 	Pasos1 = 78457115658112,
 	Pasos2 = 139423427636109,
 	Pasos3 = 117374857574881,
+	Piano1 = 129997749618331,
+	Piano2 = 87141218875826,
+	Piano3 = 78291157866430,
 	PirataCae = 101209643087864,
 	Placaje = 123092621959055,
 	PolloGoma = 89072344210154,
@@ -84,6 +88,7 @@ Audio.IDS = {
 	Sello = 71544754588151,
 	Servir = 86077660973594,
 	SilbatoCaida = 87903534635285,
+	Siseo = 85164080486331,
 	Succion = 124522751572113,
 	Trueno = 91833774512929,
 	UiAviso = 126753644558156,
@@ -96,6 +101,7 @@ Audio.IDS = {
 
 Audio.DATOS = {
 	Alarma = { volumen = 0.35, bucle = true, duracion = 1.0 },
+	AlarmaCabina = { volumen = 0.3, bucle = true, duracion = 2.25 },
 	Altillo = { volumen = 0.95, bucle = false, duracion = 0.732 },
 	AmbienteCabina = { volumen = 0.2, bucle = true, duracion = 15.0 },
 	AmbienteIsla = { volumen = 0.5, bucle = true, duracion = 5.0 },
@@ -159,6 +165,9 @@ Audio.DATOS = {
 	Pasos1 = { volumen = 0.45, bucle = false, duracion = 0.203 },
 	Pasos2 = { volumen = 0.55, bucle = false, duracion = 0.203 },
 	Pasos3 = { volumen = 0.6, bucle = false, duracion = 0.189 },
+	Piano1 = { volumen = 0.7, bucle = false, duracion = 1.48 },
+	Piano2 = { volumen = 0.6, bucle = false, duracion = 1.28 },
+	Piano3 = { volumen = 0.55, bucle = false, duracion = 1.28 },
 	PirataCae = { volumen = 0.35, bucle = false, duracion = 4.598 },
 	Placaje = { volumen = 0.8, bucle = false, duracion = 0.8 },
 	PolloGoma = { volumen = 0.8, bucle = false, duracion = 0.8 },
@@ -175,6 +184,7 @@ Audio.DATOS = {
 	Sello = { volumen = 0.9, bucle = false, duracion = 0.6 },
 	Servir = { volumen = 0.6, bucle = false, duracion = 0.425 },
 	SilbatoCaida = { volumen = 0.75, bucle = false, duracion = 2.0 },
+	Siseo = { volumen = 0.7, bucle = false, duracion = 2.48 },
 	Succion = { volumen = 0.65, bucle = false, duracion = 1.342 },
 	Trueno = { volumen = 0.75, bucle = false, duracion = 5.755 },
 	UiAviso = { volumen = 0.3, bucle = false, duracion = 0.558 },

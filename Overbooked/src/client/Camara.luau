@@ -22,21 +22,23 @@ local fovBase = 80
 local aplicado = CFrame.identity
 type Brazos = { motores: { [string]: Motor6D }, inclinacion: number }
 local articulaciones: { [Model]: Brazos } = setmetatable({}, { __mode = "k" }) :: any
-local MOTORES = { "RightShoulder", "LeftShoulder", "RightElbow", "LeftElbow", "RightWrist" }
+local MOTORES = { "RightShoulder", "LeftShoulder", "RightElbow", "LeftElbow", "RightWrist", "LeftWrist" }
 local POSE_BRAZO: { [string]: { number } } = {
-	puno = { 68, 27, 0, 12 },
-	vaso = { 68, 27, 0, 12 },
-	palma = { 55, 55, -90, 12 },
-	colgar = { 45, 15, 0, 6 },
-	dos = { 78, 18, 0, 16 },
+	puno = { 58, 42, 0, 12, 18 },
+	vaso = { 58, 42, 0, 12, 18 },
+	palma = { 48, 58, -90, 12, 0 },
+	colgar = { 40, 20, 0, 6, 0 },
+	dos = { 62, 40, 0, 16, 20 },
 }
 local tensionLanzar = 0
 local LEVANTE_PROPIO = math.rad(22)
-local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(64), 0, 0)
+local GIRO_HOMBRO_REPOSO = CFrame.Angles(math.rad(58), 0, 0)
 local alcanceHasta = 0
-local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(96), 0, 0)
-local ABRIR_REPOSO = math.rad(14)
-local ALTURA_OJOS = Vector3.new(0, -0.36, 0)
+local GIRO_CODO_REPOSO = CFrame.Angles(math.rad(80), 0, 0)
+local GIRO_MUNECA_REPOSO = CFrame.Angles(-math.rad(32), 0, 0)
+local ABRIR_REPOSO = math.rad(15)
+local ELEVAR = CFrame.new(0, 0.35, 0)
+local ALTURA_OJOS = Vector3.new(0, -0.44, 0)
 
 function Camara.sacudir(cantidad: number)
 	trauma = math.min(1, trauma + cantidad)
@@ -62,8 +64,8 @@ local function aplicarModo()
 	terceraPersona = activa
 	if activa then
 		jugador.CameraMode = Enum.CameraMode.Classic
-		jugador.CameraMaxZoomDistance = 12
-		jugador.CameraMinZoomDistance = 9
+		jugador.CameraMaxZoomDistance = 9.5
+		jugador.CameraMinZoomDistance = 7
 	else
 		jugador.CameraMinZoomDistance = 0.5
 		jugador.CameraMaxZoomDistance = 0.5
@@ -130,10 +132,14 @@ local function poseSosteniendo(personaje: Model)
 	local sosteniendo = personaje:GetAttribute("Sosteniendo")
 	local tipo = if typeof(sosteniendo) == "string" then sosteniendo else ""
 	local propio = personaje == jugador.Character and not terceraPersona
+	local datos = articulaciones[personaje]
 	if tipo == "" and not propio then
+		if datos then
+			girar(datos.motores.RightWrist, CFrame.identity)
+			girar(datos.motores.LeftWrist, CFrame.identity)
+		end
 		return
 	end
-	local datos = articulaciones[personaje]
 	if not datos then
 		local lista: { [string]: Motor6D } = {}
 		for _, nombre in MOTORES do
@@ -164,31 +170,36 @@ local function poseSosteniendo(personaje: Model)
 		local p = POSE_BRAZO[estilo.modo]
 		local tension = if personaje == jugador.Character then tensionLanzar else 0
 		local dentro = math.rad(p[4])
+		local alzar = if propio then ELEVAR else CFrame.identity
+		local doblar = if propio then CFrame.Angles(-math.rad(p[5]), 0, 0) else CFrame.identity
 		local subir = CFrame.Angles(inclinacionVista + math.rad(p[1]) + math.rad(40) * tension, 0, 0)
 		local codo = CFrame.Angles(math.rad(p[2]) + math.rad(40) * tension, 0, 0)
-		girar(m.RightShoulder, CFrame.Angles(0, dentro, 0) * subir)
+		girar(m.RightShoulder, alzar * CFrame.Angles(0, dentro, 0) * subir)
 		girar(m.RightElbow, codo)
-		if p[3] ~= 0 then
-			girar(m.RightWrist, CFrame.Angles(0, math.rad(p[3]), 0))
-		end
+		girar(m.RightWrist, CFrame.Angles(0, math.rad(p[3]), 0) * doblar)
 		if estilo.modo == "dos" then
-			girar(m.LeftShoulder, CFrame.Angles(0, -dentro, 0) * subir)
+			girar(m.LeftShoulder, alzar * CFrame.Angles(0, -dentro, 0) * subir)
 			girar(m.LeftElbow, codo)
+			girar(m.LeftWrist, doblar)
 		elseif propio then
-			girar(m.LeftShoulder, reposoIzq)
+			girar(m.LeftShoulder, ELEVAR * reposoIzq)
 			girar(m.LeftElbow, GIRO_CODO_REPOSO)
+			girar(m.LeftWrist, GIRO_MUNECA_REPOSO)
 		else
 			girar(m.LeftShoulder, CFrame.Angles(math.rad(5), 0, -math.rad(12)))
 			girar(m.LeftElbow, CFrame.Angles(math.rad(20), 0, 0))
+			girar(m.LeftWrist, CFrame.identity)
 		end
 		return
 	end
 	local alcance = math.clamp((alcanceHasta - os.clock()) / 0.45, 0, 1)
 	local estirar = math.sin(alcance * math.pi)
-	girar(m.RightShoulder, reposoDer:Lerp(CFrame.Angles(inclinacionVista + math.rad(90), 0, 0), estirar))
+	girar(m.RightShoulder, (ELEVAR * reposoDer):Lerp(ELEVAR * CFrame.Angles(inclinacionVista + math.rad(90), 0, 0), estirar))
 	girar(m.RightElbow, GIRO_CODO_REPOSO:Lerp(CFrame.identity, estirar))
-	girar(m.LeftShoulder, reposoIzq)
+	girar(m.RightWrist, GIRO_MUNECA_REPOSO:Lerp(CFrame.identity, estirar))
+	girar(m.LeftShoulder, ELEVAR * reposoIzq)
 	girar(m.LeftElbow, GIRO_CODO_REPOSO)
+	girar(m.LeftWrist, GIRO_MUNECA_REPOSO)
 end
 
 function Camara.tension(fuerza: number)

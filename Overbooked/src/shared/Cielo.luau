@@ -1,4 +1,6 @@
 --!strict
+local Destinos = require(script.Parent.Destinos)
+
 local Cielo = {}
 
 Cielo.IDS = {
@@ -16,6 +18,10 @@ Cielo.IDS = {
 	SueloCampos1 = 128661993879499,
 	SueloCampos2 = 134771438844431,
 } :: { [string]: number }
+
+for nombre, id in Destinos.IDS do
+	Cielo.IDS[nombre] = id
+end
 
 Cielo.CARPETA = "ModelosCielo"
 

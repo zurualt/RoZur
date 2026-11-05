@@ -1,5 +1,6 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
+local GuiService = game:GetService("GuiService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -41,6 +42,7 @@ type Medidor = { relleno: ImageLabel, texto: TextLabel, icono: ImageLabel }
 local gui: ScreenGui
 local raiz: Frame
 local escala: UIScale
+local panelBillete: ImageLabel? = nil
 local etiquetasGui: Instance
 local contratoCache: { [string]: any }? = nil
 local textoFase: TextLabel
@@ -86,6 +88,12 @@ local function ajustarEscala()
 	local s = Gui.escala()
 	escala.Scale = s
 	raiz.Size = UDim2.fromScale(1 / s, 1 / s)
+	local b = panelBillete
+	if b then
+		local arriba = GuiService.TopbarInset.Height / s + 4
+		b.Position = UDim2.new(0.5, 0, 0, arriba)
+		listaAvisos.Position = UDim2.new(0.5, 0, 0, arriba + 110)
+	end
 end
 
 local FILAS_ESTADO = {
@@ -132,6 +140,7 @@ local function construir()
 	Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(ajustarEscala)
 
 	local billete = Gui.panel(raiz, "Billete", UDim2.fromOffset(640, 104), UDim2.new(0.5, 0, 0, 8), Vector2.new(0.5, 0))
+	panelBillete = billete
 	textoFase = izquierda(Gui.texto(billete, "", UDim2.new(1, -130, 0, 30), UDim2.fromOffset(28, 18), Gui.TINTA, true))
 	textoRuta = izquierda(Gui.texto(billete, "", UDim2.new(1, -130, 0, 22), UDim2.fromOffset(30, 48), Gui.LAPIZ))
 	local fondoRuta, r = Gui.barra(billete, UDim2.new(1, -140, 0, 14), UDim2.fromOffset(30, 72), Gui.TURQUESA)
@@ -167,6 +176,8 @@ local function construir()
 	listaAvisos.AnchorPoint = Vector2.new(0.5, 0)
 	listaAvisos.Parent = raiz
 	Gui.lista(listaAvisos, 2).HorizontalAlignment = Enum.HorizontalAlignment.Center
+	ajustarEscala()
+	GuiService:GetPropertyChangedSignal("TopbarInset"):Connect(ajustarEscala)
 
 	panelPiloto = if TACTIL
 		then Gui.panel(raiz, "Pizarra", UDim2.fromOffset(370, 250), UDim2.new(0.5, 0, 1, -12), Vector2.new(0.5, 1))
@@ -602,7 +613,7 @@ local function riesgo(n: number): string
 	return string.rep("★", n) .. string.rep("☆", 3 - n)
 end
 
-local NOMBRES_CARGA = { Maleta = "maletas", Caja = "cajas", CajaFragil = "frágiles", Jaula = "cocodrilo" }
+local NOMBRES_CARGA = { Maleta = "maletas", Caja = "cajas", CajaFragil = "frágiles", Jaula = "cocodrilo", Piano = "piano", Bombona = "bombonas" }
 
 local function tablero()
 	local json = Estado:GetAttribute("Contratos")

@@ -412,6 +412,7 @@ local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
 }
 
 local PAGADOS: { [string]: () -> () } = { Pajaros = pajaros, CaidaLibre = caidaLibre, Piratas = Piratas.lanzar }
+local RADAR: { [() -> ()]: string } = { [pajaros] = "Pajaros", [tormenta] = "Tormenta", [Piratas.lanzar] = "Piratas" }
 
 function Peligros.lanzar(nombre: string): boolean
 	local f = PAGADOS[nombre]
@@ -476,12 +477,19 @@ function Peligros.activar(contrato: Contratos.Contrato)
 		end
 		finCalma = os.clock() + R.CALMA
 		task.wait(R.CALMA)
+		local siguiente: (() -> ())? = nil
 		while activo and generacion == miGeneracion do
 			local fase = Avion.fase()
+			local graves = Peligros.progreso() >= R.GRAVES or contrato.riesgo + Peligros.jornada() - 1 >= 3
 			if fase == "Vuelo" or fase == "Aproximacion" then
-				elegirEvento(Peligros.progreso() >= R.GRAVES or contrato.riesgo + Peligros.jornada() - 1 >= 3)()
+				local evento = siguiente or elegirEvento(graves)
+				evento()
 			end
-			task.wait(rng:NextNumber(Config.PARTIDA.INTERVALO_PELIGRO_MIN, Config.PARTIDA.INTERVALO_PELIGRO_MAX) / Peligros.intensidad())
+			siguiente = elegirEvento(graves)
+			local espera = rng:NextNumber(Config.PARTIDA.INTERVALO_PELIGRO_MIN, Config.PARTIDA.INTERVALO_PELIGRO_MAX) / Peligros.intensidad()
+			avion:SetAttribute("Radar", RADAR[siguiente :: () -> ()])
+			avion:SetAttribute("RadarHora", Workspace:GetServerTimeNow() + espera)
+			task.wait(espera)
 		end
 	end)
 	task.spawn(function()
@@ -525,6 +533,7 @@ function Peligros.detener()
 	finTormenta = 0
 	avion:SetAttribute("Tormenta", false)
 	avion:SetAttribute("CaidaLibre", false)
+	avion:SetAttribute("Radar", nil)
 	Avion.estado.turbulencia = 0
 end
 

@@ -29,8 +29,8 @@ local GRAVEDAD = 38
 local RADIO = 0.095
 local REBOTE = 0.5
 local FRENO = 2.6
-local CENTRO = Vector3.new(0.232, 1.143, -0.444)
-local NORMAL = Vector3.new(0.179, 0.08, -0.98)
+local CENTRO = Vector3.new(0.336, 1.059, -0.89)
+local NORMAL = Vector3.new(0.166, -0.028, -0.986)
 local ESCALAS = { [1] = 1.12, [-1] = 0.92 }
 local TINTA = Color3.fromRGB(27, 27, 33)
 local BLANCO = Color3.fromRGB(247, 247, 242)

@@ -98,5 +98,35 @@
       0.4
     ],
     "triangulos": 303
+  },
+  {
+    "nombre": "CabinaRadar",
+    "archivo": "CabinaRadar.fbx",
+    "tamano": [
+      1.04,
+      1.467,
+      0.819
+    ],
+    "triangulos": 1258
+  },
+  {
+    "nombre": "CabinaMonitor",
+    "archivo": "CabinaMonitor.fbx",
+    "tamano": [
+      1.66,
+      1.495,
+      0.533
+    ],
+    "triangulos": 314
+  },
+  {
+    "nombre": "Baliza",
+    "archivo": "Baliza.fbx",
+    "tamano": [
+      0.54,
+      0.58,
+      0.54
+    ],
+    "triangulos": 1596
   }
 ]

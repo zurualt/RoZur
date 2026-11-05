@@ -208,6 +208,10 @@ function Sonido.alternarMusica()
 	musicaActiva = not musicaActiva
 end
 
+function Sonido.musicaActiva(): boolean
+	return musicaActiva
+end
+
 function Sonido.iniciar()
 	grupo("Efectos", 0.9)
 	grupo("Ambiente", 0.7)

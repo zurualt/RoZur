@@ -1205,9 +1205,94 @@ def overhead(p):
         p.add(decal(rect(-0.24 + 0.13 * j, -0.16 + 0.13 * j, 3.27, 3.39), m, 0.038), "green")
 
 
+# ---------------------------------------------------------------- radar, monitor, baliza
+
+def marco_inclinado(origen, grados, hacia):
+    a = math.radians(grados)
+    return frame(origen, (1, 0, 0), (0, hacia * math.sin(a), math.cos(a)))
+
+
+RADAR_O = (0.0, 3.876, 4.531)
+RF = marco_inclinado(RADAR_O, 10.0, 1)
+RADAR_W, RADAR_H, RADAR_D = 1.04, 1.22, 0.55
+RADAR_V = 0.09
+RADAR_R = 0.36
+CRISTAL_W = 0.06
+MON_O = (0.0, 4.25, 6.05)
+MF = marco_inclinado(MON_O, 25.0, -1)
+MON_W, MON_H, MON_D = 1.66, 1.0, 0.12
+MON_PW, MON_PH = 1.44, 0.81
+BALIZA_C = 0.13
+BALIZA_TECHO = 7.95
+
+
+def rol_frente(m, frente, resto):
+    ez = m.col[2].to_3d()
+    return lambda c, n: frente if n.dot(ez) > 0.95 else resto
+
+
+def p_radar():
+    p = Prop("CabinaRadar", 6000)
+    m = RF
+    ez = m.col[2].to_3d()
+    p.add(rr_loft(RADAR_W, RADAR_H, 0.18, 3, [(0.1, -RADAR_D), (0.0, -RADAR_D + 0.12), (0.0, -0.03), (0.03, 0.0)], m), "dteal", 40)
+    p.add(bb(-0.36, 0.36, 3.86, 4.2, 3.66, 3.95, 0.02), "mgrey", 40)
+    cm = T(m, 0.0, RADAR_V, 0.0)
+    p.add(lathe([(RADAR_R, 0.0), (RADAR_R, CRISTAL_W), (0.0, CRISTAL_W)], 40, cm, cap0=False, cap1=False),
+          lambda c, n: "navy" if n.dot(ez) > 0.9 else "ink")
+    p.add(lathe([(0.46, 0.0), (0.46, 0.065), (0.445, 0.09), (0.425, 0.098), (0.415, 0.085), (0.415, 0.0)], 40, cm, cap0=False, cap1=False), "lmetal", 40)
+    for k in range(4):
+        a = math.radians(45 + 90 * k)
+        p.add(ellipsoid((0.022, 0.022, 0.012), cm @ Matrix.Translation((0.44 * math.cos(a), 0.44 * math.sin(a), 0.095)), 8, 4), "metal")
+    for s in (-1, 1):
+        perilla(p, m, s * 0.3, -0.47, 0.06, "ink", "white")
+    p.add(rr_loft(0.3, 0.11, 0.03, 2, [(0.0, 0.0), (0.0, 0.012), (0.004, 0.016)], T(m, 0.0, -0.47, 0.0), cap0=False), "cream")
+    p.add(xf(text_bm("RADAR", 0.06, 0.24), T(m, 0.0, -0.47, 0.02)), "ink")
+    p.add(decal(circ(0.42, 0.5, 0.022, 8), m, 0.006), "green")
+    return p
+
+
+def p_monitor():
+    p = Prop("CabinaMonitor", 4000)
+    m = MF
+    ez = m.col[2].to_3d()
+    p.add(rr_loft(MON_W, MON_H, 0.09, 3, [(0.03, -MON_D), (0.0, -MON_D + 0.03), (0.0, -0.02), (0.02, 0.0)], m), rol_frente(m, "ink", "dgrey"), 40)
+    p.add(rr_loft(MON_PW, MON_PH, 0.04, 2, [(0.0, 0.0), (0.0, CRISTAL_W)], m, cap0=False), lambda c, n: "navy" if n.dot(ez) > 0.9 else "ink")
+    p.add(rr_loft(0.6, 0.4, 0.05, 1, [(0.0, -0.2), (0.0, -0.1)], T(m, 0.0, 0.05, 0.0)), "mgrey", 40)
+    p.add(decal(circ(0.72, -0.455, 0.018, 8), m, 0.006), "red")
+    p.add(decal(rrect(-0.6, -0.455, 0.16, 0.03, 0.012, 1), m, 0.006), "mgrey")
+    y_barra = 4.32
+    for s in (-1, 1):
+        p.add(stick((s * 0.5, y_barra, 6.12), (s * 0.5, y_barra, 7.1), 0.026, seg=8), "metal")
+        p.add(cyl(0.045, 0.09, (s * 0.5, y_barra, 6.97), seg=10), "mgrey")
+    return p
+
+
+def p_baliza():
+    p = Prop("Baliza", 2500)
+    c = BALIZA_C
+
+    def rayas(cc, n):
+        if abs(n.z) > 0.5:
+            return "mgrey"
+        return "yellow" if int((math.degrees(math.atan2(cc.y, cc.x)) + 720.0) // 30) % 2 == 0 else "ink"
+    p.add(lathe([(0.0, 0.36), (0.27, 0.36), (0.27, 0.47)], 20, cap0=False, cap1=False), "lmetal")
+    p.add(lathe([(0.0, 0.26), (0.21, 0.26), (0.21, 0.41)], 24, cap0=False, cap1=False), rayas, 40)
+    for k in range(4):
+        a = math.radians(45 + 90 * k)
+        p.add(ellipsoid((0.02, 0.02, 0.012), Matrix.Translation((0.24 * math.cos(a), 0.24 * math.sin(a), 0.356))), "metal")
+        pts = []
+        for j in range(6):
+            t = math.radians(60 - 150 * j / 5)
+            pts.append(Vector((0.205 * math.cos(t) * math.cos(a), 0.205 * math.cos(t) * math.sin(a), c + 0.205 * math.sin(t))))
+        p.add(tube(pts, lambda u: 0.016, k=6, steps=2), "lmetal")
+    p.add(ellipsoid((0.05, 0.05, 0.035), Matrix.Translation((0.0, 0.0, c - 0.205))), "lmetal")
+    return p
+
+
 BUILDERS = [p_forro, p_cuadro, p_volante, p_gases, p_palanca] + [
-    (lambda n=n, c=c, d=d: p_tapa(n, c, d)) for n, _, c, d in BOTONES]
-EN_SITIO = {"CabinaForro", "CabinaCuadro", "CabinaVolante", "CabinaGases"}
+    (lambda n=n, c=c, d=d: p_tapa(n, c, d)) for n, _, c, d in BOTONES] + [p_radar, p_monitor, p_baliza]
+EN_SITIO = {"CabinaForro", "CabinaCuadro", "CabinaVolante", "CabinaGases", "CabinaRadar", "CabinaMonitor"}
 
 
 def colocaciones():
@@ -1223,6 +1308,7 @@ def colocaciones():
         piv = TF @ Vector((s * PALANCA_U, PALANCA_V, PALANCA_W))
         m = Matrix.Translation(piv) @ Matrix.Rotation(math.radians(-24), 4, "X") @ Matrix.Rotation(math.pi, 4, "Z")
         out["CabinaPalanca%+d" % s] = m
+    out["Baliza"] = Matrix.Translation((0.0, -1.65, BALIZA_TECHO - 0.53))
     return out
 
 
@@ -1371,6 +1457,7 @@ VISTAS = [
     ("cabina_kit_pedestal.png", (1.6, -0.2, 3.6), (0.0, 2.0, 1.4), 18),
     ("cabina_kit_mcp.png", (0.0, 1.2, 3.75), (0.0, 3.3, 3.25), 16),
     ("cabina_kit_yugo.png", (-1.3, 0.9, 3.0), (-2.6, 2.6, 2.2), 20),
+    ("cabina_kit_radar.png", (-1.2, 0.8, 4.6), (0.0, 4.0, 5.3), 17),
 ]
 
 

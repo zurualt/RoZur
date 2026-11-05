@@ -21,18 +21,18 @@ local pulsarHasta = 0
 local abrirHasta = 0
 local bofetadaHasta = 0
 
-local AGARRE_MANO = Vector3.new(-0.156, 0.061, 0.035)
+local AGARRE_MANO = Vector3.new(-0.199, -0.123, 0)
 local DISTANCIA = 90
 local SUAVIDAD = 16
 
 local POSES: { [string]: { number } } = {
-	relajada = { 18, 22, 22, 28, 8, 10, 0 },
-	abierta = { -8, -6, -8, -6, -25, -5, 14 },
-	agarre = { 60, 70, 60, 70, 35, 30, 0 },
-	pulsar = { 0, 0, 85, 95, 40, 45, 0 },
-	palma = { 5, 8, 5, 8, -15, 0, 6 },
-	bofetada = { -14, -10, -14, -10, -30, -8, 22 },
-	dos = { 45, 55, 45, 55, 20, 20, 6 },
+	relajada = { 26, 28, 24, 20, -6 },
+	abierta = { -12, -8, -10, -4, 30 },
+	agarre = { 40, 60, 30, 26, -6 },
+	pulsar = { -4, -2, 40, 38, -12 },
+	palma = { 4, 6, -8, 0, 12 },
+	bofetada = { -16, -10, -14, -6, 32 },
+	dos = { 34, 46, 22, 18, 0 },
 }
 
 local POSE_MODO: { [string]: { number } } = {
@@ -44,11 +44,8 @@ local POSE_MODO: { [string]: { number } } = {
 }
 
 local DEDOS: { DefDedo } = {
-	{ nombre = "Indice", i = 1, abre = 1 },
-	{ nombre = "Medio", i = 3, abre = 0.3 },
-	{ nombre = "Anular", i = 3, abre = -0.3 },
-	{ nombre = "Menique", i = 3, abre = -1 },
-	{ nombre = "Pulgar", i = 5, abre = 0 },
+	{ nombre = "Manopla", i = 1, abre = 0 },
+	{ nombre = "Pulgar", i = 3, abre = 1 },
 }
 
 local ESTILOS: { [string]: Estilo } = {
@@ -96,9 +93,9 @@ function Manos.punto(personaje: Model): (BasePart?, Vector3?)
 	if not mano or not mano:IsA("BasePart") then
 		return nil, nil
 	end
-	local medio = mano:FindFirstChild("DerMedio1")
-	if medio and medio:IsA("Bone") then
-		return mano, mano.CFrame * (medio.CFrame.Position + AGARRE_MANO)
+	local nudillo = mano:FindFirstChild("DerManopla1")
+	if nudillo and nudillo:IsA("Bone") then
+		return mano, mano.CFrame * (nudillo.CFrame.Position + AGARRE_MANO)
 	end
 	local agarre = mano:FindFirstChild("RightGripAttachment")
 	if agarre and agarre:IsA("Attachment") then
@@ -149,7 +146,7 @@ local function montarMano(parte: Instance?, prefijo: string, derecha: boolean): 
 		local a = parte:FindFirstChild(prefijo .. def.nombre .. "1", true)
 		local b = parte:FindFirstChild(prefijo .. def.nombre .. "2", true)
 		if not (a and a:IsA("Bone") and b and b:IsA("Bone")) then
-			return nil
+			continue
 		end
 		local ra, rb = reposo(a), reposo(b)
 		local dir = (rb.Position - ra.Position).Unit
@@ -164,6 +161,9 @@ local function montarMano(parte: Instance?, prefijo: string, derecha: boolean): 
 			i = def.i,
 		})
 	end
+	if #dedos == 0 then
+		return nil
+	end
 	return { dedos = dedos, valores = table.clone(POSES.relajada) }
 end
 
@@ -172,12 +172,12 @@ local function mover(mano: Mano?, objetivo: { number }, k: number)
 		return
 	end
 	local v = mano.valores
-	for i = 1, 7 do
+	for i = 1, 5 do
 		v[i] += (objetivo[i] - v[i]) * k
 	end
 	for _, d in mano.dedos do
 		local curva = CFrame.fromAxisAngle(d.ejeA, math.rad(v[d.i]))
-		d.a.Transform = if d.abre ~= 0 then CFrame.fromAxisAngle(d.abrir, math.rad(v[7] * d.abre)) * curva else curva
+		d.a.Transform = if d.abre ~= 0 then CFrame.fromAxisAngle(d.abrir, math.rad(v[5] * d.abre)) * curva else curva
 		d.b.Transform = CFrame.fromAxisAngle(d.ejeB, math.rad(v[d.i + 1]))
 	end
 end

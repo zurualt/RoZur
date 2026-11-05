@@ -2,6 +2,7 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
@@ -283,8 +284,10 @@ local function vigilar()
 		local estado = Avion.estado
 		local enAire = not estado.enTierra
 		local brecha = next(CollectionService:GetTagged("Brecha")) ~= nil
-		local motorCaido = estado.motores.Izq.vida <= 0 or estado.motores.Der.vida <= 0
-		local emergencia = estado.casco < 30 or brecha or (enAire and motorCaido)
+		local motorCaido = estado.motores.Izq.vida <= 0 or estado.motores.Der.vida <= 0 or estado.motores.Izq.fuego or estado.motores.Der.fuego
+		local fuego = next(CollectionService:GetTagged("Fuego")) ~= nil
+		local prueba = RunService:IsStudio() and Workspace:GetAttribute("PruebaEmergencia") == true
+		local emergencia = estado.casco < 30 or brecha or fuego or prueba or (enAire and (motorCaido or avion:GetAttribute("CaidaLibre") == true))
 		if avion:GetAttribute("Emergencia") ~= emergencia then
 			avion:SetAttribute("Emergencia", emergencia)
 		end

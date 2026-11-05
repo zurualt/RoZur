@@ -237,6 +237,8 @@ local remotoVisto: RemoteEvent? = nil
 local gui: ScreenGui
 local panel: ImageLabel
 local escalaPanel: UIScale
+local flechaPanel: ImageLabel
+local plegado = Gui.pequena()
 local filas: { Fila } = {}
 local escalas: { UIScale } = {}
 local nota: ImageLabel
@@ -603,6 +605,15 @@ local function construirPanel()
 	panel.Visible = false
 	escalaPanel = escalar(panel)
 	izquierda(Gui.texto(panel, "TAREAS", UDim2.new(1, -60, 0, 30), UDim2.fromOffset(26, 16), Gui.NARANJA, true), 30)
+	flechaPanel = Gui.icono(panel, "Flecha", UDim2.fromOffset(26, 26), UDim2.new(1, -44, 0, 18))
+	local plegar = Instance.new("TextButton")
+	plegar.BackgroundTransparency = 1
+	plegar.Text = ""
+	plegar.Size = UDim2.new(1, 0, 0, 50)
+	plegar.Parent = panel
+	plegar.Activated:Connect(function()
+		Guia.alternarTareas()
+	end)
 	for i = 1, MAX_FILAS do
 		local marco = Instance.new("Frame")
 		marco.BackgroundTransparency = 1
@@ -636,11 +647,14 @@ local function pintar(tareas: { Tarea }): Tarea?
 			end
 		end
 	end
-	local n = math.min(#tareas, MAX_FILAS)
+	local mostrar = if plegado and actual then { actual } else tareas
+	local n = math.min(#mostrar, MAX_FILAS)
 	panel.Visible = n > 0
 	panel.Size = UDim2.fromOffset(ANCHO, 62 + n * 34)
+	flechaPanel.Rotation = if plegado then 180 else 0
+	flechaPanel.Visible = #tareas > 1
 	for i, f in filas do
-		local t = if i <= n then tareas[i] else nil
+		local t = if i <= n then mostrar[i] else nil
 		f.marco.Visible = t ~= nil
 		if not t then
 			f.clave = ""
@@ -903,6 +917,10 @@ local function boton(padre: Instance, contenido: string, tamano: UDim2, posicion
 		alPulsar()
 	end)
 	return b
+end
+
+function Guia.alternarTareas()
+	plegado = not plegado
 end
 
 function Guia.comoJugar()

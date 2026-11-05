@@ -1,0 +1,437 @@
+[
+ {
+  "nombre": "AeropuertoCiudad",
+  "archivo": "AeropuertoCiudad.fbx",
+  "triangulos": 8438,
+  "bbox_min": [
+   -267.0,
+   -1.6,
+   -907.0
+  ],
+  "bbox_max": [
+   267.0,
+   92.9,
+   907.0
+  ]
+ },
+ {
+  "nombre": "AeropuertoDesierto",
+  "archivo": "AeropuertoDesierto.fbx",
+  "triangulos": 5157,
+  "bbox_min": [
+   -157.0,
+   -1.6,
+   -907.0
+  ],
+  "bbox_max": [
+   157.0,
+   50.9,
+   907.0
+  ]
+ },
+ {
+  "nombre": "AeropuertoJungla",
+  "archivo": "AeropuertoJungla.fbx",
+  "triangulos": 8300,
+  "bbox_min": [
+   -157.0,
+   -1.6,
+   -907.0
+  ],
+  "bbox_max": [
+   157.0,
+   27.5,
+   907.0
+  ]
+ },
+ {
+  "nombre": "AeropuertoNieve",
+  "archivo": "AeropuertoNieve.fbx",
+  "triangulos": 5943,
+  "bbox_min": [
+   -157.0,
+   -3.477,
+   -907.0
+  ],
+  "bbox_max": [
+   157.0,
+   25.96,
+   907.0
+  ]
+ },
+ {
+  "nombre": "AgujasDesierto",
+  "archivo": "AgujasDesierto.fbx",
+  "triangulos": 1056,
+  "bbox_min": [
+   -43.803,
+   -4.484,
+   -43.992
+  ],
+  "bbox_max": [
+   43.803,
+   67.285,
+   43.992
+  ]
+ },
+ {
+  "nombre": "BarrioCiudad",
+  "archivo": "BarrioCiudad.fbx",
+  "triangulos": 2024,
+  "bbox_min": [
+   -49.634,
+   -1.0,
+   -47.798
+  ],
+  "bbox_max": [
+   49.634,
+   38.367,
+   47.798
+  ]
+ },
+ {
+  "nombre": "BordeCiudad",
+  "archivo": "BordeCiudad.fbx",
+  "triangulos": 12076,
+  "bbox_min": [
+   -431.879,
+   -1.0,
+   -1000.0
+  ],
+  "bbox_max": [
+   431.331,
+   104.234,
+   1016.553
+  ]
+ },
+ {
+  "nombre": "BordeDesierto",
+  "archivo": "BordeDesierto.fbx",
+  "triangulos": 7566,
+  "bbox_min": [
+   -402.0,
+   -1.5,
+   -1000.0
+  ],
+  "bbox_max": [
+   402.0,
+   89.988,
+   1000.0
+  ]
+ },
+ {
+  "nombre": "BordeJungla",
+  "archivo": "BordeJungla.fbx",
+  "triangulos": 13608,
+  "bbox_min": [
+   -346.0,
+   -1.6,
+   -1001.665
+  ],
+  "bbox_max": [
+   346.0,
+   45.942,
+   1000.0
+  ]
+ },
+ {
+  "nombre": "BordeNieve",
+  "archivo": "BordeNieve.fbx",
+  "triangulos": 9698,
+  "bbox_min": [
+   -458.0,
+   -1.5,
+   -1002.397
+  ],
+  "bbox_max": [
+   458.0,
+   144.741,
+   1000.0
+  ]
+ },
+ {
+  "nombre": "CactusDesierto",
+  "archivo": "CactusDesierto.fbx",
+  "triangulos": 1619,
+  "bbox_min": [
+   -16.077,
+   -1.156,
+   -13.738
+  ],
+  "bbox_max": [
+   16.077,
+   13.253,
+   13.738
+  ]
+ },
+ {
+  "nombre": "CerroJungla",
+  "archivo": "CerroJungla.fbx",
+  "triangulos": 2760,
+  "bbox_min": [
+   -71.638,
+   -3.0,
+   -62.901
+  ],
+  "bbox_max": [
+   71.638,
+   123.0,
+   62.901
+  ]
+ },
+ {
+  "nombre": "LucesCiudad",
+  "archivo": "LucesCiudad.fbx",
+  "triangulos": 1848,
+  "bbox_min": [
+   -32.55,
+   1.4,
+   -710.5
+  ],
+  "bbox_max": [
+   32.55,
+   2.5,
+   710.5
+  ]
+ },
+ {
+  "nombre": "LucesNieve",
+  "archivo": "LucesNieve.fbx",
+  "triangulos": 720,
+  "bbox_min": [
+   -28.05,
+   1.4,
+   -616.5
+  ],
+  "bbox_max": [
+   28.05,
+   2.5,
+   616.5
+  ]
+ },
+ {
+  "nombre": "MesaDesierto",
+  "archivo": "MesaDesierto.fbx",
+  "triangulos": 997,
+  "bbox_min": [
+   -201.689,
+   -3.0,
+   -112.564
+  ],
+  "bbox_max": [
+   201.689,
+   95.0,
+   112.564
+  ]
+ },
+ {
+  "nombre": "MontanaNieve1",
+  "archivo": "MontanaNieve1.fbx",
+  "triangulos": 782,
+  "bbox_min": [
+   -312.769,
+   -5.0,
+   -308.427
+  ],
+  "bbox_max": [
+   312.769,
+   241.936,
+   308.427
+  ]
+ },
+ {
+  "nombre": "MontanaNieve2",
+  "archivo": "MontanaNieve2.fbx",
+  "triangulos": 782,
+  "bbox_min": [
+   -381.952,
+   -5.0,
+   -388.062
+  ],
+  "bbox_max": [
+   381.952,
+   204.802,
+   388.062
+  ]
+ },
+ {
+  "nombre": "PalmeralJungla",
+  "archivo": "PalmeralJungla.fbx",
+  "triangulos": 1964,
+  "bbox_min": [
+   -19.78,
+   -1.2,
+   -18.815
+  ],
+  "bbox_max": [
+   19.78,
+   22.599,
+   18.815
+  ]
+ },
+ {
+  "nombre": "PinarNieve",
+  "archivo": "PinarNieve.fbx",
+  "triangulos": 1228,
+  "bbox_min": [
+   -27.878,
+   -1.6,
+   -23.86
+  ],
+  "bbox_max": [
+   27.878,
+   24.427,
+   23.86
+  ]
+ },
+ {
+  "nombre": "SelvaJungla",
+  "archivo": "SelvaJungla.fbx",
+  "triangulos": 1864,
+  "bbox_min": [
+   -32.919,
+   -0.668,
+   -22.517
+  ],
+  "bbox_max": [
+   32.919,
+   19.994,
+   22.517
+  ]
+ },
+ {
+  "nombre": "SueloCiudad1",
+  "archivo": "SueloCiudad1.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloCiudad2",
+  "archivo": "SueloCiudad2.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloDesierto1",
+  "archivo": "SueloDesierto1.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloDesierto2",
+  "archivo": "SueloDesierto2.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloJungla1",
+  "archivo": "SueloJungla1.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloJungla2",
+  "archivo": "SueloJungla2.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloNieve1",
+  "archivo": "SueloNieve1.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "SueloNieve2",
+  "archivo": "SueloNieve2.fbx",
+  "triangulos": 12,
+  "bbox_min": [
+   -1024.0,
+   0.0,
+   -1024.0
+  ],
+  "bbox_max": [
+   1024.0,
+   2.0,
+   1024.0
+  ]
+ },
+ {
+  "nombre": "TorresCiudad",
+  "archivo": "TorresCiudad.fbx",
+  "triangulos": 2154,
+  "bbox_min": [
+   -42.5,
+   -1.0,
+   -38.5
+  ],
+  "bbox_max": [
+   42.5,
+   110.9,
+   38.5
+  ]
+ }
+]

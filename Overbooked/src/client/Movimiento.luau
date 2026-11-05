@@ -38,7 +38,7 @@ local NOMBRES = {
 	"RightShoulder",
 	"RightElbow",
 }
-local ZANCADA = 4.6
+local ZANCADA = 3.6
 local ALCANCE = 160
 local rad = math.rad
 local datos: { [Model]: Juntas } = setmetatable({}, { __mode = "k" }) :: any
@@ -119,14 +119,14 @@ local function animar(personaje: Model, j: Juntas, dt: number)
 	local caida = j.aterrizaje * j.aterrizaje
 	local libre = 1 - se
 
-	local bote = (math.abs(s) * 0.38 * f + respira * 0.025 * quieto - caida * 0.35) * libre
+	local bote = (math.abs(s) * 0.24 * f + respira * 0.02 * quieto - caida * 0.22) * libre
 	poner(j, "Root", CFrame.new(0, bote, 0) * CFrame.Angles((rad(-6) * f - rad(65) * n) * libre, s * rad(7) * f * libre, s * rad(9) * f * libre))
 	poner(j, "Waist", CFrame.Angles(rad(-5) * f + respira * rad(1.5) * quieto + rad(10) * caida, -s * rad(12) * f, -s * rad(5) * f))
 	poner(j, "Neck", CFrame.Angles(rad(5) * f + math.sin(j.fase * 2) * rad(4) * f + rad(35) * n - rad(8) * caida, s * rad(4) * f, s * rad(3) * f))
 
 	for _, lado in { "Left", "Right" } do
 		local signo = if lado == "Left" then 1 else -1
-		local paso = signo * s * rad(40) * f
+		local paso = signo * s * rad(46) * f
 		local doblez = -(math.max(0, signo * c) * rad(55) + rad(8)) * f
 		local caderaAire = if signo > 0 then rad(45) else rad(-15)
 		local rodillaAire = if signo > 0 then rad(-70) else rad(-30)

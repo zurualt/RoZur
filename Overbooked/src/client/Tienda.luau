@@ -39,12 +39,12 @@ local PESTANAS = {
 }
 local ICONOS_MEJORA = { Casco = "Casco", Combustible = "Combustible", Cocina = "Hamburguesa" }
 local VISTAS: { [string]: Vista } = {
-	Cabeza = { y = 1.25, d = 8, a = 0.45 },
-	Cara = { y = 1.15, d = 5.6, a = 0.3 },
-	Espalda = { y = 0.1, d = 12.5, a = math.pi - 0.55 },
+	Cabeza = { y = 1.55, d = 7.6, a = 0.45 },
+	Cara = { y = 1.02, d = 6, a = 0.3 },
+	Espalda = { y = -0.15, d = 10.5, a = math.pi - 0.55 },
 }
-local OJO_CENTRO = Vector3.new(0.232, 1.143, -0.444)
-local OJO_NORMAL = Vector3.new(0.179, 0.08, -0.98)
+local OJO_CENTRO = Vector3.new(0.336, 1.059, -0.89)
+local OJO_NORMAL = Vector3.new(0.166, -0.028, -0.986)
 local OJO_ESCALA = { [1] = 1.12, [-1] = 0.92 }
 local DISTANCIA_CIERRE = 24
 
@@ -84,7 +84,7 @@ local textoVuelos: TextLabel
 local iconosMando: { ImageLabel } = {}
 local muneco: Model? = nil
 local contador: NumberValue
-local camara: Vista = { y = 1.25, d = 8, a = 0.45 }
+local camara: Vista = { y = 1.55, d = 7.6, a = 0.45 }
 local giroUsuario = 0
 local arrastre: Vector3? = nil
 local reloj = 0

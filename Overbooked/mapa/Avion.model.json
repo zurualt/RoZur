@@ -1007,6 +1007,426 @@
      ]
     },
     {
+     "name": "Baliza",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.54,
+       0.58,
+       0.54
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         109.22,
+         -39.9
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Baliza",
+      "Base": 108.93
+     }
+    },
+    {
+     "name": "BalizaLuz",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.32,
+       0.32,
+       0.32
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         109.17,
+         -39.9
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.8509803921568627,
+       0.26666666666666666,
+       0.22745098039215686
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 0.15,
+      "CanQuery": false,
+      "Shape": "Ball"
+     }
+    },
+    {
+     "name": "Baliza",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.54,
+       0.58,
+       0.54
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         109.22,
+         -26.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Baliza",
+      "Base": 108.93
+     }
+    },
+    {
+     "name": "BalizaLuz",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.32,
+       0.32,
+       0.32
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         109.17,
+         -26.4
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.8509803921568627,
+       0.26666666666666666,
+       0.22745098039215686
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 0.15,
+      "CanQuery": false,
+      "Shape": "Ball"
+     }
+    },
+    {
+     "name": "Baliza",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.54,
+       0.58,
+       0.54
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         109.76,
+         -6.5
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Baliza",
+      "Base": 109.47
+     }
+    },
+    {
+     "name": "BalizaLuz",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.32,
+       0.32,
+       0.32
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         109.71,
+         -6.5
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.8509803921568627,
+       0.26666666666666666,
+       0.22745098039215686
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 0.15,
+      "CanQuery": false,
+      "Shape": "Ball"
+     }
+    },
+    {
+     "name": "Baliza",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.54,
+       0.58,
+       0.54
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         107.71,
+         -55.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "Baliza",
+      "Base": 107.42
+     }
+    },
+    {
+     "name": "BalizaLuz",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.32,
+       0.32,
+       0.32
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         107.66,
+         -55.6
+        ],
+        "orientation": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          0.0,
+          0.0,
+          1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.8509803921568627,
+       0.26666666666666666,
+       0.22745098039215686
+      ],
+      "Material": "Glass",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 0.15,
+      "CanQuery": false,
+      "Shape": "Ball"
+     }
+    },
+    {
      "name": "ParedCocinaIzq",
      "className": "Part",
      "properties": {
@@ -16524,6 +16944,214 @@
      "attributes": {
       "Visual": "CabinaPalanca",
       "Movil": true
+     }
+    },
+    {
+     "name": "Radar",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.04,
+       1.467,
+       0.819
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         104.3935,
+         -61.3467
+        ],
+        "orientation": [
+         [
+          -1.0,
+          0.0,
+          1.2246467991473532e-16
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.2246467991473532e-16,
+          0.0,
+          -1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "CabinaRadar",
+      "Base": 103.66
+     }
+    },
+    {
+     "name": "Monitor",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.66,
+       1.495,
+       0.533
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         106.3528,
+         -61.5409
+        ],
+        "orientation": [
+         [
+          -1.0,
+          0.0,
+          1.2246467991473532e-16
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ],
+         [
+          -1.2246467991473532e-16,
+          0.0,
+          -1.0
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     },
+     "attributes": {
+      "Visual": "CabinaMonitor",
+      "Base": 105.6053
+     }
+    },
+    {
+     "name": "PantallaRadar",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       0.8,
+       0.8,
+       0.02
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         104.6301,
+         -61.0825
+        ],
+        "orientation": [
+         [
+          -1.0,
+          0.0,
+          1.2246467991473532e-16
+         ],
+         [
+          -2.1265768495757713e-17,
+          0.984807753012208,
+          -0.17364817766693033
+         ],
+         [
+          -1.2060416625018976e-16,
+          -0.17364817766693033,
+          -0.984807753012208
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
+     }
+    },
+    {
+     "name": "PantallaMonitor",
+     "className": "Part",
+     "properties": {
+      "Size": [
+       1.44,
+       0.81,
+       0.02
+      ],
+      "CFrame": {
+       "CFrame": {
+        "position": [
+         0,
+         106.0246,
+         -61.4456
+        ],
+        "orientation": [
+         [
+          -1.0,
+          0.0,
+          1.2246467991473532e-16
+         ],
+         [
+          5.175581015019659e-17,
+          0.9063077870366499,
+          0.42261826174069944
+         ],
+         [
+          -1.1099069304367545e-16,
+          0.42261826174069944,
+          -0.9063077870366499
+         ]
+        ]
+       }
+      },
+      "Anchored": true,
+      "Color": [
+       0.10588235294117647,
+       0.10588235294117647,
+       0.12941176470588237
+      ],
+      "Material": "SmoothPlastic",
+      "TopSurface": "Smooth",
+      "BottomSurface": "Smooth",
+      "CanCollide": false,
+      "CastShadow": false,
+      "Transparency": 1,
+      "CanQuery": false
      }
     },
     {

@@ -52,11 +52,12 @@ local giroObjetivo = 0
 local extra = 0
 local dejarEn: CFrame? = nil
 local dejarHasta = 0
-local ralentizado = false
+local lentitud = 1
+local ayudando = false
 local ruedaActiva = false
 local teclasVisibles: { [ProximityPrompt]: Enum.KeyCode } = {}
 
-local GRANDES = { Pasajero = true, Cocodrilo = true, Jaula = true, Caja = true, CajaFragil = true, Carrito = true }
+local GRANDES = { Pasajero = true, Cocodrilo = true, Jaula = true, Caja = true, CajaFragil = true, Carrito = true, Piano = true }
 local TAPONES = { "Maleta", "Bolso", "Caja", "CajaFragil", "Carrito" }
 local ASISTENCIA = math.rad(7)
 local CARGA_MIN = 0.18
@@ -131,15 +132,15 @@ local function cuerpo(): (Model?, BasePart?, BasePart?)
 	return personaje, hrp, cabeza
 end
 
-local function ralentizar(activo: boolean)
-	if activo == ralentizado then
+local function ralentizar(factor: number)
+	if factor == lentitud then
 		return
 	end
-	ralentizado = activo
+	lentitud = factor
 	local personaje = jugador.Character
 	local humanoide = personaje and personaje:FindFirstChildOfClass("Humanoid")
 	if humanoide then
-		humanoide.WalkSpeed = StarterPlayer.CharacterWalkSpeed * (if activo then LENTO else 1)
+		humanoide.WalkSpeed = StarterPlayer.CharacterWalkSpeed * factor
 	end
 end
 
@@ -177,11 +178,12 @@ local function limpiar()
 	posicion, orientacion, adjunto = nil, nil, nil
 	sostenido, raiz = nil, nil
 	usando = false
+	ayudando = false
 	cargaDesde = nil
 	dejarEn = nil
 	AgarreVista.arco(nil)
 	Camara.tension(0)
-	ralentizar(false)
+	ralentizar(1)
 	activarRueda(false)
 end
 
@@ -199,6 +201,17 @@ local function empezar(objeto: Instance)
 	local enMano = estiloActual.modo ~= "dos"
 	local pesado = GRANDES[tipoActual] == true
 	local masa = r.AssemblyMass
+	local portador = objeto:GetAttribute("Portador")
+	if typeof(portador) == "number" and portador ~= 0 and portador ~= jugador.UserId then
+		ayudando = true
+		confirmarAntes = os.clock() + 1
+		ralentizar(LENTO)
+		apuntado = nil
+		AgarreVista.apuntar(nil, "")
+		Manos.agarrar()
+		Camara.sacudir(0.22)
+		return
+	end
 	local a = Instance.new("Attachment")
 	a.Name = "AgarreLocal"
 	a.Parent = r
@@ -220,7 +233,7 @@ local function empezar(objeto: Instance)
 	o.Parent = r
 	adjunto, posicion, orientacion = a, p, o
 	confirmarAntes = os.clock() + 1
-	ralentizar(pesado)
+	ralentizar(if pesado then LENTO else 1)
 	activarRueda(not enMano)
 	apuntado = nil
 	AgarreVista.apuntar(nil, "")
@@ -236,6 +249,12 @@ end
 local function soltar(lanzar: boolean, fuerza: number)
 	local r = raiz
 	if not sostenido or not r then
+		return
+	end
+	if ayudando then
+		limpiar()
+		RemotoSoltar:FireServer(Vector3.zero)
+		Manos.abrir()
 		return
 	end
 	local mirada = Workspace.CurrentCamera.CFrame.LookVector
@@ -294,6 +313,10 @@ local function dejar()
 	if not sostenido or not r or not personaje or not hrp or dejarEn then
 		return
 	end
+	if ayudando then
+		soltar(false, 0)
+		return
+	end
 	local cf = puntoDejar(personaje, hrp, r)
 	if not cf then
 		soltar(false, 0)
@@ -324,7 +347,7 @@ end
 
 local function valido(objeto: Instance, hrp: BasePart): BasePart?
 	local portador = objeto:GetAttribute("Portador")
-	if typeof(portador) == "number" and portador ~= 0 and portador ~= jugador.UserId then
+	if typeof(portador) == "number" and portador ~= 0 and portador ~= jugador.UserId and objeto:GetAttribute("Pesado") ~= true then
 		return nil
 	end
 	local r = raizDe(objeto)
@@ -659,6 +682,17 @@ local function sostener(dt: number, ahora: number)
 		return
 	end
 	local portador = objeto:GetAttribute("Portador")
+	if ayudando then
+		local marca = personaje:GetAttribute("Sosteniendo")
+		local confirmado = typeof(marca) == "string" and marca ~= ""
+		if confirmado then
+			confirmarAntes = 0
+		end
+		if portador == 0 or portador == jugador.UserId or (not confirmado and (confirmarAntes == 0 or ahora > confirmarAntes)) then
+			soltar(false, 0)
+		end
+		return
+	end
 	if portador == jugador.UserId then
 		confirmarAntes = 0
 	elseif confirmarAntes ~= 0 and ahora > confirmarAntes then
@@ -692,6 +726,14 @@ local function sostener(dt: number, ahora: number)
 		destino = sinAtravesar(ojos, destino, radio)
 	end
 	local p, o = posicion, orientacion
+	if objeto:GetAttribute("Pesado") == true then
+		local ayuda = objeto:GetAttribute("Ayudantes")
+		local solo = not (typeof(ayuda) == "number" and ayuda > 0)
+		ralentizar(if solo then Config.CARGA_ESPECIAL.PIANO_SOLO else LENTO)
+		if p then
+			p.MaxVelocity = if solo then Config.CARGA_ESPECIAL.PIANO_VELOCIDAD_SOLO else 26
+		end
+	end
 	if p then
 		p.Position = destino.Position + (if fijo then Vector3.zero else hrp.AssemblyLinearVelocity * dt)
 	end
@@ -755,7 +797,7 @@ function Agarre.iniciar()
 	end)
 
 	jugador.CharacterAdded:Connect(function()
-		ralentizado = false
+		lentitud = 1
 		limpiar()
 	end)
 

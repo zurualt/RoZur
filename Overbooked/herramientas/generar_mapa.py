@@ -107,6 +107,18 @@ MURO = INTERIOR + G / 2
 FILA_SALIDA = 4
 
 
+def baliza(z, techo):
+    base = round(techo - 0.53, 4)
+    return [marca("Baliza", (0.54, 0.58, 0.54), (0, base + 0.29, z), "Baliza", base=base),
+            part("BalizaLuz", (0.32, 0.32, 0.32), (0, base + 0.24, z), "D9443A", "Glass", forma="Ball", transp=0.15,
+                 colision=False, sombra=False)]
+
+
+def pantalla(nombre, tam, y, z, grados):
+    return part(nombre, (tam[0], tam[1], 0.02), (0, round(SUELO_Y + y, 4), round(-57.25 - z, 4)), "1B1B21", r=rot(grados, 180, 0),
+                transp=1, colision=False, sombra=False)
+
+
 def estructura():
     p = []
     p.append(part("Suelo", (INTERIOR * 2, G, 74.3), (0, SUELO_Y - G / 2, -15.15), MOQUETA, "Fabric"))
@@ -119,6 +131,8 @@ def estructura():
         p.append(part("LuzFila", (0.4, 0.1, 0.4), (0, TECHO_Y - 0.4, z), "FFFFFF", transp=1, colision=False, sombra=False,
                       hijos=[luz(14, 0.28)]))
     p.append(part("Lampara", (1, 0.2, 1), (0, 107.9, -57), "F2E6CC", "Neon", colision=False, sombra=False, hijos=[luz(12, 0.45)]))
+    for z, techo in ((FILAS[0] + 1.6, 109.46), (FILAS[3] + 1.6, 109.46), (-6.5, TECHO_Y), (-55.6, 107.95)):
+        p.extend(baliza(z, techo))
     for lado, sx in (("Izq", -1), ("Der", 1)):
         x = sx * MURO
         giro = rot(0, 90 * sx, 0)
@@ -226,6 +240,13 @@ def cabina():
     for x in (-0.17, 0.17):
         p.append(part("Palanca", (0.165, 0.502, 0.125), (x, 101.8523, -59.8812), NARANJA, colision=False, r=rot(-24, 0, 0),
                       atributos={"Visual": "CabinaPalanca", "Movil": True}))
+    p.append(marca("Radar", (1.04, 1.467, 0.819), (0, SUELO_Y + 3.66 + 0.7335, -61.3467), "CabinaRadar", r=giro, base=SUELO_Y + 3.66))
+    p.append(marca("Monitor", (1.66, 1.495, 0.533), (0, SUELO_Y + 5.6053 + 0.7475, -61.5409), "CabinaMonitor", r=giro,
+                   base=SUELO_Y + 5.6053))
+    a, b = math.radians(10), math.radians(25)
+    p.append(pantalla("PantallaRadar", (0.8, 0.8), 4.531 + 0.09 * math.cos(a) + 0.06 * math.sin(a),
+                      3.876 + 0.09 * math.sin(a) - 0.06 * math.cos(a), -10))
+    p.append(pantalla("PantallaMonitor", (1.44, 0.81), 6.05 - 0.06 * math.sin(b), 4.25 - 0.06 * math.cos(b), 25))
     botones = [("BotonExtintorMotor", "BotonExtintor", -2.3, "D9443A"), ("BotonAutopiloto", "BotonAuto", -1.15, "4AB8F0"),
                ("BotonMotores", "BotonMotor", 0.0, "F5CD3D"), ("BotonCinturones", "BotonCinturon", 1.15, "F27B2B"),
                ("BotonRampa", "BotonRampa", 2.3, "1FA6A0")]
