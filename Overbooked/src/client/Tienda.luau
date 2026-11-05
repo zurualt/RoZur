@@ -10,12 +10,14 @@ local UserInputService = game:GetService("UserInputService")
 local Accesorios = require(ReplicatedStorage.Shared.Accesorios)
 local Config = require(ReplicatedStorage.Shared.Config)
 local Gui = require(ReplicatedStorage.Shared.Gui)
+local Robux = require(script.Parent.Robux)
 local Sonido = require(script.Parent.Sonido)
 
 local RemotoTienda = ReplicatedStorage:WaitForChild("Remotos"):WaitForChild("Tienda") :: RemoteEvent
 
 type Tarjeta = { boton: ImageButton, foto: ImageLabel, icono: ImageLabel, precio: TextLabel, marca: ImageLabel, tamano: UIScale }
 type FilaMejora = { estrellas: { ImageLabel }, boton: ImageButton, texto: TextLabel, precio: TextLabel, moneda: ImageLabel }
+type FilaRobux = { boton: ImageButton, texto: TextLabel, info: TextLabel }
 type Estado = { dinero: number, vuelos: number, tiene: { [string]: boolean }, puestos: { [string]: string }, mejoras: { [string]: number } }
 type Vista = { y: number, d: number, a: number }
 
@@ -33,6 +35,7 @@ local PESTANAS = {
 	{ clave = "Cara", icono = "Feliz" },
 	{ clave = "Espalda", icono = "Maleta" },
 	{ clave = "Mejoras", icono = "Llave" },
+	{ clave = "Robux", icono = "Diamante" },
 }
 local ICONOS_MEJORA = { Casco = "Casco", Combustible = "Combustible", Cocina = "Hamburguesa" }
 local VISTAS: { [string]: Vista } = {
@@ -50,6 +53,7 @@ local pestana = "Cabeza"
 local elegidos: { [string]: string } = {}
 local tarjetas: { [string]: Tarjeta } = {}
 local filasMejora: { [string]: FilaMejora } = {}
+local filasRobux: { [string]: FilaRobux } = {}
 local botonesPestana: { [string]: ImageButton } = {}
 local abierto = false
 local construida = false
@@ -60,6 +64,8 @@ local panel: ImageLabel
 local aparicion: UIScale
 local rejilla: ScrollingFrame
 local listaMejoras: ScrollingFrame
+local listaRobux: ScrollingFrame
+local notaRobux: Frame
 local lado: ImageLabel
 local vista: ViewportFrame
 local saltoVista: UIScale
@@ -321,7 +327,6 @@ local function refrescarTarjetas()
 		local tiene, puesto, bloqueado, caro = situacion(a)
 		local escogida = sel ~= nil and sel.nombre == nombre
 		t.boton.ImageColor3 = if escogida then Gui.AMARILLO elseif puesto then VERDE_CLARO elseif tiene then Gui.PAPEL else CREMA_CLARO
-		t.boton.Rotation = if escogida then -2 else 0
 		t.foto.ImageColor3 = if bloqueado then Color3.fromRGB(52, 46, 42) else Color3.new(1, 1, 1)
 		t.marca.Visible = puesto
 		Gui.ponerIcono(t.icono, if bloqueado then "Avion" else "Moneda")
@@ -336,13 +341,14 @@ end
 
 local function refrescarLado()
 	local a = elegido()
-	local mejoras = pestana == "Mejoras"
+	local mejoras = pestana == "Mejoras" or pestana == "Robux"
 	vista.Visible = not mejoras
 	pista.Visible = not mejoras
 	tituloSel.Visible = not mejoras
 	infoSel.Visible = not mejoras
 	accion.Visible = not mejoras and a ~= nil
-	notaMejoras.Visible = mejoras
+	notaMejoras.Visible = pestana == "Mejoras"
+	notaRobux.Visible = pestana == "Robux"
 	if mejoras or not a then
 		if not mejoras then
 			tituloSel.Text = "Próximamente"
@@ -383,6 +389,18 @@ local function refrescarMejoras()
 	end
 end
 
+local function refrescarRobux()
+	for nombre, f in filasRobux do
+		local disponible = Robux.disponible(nombre)
+		local n = Robux.fichas(nombre)
+		local tiene = nombre == "VidasInfinitas" and Robux.tienePase()
+		f.boton.Visible = disponible or tiene
+		f.texto.Text = if tiene then "Tuyo" else Robux.precio(nombre)
+		f.boton.ImageColor3 = if tiene then GRIS else Gui.VERDE
+		f.info.Text = if not disponible and not tiene then "Muy pronto" elseif n > 0 then `Guardados: {n}` else ""
+	end
+end
+
 local function refrescar()
 	textoVuelos.Text = tostring(estado.vuelos)
 	if contador.Value ~= estado.dinero then
@@ -398,10 +416,12 @@ local function refrescar()
 			t.TextStrokeTransparency = if activa then 0.2 else 1
 		end
 	end
-	rejilla.Visible = pestana ~= "Mejoras"
+	rejilla.Visible = pestana ~= "Mejoras" and pestana ~= "Robux"
 	listaMejoras.Visible = pestana == "Mejoras"
+	listaRobux.Visible = pestana == "Robux"
 	refrescarTarjetas()
 	refrescarMejoras()
+	refrescarRobux()
 	refrescarLado()
 end
 
@@ -486,7 +506,7 @@ local function dibujarTarjetas()
 		t.boton:Destroy()
 	end
 	table.clear(tarjetas)
-	if pestana == "Mejoras" then
+	if pestana == "Mejoras" or pestana == "Robux" then
 		return
 	end
 	for orden, a in lista(pestana) do
@@ -549,6 +569,9 @@ local function seleccionarConMando()
 		local primera = Config.TIENDA.MEJORAS[1]
 		local f = primera and filasMejora[primera.nombre]
 		GuiService.SelectedObject = if f then f.boton else accion
+	elseif pestana == "Robux" then
+		local f = filasRobux.VidasInfinitas or filasRobux.Revivir
+		GuiService.SelectedObject = if f then f.boton else nil
 	end
 end
 
@@ -628,7 +651,6 @@ local function construir()
 	ajustarEscala()
 
 	panel = Gui.panel(raiz, "Papel", UDim2.fromOffset(920, 540), UDim2.fromScale(0.5, 0.5), Vector2.new(0.5, 0.5))
-	panel.Rotation = -0.6
 	aparicion = Instance.new("UIScale")
 	aparicion.Parent = panel
 	local modal = Instance.new("TextButton")
@@ -736,13 +758,46 @@ local function construir()
 		filasMejora[m.nombre] = { estrellas = estrellas, boton = b, texto = bt, precio = precio, moneda = moneda }
 	end
 
+	listaRobux = desplazable()
+	Gui.lista(listaRobux, 10)
+	local productos = { { nombre = "VidasInfinitas", titulo = "Vidas infinitas", descripcion = `¿Te caes del avión? Vuelves en {Config.ROBUX.ESPERA_PASE} segundos. Para siempre.` }, { nombre = "Revivir", titulo = "Revivir", descripcion = "Vuelve al avión al instante cuando te caigas. Si no lo usas, se guarda." } }
+	for _, e in Config.ROBUX.CAOS do
+		table.insert(productos, { nombre = e.nombre, titulo = e.titulo, descripcion = `{e.descripcion}. Se lanza en pleno vuelo.` })
+	end
+	for i, prod in productos do
+		local fila = Gui.panel(listaRobux, "Boton", UDim2.fromOffset(540, 104), UDim2.new())
+		fila.ImageColor3 = if i == 1 then Gui.AMARILLO else Gui.PAPEL
+		fila.LayoutOrder = i
+		Robux.imagen(fila, prod.nombre, UDim2.fromOffset(80, 80), UDim2.new(0, 12, 0.5, -3), Vector2.new(0, 0.5))
+		local t = Gui.texto(fila, prod.titulo, UDim2.fromOffset(280, 30), UDim2.fromOffset(102, 8), Gui.TINTA, true)
+		t.TextXAlignment = Enum.TextXAlignment.Left
+		local d = Gui.texto(fila, prod.descripcion, UDim2.fromOffset(280, 44), UDim2.fromOffset(102, 40), Gui.LAPIZ, false, 17)
+		d.TextXAlignment = Enum.TextXAlignment.Left
+		d.TextYAlignment = Enum.TextYAlignment.Top
+		local b, bt = boton(fila, "", UDim2.fromOffset(126, 64), UDim2.new(1, -12, 0.5, -10), Gui.VERDE, function()
+			if prod.nombre == "VidasInfinitas" then
+				Robux.comprarPase()
+			else
+				Robux.comprar(prod.nombre)
+			end
+		end)
+		b.AnchorPoint = Vector2.new(1, 0.5)
+		local info = Gui.texto(fila, "", UDim2.fromOffset(126, 20), UDim2.new(1, -12, 1, -6), Gui.TURQUESA, false, 16)
+		info.AnchorPoint = Vector2.new(1, 1)
+		filasRobux[prod.nombre] = { boton = b, texto = bt, info = info }
+	end
+	Robux.alCambiar(function()
+		if construida and abierto then
+			refrescarRobux()
+		end
+	end)
+
 	lado = Gui.panel(panel, "Papel", UDim2.fromOffset(292, 388), UDim2.fromOffset(604, 136))
 	lado.ImageColor3 = FONDO_VISTA
-	lado.Rotation = 0.8
 	vista = Instance.new("ViewportFrame")
 	vista.BackgroundTransparency = 1
-	vista.Size = UDim2.fromOffset(272, 214)
-	vista.Position = UDim2.fromOffset(10, 12)
+	vista.Size = UDim2.fromOffset(272, 194)
+	vista.Position = UDim2.fromOffset(10, 10)
 	vista.Ambient = Color3.fromRGB(170, 166, 160)
 	vista.LightColor = Color3.fromRGB(255, 248, 236)
 	vista.LightDirection = Vector3.new(-0.6, -1, -0.8)
@@ -796,6 +851,15 @@ local function construir()
 	Gui.icono(notaMejoras, "Avion", UDim2.fromOffset(150, 150), UDim2.new(0.5, 0, 0, 40), Vector2.new(0.5, 0))
 	local nota = Gui.texto(notaMejoras, "Las mejoras se aplican si alguien de la tripulación las tiene.", UDim2.fromOffset(250, 120), UDim2.fromOffset(21, 210), Gui.TINTA, false, 22)
 	nota.TextYAlignment = Enum.TextYAlignment.Top
+
+	notaRobux = Instance.new("Frame")
+	notaRobux.BackgroundTransparency = 1
+	notaRobux.Size = UDim2.fromScale(1, 1)
+	notaRobux.Visible = false
+	notaRobux.Parent = lado
+	Robux.imagen(notaRobux, "VidasInfinitas", UDim2.fromOffset(170, 170), UDim2.new(0.5, 0, 0, 30), Vector2.new(0.5, 0))
+	local notaR = Gui.texto(notaRobux, "Gracias por apoyar a la peor aerolínea del mundo. Los desastres y los revivir que no uses se guardan para más tarde.", UDim2.fromOffset(250, 150), UDim2.fromOffset(21, 214), Gui.TINTA, false, 20)
+	notaR.TextYAlignment = Enum.TextYAlignment.Top
 
 	UserInputService.GamepadConnected:Connect(mostrarMando)
 	UserInputService.GamepadDisconnected:Connect(mostrarMando)
@@ -860,7 +924,7 @@ function Tienda.abrir()
 	aparicion.Scale = 0.6
 	panel.Rotation = -6
 	TweenService:Create(aparicion, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	TweenService:Create(panel, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Rotation = -0.6 }):Play()
+	TweenService:Create(panel, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Rotation = 0 }):Play()
 	Sonido.reproducir("RasgarPapel", nil, 0.5, 1)
 	bucle = RunService.RenderStepped:Connect(animarVista)
 	ContextActionService:BindActionAtPriority("TiendaMando", accionMando, false, 3000, Enum.KeyCode.ButtonB, Enum.KeyCode.ButtonL1, Enum.KeyCode.ButtonR1, Enum.KeyCode.ButtonY)

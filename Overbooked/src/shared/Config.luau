@@ -418,4 +418,27 @@ Config.TIENDA = {
 	} :: { Mejora },
 }
 
+export type ProductoCaos = { nombre: string, producto: number, precio: number, titulo: string, descripcion: string }
+
+Config.ROBUX = {
+	PASE_VIDAS = 2071564630,
+	PRECIO_PASE = 59,
+	REVIVIR = 3728527770,
+	PRECIO_REVIVIR = 14,
+	ESPERA = 30,
+	ESPERA_EXTRA = 15,
+	ESPERA_MAX = 90,
+	ESPERA_PASE = 4,
+	ENFRIAMIENTO = 45,
+	BONUS_CAOS = 120,
+	CAOS = {
+		{ nombre = "Cabra", producto = 3728527782, precio = 15, titulo = "Cabra a bordo", descripcion = "Suelta una cabra loca por la cabina" },
+		{ nombre = "Gallinas", producto = 3728527795, precio = 15, titulo = "Estampida de gallinas", descripcion = "Una jaula de gallinas se abre en pleno vuelo" },
+		{ nombre = "Disco", producto = 3728527811, precio = 19, titulo = "Fiebre disco", descripcion = "Bola de discoteca y todos a bailar" },
+		{ nombre = "Pajaros", producto = 3728527827, precio = 25, titulo = "Choque de pájaros", descripcion = "Pájaros directos al motor" },
+		{ nombre = "CaidaLibre", producto = 3728527840, precio = 29, titulo = "Caída libre", descripcion = "Gravedad cero durante unos segundos" },
+		{ nombre = "Piratas", producto = 3728527851, precio = 49, titulo = "Piratas del aire", descripcion = "Llegan los piratas a abordar el avión" },
+	} :: { ProductoCaos },
+}
+
 return Config

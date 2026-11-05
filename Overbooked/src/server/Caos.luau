@@ -1404,6 +1404,10 @@ function Caos.bonus(): number
 	return bonus
 end
 
+function Caos.sumarBonus(cantidad: number)
+	bonus += cantidad
+end
+
 function Caos.detener()
 	activo = false
 	generacion += 1

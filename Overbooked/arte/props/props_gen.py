@@ -562,21 +562,22 @@ def crate(p, S, braces=True, battens=True):
                 bmesh.ops.bevel(bm, geom=[v], offset=0.13 * k, offset_type="OFFSET", segments=1, profile=0.5, affect="VERTICES", clamp_overlap=True)
                 p.add(bm, "metal", 30)
     tb = 0.06 * k
-    lo, hi = -(e - fw), e - fw
+    dentro = 0.4 * fw
+    lo, hi = -(e - fw + dentro), e - fw + dentro
     if braces:
         for nrm, f in (((0, -1, 0), 1), ((0, 1, 0), -1), ((-1, 0, 0), -1), ((1, 0, 0), 1)):
             nv = Vector(nrm)
             base = nv * (c + tb / 2)
             if abs(nv.y) > 0.5:
-                a0 = base + Vector((lo * f, 0, fw))
-                a1 = base + Vector((hi * f, 0, S - fw))
+                a0 = base + Vector((lo * f, 0, fw - dentro))
+                a1 = base + Vector((hi * f, 0, S - fw + dentro))
             else:
-                a0 = base + Vector((0, lo * f, fw))
-                a1 = base + Vector((0, hi * f, S - fw))
-            p.add(bar(a0, a1, 0.75 * fw, tb, 0.02 * k, up=nrm, caps=False), "dwood")
+                a0 = base + Vector((0, lo * f, fw - dentro))
+                a1 = base + Vector((0, hi * f, S - fw + dentro))
+            p.add(bar(a0, a1, 0.75 * fw, tb, 0.02 * k, up=nrm, caps=True), "dwood")
     if battens:
         for y in (-S / 5, S / 5):
-            p.add(bar((-(e - fw / 2), y, S - 0.03 * k + tb / 2), (e - fw / 2, y, S - 0.03 * k + tb / 2), 0.7 * fw, tb, 0.02 * k, caps=False), "dwood")
+            p.add(bar((-(e - fw), y, S - 0.03 * k + tb / 2), (e - fw, y, S - 0.03 * k + tb / 2), 0.7 * fw, tb, 0.02 * k, caps=True), "dwood")
     return c
 
 

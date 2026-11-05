@@ -411,6 +411,17 @@ local EVENTOS: { { f: () -> (), peso: number, riesgo: number } } = {
 	},
 }
 
+local PAGADOS: { [string]: () -> () } = { Pajaros = pajaros, CaidaLibre = caidaLibre, Piratas = Piratas.lanzar }
+
+function Peligros.lanzar(nombre: string): boolean
+	local f = PAGADOS[nombre]
+	if not f or not activo then
+		return false
+	end
+	f()
+	return true
+end
+
 local function elegirEvento(graves: boolean): () -> ()
 	local total = 0
 	for _, e in EVENTOS do
