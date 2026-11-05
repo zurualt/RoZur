@@ -3,6 +3,8 @@ local DataStoreService = game:GetService("DataStoreService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 local Config = require(ReplicatedStorage.Shared.Config)
 
@@ -20,6 +22,7 @@ local Datos = {}
 
 local VERSION = 2
 local CADUCIDAD_SESION = 300
+local MAX_VISTO = 80
 
 local almacen: DataStore? = nil
 local perfiles: { [Player]: Perfil } = {}
@@ -90,6 +93,10 @@ local function leerMejoras(v: any): { [string]: number }
 	return r
 end
 
+local function claveVisto(clave: string): boolean
+	return #clave <= 24 and string.match(clave, "^%a+$") ~= nil
+end
+
 local function leerAjustes(v: any): { [string]: any }
 	local r: { [string]: any } = {}
 	if typeof(v) ~= "table" then
@@ -113,6 +120,17 @@ local function leerAjustes(v: any): { [string]: any }
 	end
 	if v.Graficos == "Auto" or v.Graficos == "Alto" or v.Graficos == "Bajo" then
 		r.Graficos = v.Graficos
+	end
+	if typeof(v.Visto) == "table" then
+		local visto: { [string]: number } = {}
+		local n = 0
+		for clave, veces in v.Visto do
+			if n < MAX_VISTO and typeof(clave) == "string" and claveVisto(clave) and typeof(veces) == "number" and veces == veces then
+				visto[clave] = math.clamp(math.floor(veces), 0, 9)
+				n += 1
+			end
+		end
+		r.Visto = visto
 	end
 	return r
 end
@@ -427,9 +445,59 @@ function Datos.iniciar()
 			return
 		end
 		esperaAjustes[jugador] = ahora + 0.5
+		local visto = perfil.Ajustes.Visto
 		perfil.Ajustes = leerAjustes(datos)
+		perfil.Ajustes.Visto = visto
 		jugador:SetAttribute("Ajustes", HttpService:JSONEncode(perfil.Ajustes))
 	end)
+	local RemotoVisto = Instance.new("RemoteEvent")
+	RemotoVisto.Name = "Visto"
+	RemotoVisto.Parent = ReplicatedStorage:WaitForChild("Remotos")
+	local cupoVisto: { [Player]: { minuto: number, usados: number } } = {}
+	RemotoVisto.OnServerEvent:Connect(function(jugador, clave)
+		local perfil = perfiles[jugador]
+		if not perfil or typeof(clave) ~= "string" or not claveVisto(clave) then
+			return
+		end
+		local minuto = math.floor(os.clock() / 60)
+		local cupo: { minuto: number, usados: number } = cupoVisto[jugador] or { minuto = minuto, usados = 0 }
+		if cupo.minuto ~= minuto then
+			cupo.minuto, cupo.usados = minuto, 0
+		end
+		if cupo.usados >= 40 then
+			return
+		end
+		cupo.usados += 1
+		cupoVisto[jugador] = cupo
+		local visto = perfil.Ajustes.Visto
+		if typeof(visto) ~= "table" then
+			visto = {}
+			perfil.Ajustes.Visto = visto
+		end
+		local n = 0
+		for _ in visto do
+			n += 1
+		end
+		if visto[clave] == nil and n >= MAX_VISTO then
+			return
+		end
+		visto[clave] = math.min(9, (visto[clave] or 0) + 1)
+		jugador:SetAttribute("Ajustes", HttpService:JSONEncode(perfil.Ajustes))
+	end)
+	if RunService:IsStudio() then
+		Workspace:GetAttributeChangedSignal("ReiniciarGuia"):Connect(function()
+			if Workspace:GetAttribute("ReiniciarGuia") ~= true then
+				return
+			end
+			for jugador, perfil in perfiles do
+				perfil.Ajustes.Visto = nil
+				jugador:SetAttribute("Ajustes", HttpService:JSONEncode(perfil.Ajustes))
+			end
+			task.delay(1, function()
+				Workspace:SetAttribute("ReiniciarGuia", nil)
+			end)
+		end)
+	end
 	for _, jugador in Players:GetPlayers() do
 		task.spawn(cargar, jugador)
 	end
@@ -439,6 +507,7 @@ function Datos.iniciar()
 		guardar(jugador, true)
 		perfiles[jugador] = nil
 		esperaAjustes[jugador] = nil
+		cupoVisto[jugador] = nil
 		cargados[jugador] = nil
 		tiendaCargada[jugador] = nil
 		liberados[jugador] = nil

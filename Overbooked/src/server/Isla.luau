@@ -7,6 +7,7 @@ local Workspace = game:GetService("Workspace")
 
 local Audio = require(ReplicatedStorage.Shared.Audio)
 local Config = require(ReplicatedStorage.Shared.Config)
+local ImagenesCascada = require(ReplicatedStorage.Shared.ImagenesCascada)
 local VFX = require(ReplicatedStorage.Shared.VFX)
 local Activos = require(script.Parent.Activos)
 local Agarre = require(script.Parent.Agarre)
@@ -39,7 +40,9 @@ local palmeras: { BasePart } = {}
 local fuegos: { BasePart } = {}
 local flores: { BasePart } = {}
 local rocas: { BasePart } = {}
-local cascadas: { BasePart } = {}
+local cascada: BasePart? = nil
+local decorados: { BasePart } = {}
+local asentados: { [BasePart]: boolean } = {}
 local datosTerreno: StringValue? = nil
 local zonasTerreno: { { minimo: Vector3, maximo: Vector3 } } = {}
 local guardado: { [Instance]: { [string]: any } } = {}
@@ -50,13 +53,26 @@ for i = 1, #ALFABETO do
 	VALOR[string.byte(ALFABETO, i)] = i - 1
 end
 local BLOQUE = 16
+local VIENTO = Vector3.new(2.2, 0, 1.4)
+local FLUJO = 1
+local SIN_ASENTAR = {
+	Muelle = true,
+	Pilote = true,
+	Cascada = true,
+	LabioCascada = true,
+	Espuma = true,
+	Gaviota = true,
+	Mirador = true,
+	EstacionRadio = true,
+	Nenufares = true,
+}
 local MATERIAL_COLOR = {
 	[Enum.Material.Sand] = Color3.fromRGB(232, 206, 150),
 	[Enum.Material.Salt] = Color3.fromRGB(198, 170, 116),
 	[Enum.Material.Grass] = Color3.fromRGB(104, 184, 64),
 	[Enum.Material.LeafyGrass] = Color3.fromRGB(70, 146, 56),
 	[Enum.Material.Ground] = Color3.fromRGB(168, 120, 74),
-	[Enum.Material.Rock] = Color3.fromRGB(150, 146, 140),
+	[Enum.Material.Rock] = Color3.fromRGB(146, 152, 156),
 	[Enum.Material.Slate] = Color3.fromRGB(36, 92, 112),
 }
 local PROPIEDADES: { [string]: { [string]: any } } = {
@@ -232,9 +248,14 @@ local function borrarTerreno()
 	table.clear(zonasTerreno)
 end
 
-local function emisor(padre: Instance, textura: string, color: ColorSequence, tamano: NumberSequence, ritmo: number, vida: NumberRange, velocidad: NumberRange, aceleracion: Vector3): ParticleEmitter
+local function textura(nombre: string): string
+	local id = ImagenesCascada[nombre]
+	return if id then `rbxassetid://{id}` else VFX.textura(nombre)
+end
+
+local function emisor(padre: Instance, imagen: string, color: ColorSequence, tamano: NumberSequence, ritmo: number, vida: NumberRange, velocidad: NumberRange, aceleracion: Vector3): ParticleEmitter
 	local e = Instance.new("ParticleEmitter")
-	e.Texture = VFX.textura(textura)
+	e.Texture = textura(imagen)
 	e.Color = color
 	e.Size = tamano
 	e.Rate = ritmo
@@ -296,14 +317,310 @@ local function ambienteVivo()
 		e.SpreadAngle = Vector2.new(35, 35)
 		e.EmissionDirection = Enum.NormalId.Top
 	end
-	for _, c in cascadas do
-		local a = punto(c.Position - Vector3.new(0, c.Size.Y * 0.45, 0) + c.CFrame.LookVector * 2, "Rocio")
-		local e = emisor(a, "Humo2", ColorSequence.new(Color3.fromRGB(240, 250, 255)), NumberSequence.new({
-			NumberSequenceKeypoint.new(0, 2),
-			NumberSequenceKeypoint.new(1, 7),
-		}), 8, NumberRange.new(1, 1.8), NumberRange.new(3, 6), Vector3.new(0, 2, 0))
+end
+
+local function sonidoBucle(nombre: string, padre: Instance, alcance: number?): Sound?
+	local id = Audio.IDS[nombre]
+	if not id then
+		return nil
+	end
+	local s = Instance.new("Sound")
+	s.Name = nombre
+	s.SoundId = `rbxassetid://{id}`
+	s.Looped = true
+	local datos = Audio.DATOS[nombre]
+	s.Volume = if datos then datos.volumen else 0.6
+	s.RollOffMode = Enum.RollOffMode.InverseTapered
+	s.RollOffMinDistance = 10
+	s.RollOffMaxDistance = alcance or 120
+	s.Parent = padre
+	s:Play()
+	table.insert(efectos, s)
+	return s
+end
+
+local function curva(puntos: { { number } }): NumberSequence
+	local k = {}
+	for _, p in puntos do
+		table.insert(k, NumberSequenceKeypoint.new(p[1], p[2]))
+	end
+	return NumberSequence.new(k)
+end
+
+local function eje(posicion: Vector3, direccion: Vector3): CFrame
+	local d = direccion.Unit
+	return CFrame.lookAt(posicion, posicion + d, if math.abs(d.Y) > 0.95 then Vector3.zAxis else Vector3.yAxis) * CFrame.Angles(0, math.pi / 2, 0)
+end
+
+local function soloTerreno(agua: boolean): RaycastParams
+	local p = RaycastParams.new()
+	p.FilterType = Enum.RaycastFilterType.Include
+	p.FilterDescendantsInstances = { Workspace.Terrain }
+	p.IgnoreWater = not agua
+	return p
+end
+
+local function viga(padre: BasePart, a0: Attachment, a1: Attachment, imagen: string, ancho0: number, ancho1: number): Beam
+	local b = Instance.new("Beam")
+	b.Name = imagen
+	b.Attachment0 = a0
+	b.Attachment1 = a1
+	b.Texture = textura(imagen)
+	b.Width0 = ancho0
+	b.Width1 = ancho1
+	b.FaceCamera = true
+	b.Segments = 16
+	b.Parent = padre
+	table.insert(efectos, b)
+	return b
+end
+
+local function zonaVfx(nombre: string, cf: CFrame, tam: Vector3): BasePart
+	local p = Instance.new("Part")
+	p.Name = nombre
+	p.Anchored = true
+	p.CanCollide = false
+	p.CanQuery = false
+	p.CanTouch = false
+	p.CastShadow = false
+	p.Transparency = 1
+	p.Size = tam
+	p.CFrame = cf
+	p.Parent = isla
+	table.insert(efectos, p)
+	return p
+end
+
+local function enCaja(e: ParticleEmitter)
+	e.Shape = Enum.ParticleEmitterShape.Box
+	e.ShapeStyle = Enum.ParticleEmitterShapeStyle.Volume
+end
+
+local function cascadaViva(mirador: Vector3): Vector3?
+	local c = cascada
+	if not c then
+		return nil
+	end
+	local function ancla(nombre: string): Attachment?
+		local a = c:FindFirstChild(nombre)
+		return if a and a:IsA("Attachment") then a else nil
+	end
+	local impacto, lago = ancla("Impacto"), ancla("Lago")
+	if not impacto or not lago then
+		return nil
+	end
+	local centro = impacto.WorldPosition
+	local hit = Workspace:Raycast(centro + Vector3.new(0, 4, 0), Vector3.new(0, -14, 0), soloTerreno(true))
+	local agua = if hit then hit.Position.Y else centro.Y - 0.6
+	local giro = c.CFrame.Rotation
+	local blanco = ColorSequence.new(Color3.fromRGB(245, 252, 255))
+	local gotas = ColorSequence.new(Color3.fromRGB(220, 244, 255))
+	for i = 1, 5 do
+		local a0, a1 = ancla(`Labio{i}`), ancla(`Base{i}`)
+		if not a0 or not a1 then
+			continue
+		end
+		a0.CFrame = eje(a0.Position, Vector3.new(0, -0.45, -1))
+		a1.CFrame = eje(a1.Position, Vector3.new(0, -1, 0))
+		local b = viga(c, a0, a1, "AguaCascada", 2.3, 3.3)
+		b.CurveSize0 = 1.2
+		b.CurveSize1 = 1.6
+		b.TextureMode = Enum.TextureMode.Wrap
+		b.TextureLength = 4.5 + (i % 3) * 0.8
+		b.TextureSpeed = FLUJO * (1.5 + (i % 2) * 0.35)
+		b.Transparency = curva({ { 0, 0.35 }, { 0.12, 0.12 }, { 0.85, 0.15 }, { 1, 0.7 } })
+		b.Color = ColorSequence.new(Color3.fromRGB(190, 236, 250), Color3.fromRGB(235, 250, 255))
+		b.LightEmission = 0.25
+		b.LightInfluence = 0.55
+		b.ZOffset = 0.05 * i
+		if i >= 2 and i <= 4 then
+			local f = viga(c, a0, a1, "EspumaCascada", 1.4, 2.8)
+			f.CurveSize0 = 1.2
+			f.CurveSize1 = 1.6
+			f.TextureMode = Enum.TextureMode.Wrap
+			f.TextureLength = 2.6
+			f.TextureSpeed = FLUJO * 2.3
+			f.Transparency = curva({ { 0, 0.6 }, { 0.2, 0.3 }, { 0.8, 0.25 }, { 1, 0.5 } })
+			f.LightEmission = 0.35
+			f.LightInfluence = 0.6
+			f.ZOffset = 0.4
+		end
+		if i == 1 or i == 5 then
+			local e = emisor(a0, "Gota", gotas, curva({ { 0, 0.35 }, { 1, 0.2 } }), 9, NumberRange.new(0.8, 1.1), NumberRange.new(2, 4), Vector3.new(0, -40, 0))
+			e.EmissionDirection = Enum.NormalId.Right
+			e.SpreadAngle = Vector2.new(25, 25)
+			e.RotSpeed = NumberRange.new(0)
+			e.Orientation = Enum.ParticleOrientation.VelocityParallel
+		elseif i ~= 3 then
+			local e = emisor(a0, "Humo2", blanco, curva({ { 0, 0.8 }, { 1, 2.2 } }), 5, NumberRange.new(0.5, 0.9), NumberRange.new(1.5, 3), Vector3.new(0, -22, 0))
+			e.EmissionDirection = Enum.NormalId.Right
+			e.SpreadAngle = Vector2.new(30, 30)
+		end
+	end
+	local suelo = CFrame.new(centro.X, agua, centro.Z) * giro
+	local base = zonaVfx("NieblaCascada", suelo * CFrame.new(0, 1, -1.5), Vector3.new(9, 1.5, 5))
+	local niebla = emisor(base, "NieblaCascada", ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(214, 236, 248)),
+		curva({ { 0, 4 }, { 0.4, 10 }, { 1, 15 } }), 5, NumberRange.new(4, 6), NumberRange.new(1, 2.5), VIENTO * 0.3 + Vector3.new(0, 0.6, 0))
+	niebla.EmissionDirection = Enum.NormalId.Top
+	niebla.SpreadAngle = Vector2.new(55, 55)
+	niebla.Drag = 0.5
+	niebla.RotSpeed = NumberRange.new(-12, 12)
+	niebla.Transparency = curva({ { 0, 1 }, { 0.18, 0.45 }, { 0.6, 0.6 }, { 1, 1 } })
+	niebla.LightInfluence = 0.7
+	niebla.LightEmission = 0.08
+	enCaja(niebla)
+	local rocio = emisor(base, "Humo2", blanco, curva({ { 0, 1.5 }, { 1, 5.5 } }), 14, NumberRange.new(1.4, 2.4), NumberRange.new(5, 9), VIENTO * 1.4 + Vector3.new(0, -1.5, 0))
+	rocio.EmissionDirection = Enum.NormalId.Top
+	rocio.SpreadAngle = Vector2.new(35, 35)
+	rocio.Drag = 1.3
+	rocio.Transparency = curva({ { 0, 1 }, { 0.12, 0.5 }, { 0.7, 0.7 }, { 1, 1 } })
+	enCaja(rocio)
+	local salto = emisor(base, "Gota", gotas, curva({ { 0, 0.35 }, { 1, 0.25 } }), 28, NumberRange.new(0.7, 1.1), NumberRange.new(9, 15), Vector3.new(0, -45, 0) + VIENTO * 0.6)
+	salto.EmissionDirection = Enum.NormalId.Top
+	salto.SpreadAngle = Vector2.new(40, 40)
+	salto.Orientation = Enum.ParticleOrientation.VelocityParallel
+	salto.RotSpeed = NumberRange.new(0)
+	salto.Rotation = NumberRange.new(0)
+	enCaja(salto)
+	local brillos = emisor(base, "Brillito", ColorSequence.new(Color3.fromRGB(255, 255, 236)), curva({ { 0, 0 }, { 0.5, 0.5 }, { 1, 0 } }), 10,
+		NumberRange.new(0.6, 1.1), NumberRange.new(3, 7), Vector3.new(0, -5, 0) + VIENTO)
+	brillos.EmissionDirection = Enum.NormalId.Top
+	brillos.SpreadAngle = Vector2.new(60, 60)
+	brillos.LightEmission = 1
+	brillos.LightInfluence = 0
+	enCaja(brillos)
+	local velo = zonaVfx("VeloCascada", suelo * CFrame.new(0, 6.5, -0.6), Vector3.new(7, 9, 1.5))
+	local deriva = emisor(velo, "Humo2", blanco, curva({ { 0, 2 }, { 1, 6.5 } }), 6, NumberRange.new(2.5, 3.5), NumberRange.new(0.5, 1.5), VIENTO)
+	deriva.Drag = 0.3
+	deriva.Transparency = curva({ { 0, 1 }, { 0.2, 0.72 }, { 0.7, 0.8 }, { 1, 1 } })
+	enCaja(deriva)
+	local poza = zonaVfx("EspumaPoza", suelo * CFrame.new(0, 0.12, -2.5), Vector3.new(10, 0.1, 7))
+	local espuma = emisor(poza, "EspumaCascada", blanco, curva({ { 0, 2.5 }, { 1, 4.5 } }), 4, NumberRange.new(3, 4.5), NumberRange.new(0.05, 0.1), Vector3.zero)
+	espuma.Orientation = Enum.ParticleOrientation.VelocityPerpendicular
+	espuma.EmissionDirection = Enum.NormalId.Top
+	espuma.SpreadAngle = Vector2.zero
+	espuma.RotSpeed = NumberRange.new(-25, 25)
+	espuma.Transparency = curva({ { 0, 1 }, { 0.2, 0.2 }, { 0.75, 0.35 }, { 1, 1 } })
+	espuma.LightInfluence = 0.8
+	enCaja(espuma)
+	local onda = emisor(punto(Vector3.new(centro.X, agua + 0.1, centro.Z), "OndaCascada"), "Onda", blanco, curva({ { 0, 2 }, { 1, 11 } }), 1.6,
+		NumberRange.new(1.8, 2.2), NumberRange.new(0.05), Vector3.zero)
+	onda.Orientation = Enum.ParticleOrientation.VelocityPerpendicular
+	onda.EmissionDirection = Enum.NormalId.Top
+	onda.SpreadAngle = Vector2.zero
+	onda.RotSpeed = NumberRange.new(0)
+	onda.Transparency = curva({ { 0, 0.2 }, { 1, 1 } })
+	local pLago = lago.WorldPosition
+	local peces = zonaVfx("PecesCascada", CFrame.new(pLago.X, agua + 0.05, pLago.Z) * giro, Vector3.new(10, 0.1, 7))
+	local pez = emisor(peces, "PezSalto", ColorSequence.new(Color3.new(1, 1, 1)), NumberSequence.new(1.5), 0.45, NumberRange.new(0.85, 0.9),
+		NumberRange.new(10, 12), Vector3.new(0, -26, 0))
+	pez.Orientation = Enum.ParticleOrientation.VelocityParallel
+	pez.EmissionDirection = Enum.NormalId.Top
+	pez.SpreadAngle = Vector2.new(25, 25)
+	pez.Rotation = NumberRange.new(-90)
+	pez.RotSpeed = NumberRange.new(0)
+	pez.Transparency = curva({ { 0, 0 }, { 0.92, 0 }, { 1, 1 } })
+	pez.LightInfluence = 1
+	enCaja(pez)
+	local hacia = (mirador - pLago) * Vector3.new(1, 0, 1)
+	local normal = if hacia.Magnitude > 1 then hacia.Unit else c.CFrame.LookVector
+	local lado = normal:Cross(Vector3.yAxis).Unit
+	local medio = Vector3.new(pLago.X, agua + 0.6, pLago.Z)
+	for k, e in { 1, 1.32 } do
+		local a0 = punto(medio - lado * 15 * e, "Arcoiris")
+		local a1 = punto(medio + lado * 15 * e, "Arcoiris")
+		a0.CFrame = eje(a0.Position, Vector3.yAxis)
+		a1.CFrame = eje(a1.Position, Vector3.yAxis)
+		local b = viga(c, a0, a1, "Arcoiris", 2.6 * e, 2.6 * e)
+		b.CurveSize0 = 17 * e
+		b.CurveSize1 = -17 * e
+		b.TextureMode = Enum.TextureMode.Stretch
+		b.TextureLength = 1
+		b.Segments = 32
+		b.LightEmission = 0.7
+		b.LightInfluence = 0
+		local opaco = if k == 1 then 0.45 else 0.78
+		b.Transparency = curva({ { 0, 1 }, { 0.12, opaco }, { 0.88, opaco }, { 1, 1 } })
+	end
+	for i = 1, 3 do
+		local a0, a1 = ancla(`Rayo{i}`), ancla(`RayoFin{i}`)
+		if a0 and a1 then
+			local b = viga(c, a0, a1, "RayoLuz", 1.6, 6.5)
+			b.TextureMode = Enum.TextureMode.Stretch
+			b.TextureLength = 1
+			b.Segments = 2
+			b.LightEmission = 0.9
+			b.LightInfluence = 0
+			b.Color = ColorSequence.new(Color3.fromRGB(255, 244, 210))
+			b.Transparency = NumberSequence.new(0.5 + i * 0.08)
+		end
+	end
+	sonidoBucle("Cascada", impacto, 160)
+	for i, s in spots.rapido or {} do
+		local a = punto(s.Position, "Rapido")
+		local e = emisor(a, "Humo2", blanco, curva({ { 0, 0.8 }, { 1, 2.4 } }), 3, NumberRange.new(0.7, 1.2), NumberRange.new(1, 2.5), Vector3.new(0, -3, 0))
 		e.EmissionDirection = Enum.NormalId.Top
-		e.SpreadAngle = Vector2.new(60, 60)
+		e.SpreadAngle = Vector2.new(50, 50)
+		local g = emisor(a, "Gota", gotas, curva({ { 0, 0.25 }, { 1, 0.18 } }), 5, NumberRange.new(0.5, 0.8), NumberRange.new(5, 8), Vector3.new(0, -35, 0))
+		g.EmissionDirection = Enum.NormalId.Top
+		g.SpreadAngle = Vector2.new(35, 35)
+		g.Orientation = Enum.ParticleOrientation.VelocityParallel
+		g.RotSpeed = NumberRange.new(0)
+		local o = emisor(a, "Onda", blanco, curva({ { 0, 1 }, { 1, 4.5 } }), 0.9, NumberRange.new(1.2, 1.6), NumberRange.new(0.05), Vector3.zero)
+		o.Orientation = Enum.ParticleOrientation.VelocityPerpendicular
+		o.EmissionDirection = Enum.NormalId.Top
+		o.SpreadAngle = Vector2.zero
+		o.RotSpeed = NumberRange.new(0)
+		o.Transparency = curva({ { 0, 0.3 }, { 1, 1 } })
+		if i % 2 == 1 then
+			local son = sonidoBucle("Cascada", a, 45)
+			if son then
+				son.Volume *= 0.3
+				son.PlaybackSpeed = 1.15
+			end
+		end
+	end
+	return Vector3.new(centro.X, agua, centro.Z)
+end
+
+local function asentar()
+	local parametros = soloTerreno(false)
+	local muestras = { Vector3.zero, Vector3.new(0.35, 0, 0.35), Vector3.new(-0.35, 0, 0.35), Vector3.new(0.35, 0, -0.35), Vector3.new(-0.35, 0, -0.35) }
+	for _ = 1, 20 do
+		local quedan = 0
+		for i, d in decorados do
+			if asentados[d] then
+				continue
+			end
+			local modelo = d:FindFirstChildOfClass("Model")
+			if not modelo then
+				quedan += 1
+				continue
+			end
+			asentados[d] = true
+			local base = numero(d, "Base")
+			local techo = -math.huge
+			for _, m in muestras do
+				local p = d.CFrame:PointToWorldSpace(d.Size * m)
+				local r = Workspace:Raycast(Vector3.new(p.X, base + 30, p.Z), Vector3.new(0, -60, 0), parametros)
+				if r then
+					techo = math.max(techo, r.Position.Y)
+				end
+			end
+			if techo > -math.huge and base - techo > 0.25 then
+				local bajar = Vector3.new(0, base - techo - 0.1, 0)
+				modelo:PivotTo(modelo:GetPivot() - bajar)
+				d.CFrame -= bajar
+				d:SetAttribute("Base", base - bajar.Y)
+			end
+			if i % 50 == 0 then
+				task.wait()
+			end
+		end
+		if quedan == 0 then
+			return
+		end
+		task.wait(2)
 	end
 end
 
@@ -330,26 +647,6 @@ local function brillar(o: BasePart)
 	luz.Brightness = 0.8
 	luz.Shadows = false
 	luz.Parent = o
-end
-
-local function sonidoBucle(nombre: string, padre: Instance, alcance: number?): Sound?
-	local id = Audio.IDS[nombre]
-	if not id then
-		return nil
-	end
-	local s = Instance.new("Sound")
-	s.Name = nombre
-	s.SoundId = `rbxassetid://{id}`
-	s.Looped = true
-	local datos = Audio.DATOS[nombre]
-	s.Volume = if datos then datos.volumen else 0.6
-	s.RollOffMode = Enum.RollOffMode.InverseTapered
-	s.RollOffMinDistance = 10
-	s.RollOffMaxDistance = alcance or 120
-	s.Parent = padre
-	s:Play()
-	table.insert(efectos, s)
-	return s
 end
 
 local function motores(): { Vector3 }
@@ -596,6 +893,9 @@ function Isla.jugar(): boolean
 	end)
 	sonidoBucle("AmbienteIsla", isla)
 	ambienteVivo()
+	task.spawn(asentar)
+	local chorro = cascadaViva(centro)
+	local proximaSalpicadura = 0
 	local piezas = mezclar(spots.radio)
 	for i, tipo in C.PIEZAS do
 		if piezas[i] then
@@ -656,6 +956,10 @@ function Isla.jugar(): boolean
 			local pez = peces[rng:NextInteger(1, #peces)].Position + Vector3.new(rng:NextNumber(-6, 6), 0, rng:NextNumber(-6, 6))
 			Rafagas.lanzar("Salpicadura", pez, rng:NextNumber(0.5, 0.8))
 			Sonidos.emitir("Salpicadura", pez)
+		end
+		if chorro and ahora >= proximaSalpicadura then
+			proximaSalpicadura = ahora + rng:NextNumber(0.9, 1.8)
+			Rafagas.lanzar("Salpicadura", chorro + Vector3.new(rng:NextNumber(-3, 3), 0, rng:NextNumber(-3, 3)), rng:NextNumber(0.9, 1.4))
 		end
 		for _, o in carpeta:GetChildren() do
 			if not o:IsA("BasePart") or not o:HasTag("ObjetivoIsla") then
@@ -763,7 +1067,14 @@ function Isla.iniciar()
 					end
 				end)
 			end
-			Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil)
+			local escala = d:GetAttribute("Escala")
+			Activos.vestirFijo(d, visual, if typeof(base) == "number" then base else nil, if typeof(escala) == "number" then escala else nil)
+			if not SIN_ASENTAR[visual] and d:GetAttribute("Apoyo") == nil and typeof(base) == "number" then
+				table.insert(decorados, d)
+			end
+		end
+		if d.Name == "CascadaVFX" then
+			cascada = d
 		end
 		local spot = d:GetAttribute("Spot")
 		if typeof(spot) == "string" then
@@ -781,7 +1092,7 @@ function Isla.iniciar()
 		if d:GetAttribute("Fuego") then
 			table.insert(fuegos, d)
 		end
-		local grupo = if visual == "Flores" then flores elseif visual == "Acantilado" or visual == "RocasPlanas" then rocas elseif visual == "Cascada" then cascadas else nil
+		local grupo = if visual == "Flores" then flores elseif visual == "Acantilado" or visual == "RocasPlanas" then rocas else nil
 		if grupo then
 			table.insert(grupo, d)
 		end

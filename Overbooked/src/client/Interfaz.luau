@@ -67,9 +67,6 @@ local tableroGui: SurfaceGui
 local ayuda: ImageLabel
 local resaltado: Highlight
 local ultimoApuntado: Instance? = nil
-local panelIsla: ImageLabel
-local textosIsla: { [string]: TextLabel } = {}
-local iconoTiempoIsla: ImageLabel
 local escalaSello: UIScale
 local resultadosId = 0
 
@@ -244,24 +241,6 @@ local function construir()
 		Gui.fila(lineasAyuda, l[1], l[2] :: string, 26, Gui.TINTA, i)
 	end
 
-	panelIsla = Gui.panel(raiz, "Papel", UDim2.fromOffset(310, 206), UDim2.new(1, -14, 0, if TACTIL then 290 else 192), Vector2.new(1, 0))
-	panelIsla.Rotation = -1.5
-	panelIsla.Visible = false
-	izquierda(Gui.texto(panelIsla, "NÁUFRAGOS", UDim2.new(1, -50, 0, 30), UDim2.fromOffset(26, 18), Gui.NARANJA, true))
-	local filasIsla = Instance.new("Frame")
-	filasIsla.BackgroundTransparency = 1
-	filasIsla.Size = UDim2.new(1, -50, 1, -70)
-	filasIsla.Position = UDim2.fromOffset(26, 54)
-	filasIsla.Parent = panelIsla
-	Gui.lista(filasIsla, 4)
-	for i, f in { { "radio", "Radio" }, { "lena", "Tronco" }, { "fuego", "Bengala" }, { "tiempo", "Reloj" } } do
-		local fila = Gui.fila(filasIsla, f[2], "", 28, Gui.TINTA, i)
-		textosIsla[f[1]] = fila:FindFirstChildOfClass("TextLabel") :: TextLabel
-		if f[1] == "tiempo" then
-			iconoTiempoIsla = fila:FindFirstChildOfClass("ImageLabel") :: ImageLabel
-		end
-	end
-
 	local indicacion = Gui.texto(raiz, "H controles · M música · O ajustes", UDim2.fromOffset(320, 24), UDim2.new(1, -14, 1, -10), Gui.PAPEL, false, 20)
 	indicacion.AnchorPoint = Vector2.new(1, 1)
 	indicacion.TextXAlignment = Enum.TextXAlignment.Right
@@ -391,36 +370,6 @@ local function actualizarEstado()
 	textoCinturones.Text = if puestos then "Cinturones <b>ON</b>" else "Cinturones <b>OFF</b>"
 	textoCinturones.TextColor3 = if puestos then Gui.TINTA else Gui.ROJO
 	iconoCinturones.ImageTransparency = if puestos then 0 else 0.45
-end
-
-local function tarea(t: TextLabel, hecho: boolean, contenido: string)
-	t.Text = if hecho then `<s>{contenido}</s>` else contenido
-	t.TextColor3 = if hecho then Gui.VERDE else Gui.TINTA
-end
-
-local function actualizarIsla()
-	local enIsla = Estado:GetAttribute("Fase") == "Isla"
-	panelIsla.Visible = enIsla
-	if not enIsla then
-		return
-	end
-	local piezas = #Config.ISLA.PIEZAS
-	local radio = numeroEstado("IslaRadio")
-	local lena = numeroEstado("IslaLena")
-	local fuego = Estado:GetAttribute("IslaFuego") == true
-	tarea(textosIsla.radio, radio >= piezas, `Piezas de radio {radio}/{piezas}`)
-	tarea(textosIsla.lena, lena >= Config.ISLA.TRONCOS, `Leña en la hoguera {lena}/{Config.ISLA.TRONCOS}`)
-	tarea(textosIsla.fuego, fuego, if fuego then "Hoguera encendida" else "Enciende la hoguera con la bengala")
-	local rescate = numeroEstado("IslaRescate")
-	if rescate > 0 then
-		Gui.ponerIcono(iconoTiempoIsla, "Hidroavion")
-		textosIsla.tiempo.Text = `<b>¡Rescate en {rescate} s!</b>`
-		textosIsla.tiempo.TextColor3 = Gui.TURQUESA
-	else
-		Gui.ponerIcono(iconoTiempoIsla, "Reloj")
-		textosIsla.tiempo.Text = `Quedan {reloj(numeroEstado("IslaQuedan"))}`
-		textosIsla.tiempo.TextColor3 = Gui.TINTA
-	end
 end
 
 local marcasIsla: { [Instance]: BillboardGui } = {}
@@ -900,6 +849,10 @@ function Interfaz.alternarAyuda()
 	ayuda.Visible = not ayuda.Visible
 end
 
+function Interfaz.resultadosVisibles(): boolean
+	return panelResultados.Visible
+end
+
 function Interfaz.iniciar()
 	Gui.precargar()
 	pcall(StarterGui.SetCoreGuiEnabled, StarterGui, Enum.CoreGuiType.PlayerList, false)
@@ -972,7 +925,6 @@ function Interfaz.iniciar()
 		actualizarBarra()
 		actualizarEstado()
 		actualizarPiloto()
-		actualizarIsla()
 		for otro, e in etiquetas do
 			e.voz.Visible = BocaVoz.nivel(otro) > 0.08
 		end

@@ -31,6 +31,17 @@ local TACTIL: { [string]: string } = {
 	["H para cerrar"] = "Toca para cerrar",
 	["W/S subir y bajar · A/D girar · Shift/Ctrl gases · Espacio salir"] = "Joystick: subir, bajar y girar · Gas+ y Gas- · salta para salir",
 	["Sirve a un pasajero (E o lánzasela)"] = "Sirve a un pasajero (etiqueta o lánzasela)",
+	["Y sube (W) para despegar"] = "Y sube con el joystick para despegar",
+	["¿Fuego? Extintor y mantén F"] = "¿Fuego? Extintor y mantén «Usar»",
+	["Apunta a las llamas y mantén F"] = "Apunta a las llamas y mantén «Usar»",
+	["Dale con F hasta que se calme"] = "Dale con «Usar» hasta que se calme",
+	["Siéntate y dispara con clic"] = "Siéntate y dispara con «Fuego»",
+	["Cálmalo (mantén R)"] = "Cálmalo: mantén su etiqueta",
+	["¿Ves la burbuja? Es su pedido: tráelo de la cocina y pulsa E"] = "¿Ves la burbuja? Es su pedido: tráelo de la cocina y toca su etiqueta",
+	["¡Fuego! Coge un extintor y mantén F apuntando a las llamas"] = "¡Fuego! Coge un extintor y mantén «Usar» apuntando a las llamas",
+	["Torreta: siéntate (G) y dispara a los piratas con clic"] = "Torreta: siéntate y dispara a los piratas con «Fuego»",
+	["Tractor: súbete al asiento y conduce con WASD"] = "Tractor: súbete al asiento y conduce con el joystick",
+	["Surtidor: mantén E una y otra vez hasta el 100 %"] = "Surtidor: mantén su etiqueta una y otra vez hasta el 100 %",
 }
 local tactil = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 

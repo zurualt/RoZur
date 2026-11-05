@@ -229,7 +229,7 @@ local function anclar(visual: Model)
 	end
 end
 
-function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
+function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?, escala: number?)
 	Activos.cuando(nombre, function(plantilla)
 		if not marcador.Parent then
 			return
@@ -240,7 +240,7 @@ function Activos.vestirFijo(marcador: BasePart, nombre: string, baseY: number?)
 		local y = baseY or (marcador.Position.Y - medioAlto)
 		local frente = marcador.CFrame.LookVector * Vector3.new(1, 0, 1)
 		local giro = if frente.Magnitude > 0.01 then CFrame.lookAt(Vector3.zero, frente) else CFrame.identity
-		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * giro, nombre)
+		colocar(visual, CFrame.new(marcador.Position.X, y, marcador.Position.Z) * giro, nombre, escala)
 		anclar(visual)
 		ocultar(marcador)
 		visual.Parent = marcador

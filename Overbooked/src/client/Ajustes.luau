@@ -10,7 +10,9 @@ local Workspace = game:GetService("Workspace")
 
 local Gui = require(ReplicatedStorage.Shared.Gui)
 local Camara = require(script.Parent.Camara)
+local Guia = require(script.Parent.Guia)
 local Interfaz = require(script.Parent.Interfaz)
+local Piloto = require(script.Parent.Piloto)
 local Sonido = require(script.Parent.Sonido)
 
 local RemotoAjustes = ReplicatedStorage:WaitForChild("Remotos"):WaitForChild("Ajustes") :: RemoteEvent
@@ -316,7 +318,7 @@ local function construir()
 	task.spawn(function()
 		while gui.Parent do
 			local intro = playerGui:FindFirstChild("Intro")
-			abrir.Visible = not (intro and intro:IsA("ScreenGui") and intro.Enabled)
+			abrir.Visible = not (intro and intro:IsA("ScreenGui") and intro.Enabled) and (GRANDE or not Piloto.activo())
 			task.wait(0.4)
 		end
 	end)
@@ -415,6 +417,10 @@ local function construir()
 	boton(fila(9, "Controles"), "Ver (H)", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.TIZA, function()
 		Ajustes.cerrar()
 		Interfaz.alternarAyuda()
+	end)
+	boton(fila(10, "Cómo se juega"), "Ver", UDim2.new(0.62, 0, 0, 48), UDim2.new(0.36, 0, 0, 5), Gui.AMARILLO, function()
+		Ajustes.cerrar()
+		task.spawn(Guia.comoJugar)
 	end)
 end
 
