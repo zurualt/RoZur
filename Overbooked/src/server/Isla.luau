@@ -214,7 +214,15 @@ end
 
 local function borrarTerreno()
 	for _, z in zonasTerreno do
-		Workspace.Terrain:FillBlock(CFrame.new((z.minimo + z.maximo) / 2), z.maximo - z.minimo + Vector3.new(8, 8, 8), Enum.Material.Air)
+		local minimo, maximo = z.minimo - Vector3.new(4, 4, 4), z.maximo + Vector3.new(4, 4, 4)
+		for x = minimo.X, maximo.X - 1, 512 do
+			for zz = minimo.Z, maximo.Z - 1, 512 do
+				local a = Vector3.new(x, minimo.Y, zz)
+				local b = Vector3.new(math.min(x + 512, maximo.X), maximo.Y, math.min(zz + 512, maximo.Z))
+				Workspace.Terrain:FillBlock(CFrame.new((a + b) / 2), b - a, Enum.Material.Air)
+			end
+			task.wait()
+		end
 	end
 	table.clear(zonasTerreno)
 end
@@ -244,7 +252,7 @@ end
 local function punto(posicion: Vector3, nombre: string): Attachment
 	local a = Instance.new("Attachment")
 	a.Name = nombre
-	a.WorldPosition = posicion
+	a.Position = posicion
 	a.Parent = Workspace.Terrain
 	table.insert(efectos, a)
 	return a

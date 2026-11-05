@@ -542,7 +542,7 @@ ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 MATERIALES_ISLA = ["Sand", "Salt", "Grass", "LeafyGrass", "Ground", "Rock", "Slate"]
 AVION_RECT = (-40.0, 40.0, -68.0, 36.0)
 CIMA = (-78.0, -158.0)
-ESTANQUE = (-28.0, -196.0)
+ESTANQUE = (0.0, -200.0)
 LAGUNA = (-168.0, -50.0)
 CAMPAMENTO = (146.0, -74.0)
 SURCO = ((0.0, 128.0), (0.0, 40.0))
@@ -553,7 +553,7 @@ COSTA = [(95, 66), (55, 76), (15, 80), (-25, 78), (-65, 72), (-100, 70), (-130, 
 ACANTILADOS = [(-92, -290, 80), (-20, -305, 70), (42, -285, 55), (-196, -196, 48), (122, -226, 40)]
 SENDAS = [
     [(-8, -74), (-20, -98), (-36, -120), (-52, -138), (-66, -150)],
-    [(-36, -120), (-30, -150), (-27, -178)],
+    [(-36, -120), (-14, -148), (8, -176)],
     [(132, -92), (98, -122), (50, -146), (0, -160), (-60, -160)],
     [(44, -46), (78, -60), (116, -72)],
 ]
@@ -754,12 +754,15 @@ class Terreno:
             h = min(h, 110.2 + 0.03 * (t - 16))
             mat = "Rock"
             agua = nivel_arroyo
+        abierto = (1 - ss(14, 42, r_est)) * ss(-2, -16, t)
+        if abierto > 0:
+            h = mezcla(h, min(h, 100.4 + 0.08 * max(0.0, r_est - 14)), abierto)
         if r_est < 17:
             fondo = 96.0 + 3.6 * ss(8, 15, r_est)
             h = min(h, fondo) if r_est < 14 else mezcla(min(h, fondo), h, ss(14, 17, r_est))
             if r_est < 14:
                 agua = nivel_estanque
-            mat = "Rock" if 11 < r_est < 16 else ("Sand" if r_est <= 11 else mat)
+            mat = "Rock" if 11 < r_est < 16 and t > -5 else ("Sand" if r_est <= 13 else mat)
         if s > -4:
             for linea in SENDAS:
                 d = dist_linea(x, z, linea)
@@ -1003,7 +1006,7 @@ def isla():
                        (-44, 64, 20, "MaletaCerrada"), (64, 30, 300, "MaletaCerrada")):
         D.poner(v, x, z, g, hundir=0.1, radio=2)
     D.ocupado.append((14, 34, 2))
-    radios = [(16, 34), (-22, 72), (-56, 40), (-146, 50), (-12, -184), (128, 30)]
+    radios = [(16, 34), (-22, 72), (-56, 40), (-146, 50), (16, -180), (128, 30)]
     for i, (x, z) in enumerate(radios):
         g = rnd.uniform(0, 360)
         y, tam = D.poner("CajaAbierta", x, z, g, hundir=0.1, radio=3)
