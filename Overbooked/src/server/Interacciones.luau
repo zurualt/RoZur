@@ -159,6 +159,9 @@ local function impacto(o: BasePart, tipo: string, golpeado: Instance, velocidad:
 		return false, false
 	end
 	local jugador = jugadorDe(golpeado)
+	if jugador and lanzador and lanzador ~= jugador and Personajes.enLobby() then
+		return false, false
+	end
 	if jugador and not (jugador == lanzador and l and ahora - l.hora < 0.8) and fuerza > 40 then
 		Personajes.ragdoll(jugador, 1.1, dir * math.min(fuerza, 80) * 0.5 + Vector3.new(0, 18, 0))
 		Sonidos.emitir("Bonk", o.Position)

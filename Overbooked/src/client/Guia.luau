@@ -43,7 +43,7 @@ end
 local FASES: { [string]: Tarjeta } = {
 	Aeropuerto = tarjeta("Aeropuerto", "Aeropuerto", "LA TERMINAL", "Elegid un vuelo y entrad juntos en su puerta", {
 		{ "Billete", "Los vuelos están en el tablero de SALIDAS" },
-		{ "Diana", "Pisad el círculo de color de la puerta (hasta 4)" },
+		{ "Diana", "El primero en pisar el círculo es el capitán de la sala" },
 		{ "Moneda", "¿Dinero ganado? Gástalo en la tienda libre de impuestos" },
 	}),
 	Preparacion = tarjeta("Preparacion", "Preparacion", "¡A CARGAR EL AVIÓN!", "Con todo listo se abre la puerta del hangar", {
@@ -225,8 +225,8 @@ local PAGINAS: { Tarjeta } = {
 	}),
 	tarjeta("ComoJugar", nil, "CÓMO EMPEZAR UN VUELO", "Mira el tablero de SALIDAS y entrad juntos en la puerta del vuelo que queráis.", {
 		{ "Billete", "3 vuelos: ruta, pasajeros, riesgo y paga" },
-		{ "Diana", "Pisad el círculo de color de la puerta (hasta 4)" },
-		{ "Reloj", `A los {Config.LOBBY.CUENTA} s salís todos juntos` },
+		{ "Diana", "El primero en pisar el círculo es el capitán (hasta 4)" },
+		{ "Estrella", "El capitán elige quién entra y pulsa DESPEGAR" },
 	}),
 	tarjeta("ComoJugar", nil, "CONTROLES", "Lo básico. Todo lo demás, en Ajustes → Controles.", CONTROLES[if TACTIL then "tactil" elseif MANDO then "mando" else "teclado"]),
 }
@@ -420,7 +420,7 @@ local function tareasAeropuerto(l: { Tarea })
 	anotar(l, "tablero", "Billete", "Mira los vuelos en el tablero de SALIDAS", dentro).info = true
 	anotar(l, "puerta", "Diana", "Entra con tu grupo en el círculo de una puerta", dentro, cercana(lista :: { any }))
 	if dentro then
-		anotar(l, "espera", "Reloj", "Quedaos dentro hasta que salga el vuelo", false).info = true
+		anotar(l, "espera", "Reloj", "El capitán pulsa DESPEGAR cuando estéis todos", false).info = true
 	end
 end
 

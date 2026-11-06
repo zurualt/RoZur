@@ -159,6 +159,11 @@ function Personajes.vivo(jugador: Player): boolean
 	return humanoide ~= nil and humanoide.Health > 0
 end
 
+function Personajes.enLobby(): boolean
+	local estado = ReplicatedStorage:FindFirstChild("Estado")
+	return estado ~= nil and estado:GetAttribute("Fase") == "Aeropuerto"
+end
+
 function Personajes.alCaer(f: (Player) -> ())
 	table.insert(alCaer, f)
 end

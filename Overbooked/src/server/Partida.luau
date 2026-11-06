@@ -28,6 +28,7 @@ local Piratas = require(script.Parent.Piratas)
 local Preparacion = require(script.Parent.Preparacion)
 local Rafagas = require(script.Parent.Rafagas)
 local Roturas = require(script.Parent.Roturas)
+local Salas = require(script.Parent.Salas)
 local Tienda = require(script.Parent.Tienda)
 local Vehiculos = require(script.Parent.Vehiculos)
 
@@ -174,6 +175,7 @@ local function prepararSalas()
 			plazas = plazas,
 			fin = nil,
 		}
+		Salas.registrar(n, centro)
 		gui.Parent = pantalla
 	end
 end
@@ -185,22 +187,6 @@ local function pintarSala(sala: Sala, oferta: Contratos.Contrato?, ocupadas: num
 	for i, plaza in sala.plazas do
 		plaza.BackgroundColor3 = if i <= ocupadas then sala.estado.TextColor3 else APAGADO
 	end
-end
-
-local function enSala(sala: Sala): { Player }
-	local grupo = {}
-	local centro = sala.centro.Position
-	local radio = sala.centro.Size.Y / 2
-	for _, jugador in Players:GetPlayers() do
-		local raiz = Personajes.raiz(jugador)
-		if raiz and not saliendo[jugador] and #grupo < Config.LOBBY.MAX then
-			local d = raiz.Position - centro
-			if Vector3.new(d.X, 0, d.Z).Magnitude <= radio and math.abs(d.Y) < 6 then
-				table.insert(grupo, jugador)
-			end
-		end
-	end
-	return grupo
 end
 
 local function jornadaGrupo(grupo: { Player }): number
@@ -262,20 +248,33 @@ local function enLobby(): Contratos.Contrato
 		end
 		for n, sala in salas do
 			local oferta = ofertas[n]
-			local grupo = enSala(sala)
+			local grupo = Salas.actualizar(n, saliendo)
 			if not oferta or #grupo == 0 then
 				sala.fin = nil
 				pintarSala(sala, oferta, 0, "ESPERANDO")
+				Salas.publicar(n, 0)
 				continue
 			end
-			sala.fin = sala.fin or os.clock() + Config.LOBBY.CUENTA
-			local quedan = math.max(0, math.ceil((sala.fin :: number) - os.clock()))
+			if Salas.pidioSalir(n) then
+				sala.fin = math.min(sala.fin or math.huge, os.clock() + Config.LOBBY.CUENTA_CAPITAN)
+			elseif not sala.fin and #grupo >= Config.LOBBY.MAX then
+				sala.fin = os.clock() + Config.LOBBY.CUENTA
+			end
+			local fin = sala.fin
+			if not fin then
+				pintarSala(sala, oferta, #grupo, Salas.estado(n) or "ESPERANDO")
+				Salas.publicar(n, 0)
+				continue
+			end
+			local quedan = math.max(0, math.ceil(fin - os.clock()))
 			pintarSala(sala, oferta, #grupo, `SALE EN {quedan}`)
+			Salas.publicar(n, quedan)
 			if quedan > 0 then
 				continue
 			end
 			sala.fin = nil
 			pintarSala(sala, oferta, #grupo, "EMBARCANDO")
+			Salas.vaciar(n)
 			Rafagas.lanzar("Onda", sala.centro.Position, 1.6, COLORES_SALA[n])
 			Rafagas.lanzar("Confeti", sala.centro.Position + Vector3.new(0, 3, 0), 1.4)
 			if RunService:IsStudio() then

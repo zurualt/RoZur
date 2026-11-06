@@ -183,6 +183,7 @@ local function limpiar()
 	dejarEn = nil
 	AgarreVista.arco(nil)
 	Camara.tension(0)
+	Camara.sosteniendo(nil, "")
 	ralentizar(1)
 	activarRueda(false)
 end
@@ -197,6 +198,7 @@ local function empezar(objeto: Instance)
 	tipoActual = tipoDe(objeto)
 	estiloActual = Manos.estilo(tipoActual)
 	tamano = if objeto:IsA("Model") then objeto:GetExtentsSize() else r.Size
+	Camara.sosteniendo(objeto, tipoActual)
 	giro, giroObjetivo, extra = 0, 0, 0
 	local enMano = estiloActual.modo ~= "dos"
 	local pesado = GRANDES[tipoActual] == true
@@ -718,7 +720,7 @@ local function sostener(dt: number, ahora: number)
 	else
 		local mano, punto = Manos.punto(personaje)
 		if estiloActual.modo ~= "dos" and mano and punto then
-			destino = Manos.marco(estiloActual, mano.CFrame, punto, hrp.CFrame) * Manos.desfase(estiloActual, r.Size) * CFrame.Angles(0, giro, 0)
+			destino = Manos.marco(estiloActual, mano.CFrame, punto, hrp.CFrame, tamano) * Manos.desfase(estiloActual, r.Size) * CFrame.Angles(0, giro, 0)
 		else
 			destino = delante(cf, ojos, hrp, ahora)
 		end

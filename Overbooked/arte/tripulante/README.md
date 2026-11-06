@@ -4,7 +4,8 @@ Personaje jugable de la tripulación. Estilo blando, redondo y liso: cabeza gran
 
 ![Vistas frontal, 3/4, lateral y trasera](renders/turnaround.png)
 ![Primera persona sin nada en las manos](renders/primera_reposo.png)
-![Primera persona con un vaso en la mano derecha](renders/primera_agarre.png)
+![Primera persona con un café en la mano derecha](renders/primera_agarre.png)
+![Primera persona: bofetada, pulsar un botón, caja con las dos manos, bandeja, extintor y suelo claro](renders/primera_acciones.png)
 ![Cuatro tripulantes](renders/lineup.png)
 ![Callado, hablando y gritando](renders/caras_voz.png)
 ![Gritando mucho: lengua de perro al viento](renders/caras_grito.png)
@@ -13,6 +14,13 @@ Personaje jugable de la tripulación. Estilo blando, redondo y liso: cabeza gran
 ![Prueba de brazos y piernas en posturas extremas](renders/brazos_prueba.png)
 ![Manoplas: abierta, relajada, agarrando una barra, puño, pulsando y palma](renders/manos_prueba.png)
 ![Las mismas posturas desde el lado de la palma](renders/manos_prueba_palma.png)
+
+## Manoplas nuevas (v6.1)
+
+- Manopla de pala ancha y algo plana (0,37 de ancho, 0,21 de grueso, antes 0,34 y 0,24), con los dedos un poco curvados hacia la palma, pulgar gordito con la punta abombada y puño turquesa más fino y abombado (un rollo blando con las puntas redondas). El puño y la muñeca de la manopla dejan 0,04 studs de hueco entre sí.
+- Sombra pintada en la paleta: dos casillas nuevas con degradado (14 manoplas, 15 puños). Cada vértice coge la fila de su casilla según lo que mira hacia el dorso: el dorso queda casi blanco y los lados, la palma, la base del pulgar y la entrada del puño se oscurecen hacia un gris azulado. Vista desde el dorso en primera persona, la manopla tiene el borde más oscuro.
+- Mismos huesos y mismo `AGARRE_MANO`. 4.176 triángulos por mano (antes 2.588).
+- `tripulante_gen.py` ya pasa `separar_capas` a las 15 mallas antes de exportar, y `auditar_solapes.py` sigue dando 0 ALTA, 0 MEDIA y 0 BAJA.
 
 ## Cambios de la v6
 
@@ -46,11 +54,23 @@ Los ojos se colocan con `CENTRO = (0.336, 1.059, -0.89)` y `NORMAL = (0.166, -0.
 
 El importador pone el centro del `HumanoidRootPart` 1 stud por encima de las caderas (1,95 sobre el suelo, `HipHeight` = 0,963) y la cámara de Roblox va a raíz + 1,5 y 0,5 por detrás (el zoom mínimo). `src/client/Camara.luau` pone `Humanoid.CameraOffset = (0, -0.44, 0)` para que vaya a la altura de los ojos (3,01). Sentado, el `SeatWeld` de Roblox pone la raíz 1,214 sobre el asiento (las caderas a 0,21, justo el radio del muslo), así que no hace falta bajar nada.
 
-Con los brazos tan cortos las manos no llegan a verse desde los ojos, así que en tu propia vista (el torso no se ve) los hombros suben 0,35 studs (`ELEVAR`) y los brazos van a 58° en el hombro, 80° en el codo, 15° hacia fuera y la muñeca doblada 32° hacia arriba: las manoplas quedan en las esquinas de abajo con el pulgar encima (`primera_reposo.png`). Con algo en la mano, la derecha va a 58° + 22° (`LEVANTE_PROPIO`), codo 42°, 12° hacia dentro y muñeca 18° (`POSE_BRAZO`). Los demás jugadores te ven con los brazos normales. `PRIMERA` y `ELEVAR` del generador usan los mismos números que `Camara.luau`, con la cámara a la altura de los ojos, 0,5 por detrás y 80° de campo vertical, como en el juego.
+En tu propia vista no se ven los brazos: `Camara.luau` deja los antebrazos y los brazos con el `LocalTransparencyModifier` que les pone Roblox en primera persona (1) y solo enseña las manos. Cada manopla se coloca en el espacio de la cámara: en `PreSimulation` calcula la cadena `HumanoidRootPart → Root → Waist → hombro → codo` (hombro y codo sin girar) y pone en `RightWrist`/`LeftWrist` el `Transform` que lleva la mano justo ahí. Para que la cadena no cambie a mitad de fotograma, `Movimiento.luau` deja `Root` y `Waist` quietos en tu propia vista (el torso no se ve). Si la cámara no está en los ojos (cinemáticas, cámara libre) o estás en tercera persona, vuelven los brazos normales.
+
+Las posturas son la tabla `VISTA` (en `Camara.luau` y en `tripulante_gen.py`): x e y como fracción de media pantalla a esa profundidad, profundidad z, y en grados cabeceo (dedos hacia arriba), guiñada hacia dentro, alabeo sobre los dedos e inclinación en la pantalla. La izquierda es el espejo de la derecha. La profundidad se escala con `sqrt(tan 40° / tan(campo / 2))`, así que con el slider de 60 a 100 las manos cambian poco de tamaño y no se salen; el ancho usa el aspecto de la pantalla hasta 16:9, así que en un móvil 19,5:9 quedan igual de separadas.
+
+- **Reposo:** manoplas abajo a los lados, inclinadas hacia dentro, con el dorso hacia la cámara y el puño entrando por el borde de abajo (`primera_reposo.png`). Con los dedos hacia delante se vería el puño de frente, así que todas las posturas suben los dedos unos 50–75° para que el dorso mire a la cámara.
+- **Vida:** respiran (balanceo lento distinto en cada mano), botan con los saltitos al andar (la fase de `Movimiento.luau` llega a `Camara.paso`, que también mueve la cámara al mismo ritmo), se quedan atrás al girar la cámara (unos 0,11 studs a 180°/s y vuelven en unos 0,3 s), se mueven con la velocidad (suben al caer, bajan al aterrizar) y no siguen la sacudida de la cámara.
+- **Agarrar:** la derecha sale hacia el objeto 0,22 s y vuelve con él. Vasos y herramientas se cogen por detrás, con el dorso a la cámara y el pulgar rodeando el objeto (`primera_agarre.png`); `Manos.separacion` aparta el objeto de la palma su radio menos 0,1 para que la manopla no se meta dentro, y las herramientas van derechas e inclinadas 20° hacia delante. Lo de la palma (`palma`) va sobre la palma (`DESFASE_PALMA` = −0,12) y lo grande se abraza: las dos manoplas se agarran a las esquinas de arriba de la cara cercana del objeto, en un marco que sigue a la cámara solo en horizontal (`abrazo`), así que no se despegan al mirar abajo.
+- **Lanzar:** al cargar la mano se va atrás y arriba; al soltar, un golpe hacia delante. **Bofetada:** coge impulso a la derecha y da un manotazo con la palma hacia delante. **Botones** (`Botones` llama a `Manos.pulsar`): empuja con la palma hacia el centro. **Avisos:** la derecha se estira hacia delante.
+- **Contorno:** un `Highlight` local en cada mano (solo contorno, azul marino al 35 %) para que se lean sobre suelos claros. Se apaga en tercera persona.
+
+Los demás te ven con brazos normales y lo que llevas en la mano: `Camara.luau` mueve en su cliente el hombro (arriba y hacia dentro) y el codo de tu personaje hasta que el punto de agarre de la manopla toca el objeto (en Studio, con un muñeco, queda a 0,01–0,05 studs en las posturas normales). Con el ajuste de tercera persona, en el ragdoll, en el tractor y en el modo clip, tu personaje usa también los brazos normales.
+
+`primera_persona()` del generador hace los renders con la cámara del juego (ojos a 3,01, 0,5 por detrás, 80° de campo vertical, mirando 10° abajo) y los mismos números. Con `--rapido` va a media resolución; con `--encuadre --fov 60` (o 100) y `--aspecto 2.1667` comprueba el encuadre.
 
 ## Manoplas en el juego
 
-`src/client/Manos.luau` gira los huesos de las manoplas con `Bone.Transform` en cada `PreSimulation`. La manopla se dobla en dos sitios (nudillo y punta) hacia la palma y el pulgar se cierra hacia ella y se abre hacia delante. Las posturas son 5 ángulos en grados (manopla 1 y 2, pulgar 1 y 2, apertura del pulgar), los mismos que `POSES_MANO` de `tripulante_gen.py`. Si a un personaje le faltan huesos, esa parte de la mano no se mueve.
+`src/client/Manos.luau` gira los huesos de las manoplas con `Bone.Transform` en cada `PreSimulation`. La manopla se dobla en dos sitios (nudillo y punta) hacia la palma y el pulgar se cierra hacia ella y se abre hacia delante. Las posturas son 5 ángulos en grados (manopla 1 y 2, pulgar 1 y 2, apertura del pulgar), los mismos que `POSES_MANO` de `tripulante_gen.py`. En tu propia vista las manos en reposo usan `primera` (menos cerradas) y al sujetar un vaso o una herramienta `sosten` (para que la manopla no se quede en un muñón visto por detrás). Tu propio personaje usa lo que tienes en la mano según `Agarre` (`Manos.sostener`), sin esperar al atributo del servidor. Si a un personaje le faltan huesos, esa parte de la mano no se mueve.
 
 Roblox borra al importar los huesos que no tienen ningún vértice, así que el punto de agarre no es un hueso: está a `(-0.199, -0.123, 0)` de `DerManopla1` en el espacio de `RightHand` (el `AGARRE` del generador; lo imprime como `AGARRE_MANO`).
 
@@ -80,13 +100,13 @@ Medidas en el espacio de la pieza `Head` (centro de su caja; `Head.Size` = 1,96 
 - **Esqueleto:** R15 con huesos, jerarquía oficial de Roblox: `Root → HumanoidRootNode → LowerTorso → …`. Root en el origen y LowerTorso en el mismo punto que HumanoidRootNode (1,05). Cintura a 1,32, cuello a 2,12, hombros en (±0,47, 1,92), codos en (±0,58, 1,56), muñecas en (±0,70, 1,26), caderas en (±0,25, 0,95), rodillas en (±0,26, 0,55) y tobillos en (±0,27, 0,20). Además, 8 huesos de cara y 8 de manoplas (33 en total; en Roblox quedan 16 porque los del cuerpo se convierten en piezas).
 - **Mallas:** 15 objetos con los nombres oficiales (`Head_Geo`, `UpperTorso_Geo`, …), todos con pesos. Como mucho 3 huesos por vértice (el límite es 4).
 - **Pose:** brazos un poco abiertos (17°) para no rozar la barriga.
-- **Triángulos:** 24.304 en total (es un StarterCharacter propio, no un avatar UGC):
+- **Triángulos:** 27.480 en total (es un StarterCharacter propio, no un avatar UGC):
 
 | Pieza | Triángulos |
 |---|---|
 | Cabeza | 5.136 |
 | Torso de arriba / de abajo | 4.144 / 1.800 |
-| Cada brazo (arriba, abajo, manopla) | 868 + 340 + 2.588 |
+| Cada brazo (arriba, abajo, manopla) | 868 + 340 + 4.176 |
 | Cada pierna (muslo, pierna, bota) | 844 + 460 + 1.512 |
 
 ## Color del jugador
@@ -106,15 +126,17 @@ En Blender, el color se cambia en el nodo `PlayerColor` del material.
 | 6 | Camisa `#FFF4E0` |
 | 7 | Cinturón `#5A3B2A` |
 | 8 | Botas `#2E2A2C` |
-| 9 | Blanco manoplas, diente y calcetines `#F7F7F2` |
+| 9 | Blanco diente y calcetines `#F7F7F2` |
 | 10 | Interior boca `#2B1219` |
 | 11 | Lengua `#E85A78` |
 | 12 | Azul marino pantalón y hombreras `#2C3A5E` |
 | 13 | Coloretes `#FF8F7E` |
+| 14 | Manoplas, degradado de `#FAFAF5` a `#A4ABC6` |
+| 15 | Puños, degradado de `#2CBAB2` a `#147A75` |
 
 ## En Roblox
 
-Subido con la API de assets al grupo del juego: modelo `93486408235562` (la v5 era `79935936187714`, la v4 `126872888876091`, la v3 `124975432706541` y la v2 `87418247604950`). Si alguna vez hay que importarlo a mano en Studio:
+Subido con la API de assets al grupo del juego: modelo `138009622641677` (`python -I herramientas/subir_modelos.py arte/tripulante/ids_subida.json arte/tripulante/tripulante.fbx`; la v6 era `93486408235562`, la v5 `79935936187714`, la v4 `126872888876091`, la v3 `124975432706541` y la v2 `87418247604950`). Si alguna vez hay que importarlo a mano en Studio:
 
 1. Abre el importador 3D y elige `tripulante.fbx`.
 2. En **Rig Type** deja **R15 / Default**.
@@ -128,10 +150,12 @@ Subido con la API de assets al grupo del juego: modelo `93486408235562` (la v5 e
 blender -b -P tripulante_gen.py -- --render <carpeta absoluta>
 ```
 
-Sin `--render` solo genera el `.blend`, el `.fbx` y la paleta, en unos segundos. Con `--render` también hace las imágenes (≈ 1,5 min en CPU), con `--manos` solo las dos de las manoplas y con `--primera` solo las de primera persona. La carpeta de salida tiene que ir como ruta absoluta: con `.` Blender no encuentra dónde guardar la paleta.
+Sin `--render` solo genera el `.blend`, el `.fbx` y la paleta, en unos segundos. Con `--render` también hace las imágenes (≈ 2 min en CPU), con `--manos` solo las dos de las manoplas y con `--primera` las de las manoplas y las de primera persona. La carpeta de salida tiene que ir como ruta absoluta: con `.` Blender no encuentra dónde guardar la paleta.
 
-Si cambia el cuerpo, hay que actualizar a mano: `Config.ASSET_TRIPULANTE` y `Config.ALTURA_TRIPULANTE`, `CENTRO`/`NORMAL` en `Ojos.luau` y `OJO_CENTRO`/`OJO_NORMAL` en `Tienda.luau`, `ALTURA_OJOS` y la pose de primera persona en `Camara.luau`, `AGARRE_MANO` en `Manos.luau`, y `PIVOTES`, ojos y medidas de `arte/accesorios/accesorios_gen.py` (y volver a subir los accesorios).
+Si cambia el cuerpo, hay que actualizar a mano: `Config.ASSET_TRIPULANTE` y `Config.ALTURA_TRIPULANTE`, `CENTRO`/`NORMAL` en `Ojos.luau` y `OJO_CENTRO`/`OJO_NORMAL` en `Tienda.luau`, `ALTURA_OJOS` y `VISTA` en `Camara.luau` (y la misma tabla en el generador), `AGARRE_MANO` y `PALMA` en `Manos.luau`, y `PIVOTES`, ojos y medidas de `arte/accesorios/accesorios_gen.py` (y volver a subir los accesorios).
 
 ## Probado en Studio
 
 Cargado con `InsertService:LoadAsset`: llegan los 16 huesos (8 de cara y 8 de manoplas), 15 juntas y `HipHeight` = 0,963. Jugando: la cámara a la altura de los ojos y las manoplas en las esquinas en primera persona, la vista en tercera persona, los ojos saltones en su sitio, andar a saltitos, el ragdoll, sentarse en un banco, accesorios de cabeza, cara y espalda y la vista previa de la tienda. Falta verlo con 2 jugadores (cómo ven los demás lo que llevas en la mano) y la cara con voz de verdad.
+
+Manoplas v6.1 (modelo `138009622641677`): en primera persona, reposo, andando, girando, con un café (cogido por detrás, con el pulgar rodeándolo), cargando y soltando un lanzamiento, una caja frágil con las dos manos (agarrada por las esquinas de delante también mirando abajo), una bofetada y el contorno sobre el suelo claro del aeropuerto; en tercera persona (ajuste de cámara) con el café en la manopla y los brazos normales. El ajuste del brazo para los demás se probó con un muñeco clonado; con 2 jugadores de verdad, en un móvil y con el slider de campo en Studio no se ha probado (el encuadre a 60, 100 y 19,5:9 está comprobado con los renders).

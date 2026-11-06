@@ -79,7 +79,10 @@ local function abofetear(jugador: Player, valor: unknown)
 	local origen = raiz.Position + ARRIBA * 1.5
 	local pasajero = Pasajeros.cercano(origen + dir * 2.4, 2.6)
 	local cuerpo = if pasajero then pasajero.PrimaryPart else nil
-	local otro, distancia = companero(jugador, origen, dir)
+	local otro, distancia = nil, ALCANCE
+	if not Personajes.enLobby() then
+		otro, distancia = companero(jugador, origen, dir)
+	end
 	if pasajero and cuerpo and (not otro or (cuerpo.Position - origen).Magnitude < distancia) then
 		remoto:FireAllClients(cuerpo.Position + ARRIBA * 1.6, dir, "Pasajero", jugador)
 		golpearPasajero(jugador, pasajero, dir, false)

@@ -118,10 +118,19 @@ local function animar(personaje: Model, j: Juntas, dt: number)
 	local respira = math.sin(j.tiempo * 2.2)
 	local caida = j.aterrizaje * j.aterrizaje
 	local libre = 1 - se
+	local propio = personaje == jugador.Character and not Camara.esTerceraPersona()
+	if personaje == jugador.Character then
+		Camara.paso(j.fase, f * (1 - a), a, caida)
+	end
 
 	local bote = (math.abs(s) * 0.24 * f + respira * 0.02 * quieto - caida * 0.22) * libre
-	poner(j, "Root", CFrame.new(0, bote, 0) * CFrame.Angles((rad(-6) * f - rad(65) * n) * libre, s * rad(7) * f * libre, s * rad(9) * f * libre))
-	poner(j, "Waist", CFrame.Angles(rad(-5) * f + respira * rad(1.5) * quieto + rad(10) * caida, -s * rad(12) * f, -s * rad(5) * f))
+	if propio then
+		poner(j, "Root", CFrame.identity)
+		poner(j, "Waist", CFrame.identity)
+	else
+		poner(j, "Root", CFrame.new(0, bote, 0) * CFrame.Angles((rad(-6) * f - rad(65) * n) * libre, s * rad(7) * f * libre, s * rad(9) * f * libre))
+		poner(j, "Waist", CFrame.Angles(rad(-5) * f + respira * rad(1.5) * quieto + rad(10) * caida, -s * rad(12) * f, -s * rad(5) * f))
+	end
 	poner(j, "Neck", CFrame.Angles(rad(5) * f + math.sin(j.fase * 2) * rad(4) * f + rad(35) * n - rad(8) * caida, s * rad(4) * f, s * rad(3) * f))
 
 	for _, lado in { "Left", "Right" } do
@@ -141,7 +150,6 @@ local function animar(personaje: Model, j: Juntas, dt: number)
 
 	local sosteniendo = personaje:GetAttribute("Sosteniendo")
 	local lleva = typeof(sosteniendo) == "string" and sosteniendo ~= ""
-	local propio = personaje == jugador.Character and not Camara.esTerceraPersona()
 	if lleva or propio then
 		return
 	end

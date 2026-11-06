@@ -10,7 +10,7 @@ export type DefObjeto = {
 
 local Config = {}
 
-Config.ASSET_TRIPULANTE = 93486408235562
+Config.ASSET_TRIPULANTE = 138009622641677
 Config.ALTURA_TRIPULANTE = 3.93
 Config.ROTACION_FBX = CFrame.Angles(math.pi / 2, 0, 0)
 
@@ -84,6 +84,7 @@ Config.TURBULENCIA = {
 
 Config.LOBBY = {
 	CUENTA = 15,
+	CUENTA_CAPITAN = 5,
 	MAX = 4,
 	ESPERA_GRUPO = 20,
 }

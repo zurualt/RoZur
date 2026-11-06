@@ -20,19 +20,26 @@ local estados: { [Model]: Estado } = setmetatable({}, { __mode = "k" }) :: any
 local pulsarHasta = 0
 local abrirHasta = 0
 local bofetadaHasta = 0
+local tipoPropio = ""
+local primera = false
 
 local AGARRE_MANO = Vector3.new(-0.199, -0.123, 0)
+local PALMA = Vector3.new(-0.929, -0.371, 0)
+local DESFASE_PALMA = -0.12
+local INCLINAR_HERRAMIENTA = CFrame.Angles(-math.rad(20), 0, 0)
 local DISTANCIA = 90
 local SUAVIDAD = 16
 
 local POSES: { [string]: { number } } = {
 	relajada = { 26, 28, 24, 20, -6 },
+	primera = { 10, 14, 14, 10, 4 },
 	abierta = { -12, -8, -10, -4, 30 },
 	agarre = { 40, 60, 30, 26, -6 },
 	pulsar = { -4, -2, 40, 38, -12 },
 	palma = { 4, 6, -8, 0, 12 },
 	bofetada = { -16, -10, -14, -6, 32 },
 	dos = { 34, 46, 22, 18, 0 },
+	sosten = { 18, 24, 26, 22, -8 },
 }
 
 local POSE_MODO: { [string]: { number } } = {
@@ -74,7 +81,7 @@ end
 
 function Manos.desfase(estilo: Estilo, tamano: Vector3): CFrame
 	if estilo.modo == "palma" then
-		return CFrame.new(0, tamano.Y / 2 + 0.02, 0)
+		return CFrame.new(0, tamano.Y / 2 + DESFASE_PALMA, 0)
 	elseif estilo.modo == "colgar" then
 		return CFrame.new(0, -tamano.Y / 2 - 0.08, 0) * CFrame.Angles(0, math.pi / 2, 0)
 	elseif estilo.modo == "dos" then
@@ -83,9 +90,16 @@ function Manos.desfase(estilo: Estilo, tamano: Vector3): CFrame
 	return CFrame.new(0, -estilo.altura * tamano.Y / 2, 0)
 end
 
-function Manos.marco(estilo: Estilo, mano: CFrame, punto: Vector3, cuerpo: CFrame): CFrame
-	local giro = if estilo.modo == "puno" then mano.Rotation * CFrame.Angles(-math.pi / 2, 0, 0) else cuerpo.Rotation
-	return CFrame.new(punto) * giro
+function Manos.separacion(estilo: Estilo, tamano: Vector3): number
+	if estilo.modo == "vaso" or estilo.modo == "puno" then
+		return math.max(0, math.min(tamano.X, tamano.Z) / 2 - 0.1)
+	end
+	return 0
+end
+
+function Manos.marco(estilo: Estilo, mano: CFrame, punto: Vector3, cuerpo: CFrame, tamano: Vector3): CFrame
+	local giro = if estilo.modo == "puno" then cuerpo.Rotation * INCLINAR_HERRAMIENTA else cuerpo.Rotation
+	return CFrame.new(punto + mano:VectorToWorldSpace(PALMA) * Manos.separacion(estilo, tamano)) * giro
 end
 
 function Manos.punto(personaje: Model): (BasePart?, Vector3?)
@@ -122,6 +136,18 @@ end
 
 function Manos.bofetada()
 	bofetadaHasta = os.clock() + 0.45
+end
+
+function Manos.sostener(tipo: string)
+	tipoPropio = tipo
+end
+
+function Manos.vista(enPrimera: boolean)
+	primera = enPrimera
+end
+
+function Manos.momentos(): (number, number)
+	return pulsarHasta, bofetadaHasta
 end
 
 local function reposo(hueso: Bone): CFrame
@@ -201,7 +227,7 @@ local function paso(personaje: Model, propio: boolean, ahora: number, k: number)
 		return
 	end
 	local s = personaje:GetAttribute("Sosteniendo")
-	local tipo = if typeof(s) == "string" then s else ""
+	local tipo = if propio then tipoPropio elseif typeof(s) == "string" then s else ""
 	if tipo ~= estado.tipo then
 		if ahora - estado.cambio > 0.4 then
 			estado.cambio = ahora
@@ -210,14 +236,15 @@ local function paso(personaje: Model, propio: boolean, ahora: number, k: number)
 	end
 	local estilo = if tipo ~= "" then Manos.estilo(tipo) else nil
 	local dos = estilo ~= nil and estilo.modo == "dos"
-	local der, izq = POSES.relajada, POSES.relajada
+	local reposo = if propio and primera then POSES.primera else POSES.relajada
+	local der, izq = reposo, reposo
 	if personaje:GetAttribute("Ragdoll") then
 		return
 	elseif ahora - estado.cambio < 0.14 then
 		der = POSES.abierta
 		izq = if dos then POSES.abierta else izq
 	elseif estilo then
-		der = POSE_MODO[estilo.modo]
+		der = if propio and primera and (estilo.modo == "vaso" or estilo.modo == "puno") then POSES.sosten else POSE_MODO[estilo.modo]
 		izq = if dos then der else izq
 	elseif propio and ahora < pulsarHasta then
 		der = POSES.pulsar

@@ -7,6 +7,9 @@ from mathutils import Vector, Matrix, Quaternion
 from mathutils.bvhtree import BVHTree
 
 OUT = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
+_SEP = {}
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "herramientas", "separar_capas.py"), encoding="utf-8") as _fh:
+    exec(compile(_fh.read(), "separar_capas.py", "exec"), _SEP)
 if len(sys.argv) > 1 and os.path.isdir(sys.argv[-1]):
     OUT = sys.argv[-1]
 
@@ -34,6 +37,8 @@ PALETTE = {
     "tongue": (11, "E85A78"),
     "navy": (12, "2C3A5E"),
     "blush": (13, "FF8F7E"),
+    "guante": (14, ("FAFAF5", "A4ABC6")),
+    "puno": (15, ("2CBAB2", "147A75")),
 }
 
 PLAYER_COLORS = {
@@ -60,9 +65,12 @@ def lin(c):
     return tuple(x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4 for x in c)
 
 
-def swatch_uv(role):
+def swatch_uv(role, sombra=None):
     i = PALETTE[role][0]
-    return ((i % 4 + 0.5) / 4.0, (i // 4 + 0.5) / 4.0)
+    if sombra is None:
+        return ((i % 4 + 0.5) / 4.0, (i // 4 + 0.5) / 4.0)
+    # Casillas con degradado (16 filas): sombra 0 = claro, 1 = oscuro, sin tocar el borde de la casilla.
+    return ((i % 4 + 0.5) / 4.0, (i // 4 * 16 + 1.5 + 13.0 * min(1.0, max(0.0, sombra))) / 64.0)
 
 
 def ss(a, b, x):
@@ -97,20 +105,21 @@ def core_part(c):
 
 
 class Prim:
-    def __init__(self, bm, role, part, weights, s_layer=False, angle=50.0):
+    def __init__(self, bm, role, part, weights, s_layer=False, angle=50.0, sombra=None):
         self.bm = bm
         self.role = role
         self.part = part
         self.weights = weights
         self.s_layer = s_layer
         self.angle = angle
+        self.sombra = sombra
 
 
 PRIMS = []
 
 
-def add(bm, role, part, weights, s_layer=False, angle=50.0):
-    PRIMS.append(Prim(bm, role, part, weights, s_layer, angle))
+def add(bm, role, part, weights, s_layer=False, angle=50.0, sombra=None):
+    PRIMS.append(Prim(bm, role, part, weights, s_layer, angle, sombra))
 
 
 def ellipsoid(radii, mat=Matrix(), u=20, v=10):
@@ -373,6 +382,9 @@ MANOPLA_LARGO, NUDILLO, DOBLEZ = 0.30, 0.13, 0.23
 
 
 def build_mano(side, sx):
+    """Manopla blanca de pala ancha y algo plana, pulgar gordito y puno turquesa abombado.
+    La sombra (casillas con degradado) oscurece los lados, la palma, la base del pulgar y la entrada del puno,
+    asi que vista desde el dorso en primera persona tiene el borde un poco mas oscuro y se lee sobre cualquier suelo."""
     hp = side + "Hand"
     lado = LADOS[side]
     c = Vector((sx * CODO.x, 0, CODO.z))
@@ -381,29 +393,48 @@ def build_mano(side, sx):
     pn = Vector((-sx, 0, 0))
     pn = (pn - a * a.dot(pn)).normalized()
     f = Vector((0, -1, 0))
+    dorso = -pn
 
-    puno, _ = tube([w - a * 0.03, w + a * 0.05], lambda u: 0.136 + 0.01 * u, k=28, steps=2, cap_rings=2, cap=(0.35, 0.45))
-    add(puno, "teal", hp, {hp: 1.0}, angle=70.0)
+    def lados(n, fuerza=0.55):
+        t = n.dot(dorso)
+        return fuerza * (1.0 - ss(-0.3, 0.95, t)) + 0.12 * ss(-0.2, -0.9, t)
+
+    def sombra_puno(co, n, s):
+        return min(1.0, lados(n, 0.5) + 0.45 * abs(n.dot(a)) ** 2)
+
+    puno, _ = tube([w - a * 0.045, w + a * 0.055], lambda u: (0.128 + 0.02 * math.sin(math.pi * u), 0.146 + 0.02 * math.sin(math.pi * u)),
+                   k=32, steps=6, up=pn, cap_rings=4, cap=(0.55, 0.55))
+    add(puno, "puno", hp, {hp: 1.0}, angle=89.0, sombra=sombra_puno)
+
+    dt = (f * 0.80 + a * 0.46 + pn * 0.34).normalized()
+    base = w + a * 0.10 + f * 0.07 + pn * 0.02
+    raiz_pulgar = base + dt * 0.03
 
     def seccion(u):
-        return (0.094 + 0.024 * ss(0.0, 0.4, u) - 0.008 * ss(0.75, 1.0, u),
-                0.118 + 0.05 * ss(0.0, 0.4, u) - 0.012 * ss(0.8, 1.0, u))
-    ctrl = [w + a * 0.0, w + a * 0.15 + pn * 0.008, w + a * MANOPLA_LARGO + pn * 0.028]
-    cuerpo, _ = tube(ctrl, seccion, k=28, steps=8, up=pn, cap_rings=7, cap=(0.5, 1.15), expo=2.25)
+        return (0.082 + 0.024 * ss(0.12, 0.42, u) - 0.008 * ss(0.75, 1.0, u),
+                0.1 + 0.086 * ss(0.12, 0.5, u) - 0.012 * ss(0.8, 1.0, u))
+
+    def sombra_manopla(co, n, s):
+        v = lados(n) + 0.3 * (1.0 - ss(0.02, 0.12, s)) + 0.32 * (1.0 - ss(0.07, 0.16, (co - raiz_pulgar).length))
+        return min(1.0, v)
+
+    ctrl = [w + a * 0.0, w + a * 0.16 + pn * 0.012, w + a * MANOPLA_LARGO + pn * 0.045]
+    cuerpo, _ = tube(ctrl, seccion, k=32, steps=10, up=pn, cap_rings=8, cap=(0.5, 1.0), expo=2.4)
     b1, b2 = lado + "Manopla1", lado + "Manopla2"
-    punta = w + a * (MANOPLA_LARGO + 0.13) + pn * 0.04
+    punta = w + a * (MANOPLA_LARGO + 0.13) + pn * 0.05
     BONES_MANOS.append((b1, hp, tuple(w + a * NUDILLO), tuple(w + a * DOBLEZ + pn * 0.018)))
     BONES_MANOS.append((b2, b1, tuple(w + a * DOBLEZ + pn * 0.018), tuple(punta)))
-    add(cuerpo, "white", hp, chain_weights([hp, b1, b2], [NUDILLO, DOBLEZ], 0.045), s_layer=True, angle=89.0)
+    add(cuerpo, "guante", hp, chain_weights([hp, b1, b2], [NUDILLO, DOBLEZ], 0.045), s_layer=True, angle=89.0, sombra=sombra_manopla)
 
-    dt = (f * 0.80 + a * 0.42 + pn * 0.30).normalized()
-    base = w + a * 0.11 + f * 0.05 + pn * 0.01
-    tpts = [base, base + dt * 0.11 + a * 0.012, base + dt * 0.205 + a * 0.03]
-    pulgar, ts = tube(tpts, lambda u: 0.071 - 0.01 * u, k=18, steps=5, cap_rings=5, cap=(0.6, 1.0))
+    def sombra_pulgar(co, n, s):
+        return min(1.0, lados(n, 0.5) + 0.35 * (1.0 - ss(0.03, 0.1, s)))
+
+    tpts = [base, base + dt * 0.10 + a * 0.014, base + dt * 0.19 + a * 0.034]
+    pulgar, ts = tube(tpts, lambda u: 0.08 - 0.016 * u + 0.008 * ss(0.55, 1.0, u), k=24, steps=6, cap_rings=6, cap=(0.6, 1.0))
     p1, p2 = lado + "Pulgar1", lado + "Pulgar2"
     BONES_MANOS.append((p1, hp, tuple(base + dt * 0.06), tuple(base + dt * 0.135)))
     BONES_MANOS.append((p2, p1, tuple(base + dt * 0.135), tuple(tpts[-1] + dt * 0.07)))
-    add(pulgar, "white", hp, chain_weights([hp, p1, p2], [0.06, 0.135], 0.03), s_layer=True, angle=89.0)
+    add(pulgar, "guante", hp, chain_weights([hp, p1, p2], [0.06, 0.135], 0.03), s_layer=True, angle=89.0, sombra=sombra_pulgar)
     if side == "Right":
         AGARRE.xyz = w + a * 0.17 + pn * 0.23
 
@@ -593,6 +624,7 @@ def assemble():
                 part = pr.part
             role = pr.role(c, s) if callable(pr.role) else pr.role
             uv = swatch_uv(role)
+            gradiente = pr.sombra is not None and isinstance(PALETTE[role][1], tuple) and isinstance(PALETTE[role][1][0], str)
             a = acc[part]
             vm = vmaps.setdefault(part, {})
             idx = []
@@ -618,7 +650,7 @@ def assemble():
                     if lf.normal.dot(f.normal) >= cos_lim:
                         nsum += lf.normal * lf.calc_area()
                 a["n"].append(tuple(nsum.normalized() if nsum.length > 1e-9 else f.normal))
-                a["uv"].append(uv)
+                a["uv"].append(swatch_uv(role, pr.sombra(v.co, v.normal, v[sl] if sl else 0.0)) if gradiente else uv)
             a["f"].append(tuple(idx))
     return acc
 
@@ -628,9 +660,16 @@ def make_palette_image():
     img = bpy.data.images.new("TripulantePalette", size, size, alpha=True)
     px = [0.0] * (size * size * 4)
     for role, (i, col) in PALETTE.items():
-        rgba = col if isinstance(col, tuple) else (*hex_rgb(col), 1.0)
         gx, gy = i % 4, i // 4
         for y in range(gy * 16, gy * 16 + 16):
+            if isinstance(col, str):
+                rgba = (*hex_rgb(col), 1.0)
+            elif isinstance(col[0], str):
+                t = min(1.0, max(0.0, (y - gy * 16 - 1.0) / 13.0))
+                c0, c1 = hex_rgb(col[0]), hex_rgb(col[1])
+                rgba = (*(c0[k] + (c1[k] - c0[k]) * t for k in range(3)), 1.0)
+            else:
+                rgba = col
             for x in range(gx * 16, gx * 16 + 16):
                 o = (y * size + x) * 4
                 px[o:o + 4] = rgba
@@ -651,7 +690,7 @@ def palette_material(name, img, player_hex):
     bsdf = nt.nodes.new("ShaderNodeBsdfPrincipled")
     tex = nt.nodes.new("ShaderNodeTexImage")
     tex.image = img
-    tex.interpolation = "Closest"
+    tex.interpolation = "Linear"
     rgb = nt.nodes.new("ShaderNodeRGB")
     rgb.name = "PlayerColor"
     rgb.label = "PlayerColor"
@@ -813,16 +852,80 @@ POSES_MANO = {
     "puno": (88, 98, 46, 44, -10),
     "pulsar": (-4, -2, 40, 38, -12),
     "palma": (4, 6, -8, 0, 12),
+    "primera": (10, 14, 14, 10, 4),
+    "bofetada": (-16, -10, -14, -6, 32),
+    "dos": (34, 46, 22, 18, 0),
+    "sosten": (18, 24, 26, 22, -8),
 }
 
 
-# Primera persona (Camara.luau): hombro, codo, giro hacia dentro y muneca en grados, y los hombros subidos ELEVAR
-# (solo en tu propia vista: el torso no se ve) para que las manoplas cortas lleguen a las esquinas de abajo.
-ELEVAR = Vector((0.0, 0.0, 0.35))
-PRIMERA = (
-    ("reposo", (58, 80, -15, 32), (58, 80, -15, 32), "relajada"),
-    ("agarre", (80, 42, 12, 18), (58, 80, -15, 32), "agarre"),
-)
+# Primera persona (Camara.luau): en tu propia vista no se ven los brazos, solo las manoplas, y cada una se coloca en el
+# espacio de la camara (X derecha, Y arriba, -Z delante, como en Roblox). Cada postura es x e y como fraccion de media
+# pantalla a esa profundidad, profundidad z, y en grados cabeceo (dedos hacia arriba), guinada hacia dentro, alabeo sobre los
+# dedos e inclinacion en la pantalla (mano derecha; la izquierda es su espejo). Los mismos numeros que VISTA en Camara.luau.
+VISTA = {
+    "reposo": (0.54, -0.78, 0.86, 50, 0, -22, 30),
+    "alcance": (0.2, -0.46, 1.1, 68, 6, -12, 16),
+    "pulsar": (0.1, -0.42, 1.0, 74, 0, -6, 10),
+    "bofetadaAtras": (0.8, -0.5, 0.8, 64, 40, -10, -10),
+    "bofetadaGolpe": (-0.02, -0.36, 0.92, 74, 28, 0, 22),
+    "lanzar": (0.24, -0.44, 1.2, 66, 8, -30, 12),
+    "puno": (0.32, -0.66, 0.92, 62, 0, -18, 12),
+    "vaso": (0.32, -0.64, 0.92, 64, 0, -18, 12),
+    "palma": (0.3, -0.66, 1.0, 32, 10, -180, 8),
+    "colgar": (0.46, -0.7, 0.95, 58, 4, -60, 8),
+    "abrazo": (-0.06, 0.75, 0.1, 78, 35, 0, 0),
+}
+TAN_REF = math.tan(math.radians(40))
+# Lo que sube un objeto llevado en la palma sobre el punto de agarre, ademas de su media altura (Manos.desfase).
+DESFASE_PALMA = -0.12
+Q3 = Matrix(((-1, 0, 0), (0, 0, 1), (0, 1, 0)))
+Q4 = Q3.to_4x4()
+
+
+def base_mano(signo):
+    dedos = Vector((0.12 * signo, -0.3, 0)).normalized()
+    palma = Vector((-signo, 0, 0))
+    palma = (palma - dedos * dedos.dot(palma)).normalized()
+    h = Matrix((dedos, palma, dedos.cross(palma))).transposed()
+    v = Matrix(((0, 0, -1), (0, -1, 0), (-1, 0, 0))).transposed()
+    return v @ h.inverted()
+
+
+def giro_vista(p, signo):
+    return (Matrix.Rotation(signo * math.radians(p[6]), 3, "Z") @ Matrix.Rotation(signo * math.radians(p[4]), 3, "Y")
+            @ Matrix.Rotation(math.radians(p[3]), 3, "X") @ Matrix.Rotation(signo * math.radians(p[5]), 3, "Z") @ base_mano(signo))
+
+
+def en_vista(p, signo, tv, ancho):
+    z = p[2] * math.sqrt(TAN_REF / tv)
+    m = giro_vista(p, signo).to_4x4()
+    m.translation = (signo * p[0] * ancho * tv * z, p[1] * tv * z, -z)
+    return m
+
+
+def abrazo(signo, caja_r, tam, cam_r, tv, ancho):
+    """Como abrazo() de Camara.luau: las manoplas van a los lados del objeto en un marco centrado en el y girado solo con la
+    camara (sin cabeceo), asi que se quedan pegadas aunque mires abajo; luego se meten en la pantalla si se salen."""
+    frente = cam_r.to_3x3() @ Vector((0, 0, -1))
+    frente.y = 0
+    frente.normalize()
+    derecha = frente.cross(Vector((0, 1, 0))).normalized()
+    marco = Matrix((derecha, derecha.cross(frente), -frente)).transposed().to_4x4()
+    marco.translation = caja_r.translation
+    r = (marco.inverted() @ caja_r).to_3x3()
+    h = tam / 2
+
+    def ext(eje):
+        return sum(abs(r.col[i].dot(eje)) * h[i] for i in range(3))
+    p = VISTA["abrazo"]
+    sitio = Matrix.Translation((signo * (ext(Vector((1, 0, 0))) + p[0]), ext(Vector((0, 1, 0))) * p[1], ext(Vector((0, 0, 1))) + p[2]))
+    l = cam_r.inverted() @ marco @ sitio @ giro_vista(p, signo).to_4x4()
+    fondo = max(0.6, -l.translation.z)
+    x = min(0.85 * ancho * tv * fondo, max(-0.85 * ancho * tv * fondo, l.translation.x))
+    y = min(0.6 * tv * fondo, max(-0.85 * tv * fondo, l.translation.y))
+    l.translation = (x, y, -fondo)
+    return l
 
 
 def pose_mano(rig, side, vals):
@@ -930,6 +1033,161 @@ def caja(ob):
     return mn, mx
 
 
+def material_color(nombre, hexa, rugosidad=0.5):
+    m = bpy.data.materials.new(nombre)
+    m.use_nodes = True
+    b = m.node_tree.nodes["Principled BSDF"]
+    b.inputs["Base Color"].default_value = (*lin(hex_rgb(hexa)), 1.0)
+    b.inputs["Roughness"].default_value = rugosidad
+    return m
+
+
+def objeto_malla(nombre, bm, mat, coll):
+    me = bpy.data.meshes.new(nombre)
+    bm.to_mesh(me)
+    for pol in me.polygons:
+        pol.use_smooth = True
+    me.materials.append(mat)
+    ob = bpy.data.objects.new(nombre, me)
+    coll.objects.link(ob)
+    return ob
+
+
+def primera_persona(scene, coll, rig, objs, mats, rdir):
+    """Renders de primera persona con la camara del juego (ojos a 3,01, 0,5 por detras, 80 grados de campo vertical,
+    mirando 10 grados hacia abajo) y las manoplas colocadas como en Camara.luau. Sin brazos, como en tu propia vista."""
+    cajas = {o.name[:-4]: caja(o) for o in objs}
+
+    def centro(side):
+        mn, mx = cajas[side + "Hand"]
+        return Q3 @ ((mn + mx) / 2)
+
+    def opcion(nombre, defecto):
+        return float(sys.argv[sys.argv.index(nombre) + 1]) if nombre in sys.argv else defecto
+
+    # --fov y --aspecto solo para comprobar el encuadre (el slider de Ajustes va de 60 a 100; un movil apaisado es 19,5:9).
+    fov = opcion("--fov", 80.0)
+    aspecto = opcion("--aspecto", 16 / 9)
+    tv = math.tan(math.radians(fov / 2))
+    ancho = min(1.78, max(1.2, aspecto))
+    cam_r = Matrix.Translation((0, ZE, 0.5)) @ Matrix.Rotation(math.radians(-10), 4, "X")
+    rapido = "--rapido" in sys.argv
+    suelo = bpy.data.materials["Ground"].node_tree.nodes["Principled BSDF"].inputs["Base Color"]
+    taza = material_color("Taza", "D9443A", 0.4)
+    tapa = material_color("Tapa", "FFF4E0", 0.5)
+    carton = material_color("Carton", "E6C8A0", 0.8)
+    boton = material_color("Boton", "F27B2B", 0.4)
+
+    def escena(nombre, der, izq, res, cosas=None, fondo="6B7A8F"):
+        r2 = clone(rig, objs, coll, mats["Lavanda"], (0, 0, 0), solo={"RightHand_Geo", "LeftHand_Geo"})
+        bpy.context.view_layer.update()
+        for side, signo, (pv, mano) in (("Right", 1, der), ("Left", -1, izq)):
+            m = pv if isinstance(pv, Matrix) else en_vista(VISTA[pv], signo, tv, ancho)
+            d = Q4 @ cam_r @ m @ Matrix.Translation(-centro(side)) @ Q4
+            r2.pose.bones[side + "Hand"].matrix = d @ r2.data.bones[side + "Hand"].matrix_local
+            bpy.context.view_layer.update()
+            pose_mano(r2, side, POSES_MANO[mano])
+        extra = cosas(r2) if cosas else []
+        suelo.default_value = (*lin(hex_rgb(fondo)), 1.0)
+        cd = bpy.data.cameras.new("CamPrimera")
+        cd.sensor_fit = "VERTICAL"
+        cd.angle = math.radians(fov)
+        cd.clip_start = 0.05
+        co = bpy.data.objects.new("CamPrimera", cd)
+        coll.objects.link(co)
+        co.matrix_world = Q4 @ cam_r
+        scene.camera = co
+        scene.render.resolution_x, scene.render.resolution_y = round(res[1] * aspecto), res[1]
+        scene.render.resolution_percentage = 50 if rapido else 100
+        scene.cycles.samples = 16 if rapido else 48
+        ruta = os.path.join(rdir, nombre + ".png")
+        scene.render.filepath = ruta
+        bpy.ops.render.render(write_still=True)
+        for ch in list(r2.children):
+            bpy.data.objects.remove(ch)
+        bpy.data.objects.remove(r2)
+        for ob in extra:
+            bpy.data.objects.remove(ob)
+        bpy.data.objects.remove(co)
+        suelo.default_value = (*lin(hex_rgb("EFE9DC")), 1.0)
+        return ruta
+
+    def palma(r2):
+        m = r2.pose.bones["RightHand"].matrix @ r2.data.bones["RightHand"].matrix_local.inverted()
+        return m @ AGARRE, m.to_3x3() @ (Q3 @ Vector((-0.929, -0.371, 0.0)))
+
+    def agarre(r2):
+        c, n = palma(r2)
+        c = c + n * (0.25 - 0.1)
+        vaso = objeto_malla("Vaso", cylinder(0.23, 0.62, Matrix.Translation(c), 32), taza, coll)
+        lid = objeto_malla("Tapa", cylinder(0.245, 0.06, Matrix.Translation(c + Vector((0, 0, 0.32))), 32), tapa, coll)
+        return [vaso, lid]
+
+    ojo_r = cam_r.translation
+    mirada = cam_r.to_3x3() @ Vector((0, 0, -1))
+    caja_r = Matrix.Translation(ojo_r + mirada * 2.5 - Vector((0, 1.85, 0)))
+    tam = Vector((2.0, 2.0, 2.0))
+
+    def caja_grande(r2):
+        bm = redondeado((1.0, 1.0, 1.0), Q4 @ caja_r, 16, 10, 0.12)
+        return [objeto_malla("Caja", bm, carton, coll)]
+
+    def pulsador(r2):
+        frente = Q3 @ (cam_r.to_3x3() @ Vector((0, 0, -1)))
+        punta = Vector(r2.pose.bones["DerManopla2"].tail)
+        m = Matrix.Translation(punta + frente * 0.12) @ frame_from_normal(-frente)
+        return [objeto_malla("Pulsador", cylinder(0.2, 0.1, m, 32), boton, coll)]
+
+    def en_mano(r2, radio, altura, giro):
+        # Igual que Manos.marco y Manos.desfase: el objeto va derecho (o inclinado si es herramienta) sobre el punto de agarre,
+        # separado de la palma lo que haga falta para que la manopla no se meta dentro (Manos.separacion).
+        c, n = palma(r2)
+        c = c + n * max(0.0, radio - 0.1)
+        g = Q3 @ giro @ Q3
+        return Matrix.Translation(c + g @ Vector((0, 0, altura))) @ g.to_4x4()
+
+    def bandeja(r2):
+        m = en_mano(r2, 0.0, 0.05 + DESFASE_PALMA, Matrix.Identity(3))
+        return [objeto_malla("Bandeja", redondeado((0.6, 0.42, 0.05), m, 20, 8, 0.25), material_color("Metal", "A9B0B8", 0.3), coll),
+                objeto_malla("Hamburguesa", redondeado((0.2, 0.2, 0.12), m @ Matrix.Translation((0.1, 0.0, 0.16)), 16, 8, 0.7), boton, coll)]
+
+    def extintor(r2):
+        m = en_mano(r2, 0.35, -0.6 * 0.9, Matrix.Rotation(math.radians(-20), 3, "X"))
+        return [objeto_malla("Extintor", cylinder(0.3, 1.5, m, 32), taza, coll),
+                objeto_malla("Asa", redondeado((0.12, 0.2, 0.08), m @ Matrix.Translation((0, 0, 0.82)), 12, 6, 0.6), material_color("Negro", "2E2A2C", 0.5), coll)]
+
+    if "--encuadre" in sys.argv:
+        escena("encuadre_%d_%.2f" % (fov, aspecto), ("reposo", "primera"), ("reposo", "primera"), (1600, 900))
+        escena("encuadre_vaso_%d_%.2f" % (fov, aspecto), ("vaso", "sosten"), ("reposo", "primera"), (1600, 900), agarre)
+        return
+    escena("primera_reposo", ("reposo", "primera"), ("reposo", "primera"), (1600, 900))
+    escena("primera_agarre", ("vaso", "sosten"), ("reposo", "primera"), (1600, 900), agarre)
+    piezas = [
+        escena("_p_bofetada", ("bofetadaGolpe", "bofetada"), ("reposo", "primera"), (800, 450)),
+        escena("_p_pulsar", ("pulsar", "pulsar"), ("reposo", "primera"), (800, 450), pulsador),
+        escena("_p_abrazo", (abrazo(1, caja_r, tam, cam_r, tv, ancho), "dos"), (abrazo(-1, caja_r, tam, cam_r, tv, ancho), "dos"), (800, 450), caja_grande),
+        escena("_p_bandeja", ("palma", "palma"), ("reposo", "primera"), (800, 450), bandeja),
+        escena("_p_extintor", ("puno", "sosten"), ("reposo", "primera"), (800, 450), extintor),
+        escena("_p_claro", ("reposo", "primera"), ("reposo", "primera"), (800, 450), None, "F4F1EA"),
+    ]
+    imgs = [bpy.data.images.load(r) for r in piezas]
+    w, h = imgs[0].size
+    hoja = bpy.data.images.new("PrimeraAcciones", w * 3, h * 2, alpha=True)
+    px = [0.0] * (w * 3 * h * 2 * 4)
+    for k, im in enumerate(imgs):
+        ox, oy = (k % 3) * w, (1 - k // 3) * h
+        src = list(im.pixels[:])
+        for y in range(h):
+            o = ((oy + y) * w * 3 + ox) * 4
+            px[o:o + w * 4] = src[y * w * 4:(y + 1) * w * 4]
+    hoja.pixels = px
+    hoja.filepath_raw = os.path.join(rdir, "primera_acciones.png")
+    hoja.file_format = "PNG"
+    hoja.save()
+    for r in piezas:
+        os.remove(r)
+
+
 def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
@@ -942,6 +1200,7 @@ def main():
     exp = export_material(img)
     rig = build_armature(coll)
     objs = build_meshes(coll, rig, acc, mat, PARTS)
+    print("SEPARAR_CAPAS", sum(_SEP["separar_capas"](o) for o in objs))
     for o in build_meshes(coll, rig, acc, mat, ["Ojos_" + v for v in VARIANTES_OJOS]):
         OJOS_OBJ[o.name[5:-4]] = o
         o.hide_render = True
@@ -1005,7 +1264,7 @@ def main():
     cm.use_nodes = True
     cm.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (*lin(hex_rgb("F0B73A")), 1.0)
     hechos = []
-    for i, nm in enumerate(POSES_MANO):
+    for i, nm in enumerate(("abierta", "relajada", "agarre", "puno", "pulsar", "palma")):
         r2 = clone(rig, objs, coll, mats["Lavanda"], (i * 0.85, 0, 0), solo={"RightHand_Geo", "RightLowerArm_Geo"})
         bpy.context.view_layer.update()
         pose_mano(r2, "Right", POSES_MANO[nm])
@@ -1033,47 +1292,8 @@ def main():
         for ch in list(r2.children):
             bpy.data.objects.remove(ch)
         bpy.data.objects.remove(r2)
-    brazos = {p + "_Geo" for p in PARTS if "Arm" in p or "Hand" in p}
-    for nombre, der, izq, mano in PRIMERA:
-        if "--render" not in sys.argv and "--primera" not in sys.argv:
-            break
-        r2 = clone(rig, objs, coll, mats["Lavanda"], (0, 0, 0), solo=brazos)
-        bpy.context.view_layer.update()
-        p = []
-        for lado, sx, (hombro, codo, giro, muneca) in (("Right", -1, der), ("Left", 1, izq)):
-            p += [(lado + "Hand", "X", muneca), (lado + "LowerArm", "X", -codo), (lado + "UpperArm", "X", -hombro),
-                  (lado + "UpperArm", "Z", -sx * giro), (lado + "UpperArm", "T", tuple(ELEVAR))]
-        pose(r2, p)
-        pose_mano(r2, "Right", POSES_MANO[mano])
-        pose_mano(r2, "Left", POSES_MANO["relajada"])
-        hechos2 = []
-        if mano == "agarre":
-            c = r2.pose.bones["RightHand"].matrix @ r2.data.bones["RightHand"].matrix_local.inverted() @ AGARRE
-            bm = cylinder(0.15, 0.42, Matrix.Translation(c), 32)
-            me = bpy.data.meshes.new("Barra")
-            bm.to_mesh(me)
-            me.materials.append(cm)
-            bo = bpy.data.objects.new("Barra", me)
-            coll.objects.link(bo)
-            hechos2.append(bo)
-        zc = ZE
-        suelo = bpy.data.materials["Ground"].node_tree.nodes["Principled BSDF"].inputs["Base Color"]
-        suelo.default_value = (*lin(hex_rgb("6B7A8F")), 1.0)
-        co = camera(scene, loc=(0, 0.5, zc), target=(0, -5, zc), lens=20)
-        co.data.sensor_fit = "VERTICAL"
-        co.data.angle = math.radians(80)
-        co.data.clip_start = 0.1
-        scene.render.resolution_x, scene.render.resolution_y = 1600, 900
-        scene.cycles.samples = 48
-        scene.render.filepath = os.path.join(rdir, "primera_" + nombre + ".png")
-        bpy.ops.render.render(write_still=True)
-        for ch in list(r2.children):
-            bpy.data.objects.remove(ch)
-        bpy.data.objects.remove(r2)
-        for bo in hechos2:
-            bpy.data.objects.remove(bo)
-        bpy.data.objects.remove(co)
-        suelo.default_value = (*lin(hex_rgb("EFE9DC")), 1.0)
+    if "--render" in sys.argv or "--primera" in sys.argv:
+        primera_persona(scene, coll, rig, objs, mats, rdir)
     if "--render" not in sys.argv:
         return
 
